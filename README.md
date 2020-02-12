@@ -8,6 +8,8 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Getting Started
 
+Before starting to build the adapter for your project, please [contact the DeFi Pulse team](https://discord.gg/Gx4TCTk) to obtain and sign a contributor agreement, and to obtain a project specific SDK key.  
+
 Once you have the repo cloned locally, install dependencies by running:
 
 ```
@@ -20,7 +22,7 @@ Next you'll need to create a `.env` file. An example file `.env.example` is prov
 DEFIPULSE_KEY='SDK_KEY_HERE'
 ```
 
-If you don't already have one, contact the DeFi Pulse team to be issued an SDK key and replace the placeholder `SDK_KEY_HERE` with your key.
+Replace the placeholder `SDK_KEY_HERE` with the key you obtained after signing the contributor ageement.
 
 To verify that you have access and everything is working, try running:
 
