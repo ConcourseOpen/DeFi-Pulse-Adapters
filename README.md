@@ -4,7 +4,7 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Documentation Links
 
-[SDK Reference](https://github.com/ConcourseOpen/Defipulse-Template/blob/master/docs/sdk.md)
+[SDK Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md)
 
 # Getting Started
 
@@ -137,7 +137,7 @@ let balanceOfResults = await sdk.api.abi.multiCall({
 
 These illustrate the most common SDK interactions for most adapters - running one view/function on a single token/address, and running batches of a given view/function on multiple tokens/address with different parameters.
 
-[Full documentation of available functions in the SDK](https://github.com/ConcourseOpen/Defipulse-Template/blob/master/docs/sdk.md)
+[Full documentation of available functions in the SDK](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md)
 
 If the SDK doesn't provide required methods to implement your project adapter, please contact a member of the DeFi Pulse team so we can add necessary support where applicable, and/or collaborate to find a suitable alternative solution.
 
