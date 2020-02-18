@@ -8,7 +8,7 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Getting Started
 
-Before starting to build the adapter for your project, please fill out and submit this [short form](https://forms.gle/sftGdpDq7mGrvSN38) to obtain and sign a contributor agreement and to obtain a project-specific SDK key.
+Before starting to build the adapter for your project, please fill out this [short form](https://forms.gle/sftGdpDq7mGrvSN38) to apply for a listing on DeFi Pulse and to sign a contributor agreement for this repository.
 
 Once you have the repo cloned locally, install dependencies by running:
 
