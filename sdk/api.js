@@ -53,6 +53,8 @@
       multiCall: (options) => abi('multiCall', { ...options })
     },
     util: {
+      getLogs: (options) => util('getLogs', { ...options }),
+      kyberTokens: () => util('kyberTokens'),
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
