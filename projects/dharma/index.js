@@ -231,10 +231,6 @@
           });
         }
       });
-
-      symbolBalances = await sdk.api.util.toSymbols(balances);
-
-      return symbolBalances.output;
     } else {
       let dharmaDaiAddress = "0x00000000001876eB1444c986fD502e618c587430";
       let daiAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
@@ -256,21 +252,17 @@
         "type": "function"
       };
 
-      let balances = {};
-
       let dharmaDaiUnderlyingBalance = (await sdk.api.abi.call({
         block,
         target: dharmaDaiAddress,
         abi: totalSupplyUnderlyingABI
       })).output;
 
-      if (dharmaDaiUnderlyingBalance.success) {
-        let dharmaDaiUnderlyingBalanceBN = BigNumber(
-          dharmaDaiUnderlyingBalance.output || 0
-        );
-        if (dharmaDaiUnderlyingBalanceBN.toNumber() > 0) {
-          balances[daiAddress] = dharmaDaiUnderlyingBalanceBN.toFixed();
-        }
+      let dharmaDaiUnderlyingBalanceBN = BigNumber(
+        dharmaDaiUnderlyingBalance || 0
+      );
+      if (dharmaDaiUnderlyingBalanceBN.toNumber() > 0) {
+        balances[daiAddress] = dharmaDaiUnderlyingBalanceBN.toFixed();
       }
 
       let dharmaUSDCUnderlyingBalance = (await sdk.api.abi.call({
@@ -279,19 +271,17 @@
         abi: totalSupplyUnderlyingABI
       })).output;
 
-      if (dharmaUSDCUnderlyingBalance.success) {
-        let dharmaUSDCUnderlyingBalanceBN = BigNumber(
-          dharmaUSDCUnderlyingBalance.output || 0
-        );
-        if (dharmaUSDCUnderlyingBalanceBN.toNumber() > 0) {
-          balances[usdcAddress] = dharmaUSDCUnderlyingBalanceBN.toFixed();
-        }
+      let dharmaUSDCUnderlyingBalanceBN = BigNumber(
+        dharmaUSDCUnderlyingBalance || 0
+      );
+      if (dharmaUSDCUnderlyingBalanceBN.toNumber() > 0) {
+        balances[usdcAddress] = dharmaUSDCUnderlyingBalanceBN.toFixed();
       }
-
-      symbolBalances = await sdk.api.util.toSymbols(balances);
-
-      return symbolBalances.output;     
     }
+
+    symbolBalances = await sdk.api.util.toSymbols(balances);
+
+    return symbolBalances.output;
   }
 
 /*==================================================
