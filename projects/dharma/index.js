@@ -5,7 +5,6 @@
   const sdk = require('../../sdk');
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
-  var web3Utils = require('web3-utils');
 
 /*==================================================
   Settings
