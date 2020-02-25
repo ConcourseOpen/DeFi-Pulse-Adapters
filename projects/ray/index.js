@@ -6,7 +6,7 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
-  const opportunityAbi = require('./abis/Opportunity.json');
+  const opportunityAbi = require('./abis/Opportunity');
 
 /*==================================================
   Settings
@@ -128,128 +128,66 @@
     return tokens;
   }
 
-  function handlePmEthBalance(result, balances) {
-
-    balances[WETH_ADDRESS] = BigNumber(balances[WETH_ADDRESS] || 0).plus(result.output).toFixed();
-  }
-
-  function handlePmErc20Balance(result, balances) {
-
-    _.each(result.output, (balanceOf) => {
-
-      if (balanceOf.success) {
-
-        let balance = balanceOf.output;
-        let address = balanceOf.input.target;
-
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
-  }
-
-  function handleOpportunityBalance(result, balances) {
-
-    _.each(result.output, (getBalance) => {
-
-      if (getBalance.success) {
-
-        let balance = getBalance.output;
-        let address = getBalance.input.params;
-
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
-  }
-
 /*==================================================
   Main
   ==================================================*/
 
   async function run(timestamp, block) {
-
     let balances = {};
-    let promises = [];
-    let calls;
+
     let { pmCalls, portfolioManagers } = getPmCalls(timestamp);
     let opportunityCalls = getOpportunityCalls(timestamp);
 
-    for (let i = 0; i < portfolioManagers.length; i++) {
-      promises.push(
-        sdk.api.eth.getBalance({target: portfolioManagers[i], block})
-        .then(result => {
-                return {
-                  type: 'pmEthBalance',
-                  result: result
-                }
-              })
-        );
-    }
+    await Promise.all(_.map(portfolioManagers, (portfolioManager) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let balance = (await sdk.api.eth.getBalance({target: portfolioManager, block})).output;
 
-    calls = pmCalls;
-    promises.push(
-      sdk.api.abi.multiCall({
-        block,
-        calls,
-        abi: 'erc20:balanceOf'
-      }).then(result => {
-        return {
-          type: 'pmErc20Balance',
-          result: result
+          balances[ETH_ADDRESS] = BigNumber(balances[ETH_ADDRESS] || 0).plus(balance).toFixed();
+          resolve();
+        } catch(error) {
+          reject(error);
         }
       })
-    );
+    }));
 
-    calls = opportunityCalls;
+    let pmBalances = (await sdk.api.abi.multiCall({
+      block,
+      calls: pmCalls,
+      abi: 'erc20:balanceOf'
+    })).output;
 
-    promises.push(
-      sdk.api.abi.multiCall({
-        block,
-        calls,
-        abi: opportunityAbi.getBalance
-      }).then(result => {
-        return {
-          type: 'opportunityBalance',
-          result: result
+    _.each(pmBalances, (result) => {
+      if (result.success) {
+        let balance = result.output;
+        let address = result.input.target;
+
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
         }
-      })
-    );
 
-    await Promise.all(promises).then( (results) => {
-      for (let i = 0; i < results.length; i++) {
-
-        switch (results[i].type) {
-          case 'pmEthBalance':
-
-            handlePmEthBalance(results[i].result, balances);
-            break;
-
-          case 'pmErc20Balance':
-
-            handlePmErc20Balance(results[i].result, balances);
-            break;
-
-          case 'opportunityBalance':
-
-            handleOpportunityBalance(results[i].result, balances);
-            break;
-
-          default:
-            throw new Error(`${results[i].type} is an invalid case!`);
-
-        }
+        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
       }
     });
 
-    balances[ETH_ADDRESS] = balances[WETH_ADDRESS];
-    delete balances[WETH_ADDRESS];
+    let opportunityBalances = (await sdk.api.abi.multiCall({
+      block,
+      calls: opportunityCalls,
+      abi: opportunityAbi.getBalance
+    })).output;
+
+    _.each(opportunityBalances, (result) => {
+      if (result.success) {
+        let balance = result.output;
+        let address = result.input.params;
+
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
+        }
+
+        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+      }
+    });
 
     return (await sdk.api.util.toSymbols(balances)).output;
   }
