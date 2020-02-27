@@ -71,20 +71,6 @@
       return map;
     }, {});
 
-    // Underlying Token Decimals
-    let cTokenUnderLyingTokenDecimalsMap = (await sdk.api.abi.multiCall({
-      block,
-      calls: _.map(Object.values(cTokensMap), (token) => {
-        return {
-          target: token
-        }
-      }),
-      abi: 'erc20:decimals'
-    })).output.reduce(function(map, object) {
-      map[object.input.target] = object.output;
-      return map;
-    }, {});
-
     // Compute Balances
     _.each(balanceOfResults.output, (balanceOf) => {
       if(balanceOf.success) {
