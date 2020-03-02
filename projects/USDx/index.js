@@ -50,7 +50,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'USDx(dForce)',
+    name: 'USDx',
     token: 'USDx',
     category: 'Assets',
     start: 1563991581, // Jul-25-2019 02:06:21 AM +UTC
