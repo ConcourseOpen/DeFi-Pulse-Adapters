@@ -198,6 +198,7 @@
 
   module.exports = {
     name: 'Robo-Advisor for Yield',
+    shortName: 'RAY',
     token: 'RAY',
     category: 'Lending',
     start: 1568274392,  // 09/12/2019 @ 7:46am (UTC)
