@@ -57,7 +57,7 @@
 
   module.exports = {
     name: 'dForce',
-    token: null,
+    token: 'DF',
     category: 'Lending',
     start: 1565043417, // Aug-06-2019 06:16:57 AM +UTC
     run
