@@ -1,0 +1,79 @@
+/*==================================================
+  Modules
+  ==================================================*/
+
+const sdk = require('../../sdk');
+const _ = require('underscore');
+const axios = require('axios');
+const BigNumber = require('bignumber.js');
+const ddexMarginContractAddress = '0x241e82c79452f51fbfc89fac6d912e021db1a3b7'
+
+/*==================================================
+  Helper Functions
+  ==================================================*/
+
+async function GenerateCallList(timestamp) {
+  let assets = await axios.get('https://api.ddex.io/v4/assets');
+  assets = assets.data.data.assets;
+  assets = _.filter(assets, (asset) => {
+    let symbol = asset.symbol;
+    return symbol !== "ETH";
+  });
+
+  let calls = [];
+  _.each(assets, (asset) => {
+    calls.push({
+      target: asset.address,
+      params: ddexMarginContractAddress
+    })
+  });
+
+  return calls;
+}
+
+/*==================================================
+  Main
+  ==================================================*/
+
+async function run(timestamp, block) {
+  let ethBalance = await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block});
+
+  let balances = {
+    '0x0000000000000000000000000000000000000000': ethBalance.output
+  };
+
+  let calls = await GenerateCallList(timestamp);
+
+  let balanceOfResults = await sdk.api.abi.multiCall({
+    block,
+    calls,
+    abi: 'erc20:balanceOf'
+  });
+
+  _.each(balanceOfResults.output, (balanceOf) => {
+    if(balanceOf.success) {
+      let balance = balanceOf.output;
+      let address = balanceOf.input.target;
+
+      if (BigNumber(balance).toNumber() <= 0) {
+        return;
+      }
+
+      balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+    }
+  });
+
+  let symbolBalances = await sdk.api.util.toSymbols(balances);
+  return symbolBalances.output
+}
+
+/*==================================================
+  Exports
+  ==================================================*/
+
+module.exports = {
+  name: 'DDEX',
+  category: 'Lending',
+  start: 1566470505, // 2019-08-22T18:41:45+08:00
+  run
+}
