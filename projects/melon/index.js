@@ -12,7 +12,8 @@ const BigNumber = require("bignumber.js");
 
 const versions = [
   "0xCB6c6Bdf0AA4cF0188518783b871931EFB64248f",
-  "0x01Bde0b02740D6311e4a87CA112DeEEddb057EFB"
+  "0x01Bde0b02740D6311e4a87CA112DeEEddb057EFB",
+  "0x5f9AE054C7F0489888B1ea46824b4B9618f8A711"
 ];
 
 /*==================================================
