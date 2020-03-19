@@ -51,7 +51,10 @@ async function run(timestamp, block) {
   let fundCalls = [];
 
   _.each(latestIds, latestId => {
-    if (latestId.success) {
+    // edge case error where getLastFundId reports incorrectly with a very high number
+    // possible overflow bug or different output type by design to signal error
+    // check for reasonable number string length to mitigate
+    if (latestId.success && latestId.output.length < 10) {
       let ids = _.range(Number(latestId.output) + 1);
 
       _.each(ids, id => {
