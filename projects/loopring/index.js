@@ -27,7 +27,7 @@
   module.exports = {
     name: 'Loopring',
     token: 'LRC',
-    category: 'Protocol',
+    category: 'Derivatives',
     start: 1574241665, // 11/20/2019 @ 09:21AM (UTC)
     run
   }
