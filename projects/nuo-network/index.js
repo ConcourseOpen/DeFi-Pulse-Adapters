@@ -145,22 +145,22 @@
     let addresses = await sdk.api.abi.call({
       target: '0x4e9d7f37eadc6fef64b5f5dccc4deb6224667677',
       abi:   {
-    "constant": true,
-    "inputs": [],
-    "name": "getAllAccounts",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
+        "constant": true,
+        "inputs": [],
+        "name": "getAllAccounts",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
       block
     });
-  
+
     _.each(addresses.output, (address) => {
       _.each(tokenAddresses, (tokenAddress) => {
         uCalls.push({
@@ -169,18 +169,23 @@
         })
       });
     });
-  
-    let actualBalances = await sdk.api.abi.multiCall({
-      block,
-      uCalls,
-      abi: 'erc20:balanceOf'
-    })
-    _.each(actualBalances.output, (actualBalance) => {
-      if(actualBalance.success) {
-        let address = actualBalance.input.target
-        balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
-      }
-    });
+
+    uCalls = _.chunk(uCalls, 5000);
+
+    for(let userCalls of uCalls) {
+      let actualBalances = await sdk.api.abi.multiCall({
+        block,
+        calls: userCalls,
+        abi: 'erc20:balanceOf'
+      });
+
+      _.each(actualBalances.output, (actualBalance) => {
+        if(actualBalance.success) {
+          let address = actualBalance.input.target
+          balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
+        }
+      });
+    }
 
     let symbolBalances = await sdk.api.util.toSymbols(balances);
 
