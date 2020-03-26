@@ -97,6 +97,16 @@
       });
     });
 
+    let counter = 0;
+    for(let i of calls) {
+      console.log(i);
+      console.log(i.target);
+      console.log(i.params);
+      console.log(counter++);
+    }
+
+    console.log("================ \n");
+
     let balanceOfResults = await sdk.api.abi.multiCall({
       block,
       calls,
@@ -160,9 +170,15 @@
       },
       block
     });
+    // console.log(addresses);
+    // var testAddr = addresses.output.slice(0,2);
+    var testAddr = _.first(addresses.output,2);
 
-    _.each(addresses.output, (address) => {
+    // console.log("Should print 1000 addresees : " + testAddr);
+    _.each(testAddr.output, (address) => {
       _.each(tokenAddresses, (tokenAddress) => {
+        console.log(tokenAddress);
+        console.log(address);
         uCalls.push({
           target: tokenAddress,
           params: address
@@ -170,14 +186,20 @@
       });
     });
 
-    uCalls = _.chunk(uCalls, 5000);
+    let count = 0;
+    for(let i of uCalls) {
+      console.log(i);
+      console.log(i.target);
+      console.log(i.params);
+      console.log(count++);
+    }
 
-    for(let userCalls of uCalls) {
       let actualBalances = await sdk.api.abi.multiCall({
         block,
-        calls: userCalls,
+        uCalls,
         abi: 'erc20:balanceOf'
       });
+      console.log("Actual balances : " + actualBalances);
 
       _.each(actualBalances.output, (actualBalance) => {
         if(actualBalance.success) {
@@ -185,7 +207,7 @@
           balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
         }
       });
-    }
+    // }
 
     let symbolBalances = await sdk.api.util.toSymbols(balances);
 
