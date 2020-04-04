@@ -43,7 +43,13 @@
       address: '0xC830217BD3000E92CE846C549de6a2A36AEa8954', beginTimestamp: 1575649643, endTimestamp: null,
       coins: [DAI_ADDRESS]
     },
+    {
+      address: '0x3d6fa1331E142504Ba0B7965CD801c7F3b21b6C0', beginTimestamp: 1583869244, endTimestamp: null,
+      coins: [DAI_ADDRESS, USDC_ADDRESS, WETH_ADDRESS]
+    }
   ];
+
+
 
   const allPortfolioManagers = [
     {
