@@ -14,7 +14,7 @@
   Settings
   ==================================================*/
 
-  const runTimeLimit = 1000 * 60 * 2;
+  const runTimeLimit = 1000 * 60 * 5;
   const symbolLengthLimit = 6;
   const ethCallCountLimit = 1000;
 
