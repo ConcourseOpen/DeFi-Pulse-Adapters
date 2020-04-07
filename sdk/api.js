@@ -49,7 +49,7 @@
             if(options.chunk.combine == 'array') {
               output = [
                 ...output,
-                call.output
+                ...call.output
               ]
             } else if(options.chunk.combine == 'balances') {
               output.push(call.output);
