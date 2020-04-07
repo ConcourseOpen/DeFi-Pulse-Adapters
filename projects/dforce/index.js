@@ -11,6 +11,7 @@
   ==================================================*/
 
   const lendingReserves = [
+    '0x4Fabb145d64652a948d72533023f6E7A623C7C53', // BUSD
     '0x06AF07097C9Eeb7fD685c692751D5C66dB49c215', // CHAI(DAI)
     '0x0316EB71485b0Ab14103307bf65a021042c6d380', // HBTC
     '0xdF574c24545E5FfEcb9a659c229253D4111d87e1', // HUSD
