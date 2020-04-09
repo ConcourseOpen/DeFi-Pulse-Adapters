@@ -109,6 +109,6 @@ module.exports = {
   name: 'Opyn',
   token: null,
   category: 'Derivatives',
-  start: 1581542700,  // 02/12/2020 @ 09:25AM (UTC)
+  start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
   run
 }
