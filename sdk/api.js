@@ -140,6 +140,7 @@
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
+      unwrap: (options) => util('unwrap', { ...options }),
       lookupBlock: (timestamp) => util('lookupBlock', { timestamp })
     },
     eth: {
