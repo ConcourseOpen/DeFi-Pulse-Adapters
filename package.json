@@ -14,8 +14,8 @@
     "dotenv": "^8.2.0",
     "ethers": "^4.0.40",
     "mocha": "^7.0.0",
-    "mocha-logger": "^1.0.6",
     "moment": "^2.24.0",
+    "shelljs": "^0.8.3",
     "terminal-kit": "^1.35.2",
     "underscore": "^1.9.1",
     "web3-utils": "^1.2.6"

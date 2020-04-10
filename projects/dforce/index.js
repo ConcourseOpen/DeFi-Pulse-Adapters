@@ -27,10 +27,10 @@
   const market = '0x0eEe3E3828A45f7601D5F54bF49bB01d1A9dF5ea' // market
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     let calls = _.reduce(lendingReserves, (accum, reserve) => [...accum, {
@@ -63,5 +63,5 @@
     token: 'DF',
     category: 'Lending',
     start: 1565043417, // Aug-06-2019 06:16:57 AM +UTC
-    run
+    tvl
   }

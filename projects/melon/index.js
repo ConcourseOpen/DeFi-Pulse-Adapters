@@ -17,10 +17,10 @@ const versions = [
 ];
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-async function run(timestamp, block) {
+async function tvl(timestamp, block) {
   let balances = {};
 
   let latestIds = (
@@ -190,5 +190,5 @@ module.exports = {
   token: "MLN",
   category: "Assets",
   start: 1551398400, // 03/01/2019 @ 12:00am (UTC)
-  run
+  tvl
 };

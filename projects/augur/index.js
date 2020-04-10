@@ -5,10 +5,10 @@
   const sdk = require('../../sdk');
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let getBalance = await sdk.api.eth.getBalance({target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', block});
 
     let balances = {
@@ -29,5 +29,5 @@
     token: 'REP',
     category: 'Derivatives',
     start: 1531008000, // 07/08/2018 @ 12:00am (UTC)
-    run
+    tvl
   }

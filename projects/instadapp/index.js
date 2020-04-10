@@ -14,10 +14,10 @@
   const addressV2 = '0x498b3BfaBE9F73db90D252bCD4Fa9548Cd0Fd981';
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let wallets = (await sdk.api.util.getLogs({
       target: addressV2,
       topic: 'Created(address,address,address)',
@@ -44,5 +44,5 @@
     category: 'Lending',
     contributesTo: ['Maker', 'Compound'],
     start: 1543622400,  // 12/01/2018 @ 12:00am (UTC)
-    run
+    tvl
   }

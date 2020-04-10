@@ -29,10 +29,10 @@
   }
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     // Vault Asset Balances
@@ -102,5 +102,5 @@
     token: null,
     category: 'Assets',
     start: 1554848955,  // 04/09/2019 @ 10:29pm (UTC)
-    run
+    tvl
   }

@@ -80,10 +80,10 @@
   }
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
 
     let balances = {
@@ -125,5 +125,5 @@
     token: 'BNT',
     category: 'DEXes',
     start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-    run
+    tvl
   }

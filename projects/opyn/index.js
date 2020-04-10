@@ -23,10 +23,10 @@
   ]
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {    
+  async function tvl(timestamp, block) {
     let balances = {};
 
     for(let i = 0; i < factoriesAddresses.length; i++) {
@@ -73,7 +73,7 @@
 
       // batch balanceOf calls
       let balanceOfCalls = [];
-  
+
       _.each(optionsAddresses, (optionsAddress) => {
         _.each(tokenAddresses, (tokenAddress) => {
           balanceOfCalls.push({
@@ -82,14 +82,14 @@
           });
         });
       });
-  
+
       // get tokens balances
       const balanceOfResults = await sdk.api.abi.multiCall({
         block,
         calls: balanceOfCalls,
         abi: "erc20:balanceOf"
       });
-  
+
       _.each(balanceOfResults.output, (balanceOf) => {
         if(balanceOf.success) {
           let address = balanceOf.input.target
@@ -110,5 +110,5 @@ module.exports = {
   token: null,
   category: 'Derivatives',
   start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
-  run
+  tvl
 }

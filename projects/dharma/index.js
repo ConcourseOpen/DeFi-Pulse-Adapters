@@ -77,10 +77,10 @@
   ]
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {
       '0x0000000000000000000000000000000000000000': '0', // ETH
     };
@@ -293,5 +293,5 @@
     category: 'Lending',
     contributesTo: ['Compound'],
     dataStartTimestamp : 1526947200, // 05/22/2018 @ 12:00am (UTC)
-    run
+    tvl
   }

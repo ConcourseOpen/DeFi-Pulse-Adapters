@@ -32,10 +32,10 @@
   const lendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3"
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let getBalance = await sdk.api.eth.getBalance({target: lendingPoolCore, block});
 
     let balances = {
@@ -72,5 +72,5 @@
     token: 'LEND',
     category: 'Lending',
     start: 1578355200,  // 01/07/2020 @ 12:00am (UTC)
-    run
+    tvl
   }

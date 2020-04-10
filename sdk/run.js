@@ -9,7 +9,7 @@
   Run
   ==================================================*/
 
-  async function Run(project, timeUnit = 'day', timeOffset = 0) {
+  async function Run(runFunction, project, timeUnit = 'day', timeOffset = 0) {
     try {
       let timestamp;
 
@@ -22,7 +22,7 @@
       let point = await sdk.api.util.lookupBlock(timestamp);
 
       await sdk.api.util.resetEthCallCount();
-      let output = await project.run(point.timestamp, point.block);
+      let output = await project[runFunction](point.timestamp, point.block);
       let ethCallCount = await sdk.api.util.getEthCallCount();
 
       return {
