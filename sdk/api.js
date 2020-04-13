@@ -7,6 +7,7 @@
   const _ = require('underscore');
   const utility = require('./util');
   const term = require( 'terminal-kit' ).terminal;
+  const Bottleneck = require('bottleneck');
 
 /*==================================================
   Helper Methods
@@ -29,33 +30,52 @@
           });
         }
 
-        for(let chunk of chunks) {
-          let opts = {
-            ...options
-          }
-          opts[options.chunk.param] = chunk;
+        function processRequest(chunk) {
+          return new Promise(async(resolve, reject) => {
+            try {
+              let opts = {
+                ...options
+              }
+              opts[options.chunk.param] = chunk;
 
 
-          let call = await POST(endpoint, opts);
-          complete++;
+              let call = await POST(endpoint, opts);
+              complete++;
 
-          if(process.env.LOG_PROGRESS == 'true') {
-            progressBar.update(complete / chunks.length);
-          }
+              if(process.env.LOG_PROGRESS == 'true') {
+                progressBar.update(complete / chunks.length);
+              }
 
-          if(call.ethCallCount) {
-            ethCallCount += call.ethCallCount;
+              if(call.ethCallCount) {
+                ethCallCount += call.ethCallCount;
 
-            if(options.chunk.combine == 'array') {
-              output = [
-                ...output,
-                ...call.output
-              ]
-            } else if(options.chunk.combine == 'balances') {
-              output.push(call.output);
+                if(options.chunk.combine == 'array') {
+                  output = [
+                    ...output,
+                    ...call.output
+                  ]
+                } else if(options.chunk.combine == 'balances') {
+                  output.push(call.output);
+                }
+              }
+              resolve();
+            } catch(error) {
+              reject(error);
             }
-          }
+          });
         }
+
+        const limiter = new Bottleneck({
+          maxConcurrent: process.env.ADAPTER_CONCURRENCY || 1
+        });
+
+        await Promise.all(_.map(chunks, (chunk) => {
+          return limiter.schedule(() => {
+            return processRequest(chunk);
+          });
+        }));
+
+        console.log('testing');
 
         if(process.env.LOG_PROGRESS == 'true') {
           progressBar.update(1);

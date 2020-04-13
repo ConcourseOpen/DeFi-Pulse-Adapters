@@ -10,6 +10,7 @@
     "argv": "0.0.2",
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
+    "bottleneck": "^2.19.5",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethers": "^4.0.40",

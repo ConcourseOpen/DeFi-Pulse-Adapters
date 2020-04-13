@@ -29,7 +29,6 @@
     let label;
 
     let functions = [];
-    let output = {};
 
     if(args.function) {
       if(project[args.function]) {
@@ -52,11 +51,11 @@
       }
 
       it(label, async function() {
-        let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
-        this.test.value = projectRun;
 
         if(runFunction == 'tvl') {
           this.timeout(tvlTimeLimit);
+          let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
+          this.test.value = projectRun;
           chai.expect(projectRun.output).to.be.an('object');
 
           _.each(projectRun.output, (value, symbol) => {
@@ -71,6 +70,8 @@
           chai.expect(projectRun.ethCallCount).to.be.at.most(ethCallCountLimit);
         } else if(runFunction == 'rates') {
           this.timeout(ratesTimeLimit);
+          let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
+          this.test.value = projectRun;
         }
       });
 
