@@ -75,8 +75,6 @@
           });
         }));
 
-        console.log('testing');
-
         if(process.env.LOG_PROGRESS == 'true') {
           progressBar.update(1);
         }
