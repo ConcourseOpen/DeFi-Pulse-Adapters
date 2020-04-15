@@ -36,7 +36,7 @@
         ...converters
       ]
 
-      if(converters !== pageFetchCount) {
+      if(converters.length !== pageFetchCount) {
         moreData = false;
       }
     }
