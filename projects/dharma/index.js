@@ -292,6 +292,6 @@
     token: null,
     category: 'Lending',
     contributesTo: ['Compound'],
-    dataStartTimestamp : 1526947200, // 05/22/2018 @ 12:00am (UTC)
+    start: 1526947200, // 05/22/2018 @ 12:00am (UTC)
     tvl
   }
