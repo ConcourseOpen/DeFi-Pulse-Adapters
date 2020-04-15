@@ -5,7 +5,6 @@
   const sdk = require("../../sdk");
   const _ = require("underscore");
   const BigNumber = require("bignumber.js");
-  const ethers = require("ethers");
 
   const abi = require('./abi');
 
