@@ -185,6 +185,31 @@ const _mergeDaiSUSDBalances = async ({ block, supply }) => {
 
       if (symbol === 'DAI') {
         supply[symbol] = ((new BigNumber(supply[symbol])).minus(assets)).toFixed();
+
+        /* Handle switch to CHAI */
+        if (block >= 9129436) {
+          let chaiDecimals = decimalsResponse.output.find((item) => item.input.target === CHAI.token);
+          chaiDecimals = chaiDecimals.output;
+
+          let chaiPrice = await sdk.api.abi.call({
+            block,
+            target: fToken.iToken,
+            abi: CHAI.ABI.find((item) => (item.name === 'chaiPrice' && item.type === 'function')),
+          });
+          chaiPrice = chaiPrice.output;
+          let daiBalance = new BigNumber(assets * (chaiPrice / Math.pow(10, chaiDecimals)));
+          let vaultChai = vaultTokenResponse.output.find((item) => item.input.target === CHAI.token);
+          vaultChai = vaultChai.output;
+          vaultChai = new BigNumber( vaultChai || 0);
+          vaultChai = (vaultChai / Math.pow(10, chaiDecimals)) * (chaiPrice / Math.pow(10, chaiDecimals));
+          let chaiTotal = daiBalance.plus(vaultChai);
+
+          if (supply[symbol]) {
+            supply[symbol] = (new BigNumber(supply[symbol])).plus(chaiTotal).toFixed();
+          } else {
+            supply[symbol] = chaiTotal.toFixed();
+          }
+        }
       }
     }
 
