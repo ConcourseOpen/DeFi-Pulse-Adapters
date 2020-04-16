@@ -9,15 +9,11 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    let getBalance = await sdk.api.eth.getBalance({target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', block});
-
     let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
+      '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', block})).output
     };
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================

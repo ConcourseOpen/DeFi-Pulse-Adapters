@@ -12,7 +12,7 @@ const ddexMarginContractAddress = '0x241e82c79452f51fbfc89fac6d912e021db1a3b7'
   Helper Functions
   ==================================================*/
 
-async function GenerateCallList(timestamp) {
+async function GenerateCallList() {
   let assets = await axios.get('https://api.ddex.io/v4/assets');
   assets = assets.data.data.assets;
   assets = _.filter(assets, (asset) => {
@@ -36,35 +36,19 @@ async function GenerateCallList(timestamp) {
   ==================================================*/
 
 async function tvl(timestamp, block) {
-  let ethBalance = await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block});
-
   let balances = {
-    '0x0000000000000000000000000000000000000000': ethBalance.output
+    '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block})).output
   };
-
-  let calls = await GenerateCallList(timestamp);
 
   let balanceOfResults = await sdk.api.abi.multiCall({
     block,
-    calls,
+    calls: await GenerateCallList(),
     abi: 'erc20:balanceOf'
   });
 
-  _.each(balanceOfResults.output, (balanceOf) => {
-    if(balanceOf.success) {
-      let balance = balanceOf.output;
-      let address = balanceOf.input.target;
+  await sdk.util.sumMultiCall(balances, balanceOfResults);
 
-      if (BigNumber(balance).toNumber() <= 0) {
-        return;
-      }
-
-      balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-    }
-  });
-
-  let symbolBalances = await sdk.api.util.toSymbols(balances);
-  return symbolBalances.output
+  return balances;
 }
 
 /*==================================================

@@ -4,7 +4,6 @@
 
   const sdk = require('../../sdk');
   const _ = require('underscore');
-  const BigNumber = require('bignumber.js');
 
 /*==================================================
   Settings
@@ -27,40 +26,31 @@
     '0xe41d2489571d322189246dafa5ebde1f4699f498',
     '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
     '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
-  ]
+  ];
 
-  const lendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3"
+  const lendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
 
 /*==================================================
   TVL
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    let getBalance = await sdk.api.eth.getBalance({target: lendingPoolCore, block});
-
     let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
+      '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: lendingPoolCore, block})).output
     };
 
-    const calls = _.reduce(reserves, (accum, reserve) => [...accum, {
+    const balanceOfResults = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(reserves, (reserve) => ({
         target: reserve,
         params: lendingPoolCore
-    }] , []);
-
-    let balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls,
+      })),
       abi: 'erc20:balanceOf'
     });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let address = balanceOf.input.target
-        balances[address] = BigNumber(balances[address] || 0).plus(balanceOf.output).toFixed();
-      }
-    });
+    sdk.util.sumMultiCall(balances, balanceOfResults);
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================

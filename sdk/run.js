@@ -22,7 +22,8 @@
       let point = await sdk.api.util.lookupBlock(timestamp);
 
       await sdk.api.util.resetEthCallCount();
-      let output = await project[runFunction](point.timestamp, point.block);
+      let balances = await project[runFunction](point.timestamp, point.block);
+      let output = (await sdk.api.util.toSymbols(balances)).output;
       let ethCallCount = await sdk.api.util.getEthCallCount();
 
       return {
