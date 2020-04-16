@@ -80,7 +80,7 @@ const _calculateITokenBalances = async ({ iTokens, block }) => {
     let supplyResponse = await sdk.api.abi.multiCall({
       calls,
       block,
-      abi: iToken_ABI.find((item) => (item.name === 'totalSupply' && item.type === 'function')),
+      abi: iToken_ABI.find((item) => (item.name === 'totalAssetSupply' && item.type === 'function')),
     });
 
     /* query borrow amount of iTokens */
@@ -146,7 +146,7 @@ const _mergeDaiSUSDBalances = async ({ block, supply }) => {
     let supplyResponse = await sdk.api.abi.multiCall({
       calls,
       block,
-      abi: iToken_ABI.find((item) => (item.name === 'totalSupply' && item.type === 'function')),
+      abi: iToken_ABI.find((item) => (item.name === 'totalAssetSupply' && item.type === 'function')),
     });
 
     /* query borrow amount of DAI and SUSD */
@@ -157,7 +157,9 @@ const _mergeDaiSUSDBalances = async ({ block, supply }) => {
     });
 
     calls = fTokens.map((fToken) => ({ target: fToken.token, params: bzxVaultAddress, }));
-    /* check tokens locked in bZx vault */
+    calls.push({ target: CHAI.token, params: bzxVaultAddress }); /* pull vault reserve of CHAI token too */
+
+    /* pull tokens locked in bZx vault */
     let vaultTokenResponse = await sdk.api.abi.multiCall({
       calls,
       block,
