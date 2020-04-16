@@ -16,7 +16,7 @@ async function tvl (timestamp, block) {
 
   /* pull kyber market addresses */
   const reserveAddresses = (await sdk.api.abi.call({
-    target: abi['KyberNetworkAddress'],
+    target: abi['networkAddress'],
     abi: abi['getReserves'],
     block
   })).output;
