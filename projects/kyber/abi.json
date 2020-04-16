@@ -1,5 +1,5 @@
 {
-  "KyberNetworkAddress": "0x9ae49C0d7F8F9EF4B864e004FE86Ac8294E20950",
+  "networkAddress": "0x9ae49C0d7F8F9EF4B864e004FE86Ac8294E20950",
   "getReserves": {
     "constant": true,
     "inputs": [],
