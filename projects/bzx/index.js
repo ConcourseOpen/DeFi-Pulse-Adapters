@@ -76,8 +76,6 @@
       }))
     ];
 
-    console.log(balanceOfCalls);
-
     const balanceOfResult = await sdk.api.abi.multiCall({
       block,
       calls: balanceOfCalls,
