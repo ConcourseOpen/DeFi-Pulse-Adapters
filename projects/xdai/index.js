@@ -13,7 +13,7 @@
     const saiAddress = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359';
     const daiAddress = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
     const chaiAddress = '0x06AF07097C9Eeb7fD685c692751D5C66dB49c215';
-    const mcdMigrationBlock = 9162031
+    const daiDeploymentBlock = 8928158;
     const initializeChaiBlock = 9779414;
     const saiShutdownBlock = 9884448;
 
@@ -27,7 +27,7 @@
       block: Math.min(block, saiShutdownBlock)
     })).output;
 
-    if (block >= mcdMigrationBlock) {
+    if (block >= daiDeploymentBlock) {
       daiBalance = (await sdk.api.erc20.balanceOf({
         target: daiAddress,
         owner: bridgeAddress,
@@ -35,13 +35,15 @@
       })).output;
     }
 
+    // bridge contract of prior versions didn't support investedAmountInDai call
+    // so we include chai balance into consideration only after it was properly initialized in the bridge contract
     if (block >= initializeChaiBlock) {
       chaiBalance = (await sdk.api.abi.call({
         target: bridgeAddress,
         abi: {
           constant: true,
           inputs: [],
-          name: "dsrBalance",
+          name: "investedAmountInDai",
           outputs: [
             {
               name: "balance",
