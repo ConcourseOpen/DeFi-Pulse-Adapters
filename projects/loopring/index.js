@@ -10,6 +10,7 @@
   Vars
   ==================================================*/
   const loopringExchangeAddr = '0x944644Ea989Ec64c2Ab9eF341D383cEf586A5777';
+  const wedexExchangeAddr = '0xD97D09f3bd931a14382ac60f156C1285a56Bb51B';
   const listedTokens = [
     "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD", // LRC
     "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
@@ -23,9 +24,11 @@
 
   async function run(timestamp, block) {
     let getBalance = await sdk.api.eth.getBalance({target: loopringExchangeAddr, block});
+    let getWedexBalance = await sdk.api.eth.getBalance({target: wedexExchangeAddr, block});
+    let ethBlanace = BigNumber(getBalance.output || 0).plus(getWedexBalance.output);
 
     let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
+      '0x0000000000000000000000000000000000000000': ethBlanace
     };
 
     let calls = [];
@@ -33,7 +36,11 @@
       calls.push({
         target: token,
         params: loopringExchangeAddr
-      })
+      });
+      calls.push({
+        target: token,
+        params: wedexExchangeAddr
+      });
     });
 
     let balanceOfResults = await sdk.api.abi.multiCall({
