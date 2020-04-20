@@ -8,8 +8,6 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Getting Started
 
-Before starting to build the adapter for your project, please fill out this [short form](https://forms.gle/sftGdpDq7mGrvSN38) to apply for a listing on DeFi Pulse and to sign a contributor agreement for this repository.
-
 Once you have the repo cloned locally, install dependencies by running:
 
 ```
@@ -22,7 +20,7 @@ Next you'll need to create a `.env` file. An example file `.env.example` is prov
 DEFIPULSE_KEY='SDK_KEY_HERE'
 ```
 
-Replace the placeholder `SDK_KEY_HERE` with the key you obtained after signing the contributor ageement.
+To obtain an SDK key, or to get help with the SDK, please join our Discord: https://discord.gg/Gx4TCTk (channel: #defi-community). Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible. 
 
 To verify that you have access and everything is working, try running:
 
