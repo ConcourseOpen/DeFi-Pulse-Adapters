@@ -51,7 +51,6 @@
       }
 
       it(label, async function() {
-
         if(runFunction == 'tvl') {
           this.timeout(tvlTimeLimit);
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
