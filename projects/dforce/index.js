@@ -33,25 +33,18 @@
   async function tvl(timestamp, block) {
     let balances = {};
 
-    let calls = _.reduce(lendingReserves, (accum, reserve) => [...accum, {
-        target: reserve,
-        params: market
-    }], []);
-
     let balanceOfResults = await sdk.api.abi.multiCall({
       block,
-      calls,
+      calls: _.map(lendingReserves, (reserve) => ({
+        target: reserve,
+        params: market
+      })),
       abi: 'erc20:balanceOf'
     });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let address = balanceOf.input.target;
-        balances[address] = BigNumber(balances[address] || 0).plus(BigNumber(balanceOf.output)).toFixed();
-      }
-    });
+    sdk.util.sumMultiCall(balances, balanceOfResults);
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================

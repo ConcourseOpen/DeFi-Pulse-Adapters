@@ -20,10 +20,26 @@
     return balances;
   }
 
+  function SumMultiCall(balances, results) {
+    _.each(results.output, (result) => {
+      if(result.success) {
+        let address = result.input.target;
+        let balance = result.output;
+
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
+        }
+
+        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+      }
+    });
+  }
+
 /*==================================================
   Exportsd
   ==================================================*/
 
   module.exports = {
-    sum: Sum
+    sum: Sum,
+    sumMultiCall: SumMultiCall
   }
