@@ -49,10 +49,10 @@ Feel free to add additional files and folders within your project adapter direct
 
 ## The Run Function
 
-The main run function of a project adater is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection if historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+The main tvl function of a project adater is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection if historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
 ```js
-async function run(timestamp, block) {
+async function tvl(timestamp, block) {
   let balances = {
     '0x0000000000000000000000000000000000000000': 1000000000000000000, // ETH
     '0x6B175474E89094C44Da98b954EedeAC495271d0F': 2000000000000000000  // DAI
@@ -156,7 +156,7 @@ module.exports = {
   token: null,              // null, or token symbol if project has a custom token
   category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-  run                       // adapter
+  tvl                       // adapter
 }
 ```
 
@@ -168,7 +168,7 @@ module.exports = {
   token: 'BNT',
   category: 'DEXes',
   start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-  run
+  tvl
 }
 ```
 
