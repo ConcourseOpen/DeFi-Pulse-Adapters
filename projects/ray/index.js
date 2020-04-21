@@ -157,13 +157,24 @@
       })
     }));
 
-    let balanceOfResults = (await sdk.api.abi.multiCall({
+    let pmBalances = (await sdk.api.abi.multiCall({
       block,
       calls: pmCalls,
       abi: 'erc20:balanceOf'
     })).output;
 
-    await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+    _.each(pmBalances, (result) => {
+      if (result.success) {
+        let balance = result.output;
+        let address = result.input.target;
+
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
+        }
+
+        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+      }
+    });
 
     let opportunityBalances = (await sdk.api.abi.multiCall({
       block,
