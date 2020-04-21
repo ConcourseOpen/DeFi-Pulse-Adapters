@@ -62,6 +62,16 @@
       }
     });
 
+    let pools = await sdk.api.util.getLogs({
+      target: '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd',
+      topic: 'LOG_NEW_POOL(address,address)',
+      keys: ['topics'],
+      fromBlock: 9562480,
+      toBlock: block
+    });
+
+    console.log(pools)
+
     return balances;
   }
 
