@@ -61,10 +61,14 @@
     });
 
     _.each(iTokens, (iToken) => {
-      const totalSupply = _.find(supplyResult.output, (result) => (result.input.target === iToken.iTokenAddress)).output;
-      const totalBorrow = _.find(borrowResult.output, (result) => (result.input.target === iToken.iTokenAddress)).output;
+      const supply = _.find(supplyResult.output, (result) => (result.input.target === iToken.iTokenAddress));
+      const borrow = _.find(borrowResult.output, (result) => (result.input.target === iToken.iTokenAddress));
 
-      balances[iToken.underlyingAddress] = BigNumber(totalSupply).minus(totalBorrow).toFixed();
+      if(supply.success && borrow.success) {
+        const totalSupply = supply.output;
+        const totalBorrow = borrow.output;
+        balances[iToken.underlyingAddress] = BigNumber(totalSupply).minus(totalBorrow).toFixed();
+      }
     });
 
     const kyberTokens = (await sdk.api.util.kyberTokens()).output;
@@ -82,7 +86,7 @@
       abi: 'erc20:balanceOf',
     });
 
-    sdk.util.sumMultiCall(balances, balanceOfResult);;
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResult);;
 
     return balances;
   }
@@ -94,7 +98,7 @@
   module.exports = {
     name: 'bZx',
     token: 'BZRX',
-    category: 'Lending',
+    category: 'lending',
     start: 1558742400,  // 05/25/2019(UTC)
     tvl
   };

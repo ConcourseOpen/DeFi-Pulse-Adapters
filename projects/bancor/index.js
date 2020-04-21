@@ -84,36 +84,21 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
-
     let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
+      '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block})).output
     };
 
-    let calls = await GenerateCallList(timestamp);
+    const calls = await GenerateCallList(timestamp);
 
-    let balanceOfResults = await sdk.api.abi.multiCall({
+    const balanceOfResults = await sdk.api.abi.multiCall({
       block,
       calls,
       abi: 'erc20:balanceOf'
     });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let balance = balanceOf.output;
-        let address = balanceOf.input.target;
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
-
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -123,7 +108,7 @@
   module.exports = {
     name: 'Bancor',
     token: 'BNT',
-    category: 'DEXes',
+    category: 'dexes',
     start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
     tvl
   }

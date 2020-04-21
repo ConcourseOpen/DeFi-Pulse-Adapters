@@ -88,9 +88,7 @@
       }
     });
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -100,7 +98,7 @@
   module.exports = {
     name: 'Set Protocol',
     token: null,
-    category: 'Assets',
+    category: 'assets',
     start: 1554848955,  // 04/09/2019 @ 10:29pm (UTC)
     tvl
   }

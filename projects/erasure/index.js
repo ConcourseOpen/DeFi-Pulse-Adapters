@@ -118,9 +118,7 @@
       }
     });
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -130,7 +128,7 @@
   module.exports = {
     name: "Erasure",
     token: "NMR",
-    category: "Derivatives",
+    category: "derivatives",
     start: 1566518400, // 08/23/2019 @ 12:00am (UTC)
     tvl
   };

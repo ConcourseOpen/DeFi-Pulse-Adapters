@@ -23,7 +23,7 @@
   module.exports = {
     name: 'Augur',
     token: 'REP',
-    category: 'Derivatives',
+    category: 'derivatives',
     start: 1531008000, // 07/08/2018 @ 12:00am (UTC)
     tvl
   }

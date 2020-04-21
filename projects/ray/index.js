@@ -157,24 +157,13 @@
       })
     }));
 
-    let pmBalances = (await sdk.api.abi.multiCall({
+    let balanceOfResults = (await sdk.api.abi.multiCall({
       block,
       calls: pmCalls,
       abi: 'erc20:balanceOf'
     })).output;
 
-    _.each(pmBalances, (result) => {
-      if (result.success) {
-        let balance = result.output;
-        let address = result.input.target;
-
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
+    await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
     let opportunityBalances = (await sdk.api.abi.multiCall({
       block,
@@ -195,7 +184,7 @@
       }
     });
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -206,7 +195,7 @@
     name: 'Robo-Advisor for Yield',
     shortName: 'RAY',
     token: 'RAY',
-    category: 'Lending',
+    category: 'lending',
     start: 1568274392,  // 09/12/2019 @ 7:46am (UTC)
     tvl
   }

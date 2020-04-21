@@ -47,7 +47,7 @@ projects
 
 Feel free to add additional files and folders within your project adapter directly as needed to help organize your code, but most projects shouldn't be too large. Please keep all code within your project adapter directory - PR's with modifications or additions outside the scope of your own project usually won't be allowed, and in cases where they are needed will need to be discussed with the DeFi Pulse team in advance.
 
-## The Run Function
+## The TVL Function
 
 The main tvl function of a project adater is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection if historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
@@ -58,19 +58,15 @@ async function tvl(timestamp, block) {
     '0x6B175474E89094C44Da98b954EedeAC495271d0F': 2000000000000000000  // DAI
   };
 
-  let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-  return symbolBalances.output;
+  return balances;
 }
 ```
 
 In the case of the `_template' adapter, we're just using some hard coded values as token balances to illustrate a minimal implementation.
 
-For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. Due to the methods most commonly available in core contracts for most projects already on Defi Pulse (and a lack of broad standardization), we've found the most effective solution is for project adapters to work internally with token addresses where possible, and translate those raw addresses/wei to tokens/decimal converted values as late as possible.
+For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. Due to the methods most commonly available in core contracts for most projects already on Defi Pulse (and a lack of broad standardization), we've found the most effective solution is for project adapters to work internally with token addresses; symbol conversions are done automatically after the adapter runs;
 
-the `_template` project illustrates a helper function available to assist with this conversion, the `toSymbols` method accepts an object containing these raw values, and outputs the decimal converted values with proper token symbols. This is completely optional however, and depending on how your project works and the methods available it may make more sense to deal directly with symbols from the start.
-
-The important thing is that the adapter is expected to output an object with token symbols and decimal converted values. For the `_template` adapter, the output looks like this:
+The important thing is that the adapter is expected to output an object with token addresses and raw non-decimal converted balances. For the `_template` adapter, the output looks like this:
 
 ```js
 {
@@ -99,22 +95,9 @@ async function run(timestamp, block) {
     abi: 'erc20:balanceOf'
   });
 
-  _.each(balanceOfResults.output, (balanceOf) => {
-    if(balanceOf.success) {
-      let balance = balanceOf.output;
-      let address = balanceOf.input.target;
+  await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-      if (BigNumber(balance).toNumber() <= 0) {
-        return;
-      }
-
-      balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-    }
-  });
-
-  let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-  return symbolBalances.output;
+  return balances;
 }
 ```
 
@@ -154,9 +137,9 @@ Each project adapter needs to export the main run function, in addition to some 
 module.exports = {
   name: 'Template Project', // project name
   token: null,              // null, or token symbol if project has a custom token
-  category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: 'assets',       // allowed values as shown on DefiPulse: 'derivatives', 'dexes', 'lending', 'payments', 'assets'
   start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-  tvl                       // adapter
+  tvl                       // tvl adapter
 }
 ```
 
@@ -166,13 +149,13 @@ Here's a look at the `bancor` adapter for a practical example of this:
 module.exports = {
   name: 'Bancor',
   token: 'BNT',
-  category: 'DEXes',
+  category: 'dexes',
   start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
   tvl
 }
 ```
 
-You can see the affect of these settings on [DeFi Pulse](https://defipulse.com/).
+You can see the effect of these settings on [DeFi Pulse](https://defipulse.com/).
 
 The project's name and protocol token are simple values shown in the UI and API data. Category influences how the project is classified and what section it's tvl contributes to for aggregate results on the main page. Finally the start time defines the limit for how far back data needs to be fetched to retrieve the projects full historical data.
 
@@ -187,21 +170,28 @@ npm run test -- --project=_template
 The `test` command will run a project adapter once for the latest hourly point, perform some basic checks on it's output, and log the result.
 
 ```
- _template project running & output format
-    runs for specified time: latest
-      ✓ returns valid data at point hour 0 (1600ms)
-    ✔ Output: {
-      "ethCallCount": 0,
-      "timestamp": 1581026400,
-      "block": 9431690,
-      "output": {
-        "ETH": "1",
-        "DAI": "2"
-      }
-    }
+_template project running & output format
+  runs for specified time: latest hour
+    ✓ returns valid tvl data at hour 0 (1172ms)
 
 
-  1 passing (2s)
+1 passing (1s)
+```
+
+Output of tests are stored in json files under `output/**project_name**/**adapter_type**` and are named based on the time they were run to fetch data for.
+
+In the above example, the output is saved to `output/_template/tvl/2020-04-16T17:00:00Z.json` since the project is `_template`, and the adapter provided is for tvl. It's output is shown below:
+
+```json
+{
+  "ethCallCount": 0,
+  "timestamp": 1587481200,
+  "block": 9916481,
+  "output": {
+    "ETH": "1",
+    "DAI": "2"
+  }
+}
 ```
 
 The test will output how many Ethereum network calls were used for the run, confirm the timestamp and block the test was run on, and provide the output generated by the adapter.

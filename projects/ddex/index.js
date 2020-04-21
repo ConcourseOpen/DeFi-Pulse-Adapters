@@ -46,7 +46,7 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf'
   });
 
-  await sdk.util.sumMultiCall(balances, balanceOfResults);
+  await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
   return balances;
 }
@@ -57,7 +57,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'DDEX',
-  category: 'Lending',
+  category: 'lending',
   start: 1566470505, // 2019-08-22T18:41:45+08:00
   tvl
 }

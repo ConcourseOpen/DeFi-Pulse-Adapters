@@ -42,7 +42,7 @@
       abi: 'erc20:balanceOf'
     });
 
-    sdk.util.sumMultiCall(balances, balanceOfResults);
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
     return balances;
   }
@@ -54,7 +54,7 @@
   module.exports = {
     name: 'dForce',
     token: 'DF',
-    category: 'Lending',
+    category: 'lending',
     start: 1565043417, // Aug-06-2019 06:16:57 AM +UTC
     tvl
   }

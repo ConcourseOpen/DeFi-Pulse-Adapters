@@ -20,7 +20,7 @@
     return balances;
   }
 
-  function SumMultiCall(balances, results) {
+  function SumMultiBalanceOf(balances, results) {
     _.each(results.output, (result) => {
       if(result.success) {
         let address = result.input.target;
@@ -41,5 +41,5 @@
 
   module.exports = {
     sum: Sum,
-    sumMultiCall: SumMultiCall
+    sumMultiBalanceOf: SumMultiBalanceOf
   }

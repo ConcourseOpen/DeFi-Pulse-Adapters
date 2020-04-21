@@ -29,6 +29,9 @@
   async function tvl(timestamp, block) {
     let balances = {};
 
+    let balanceOfCalls = [];
+    let optionsAddresses = []
+
     for(let i = 0; i < factoriesAddresses.length; i++) {
       // number of created oTokens
       let numberOfOptionsContracts = (
@@ -55,9 +58,6 @@
         })
       ).output;
 
-      // list of options addresses
-      let optionsAddresses = []
-
       _.each(optionsContracts, async (contracts) => {
         optionsAddresses = [
           ...optionsAddresses,
@@ -70,35 +70,27 @@
         let balance = (await sdk.api.eth.getBalance({target: optionAddress, block})).output;
         balances["0x0000000000000000000000000000000000000000"] = BigNumber(balances["0x0000000000000000000000000000000000000000"] || 0).plus(BigNumber(balance)).toFixed();
       })
-
-      // batch balanceOf calls
-      let balanceOfCalls = [];
-
-      _.each(optionsAddresses, (optionsAddress) => {
-        _.each(tokenAddresses, (tokenAddress) => {
-          balanceOfCalls.push({
-            target: tokenAddress,
-            params: [optionsAddress]
-          });
-        });
-      });
-
-      // get tokens balances
-      const balanceOfResults = await sdk.api.abi.multiCall({
-        block,
-        calls: balanceOfCalls,
-        abi: "erc20:balanceOf"
-      });
-
-      _.each(balanceOfResults.output, (balanceOf) => {
-        if(balanceOf.success) {
-          let address = balanceOf.input.target
-          balances[address] = BigNumber(balances[address] || 0).plus(balanceOf.output).toFixed();
-        }
-      });
     }
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    _.each(optionsAddresses, (optionsAddress) => {
+      _.each(tokenAddresses, (tokenAddress) => {
+        balanceOfCalls.push({
+          target: tokenAddress,
+          params: [optionsAddress]
+        });
+      });
+    });
+
+    // get tokens balances
+    const balanceOfResults = await sdk.api.abi.multiCall({
+      block,
+      calls: balanceOfCalls,
+      abi: "erc20:balanceOf"
+    });
+
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+
+    return balances;
   }
 
 /*==================================================
@@ -108,7 +100,7 @@
 module.exports = {
   name: 'Opyn',
   token: null,
-  category: 'Derivatives',
+  category: 'derivatives',
   start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
   tvl
 }

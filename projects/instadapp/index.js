@@ -31,7 +31,7 @@
       targets: wallets
     })).output;
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -41,7 +41,7 @@
   module.exports = {
     name: 'InstaDApp',
     token: null,
-    category: 'Lending',
+    category: 'lending',
     contributesTo: ['Maker', 'Compound'],
     start: 1543622400,  // 12/01/2018 @ 12:00am (UTC)
     tvl

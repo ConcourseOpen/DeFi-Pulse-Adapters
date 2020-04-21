@@ -178,7 +178,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -188,7 +188,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Melon",
   token: "MLN",
-  category: "Assets",
+  category: "assets",
   start: 1551398400, // 03/01/2019 @ 12:00am (UTC)
   tvl
 };

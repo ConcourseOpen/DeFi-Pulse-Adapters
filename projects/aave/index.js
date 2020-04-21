@@ -48,7 +48,7 @@
       abi: 'erc20:balanceOf'
     });
 
-    sdk.util.sumMultiCall(balances, balanceOfResults);
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
     return balances;
   }
@@ -60,7 +60,7 @@
   module.exports = {
     name: 'Aave',
     token: 'LEND',
-    category: 'Lending',
+    category: 'lending',
     start: 1578355200,  // 01/07/2020 @ 12:00am (UTC)
     tvl
   }
