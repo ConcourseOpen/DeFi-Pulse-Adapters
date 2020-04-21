@@ -8,6 +8,8 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Getting Started
 
+DeFi Pulse is a curated site. Contributions to this repo are welcome, but will be merged at the discretion of the DeFi Pulse team. Contact us on Discord (https://discord.gg/Gx4TCTk) if you have any questions regarding a possible listing of your project on DeFi Pulse.
+
 Once you have the repo cloned locally, install dependencies by running:
 
 ```
