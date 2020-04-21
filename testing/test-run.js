@@ -55,6 +55,7 @@
         if(runFunction == 'tvl') {
           this.timeout(tvlTimeLimit);
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
+          console.log(projectRun);
           this.test.value = projectRun;
           chai.expect(projectRun.output).to.be.an('object');
 
