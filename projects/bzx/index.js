@@ -5,7 +5,7 @@
   const sdk = require('../../sdk');
   const BigNumber = require('bignumber.js');
   const _ = require('underscore');
-
+  const axios = require('axios');
   const abi = require('./abi');
 
 /*==================================================
@@ -73,7 +73,7 @@
 
     const kyberTokens = (await sdk.api.util.kyberTokens()).output;
 
-    balanceOfCalls = [
+    const balanceOfCalls = [
       ..._.map(kyberTokens, (data, address) => ({
         target: address,
         params: '0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633'
@@ -86,9 +86,28 @@
       abi: 'erc20:balanceOf',
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResult);;
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResult);
 
     return balances;
+  }
+
+/*==================================================
+  Rates
+==================================================*/
+
+  async function rates(timestamp, block) {
+    const lendingRates = (await axios('https://api.bzx.network/v1/supply-rate-apr')).data.data;
+    const borrowRates = (await axios('https://api.bzx.network/v1/borrow-rate-apr')).data.data;
+
+    const rates = {
+      lend: {},
+      borrow: {}
+    };
+
+    _.forEach(lendingRates, (rate, symbol) => rates.lend[symbol.toUpperCase()] = Number(rate));
+    _.forEach(borrowRates, (rate, symbol) => rates.borrow[symbol.toUpperCase()] = Number(rate));
+
+    return rates;
   }
 
 /*==================================================
@@ -100,5 +119,6 @@
     token: 'BZRX',
     category: 'lending',
     start: 1558742400,  // 05/25/2019(UTC)
-    tvl
+    tvl,
+    rates,
   };
