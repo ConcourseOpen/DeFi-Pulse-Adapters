@@ -32,7 +32,7 @@
   module.exports = {
     name: 'WBTC',
     token: null,
-    category: 'Assets',
+    category: 'assets',
     start: 1543095952,  // Nov-24-2018 09:45:52 PM +UTC
     tvl,
   };
