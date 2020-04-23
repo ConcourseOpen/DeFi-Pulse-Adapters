@@ -17,6 +17,7 @@
         balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
       })
     });
+
     return balances;
   }
 

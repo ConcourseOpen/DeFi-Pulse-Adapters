@@ -62,7 +62,6 @@
       }
     });
 
-
     return balances;
   }
 
