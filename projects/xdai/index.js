@@ -5,10 +5,10 @@
   const sdk = require('../../sdk');
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     const bridgeAddress = '0x4aa42145Aa6Ebf72e164C9bBC74fbD3788045016';
     const saiAddress = '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359';
     const daiAddress = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
@@ -35,7 +35,7 @@
       })).output;
     }
 
-    // there is no sense in checking chai balance before chai contract was actually deployed 
+    // there is no sense in checking chai balance before chai contract was actually deployed
     // and initializeChaiToken() was called on the bridge contract
     if (block >= initializeChaiBlock) {
       chaiBalance = (await sdk.api.erc20.balanceOf({
@@ -44,7 +44,7 @@
         block
       })).output;
     }
-    
+
     const balances = {
       [saiAddress]: saiBalance,
       [daiAddress]: daiBalance,
@@ -65,5 +65,5 @@
     token: null,
     category: 'Payments',
     start: 1539028166,
-    run
+    tvl
   };
