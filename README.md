@@ -2,13 +2,20 @@
 
 Welcome to the DeFiPulse Project Template Repository! This purpose of this repo is to allow 3rd party developers to build, validate and update their own project adapter for DeFi Pulse in order to allow a higher volume of projects to be added and maintained over time.
 
+# How to Get Listed on DeFi Pulse
+
+- Apply for a listing on The DeFi List: https://defipulse.com/defi-list
+- Check with the DeFi Pulse team to make sure you are eligible to be ranked on DeFi Pulse. Discord: https://discord.gg/Gx4TCTk
+- Propose a framework for counting your TVL
+- Code an adapter as described below
+- Work with us during testing
+- Make sure your adapter stays up to date as your dApp gets upgraded over time
+
 # Documentation Links
 
 [SDK Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md)
 
-# Getting Started
-
-DeFi Pulse is a curated site. Contributions to this repo are welcome, but will be merged at the discretion of the DeFi Pulse team. Contact us on Discord (https://discord.gg/Gx4TCTk) if you have any questions regarding a possible listing of your project on DeFi Pulse.
+# Getting Started with the Adapter
 
 Once you have the repo cloned locally, install dependencies by running:
 
@@ -22,7 +29,7 @@ Next you'll need to create a `.env` file. An example file `.env.example` is prov
 DEFIPULSE_KEY='SDK_KEY_HERE'
 ```
 
-To obtain an SDK key, or to get help with the SDK, please join our Discord: https://discord.gg/Gx4TCTk (channel: #defi-community). Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible. 
+You'll obtain your SDK key in the course of the listing process described above. Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible. 
 
 To verify that you have access and everything is working, try running:
 
