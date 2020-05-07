@@ -33,6 +33,6 @@
     name: 'WBTC',
     token: null,
     category: 'Assets',
-    start: 1543095952,  // Nov-24-2018 09:45:52 PM +UTC
+    start: 1543104000,  // 11/25/2018 @ 12:00am (UTC)
     tvl,
   };
