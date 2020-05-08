@@ -32,6 +32,6 @@
     name: 'Veil',
     token: null,
     category: 'derivatives',
-    start: 1545252600,  // Dec-19-2018 08:50:00 PM +UTC
+    start: 1545177600, // 12/19/2018 @ 12:00am (UTC)
     tvl,
   };
