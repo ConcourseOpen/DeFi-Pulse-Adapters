@@ -47,7 +47,7 @@
       totalSNXLocked = totalSNXLocked.plus(locked);
     });
 
-    return { [snxContract]: totalSNXLocked.toFixed() };
+    return (await sdk.api.util.toSymbols({ [snxContract]: totalSNXLocked.toFixed() })).output;
   }
 
 /*==================================================
