@@ -33,7 +33,7 @@
   module.exports = {
     name: 'Connext',
     token: null,
-    category: 'lending',
-    start: 1551916800,  // 03/07/2019 @ 12:00am (UTC)
+    category: 'Lending',
+    start: 1552065900,  // 03/08/2019 @ 5:25pm (UTC)
     tvl,
   };
