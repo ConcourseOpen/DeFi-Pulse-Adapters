@@ -154,7 +154,7 @@
     name: 'Compound',
     website: 'https://compound.finance',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     start: 1538006400, // 09/27/2018 @ 12:00am (UTC)
     tvl,
     rates,
