@@ -34,6 +34,6 @@
     name: 'Connext',
     token: null,
     category: 'lending',
-    start: 1551945204,  // Mar-07-2019 07:53:24 AM +UTC
+    start: 1551916800,  // 03/07/2019 @ 12:00am (UTC)
     tvl,
   };
