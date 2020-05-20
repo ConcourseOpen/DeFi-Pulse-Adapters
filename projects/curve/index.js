@@ -12,6 +12,7 @@
     let balances = {};
 
     let swaps = [
+      '0x2e60CF74d81ac34eB21eEff58Db4D385920ef419',
       '0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56',
       '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C',
       '0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51',
@@ -77,6 +78,7 @@
     })
 
     for(let [i, balance] of balancesResults.output.entries()) {
+      if(!balance.output) continue;
       balances[coinsResults.output[i].output] = balance.output
     }
 
@@ -129,6 +131,6 @@
     name: 'Curve Finance',
     token: null,
     category: 'dexes',
-    start: 1582609711,        // 25/02/2020 @ 5.48am UTC
+    start: 1579580319,        // 21/01/2020 @ 4.18am UTC
     tvl
   }
