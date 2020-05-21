@@ -12,6 +12,7 @@
     let balances = {};
 
     let swaps = [
+      '0xe5FdBab9Ad428bBB469Dee4CB6608C0a8895CbA5',
       '0x2e60CF74d81ac34eB21eEff58Db4D385920ef419',
       '0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56',
       '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C',
@@ -21,7 +22,7 @@
       '0x06364f10B501e868329afBc005b3492902d6C763',
     ]
 
-    let coins = [2, 3, 4, 4, 4, 4]
+    let coins = [2, 2, 2, 3, 4, 4, 4, 4]
 
     let balancesCalls = swaps.flatMap((token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
@@ -131,6 +132,6 @@
     name: 'Curve Finance',
     token: null,
     category: 'dexes',
-    start: 1579580319,        // 21/01/2020 @ 4.18am UTC
+    start: 1578074057,        // 03/01/2020 @ 5:54pm UTC
     tvl
   }
