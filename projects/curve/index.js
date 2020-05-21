@@ -18,15 +18,18 @@
       '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C',
       '0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51',
       '0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27',
+      '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966',
       '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD',
       '0x06364f10B501e868329afBc005b3492902d6C763',
     ]
 
-    let coins = [2, 2, 2, 3, 4, 4, 4, 4]
+    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4]
 
     let balancesCalls = swaps.flatMap((token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     })
+    balancesCalls = balancesCalls.filter(call => !(call.target == '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966' && call.params == 1))
+
     let balancesResults = await sdk.api.abi.multiCall({
       block,
       calls: balancesCalls,
@@ -54,6 +57,8 @@
     let coinsCalls = swaps.flatMap((token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     })
+    coinsCalls = coinsCalls.filter(call => !(call.target == '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966' && call.params == 1))
+    
     let coinsResults = await sdk.api.abi.multiCall({
       block,
       calls: coinsCalls,
