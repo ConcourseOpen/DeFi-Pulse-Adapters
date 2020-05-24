@@ -12,7 +12,7 @@
   Settings
 ==================================================*/
 
-  const snxContract = '0xC011A72400E58ecD99Ee497CF89E3775d4bd732F';
+  const snxContract = '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F';
   const stateAddress = '0x4b9Ca5607f1fF8019c1C6A3c2f0CC8de622D5B82';
 
 /*==================================================
