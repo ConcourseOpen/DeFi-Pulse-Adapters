@@ -61,7 +61,7 @@
       }
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -71,8 +71,8 @@
   module.exports = {
     name: 'Balancer',
     token: null,
-    category: 'dexes',
+    category: 'DEXes',
     contributesTo: [],
     start : 1582761600, // 02/27/2020 @ 12:00am (UTC)
     tvl
-  }
+  };
