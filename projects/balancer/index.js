@@ -6,6 +6,8 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
+  const abi = require('./abi');
+
 /*==================================================
   TVL
   ==================================================*/
@@ -23,24 +25,27 @@
       toBlock: block
     });
 
+    let poolCalls = [];
+
     let pools = _.map(poolLogs.output, (poolLog) => {
       return `0x${poolLog[2].slice(26)}`
     });
 
-    let kyberTokens = (await sdk.api.util.kyberTokens()).output;
+    for(let i = 0; i < pools.length; i++) {
 
-    let poolCalls = [];
+      let poolTokens = (await sdk.api.abi.call({
+        target: pools[i],
+        abi: abi.getCurrentTokens,
+      })).output;
 
-    _.each(kyberTokens, (data, address) => {
-      if(data.ethPrice) {
-        _.each(pools, (pool) => {
-          poolCalls.push({
-            target: address,
-            params: pool
-          });
+      _.each(poolTokens, (address) =>{
+        poolCalls.push({
+          target: address,
+          params: pools[i]
         });
-      }
-    });
+      });
+
+    }
 
     let poolBalances = (await sdk.api.abi.multiCall({
       block,
