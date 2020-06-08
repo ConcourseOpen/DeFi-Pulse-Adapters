@@ -4,12 +4,12 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # How to Get Listed on DeFi Pulse
 
-- Apply for a listing on The DeFi List: https://defipulse.com/defi-list
-- Check with the DeFi Pulse team to make sure you are eligible to be ranked on DeFi Pulse. Discord: https://discord.gg/Gx4TCTk
-- Propose a framework for counting your TVL
+- FIRST, You must successfully apply and be listed on The DeFi List: https://defipulse.com/defi-list (Application here: https://concourseopen.typeform.com/to/fLufMQ?defipulse=xxxxx)
+- Ask for a SDK KEY from DeFi Pulse in our Discord (https://discord.gg/Gx4TCTk) or Telegram (https://t.me/defipulse)
+- Propose a framework for counting your Total Value Locked (TVL)
 - Code an adapter as described below
 - Work with us during testing
-- Make sure your adapter stays up to date as your dApp gets upgraded over time
+- Make sure your adapter stays up to date as your dApp gets upgraded over time. Outdated adapters may be delisted.
 
 # Documentation Links
 
