@@ -21,9 +21,10 @@
       '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966',
       '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD',
       '0x06364f10B501e868329afBc005b3492902d6C763',
+      '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
     ]
 
-    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4]
+    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2]
 
     let balancesCalls = swaps.flatMap((token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
