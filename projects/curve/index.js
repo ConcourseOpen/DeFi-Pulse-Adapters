@@ -5,6 +5,7 @@
   const sdk = require('../../sdk');
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
+  _.flatMap = _.compose(_.flatten, _.map);
 
 /*==================================================
   Settings
@@ -53,7 +54,7 @@
 
     let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4]
 
-    let balancesCalls = swaps.flatMap((token, i) => {
+    let balancesCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     });
 
@@ -83,7 +84,7 @@
       }
     });
 
-    let coinsCalls = swaps.flatMap((token, i) => {
+    let coinsCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     });
 
