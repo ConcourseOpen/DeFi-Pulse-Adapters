@@ -14,7 +14,7 @@
       "smartPool": "0x0327112423f3a68efdf1fcf402f6c5cb9f7c33fd",
       "balancerPool": "0x9891832633a83634765952b051bc7fef36714a46"
     }
-  ]
+  ];
 
 /*==================================================
   TVL
@@ -60,7 +60,7 @@
       abi: 'erc20:balanceOf'
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResults)
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
     return balances;
   }
@@ -72,7 +72,7 @@
   module.exports = {
     name: 'PieDAO', // project name
     token: null,              // null, or token symbol if project has a custom token
-    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1585836606,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-    tvl                       // tvl adapter
-  }
+    tvl,                       // tvl adapter
+  };
