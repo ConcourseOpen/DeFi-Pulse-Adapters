@@ -58,6 +58,6 @@
     name: 'Synthetix',
     token: 'SNX',
     category: 'Derivatives',
-    start: 1551139200,  // 02/26/2019 @ 12:00am (UTC)
+    start: 1565287200,  // Fri Aug 09 2019 00:00:00
     tvl,
   };
