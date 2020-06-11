@@ -4,7 +4,8 @@
 
   const sdk = require('../../sdk');
   const abi = require('./abi');
-
+  const BigNumber = require('bignumber.js');
+  
 /*==================================================
   Settings
   ==================================================*/
@@ -22,9 +23,12 @@
     const capacity = (await sdk.api.abi.call({
       target: flexaContract,
       params: stakingAddress,
+      block,
       abi: abi.balanceOf,
     })).output;
-
+    if (BigNumber(capacity).toNumber() <= 0) {
+      return;
+    }
     return {[flexaContract]:capacity};
   
   }
@@ -37,6 +41,6 @@
     name: 'Flexa',
     token: 'FXC',
     category: 'payments',
-    start: 1546639415,        // Jan-04-2019 10:03:35 PM +UTC
+    start: 1546646400,        // 01/05/2019
     tvl
   }
