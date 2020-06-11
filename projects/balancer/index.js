@@ -31,21 +31,22 @@
       return `0x${poolLog[2].slice(26)}`
     });
 
-    for(let i = 0; i < pools.length; i++) {
+    const poolTokenData = (await sdk.api.abi.multiCall({
+      calls: _.map(pools, (poolAddress) => ({ target: poolAddress })),
+      abi: abi.getCurrentTokens,
+    })).output;
 
-      let poolTokens = (await sdk.api.abi.call({
-        target: pools[i],
-        abi: abi.getCurrentTokens,
-      })).output;
+    _.forEach(poolTokenData, (poolToken) => {
+      let poolTokens = poolToken.output;
+      let poolAddress = poolToken.input.target;
 
-      _.each(poolTokens, (address) =>{
+      _.forEach(poolTokens, (token) => {
         poolCalls.push({
-          target: address,
-          params: pools[i]
+          target: token,
+          params: poolAddress,
         });
-      });
-
-    }
+      })
+    });
 
     let poolBalances = (await sdk.api.abi.multiCall({
       block,
