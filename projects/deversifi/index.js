@@ -33,7 +33,7 @@ async function tvl(timestamp, block) {
   const ethBalance = await sdk.api.eth.getBalance({ target: deversifiStarkAddr, block })
 
   const balances = {
-    '0x0000000000000000000000000000000000000000': ethBalance
+    '0x0000000000000000000000000000000000000000': ethBalance.output
   }
 
   const calls = []
@@ -50,7 +50,7 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf'
   })
 
-  sdk.util.sumMultiBalanceOf(balances, balanceOfResults)
+  await sdk.util.sumMultiBalanceOf(balances, balanceOfResults)
 
   return balances
 }
