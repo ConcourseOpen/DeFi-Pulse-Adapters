@@ -52,10 +52,10 @@ async function tvl(_, block) {
   const tokenList =
     events
       .reduce((acc, { data }) => {
-        const tokenAddress = getTokenAddressFromLogData(data)
-        if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc
+        const tokenAddress = getTokenAddressFromLogData(data);
+        if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc;
 
-        const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block)
+        const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block);
         return acc.concat(tokenWithCallData)
       }, []);
 
@@ -74,7 +74,7 @@ async function tvl(_, block) {
 
   utilBase.sumMultiBalanceOf(balances, erc20Balances);
 
-  return balances;
+  return (await util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -84,7 +84,7 @@ async function tvl(_, block) {
 module.exports = {
   name: 'Gnosis Protocol',
   token: 'GNO',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1579811423, // Thu, 23 Jan 2020 20:30:23 GMT
   tvl,
 };
