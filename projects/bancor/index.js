@@ -42,7 +42,7 @@
     }
 
     tokenConverters = _.filter(tokenConverters, (converter) => {
-      let hasLength = converter.details.length == 1;
+      let hasLength = converter.details.length > 0;
       let isEthereum = converter.details[0].blockchain.type == 'ethereum';
       let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
       let existsAtTimestamp = createdTimestamp <= timestamp;
@@ -90,12 +90,12 @@
     };
 
     const calls = await GenerateCallList(timestamp);
-    calls.map(async elem => {
-        if (['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'].includes(elem.target.toLowerCase())) {
-            const ethBalance = (await sdk.api.eth.getBalance({target: elem.params, block})).output;
-            balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
-        }
-    });
+    for (let elem of calls) {
+      if (['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'].includes(elem.target.toLowerCase())) {
+        const ethBalance = (await sdk.api.eth.getBalance({target: elem.params, block})).output;
+        balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
+      }
+    };
 
     const balanceOfResults = await sdk.api.abi.multiCall({
       block,
