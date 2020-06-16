@@ -90,10 +90,9 @@
     };
 
     const calls = await GenerateCallList(timestamp);
-    calls.map(call => {
-        const lowerTarget = call.target.toLowerCase();
-        if (lowerTarget in ['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315']) {
-            const ethBalance = (await sdk.api.eth.getBalance({target: call.params, block})).output;
+    calls.map(async elem => {
+        if (['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'].includes(elem.target.toLowerCase())) {
+            const ethBalance = (await sdk.api.eth.getBalance({target: elem.params, block})).output;
             balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
         }
     });
