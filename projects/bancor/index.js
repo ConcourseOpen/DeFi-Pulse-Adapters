@@ -84,11 +84,18 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
+    const ethAddress = '0x0000000000000000000000000000000000000000';
     let balances = {
-      '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block})).output
+      [ethAddress]: (await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block})).output
     };
 
     const calls = await GenerateCallList(timestamp);
+    calls.map(async elem => {
+        if (['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'].includes(elem.target.toLowerCase())) {
+            const ethBalance = (await sdk.api.eth.getBalance({target: elem.params, block})).output;
+            balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
+        }
+    });
 
     const balanceOfResults = await sdk.api.abi.multiCall({
       block,
