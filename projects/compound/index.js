@@ -88,20 +88,25 @@ async function getUnderlying(block, cToken) {
 
 // returns {[underlying]: {cToken, decimals, symbol}}
 async function getMarkets(block) {
-  let allCTokens = await getAllCTokens(block);
-  // if not in cache, get from the blockchain
-  await (
-    Promise.all(allCTokens.map(async (cToken) => {
-      let underlying = await getUnderlying(block, cToken);
+  if (block < 10271924) {
+    // the allMarkets getter was only added in this block.
+    return markets;
+  } else {
+    let allCTokens = await getAllCTokens(block);
+    // if not in cache, get from the blockchain
+    await (
+      Promise.all(allCTokens.map(async (cToken) => {
+        let underlying = await getUnderlying(block, cToken);
 
-      if (!markets[underlying]) {
-        let info = await sdk.api.erc20.info(underlying);
-        markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
-      }
-    }))
-  );
+        if (!markets[underlying]) {
+          let info = await sdk.api.erc20.info(underlying);
+          markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
+        }
+      }))
+    );
 
-  return markets;
+    return markets;
+  }
 }
 
 async function tvl(timestamp, block) {
@@ -206,7 +211,7 @@ async function rates(timestamp, block) {
         .div(10 ** data.decimals)
         .toFixed();
     } else {
-      v1Tokens[address] = underlying;
+      v1Tokens[underlying] = data;
     }
   });
 
@@ -216,23 +221,26 @@ async function rates(timestamp, block) {
 
     const marketsResults = (await sdk.api.abi.multiCall({
       block,
-      calls: _.map(v1Tokens, (token, address) => ({
+      calls: _.map(v1Tokens, (data, underlying) => ({
         target: '0x3FDA67f7583380E67ef93072294a7fAc882FD7E7',
-        params: token.cToken,
+        params: underlying,
       })),
       abi: abi['markets'],
     })).output;
 
     _.each(marketsResults, (market) => {
       if (market.success && market.output.isSupported) {
-        const token = _.findWhere(v1Tokens, { cToken: market.input.params[0] });
-        rates.lend[token.symbol] = String(
-          (market.supplyRateMantissa / 1e18) * blocksPerYear * 100
-        );
-        rates.borrow[token.symbol] = String(
-          (market.borrowRateMantissa / 1e18) * blocksPerYear * 100
-        );
-        rates.supply[token.symbol] = String(market.totalBorrows / 1e18);
+        const underlying = market.input.params[0];
+        if (v1Tokens[underlying]) {
+          const symbol = v1Tokens[underlying].symbol;
+          rates.lend[symbol] = String(
+            (market.supplyRateMantissa / 1e18) * blocksPerYear * 100
+          );
+          rates.borrow[symbol] = String(
+            (market.borrowRateMantissa / 1e18) * blocksPerYear * 100
+          );
+          rates.supply[symbol] = String(market.totalBorrows / 1e18);
+        }
       }
     });
   }
