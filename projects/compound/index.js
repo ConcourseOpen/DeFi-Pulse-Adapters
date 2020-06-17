@@ -291,6 +291,6 @@ module.exports = {
   tvl,
   rates,
   term: '1 block',
-  permissioning: 'open',
-  variability: 'medium',
+  permissioning: 'Open',
+  variability: 'Medium',
 };
