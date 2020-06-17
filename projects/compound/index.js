@@ -2,72 +2,17 @@
   Modules
   ==================================================*/
 
-const sdk = require('../../sdk');
 const _ = require('underscore');
+const sdk = require('../../sdk');
+const abi = require('./abi.json');
 const BigNumber = require('bignumber.js');
 
-const abi = require('./abi.json');
-
 /*==================================================
-  TVL
+  Settings
   ==================================================*/
 
-// ask comptroller for all markets array
-async function getAllCTokens(block) {
-  let res = await sdk.api.abi.call({
-    block,
-    target: '0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b',
-    params: [],
-    abi: {
-      constant: true,
-      inputs: [],
-      name: 'getAllMarkets',
-      outputs: [
-        {
-          internalType: 'contract CToken[]',
-          name: '',
-          type: 'address[]',
-        },
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function',
-      signature: '0xb0772d0b',
-    },
-  })
-  return res.output;
-}
-
-async function getUnderlying(block, cToken) {
-  if (cToken == '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5') {
-    return '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';//cETH => WETH
-  }
-  let res = await sdk.api.abi.call({
-    block,
-    target: cToken,
-    abi: {
-      constant: true,
-      inputs: [],
-      name: 'underlying',
-      outputs: [
-        {
-          name: '',
-          type: 'address',
-        },
-      ],
-      payable: false,
-      stateMutability: 'view',
-      type: 'function',
-      signature: '0x6f307dc3',
-    },
-  })
-  return res.output;
-}
-
-// returns {[underlying]: {cToken, decimals, symbol}}
-async function getMarkets(block) {
   // cache some data
-  let markets = {
+  const markets = {
     '0x0D8775F648430679A709E98d2b0Cb6250d2887EF': {
       symbol: 'BAT',
       decimals: 18,
@@ -115,15 +60,46 @@ async function getMarkets(block) {
     },
   };
 
-  let allCTokens = await getAllCTokens(block);
-  // if not in cache, get frm blockchain
-  for (let cToken of allCTokens) {
-    let underlying = await getUnderlying(block, cToken);
-    if (!markets[underlying]) {
-      let info = await sdk.api.erc20.info(underlying);
-      markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
-    }
+/*==================================================
+  TVL
+  ==================================================*/
+
+// ask comptroller for all markets array
+async function getAllCTokens(block) {
+  return (await sdk.api.abi.call({
+    block,
+    target: '0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b',
+    params: [],
+    abi: abi['getAllMarkets'],
+  })).output;
+}
+
+async function getUnderlying(block, cToken) {
+  if (cToken === '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5') {
+    return '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';//cETH => WETH
   }
+
+  return (await sdk.api.abi.call({
+    block,
+    target: cToken,
+    abi: abi['underlying'],
+  })).output;
+}
+
+// returns {[underlying]: {cToken, decimals, symbol}}
+async function getMarkets(block) {
+  let allCTokens = await getAllCTokens(block);
+  // if not in cache, get from the blockchain
+  await (
+    Promise.all(allCTokens.map(async (cToken) => {
+      let underlying = await getUnderlying(block, cToken);
+
+      if (!markets[underlying]) {
+        let info = await sdk.api.erc20.info(underlying);
+        markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
+      }
+    }))
+  );
 
   return markets;
 }
@@ -142,7 +118,7 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf',
   });
 
-  await sdk.util.sumMultiBalanceOf(balances, v1Locked);
+  sdk.util.sumMultiBalanceOf(balances, v1Locked);
 
   // Get V2 tokens locked
   let v2Locked = await sdk.api.abi.multiCall({
@@ -150,27 +126,11 @@ async function tvl(timestamp, block) {
     calls: _.map(markets, (data, underlying) => ({
       target: data.cToken,
     })),
-    abi: {
-      constant: true,
-      inputs: [],
-      name: 'getCash',
-      outputs: [
-        {
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      payable: false,
-      signature: '0x3b1d21a2',
-      stateMutability: 'view',
-      type: 'function',
-    },
+    abi: abi['getCash'],
   });
 
   _.each(markets, (data, underlying) => {
-    let getCash = _.find(v2Locked.output, (result) => {
-      return result.success && result.input.target == data.cToken;
-    });
+    let getCash = _.find(v2Locked.output, (result) => result.success && result.input.target === data.cToken);
 
     if (getCash) {
       balances[underlying] = BigNumber(balances[underlying] || 0)
@@ -178,6 +138,7 @@ async function tvl(timestamp, block) {
         .toFixed();
     }
   });
+
   return balances;
 }
 
@@ -275,6 +236,7 @@ async function rates(timestamp, block) {
       }
     });
   }
+
   return rates;
 }
 
@@ -286,7 +248,7 @@ module.exports = {
   name: 'Compound',
   website: 'https://compound.finance',
   token: null,
-  category: 'Lending',
+  category: 'lending',
   start: 1538006400, // 09/27/2018 @ 12:00am (UTC)
   tvl,
   rates,
