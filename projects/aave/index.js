@@ -4,12 +4,13 @@
 
   const sdk = require('../../sdk');
   const _ = require('underscore');
+  const BigNumber = require("bignumber.js");
 
 /*==================================================
   Settings
   ==================================================*/
 
-  const reserves = [
+  const aaveReserves = [
     '0x6b175474e89094c44da98b954eedeac495271d0f',
     '0x0000000000085d4780B73119b644AE5ecd22b376',
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
@@ -28,29 +29,68 @@
     '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
   ];
 
-  const lendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
+  const aaveLendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
+
+  const uniswapReserves = [
+    "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "0x97dec872013f6b5fb443861090ad931542878126",
+    "0xf173214c720f58e03e194085b1db28b50acdeead",
+    "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667",
+    "0xcaa7e4656f6a2b59f5f99c745f91ab26d1210dce",
+    "0x2c4bd064b998838076fa341a83d007fc2fa50957",
+    "0xe9cf7887b93150d4f2da7dfc6d502b216438f244",
+  ];
+
+  const uniswapLendingPoolCore = "0x1012cfF81A1582ddD0616517eFB97D02c5c17E25";
 
 /*==================================================
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
-    let balances = {
-      '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: lendingPoolCore, block})).output
-    };
+  async function multiMarketTvl(lendingPoolCore, reserves, block) {
+     let balances = {
+       "0x0000000000000000000000000000000000000000": (
+         await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
+       ).output,
+     };
 
-    const balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls: _.map(reserves, (reserve) => ({
-        target: reserve,
-        params: lendingPoolCore
-      })),
-      abi: 'erc20:balanceOf'
+     const balanceOfResults = await sdk.api.abi.multiCall({
+       block,
+       calls: _.map(reserves, (reserve) => ({
+         target: reserve,
+         params: lendingPoolCore,
+       })),
+       abi: "erc20:balanceOf",
+     });
+
+     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+
+     return balances;
+  }
+
+  async function tvl(timestamp, block) {
+    let aaveMarketTvlBalances = await multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
+    
+    const uniswapMarketTvlBalances = await multiMarketTvl(
+      uniswapLendingPoolCore,
+      uniswapReserves,
+      block
+    );
+
+    // Combine TVL values into one dict
+    Object.keys(uniswapMarketTvlBalances).map(address => {
+      if (aaveMarketTvlBalances[address]) {
+        aaveMarketTvlBalances[address] = BigNumber(
+          aaveMarketTvlBalances[address]
+        ).plus(uniswapMarketTvlBalances[address]).toFixed();
+      } else {
+        aaveMarketTvlBalances[address] = uniswapMarketTvlBalances[address];
+      }
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-
-    return balances;
+    return aaveMarketTvlBalances;
   }
 
 /*==================================================
