@@ -27,7 +27,7 @@
     '0xe41d2489571d322189246dafa5ebde1f4699f498',
     '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
     '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
-  ]
+  ];
 
   const aaveLendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
 
@@ -94,7 +94,7 @@
       }
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -106,5 +106,5 @@
     token: 'LEND',
     category: 'Lending',
     start: 1578355200,  // 01/07/2020 @ 12:00am (UTC)
-    tvl
+    tvl,
   };
