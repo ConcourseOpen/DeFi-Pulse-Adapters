@@ -46,51 +46,55 @@
   const uniswapLendingPoolCore = "0x1012cfF81A1582ddD0616517eFB97D02c5c17E25";
 
 /*==================================================
+  Helper Functions
+==================================================*/
+
+  async function _multiMarketTvl(lendingPoolCore, reserves, block) {
+    let _balances = {
+      "0x0000000000000000000000000000000000000000": (
+        await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
+      ).output,
+    };
+
+    const balanceOfResults = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(reserves, (reserve) => ({
+        target: reserve,
+        params: lendingPoolCore,
+      })),
+      abi: "erc20:balanceOf",
+    });
+
+    sdk.util.sumMultiBalanceOf(_balances, balanceOfResults);
+
+    return _balances;
+  }
+
+/*==================================================
   TVL
   ==================================================*/
 
-  async function multiMarketTvl(lendingPoolCore, reserves, block) {
-     let balances = {
-       "0x0000000000000000000000000000000000000000": (
-         await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
-       ).output,
-     };
-
-     const balanceOfResults = await sdk.api.abi.multiCall({
-       block,
-       calls: _.map(reserves, (reserve) => ({
-         target: reserve,
-         params: lendingPoolCore,
-       })),
-       abi: "erc20:balanceOf",
-     });
-
-     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-
-     return balances;
-  }
-
   async function tvl(timestamp, block) {
-    let aaveMarketTvlBalances = await multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
+    let balances = await _multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
     
-    const uniswapMarketTvlBalances = await multiMarketTvl(
+    const uniswapMarketTvlBalances = await _multiMarketTvl(
       uniswapLendingPoolCore,
       uniswapReserves,
       block
     );
 
     // Combine TVL values into one dict
-    Object.keys(uniswapMarketTvlBalances).map(address => {
-      if (aaveMarketTvlBalances[address]) {
-        aaveMarketTvlBalances[address] = BigNumber(
-          aaveMarketTvlBalances[address]
+    Object.keys(uniswapMarketTvlBalances).forEach(address => {
+      if (balances[address]) {
+        balances[address] = BigNumber(
+          balances[address]
         ).plus(uniswapMarketTvlBalances[address]).toFixed();
       } else {
-        aaveMarketTvlBalances[address] = uniswapMarketTvlBalances[address];
+        balances[address] = uniswapMarketTvlBalances[address];
       }
     });
 
-    return aaveMarketTvlBalances;
+    return balances;
   }
 
 /*==================================================
@@ -103,4 +107,4 @@
     category: 'lending',
     start: 1578355200,  // 01/07/2020 @ 12:00am (UTC)
     tvl
-  }
+  };
