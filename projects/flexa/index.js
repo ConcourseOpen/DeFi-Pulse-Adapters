@@ -4,7 +4,6 @@
 
   const sdk = require('../../sdk');
   const abi = require('./abi');
-  const BigNumber = require('bignumber.js');
   
 /*==================================================
   Settings
