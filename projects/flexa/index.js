@@ -2,9 +2,9 @@
   Modules
   ==================================================*/
 
-  const sdk = require('../../sdk');
   const abi = require('./abi');
-  
+  const sdk = require('../../sdk');
+
 /*==================================================
   Settings
   ==================================================*/
@@ -17,7 +17,6 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
-
     const capacity = (await sdk.api.abi.call({
       target: flexaNetwork,
       params: stakingAddress,
@@ -26,7 +25,6 @@
     })).output;
 
     return {[flexaNetwork]:capacity};
-  
   }
 
 /*==================================================
@@ -38,5 +36,5 @@
     token: 'FXC',
     category: 'payments',
     start: 1546646400,        // 01/05/2019
-    tvl
-  }
+    tvl,
+  };
