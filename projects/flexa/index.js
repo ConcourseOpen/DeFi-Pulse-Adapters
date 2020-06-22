@@ -24,7 +24,7 @@
       abi: abi.balanceOf,
     })).output;
 
-    return {[flexaNetwork]:capacity};
+    return (await sdk.api.util.toSymbols({[flexaNetwork]:capacity})).output;
   }
 
 /*==================================================
@@ -34,7 +34,7 @@
   module.exports = {
     name: 'Flexa',
     token: 'FXC',
-    category: 'payments',
+    category: 'Payments',
     start: 1546646400,        // 01/05/2019
     tvl,
   };
