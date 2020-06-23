@@ -34,7 +34,7 @@ const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
   Main
 ==================================================*/
 
-async function tvl(_, block) {
+async function tvl(timestamp, block) {
   // Snag all token addresses that have been listed on Gnosis Conditional Token
   const { output: events } = await util.getLogs({
     keys: [],
@@ -48,11 +48,11 @@ async function tvl(_, block) {
   // 2. Remove any tokens we want to ignore as denoted top of file
   // 3. Format to pipe into erc20:balanceOf multiCall
   const tokenList = events.reduce((acc, { data }) => {
-    const tokenAddress = getTokenAddressFromLogData(data)
-    if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc
+    const tokenAddress = getTokenAddressFromLogData(data);
+    if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc;
     // add it to de-dupe
-    TOKENS_TO_IGNORE.add(tokenAddress)
-    const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block)
+    TOKENS_TO_IGNORE.add(tokenAddress);
+    const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block);
     return acc.concat(tokenWithCallData)
   }, []);
   
