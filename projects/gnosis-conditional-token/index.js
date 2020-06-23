@@ -70,7 +70,7 @@ async function tvl(timestamp, block) {
 
   utilBase.sumMultiBalanceOf(balances, erc20Balances);
 
-  return balances;
+  return (await util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -80,7 +80,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Gnosis Conditional Token',
   token: null,
-  category: 'derivatives',
+  category: 'Derivatives',
   start: 1569488751, // Sep-26-2019 09:05:51 AM UTC
   tvl,
 };
