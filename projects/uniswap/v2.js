@@ -1,17 +1,17 @@
 const BigNumber = require('bignumber.js')
 
 const sdk = require('../../sdk')
+const { getSupportedTokens } = require('./utils')
 const token0 = require('./abis/token0.json')
 const token1 = require('./abis/token1.json')
 const getReserves = require('./abis/getReserves.json')
 
 const START_BLOCK = 10000835
 const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
-const SUPPORTED_TOKEN_ADDRESSES = require('./supportedTokens.json').map(
-  ({ contract }) => contract.toLowerCase()
-)
 
 module.exports = async function tvl(_, block) {
+  const supportedTokens = await getSupportedTokens()
+
   const logs = await sdk.api.util
     .getLogs({
       keys: [],
@@ -56,7 +56,7 @@ module.exports = async function tvl(_, block) {
   token0Addresses.forEach((token0Address) => {
     if (token0Address.success) {
       const tokenAddress = token0Address.output.toLowerCase()
-      if (SUPPORTED_TOKEN_ADDRESSES.includes(tokenAddress)) {
+      if (supportedTokens.includes(tokenAddress)) {
         const pairAddress = token0Address.input.target.toLowerCase()
         pairs[pairAddress] = {
           token0Address: tokenAddress,
@@ -68,7 +68,7 @@ module.exports = async function tvl(_, block) {
   token1Addresses.forEach((token1Address) => {
     if (token1Address.success) {
       const tokenAddress = token1Address.output.toLowerCase()
-      if (SUPPORTED_TOKEN_ADDRESSES.includes(tokenAddress)) {
+      if (supportedTokens.includes(tokenAddress)) {
         const pairAddress = token1Address.input.target.toLowerCase()
         pairs[pairAddress] = {
           ...(pairs[pairAddress] || {}),
