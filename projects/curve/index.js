@@ -3,6 +3,8 @@
   ==================================================*/
 
   const sdk = require('../../sdk');
+  const _ = require('underscore');
+  _.flatMap = _.compose(_.flatten, _.map);
 
 /*==================================================
   TVL
@@ -22,11 +24,12 @@
       '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD',
       '0x06364f10B501e868329afBc005b3492902d6C763',
       '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
+      '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714',
     ]
 
-    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2]
+    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2, 3]
 
-    let balancesCalls = swaps.flatMap((token, i) => {
+    let balancesCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     })
     balancesCalls = balancesCalls.filter(call => !(call.target == '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966' && call.params == 1))
@@ -55,11 +58,11 @@
       },
     })
 
-    let coinsCalls = swaps.flatMap((token, i) => {
+    let coinsCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     })
     coinsCalls = coinsCalls.filter(call => !(call.target == '0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966' && call.params == 1))
-    
+
     let coinsResults = await sdk.api.abi.multiCall({
       block,
       calls: coinsCalls,
@@ -85,11 +88,11 @@
     })
 
     for(let [i, balance] of balancesResults.output.entries()) {
-      if(!balance.output) continue;
+      if(!balance || !balance.output) continue;
       balances[coinsResults.output[i].output] = balance.output
     }
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
   async function rates(timestamp, block) {
@@ -137,7 +140,7 @@
   module.exports = {
     name: 'Curve Finance',
     token: null,
-    category: 'dexes',
-    start: 1578074057,        // 03/01/2020 @ 5:54pm UTC
+    category: 'DEXes',
+    start: 1581138000,        // 03/01/2020 @ 5:54pm UTC
     tvl
   }
