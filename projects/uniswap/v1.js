@@ -2,46 +2,76 @@ const BigNumber = require('bignumber.js')
 
 const sdk = require('../../sdk')
 
+const SUPPORTED_TOKEN_ADDRESSES = require('./supportedTokens.json').map(
+  ({ contract }) => contract.toLowerCase()
+)
 const START_BLOCK = 6627917
 const FACTORY = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95'
+const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase()
 
 module.exports = async function tvl(_, block) {
-  const events = (
-    await sdk.api.util.getLogs({
+  const logs = await sdk.api.util
+    .getLogs({
       keys: [],
       toBlock: block,
       target: FACTORY,
       fromBlock: START_BLOCK,
       topic: 'NewExchange(address,address)',
     })
-  ).output
+    .then(({ output }) => output)
 
-  const allExchanges = []
-  events.forEach((event) => {
-    allExchanges.push({
-      tokenAddress: `0x${event.topics[1].substring(26)}`,
-      exchangeAddress: `0x${event.topics[2].substring(26)}`,
-    })
+  const exchanges = {}
+  logs.forEach((log) => {
+    const tokenAddress = `0x${log.topics[1].substring(26)}`.toLowerCase()
+
+    // only consider supported tokens
+    if (SUPPORTED_TOKEN_ADDRESSES.includes(tokenAddress)) {
+      const exchangeAddress = `0x${log.topics[2].substring(26)}`.toLowerCase()
+      exchanges[exchangeAddress] = tokenAddress
+    }
   })
 
-  const balances = (
-    await sdk.api.abi.multiCall({
+  const tokenBalances = await sdk.api.abi
+    .multiCall({
       abi: 'erc20:balanceOf',
-      calls: allExchanges.map(({ tokenAddress, exchangeAddress }) => ({
-        target: tokenAddress,
+      calls: Object.keys(exchanges).map((exchangeAddress) => ({
+        target: exchanges[exchangeAddress],
         params: exchangeAddress,
       })),
       block,
     })
-  ).output
+    .then(({ output }) => output)
 
-  return balances.reduce((accumulator, balance) => {
-    if (accumulator[balance.input.target] !== undefined) {
-      throw Error(`Duplicate token address: ${balance.input.target}`)
+  // note that this undercounts ETH locked
+  // it only measures ETH in exchanges for supported tokens
+  const ETHBalances = await Promise.all(
+    Object.keys(exchanges).map((exchangeAddress) =>
+      sdk.api.eth
+        .getBalance({
+          target: exchangeAddress,
+          block,
+        })
+        .then(({ output }) => output)
+    )
+  )
+
+  return tokenBalances.reduce(
+    (accumulator, tokenBalance) => {
+      if (tokenBalance.success) {
+        const balanceBigNumber = new BigNumber(tokenBalance.output)
+        if (!balanceBigNumber.isZero()) {
+          const tokenAddress = tokenBalance.input.target.toLowerCase()
+          accumulator[tokenAddress] = balanceBigNumber.toFixed()
+        }
+      }
+      return accumulator
+    },
+    {
+      [ETH]: ETHBalances.reduce(
+        (accumulator, ETHBalance) =>
+          accumulator.plus(new BigNumber(ETHBalance)),
+        new BigNumber('0')
+      ).toFixed(),
     }
-    if (balance.success && !new BigNumber(balance.output).isZero()) {
-      accumulator[balance.input.target] = balance.output
-    }
-    return accumulator
-  }, {})
+  )
 }
