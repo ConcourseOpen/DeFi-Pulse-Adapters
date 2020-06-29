@@ -154,6 +154,7 @@
     },
     util: {
       getLogs: (options) => util('getLogs', { ...options }),
+      tokenList: () => util('tokenList'),
       kyberTokens: () => util('kyberTokens'),
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
