@@ -253,6 +253,50 @@ let result = await sdk.api.eth.getBalance({
 }
 ```
 
+### getBalances(*object*)
+
+get the ETH/wei balances for a given list of addresses.
+
+###### Options Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| targets (required)             | *array* **([address])**        | Target addresses to make the call on                           |
+| block (optional)               | *number*                       | Block number for the call                                    |
+| decimals (optional)            | *number*                       | Will return a decimal converted result using this value      |
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
+| output                         | *array/object*                 | ETH/wei balance                                              |
+
+###### Example
+
+```js
+let result = await sdk.api.eth.getBalances({
+  targets: ['0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'],
+  block: 9424627
+});
+```
+
+###### Result:
+
+```js
+{
+  ethCallCount: 2,
+  output: [
+    {
+      target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b',
+      balance: '2694789147548299731168'
+    },
+    {
+      target: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+      balance: '2694789147548299731168'
+    }
+  ]
+}
+```
+
 ## ABI - *sdk.api.abi.___*
 
 Make Ethereum network calls using a provided ABI object.

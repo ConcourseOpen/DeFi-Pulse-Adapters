@@ -163,6 +163,7 @@
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),
+      getBalances: (options) => eth('getBalances', options),
     },
     erc20: {
       info: (target) => erc20('info', { target }),
