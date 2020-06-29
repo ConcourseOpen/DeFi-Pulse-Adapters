@@ -1,7 +1,6 @@
 const BigNumber = require('bignumber.js')
 
 const sdk = require('../../sdk')
-const { getSupportedTokens } = require('./utils')
 const token0 = require('./abis/token0.json')
 const token1 = require('./abis/token1.json')
 const getReserves = require('./abis/getReserves.json')
@@ -10,7 +9,9 @@ const START_BLOCK = 10000835
 const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 
 module.exports = async function tvl(_, block) {
-  const supportedTokens = await getSupportedTokens()
+  const supportedTokens = await sdk.api.util
+    .tokenList()
+    .then(({ contract }) => contract)
 
   const logs = await sdk.api.util
     .getLogs({

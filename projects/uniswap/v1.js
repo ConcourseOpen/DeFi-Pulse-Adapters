@@ -1,14 +1,15 @@
 const BigNumber = require('bignumber.js')
 
 const sdk = require('../../sdk')
-const { getSupportedTokens } = require('./utils')
 
 const START_BLOCK = 6627917
 const FACTORY = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95'
 const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase()
 
 module.exports = async function tvl(_, block) {
-  const supportedTokens = await getSupportedTokens()
+  const supportedTokens = await sdk.api.util
+    .tokenList()
+    .then(({ contract }) => contract)
 
   const logs = await sdk.api.util
     .getLogs({
