@@ -11,7 +11,7 @@ const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 module.exports = async function tvl(_, block) {
   const supportedTokens = await sdk.api.util
     .tokenList()
-    .then(({ contract }) => contract)
+    .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
 
   const logs = await sdk.api.util
     .getLogs({
