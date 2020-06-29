@@ -9,7 +9,7 @@ const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase()
 module.exports = async function tvl(_, block) {
   const supportedTokens = await sdk.api.util
     .tokenList()
-    .then(({ contract }) => contract)
+    .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
 
   const logs = await sdk.api.util
     .getLogs({
@@ -45,16 +45,12 @@ module.exports = async function tvl(_, block) {
 
   // note that this undercounts ETH locked
   // it only measures ETH in exchanges for supported tokens
-  const ETHBalances = await Promise.all(
-    Object.keys(exchanges).map((exchangeAddress) =>
-      sdk.api.eth
-        .getBalance({
-          target: exchangeAddress,
-          block,
-        })
-        .then(({ output }) => output)
-    )
-  )
+  const ETHBalances = await sdk.api.eth
+    .getBalances({
+      targets: Object.keys(exchanges).map((exchangeAddress) => exchangeAddress),
+      block,
+    })
+    .then(({ output }) => output)
 
   return tokenBalances.reduce(
     (accumulator, tokenBalance) => {
@@ -70,7 +66,7 @@ module.exports = async function tvl(_, block) {
     {
       [ETH]: ETHBalances.reduce(
         (accumulator, ETHBalance) =>
-          accumulator.plus(new BigNumber(ETHBalance)),
+          accumulator.plus(new BigNumber(ETHBalance.balance)),
         new BigNumber('0')
       ).toFixed(),
     }

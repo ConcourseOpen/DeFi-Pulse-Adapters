@@ -16,8 +16,8 @@ async function tvl(_, block) {
   const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)))
 
   return Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
-    const v1Balance = new BigNumber(v1[tokenAddresses] || '0')
-    const v2Balance = new BigNumber(v2[tokenAddresses] || '0')
+    const v1Balance = new BigNumber(v1[tokenAddress] || '0')
+    const v2Balance = new BigNumber(v2[tokenAddress] || '0')
     accumulator[tokenAddress] = v1Balance.plus(v2Balance).toFixed()
     return accumulator
   }, {})
