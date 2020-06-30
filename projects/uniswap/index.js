@@ -15,7 +15,7 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)));
 
-  return (
+  const balances = (
     Array
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
@@ -26,6 +26,8 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
+
+  return balances;
 }
 
 module.exports = {
