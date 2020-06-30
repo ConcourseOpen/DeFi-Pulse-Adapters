@@ -1,54 +1,32 @@
-/*==================================================
-  Modules
-==================================================*/
+const BigNumber = require('bignumber.js')
 
-  const sdk = require('../../sdk');
+const v1TVL = require('./v1')
+const v2TVL = require('./v2')
 
-/*==================================================
-  Settings
-==================================================*/
+const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase()
+const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase()
 
-  const startBlock = 6627917;
-  const factory = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95';
+async function tvl(_, block) {
+  const [v1, v2] = await Promise.all([v1TVL(_, block), v2TVL(_, block)])
 
-/*==================================================
-  Main
-==================================================*/
+  // replace WETH with ETH for v2
+  v2[ETH] = v2[WETH]
+  delete v2[WETH]
 
-  async function tvl (timestamp, block) {
-    const allExchanges = [];
-    let events = (await sdk.api.util.getLogs({
-      keys: [],
-      toBlock: block,
-      target: factory,
-      fromBlock: startBlock,
-      topic: 'NewExchange(address,address)',
-    })).output;
+  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)))
 
-    events.forEach((event) => {
-      allExchanges.push({
-        tokenAddress: `0x${event.topics[1].substring(26)}`,
-        exchangeAddress: `0x${event.topics[2].substring(26)}`,
-      });
-    });
+  return Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
+    const v1Balance = new BigNumber(v1[tokenAddress] || '0')
+    const v2Balance = new BigNumber(v2[tokenAddress] || '0')
+    accumulator[tokenAddress] = v1Balance.plus(v2Balance).toFixed()
+    return accumulator
+  }, {})
+}
 
-    const balances = (await sdk.api.abi.multiCall({
-      block: block,
-      abi: 'erc20:balanceOf',
-      calls: allExchanges.map(exchange => ({ target: exchange.tokenAddress, params: exchange.exchangeAddress })),
-    })).output;
-
-    return balances;
-  }
-
-/*==================================================
-  Exports
-==================================================*/
-
-  module.exports = {
-    name: 'Uniswap',
-    token: null,
-    category: 'dexes',
-    start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
-    tvl,
-  };
+module.exports = {
+  name: 'Uniswap',
+  token: null,
+  category: 'dexes',
+  start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
+  tvl,
+}
