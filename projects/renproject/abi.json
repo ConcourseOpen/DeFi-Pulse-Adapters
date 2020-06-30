@@ -1,0 +1,28 @@
+{
+  "getDarknodes": {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_start",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_count",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDarknodes",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+  }
+}
