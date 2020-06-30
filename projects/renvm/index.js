@@ -81,7 +81,7 @@
   }
 
   module.exports = {
-    name: "REN Project",
+    name: "RenVM",
     token: "REN",
     category: "assets",
     // FIXME: Need a more accurate date here, where all assets are available, however, it is relatively fair to start at the time mainnet was officially launched
