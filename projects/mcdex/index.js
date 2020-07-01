@@ -25,6 +25,6 @@
     website: 'https://mcdex.io',
     token: 'MCB',
     category: 'derivatives',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1592478136,        // block 10289316
+    start: 1592478252,        // block 10289326 
     tvl,
   };
