@@ -175,7 +175,7 @@
     );
 
     // Combine TVL values into one dict
-    Object.keys(uniswapMarketTvlBalances).map(address => {
+    Object.keys(uniswapMarketTvlBalances).forEach(address => {
       if (balances[address]) {
         balances[address] = BigNumber(
           balances[address]
@@ -185,7 +185,6 @@
       }
     });
 
-    console.log(balances)
     return balances;
   }
 
