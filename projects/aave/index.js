@@ -49,34 +49,126 @@
   const uniswapLendingPool = "0x2F60C3EB259D63dcCa81fDE7Eaa216D9983D7C60";
 
 /*==================================================
+  Helper Functions
+  ==================================================*/
+
+  async function _multiMarketTvl(lendingPoolCore, reserves, block) {
+    let balances = {
+      "0x0000000000000000000000000000000000000000": (
+        await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
+      ).output,
+    };
+
+    const balanceOfResults = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(reserves, (reserve) => ({
+        target: reserve.address,
+        params: lendingPoolCore,
+      })),
+      abi: "erc20:balanceOf",
+    });
+
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+
+    return balances;
+  }
+
+  async function _multiMarketRates(lendingPool, reserves, block) {
+    const calls = _.map(reserves, (reserve) => ({
+      target: lendingPool,
+      params: reserve.address,
+    }));
+
+    const reserveDataResults = (
+      await sdk.api.abi.multiCall({
+        block,
+        calls,
+        abi: abi["getReserveData"],
+      })
+    ).output;
+
+    const reserveConfigResult = (
+      await sdk.api.abi.multiCall({
+        block,
+        calls,
+        abi: abi["getReserveConfigurationData"],
+      })
+    ).output;
+
+    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
+
+    reserveDataResults.map((result) => {
+      if (!result || !result.success) return;
+      const address = result.input.params[0];
+      const reserveData = result.output;
+      const reserveDict = reserves.find(
+        (reserve) => reserve.address === address
+      );
+      const symbol = reserveDict.symbol;
+
+      const outStandingBorrows = BigNumber(reserveData.totalLiquidity)
+        .minus(BigNumber(reserveData.availableLiquidity))
+        .div(10 ** reserveDict.decimals)
+        .toFixed();
+      const lendRate = BigNumber(reserveData.liquidityRate)
+        .div(10 ** 25)
+        .toFixed();
+      const borrowRate = BigNumber(reserveData.variableBorrowRate)
+        .div(10 ** 25)
+        .toFixed();
+      const borrowStableRate = BigNumber(reserveData.stableBorrowRate)
+        .div(10 ** 25)
+        .toFixed();
+
+      ratesData.lend[symbol] = lendRate;
+      ratesData.borrow[symbol] = borrowRate;
+      ratesData.borrow_stable[symbol] = borrowStableRate;
+      ratesData.supply[symbol] = outStandingBorrows;
+    });
+
+    reserveConfigResult.map((result) => {
+      if (!result || !result.success) return;
+      const address = result.input.params[0];
+      const reserveConfig = result.output;
+      const reserveDict = reserves.find(
+        (reserve) => reserve.address === address
+      );
+      const symbol = reserveDict.symbol;
+
+      const isActive = reserveConfig.isActive;
+      const borrowingEnabled = reserveConfig.borrowingEnabled;
+      const stableBorrowRateEnabled = reserveConfig.stableBorrowRateEnabled;
+
+      if (!isActive) {
+        delete ratesData.lend[symbol];
+        delete ratesData.borrow[symbol];
+        delete ratesData.borrow_stable[symbol];
+        delete ratesData.supply[symbol];
+        return;
+      }
+
+      if (!borrowingEnabled) {
+        delete ratesData.borrow[symbol];
+        delete ratesData.borrow_stable[symbol];
+        return;
+      }
+
+      if (!stableBorrowRateEnabled) {
+        delete ratesData.borrow_stable[symbol];
+      }
+    });
+
+    return ratesData;
+  }
+
+/*==================================================
   TVL
   ==================================================*/
 
-  async function multiMarketTvl(lendingPoolCore, reserves, block) {
-     let balances = {
-       "0x0000000000000000000000000000000000000000": (
-         await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
-       ).output,
-     };
-
-     const balanceOfResults = await sdk.api.abi.multiCall({
-       block,
-       calls: _.map(reserves, (reserve) => ({
-         target: reserve.address,
-         params: lendingPoolCore,
-       })),
-       abi: "erc20:balanceOf",
-     });
-
-     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-
-     return balances;
-  }
-
   async function tvl(timestamp, block) {
-    let aaveMarketTvlBalances = await multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
+    let balances = await _multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
     
-    const uniswapMarketTvlBalances = await multiMarketTvl(
+    const uniswapMarketTvlBalances = await _multiMarketTvl(
       uniswapLendingPoolCore,
       uniswapReserves,
       block
@@ -84,106 +176,27 @@
 
     // Combine TVL values into one dict
     Object.keys(uniswapMarketTvlBalances).map(address => {
-      if (aaveMarketTvlBalances[address]) {
-        aaveMarketTvlBalances[address] = BigNumber(
-          aaveMarketTvlBalances[address]
+      if (balances[address]) {
+        balances[address] = BigNumber(
+          balances[address]
         ).plus(uniswapMarketTvlBalances[address]).toFixed();
       } else {
-        aaveMarketTvlBalances[address] = uniswapMarketTvlBalances[address];
+        balances[address] = uniswapMarketTvlBalances[address];
       }
     });
 
-    return aaveMarketTvlBalances;
+    console.log(balances)
+    return balances;
   }
 
 /*==================================================
   Rates
   ==================================================*/
-  
-  async function multiMarketRates(lendingPool, reserves, block) {
-    const calls = _.map(reserves, (reserve) => ({
-      target: lendingPool,
-      params: reserve.address,
-    }))
-
-    const reserveDataResults = (
-      await sdk.api.abi.multiCall({
-        block,
-        calls,
-        abi: abi["getReserveData"]
-      })
-    ).output
-
-    const reserveConfigResult = (
-      await sdk.api.abi.multiCall({
-        block,
-        calls,
-        abi: abi["getReserveConfigurationData"]
-      })
-    ).output
-
-    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} }
-
-    reserveDataResults.map(result => {
-      if (!result || !result.success) return
-      const address = result.input.params[0]
-      const reserveData = result.output
-      const reserveDict = reserves.find(reserve => reserve.address === address)
-      const symbol = reserveDict.symbol
-
-      const outStandingBorrows = BigNumber(reserveData.totalLiquidity)
-        .minus(BigNumber(reserveData.availableLiquidity))
-        .div(10 ** reserveDict.decimals)
-        .toFixed();
-      const lendRate = BigNumber(reserveData.liquidityRate).div(10 ** 25).toFixed()
-      const borrowRate = BigNumber(reserveData.variableBorrowRate).div(10 ** 25).toFixed()
-      const borrowStableRate = BigNumber(reserveData.stableBorrowRate).div(10 ** 25).toFixed()
-      
-      ratesData.lend[symbol] = lendRate
-      ratesData.borrow[symbol] = borrowRate
-      ratesData.borrow_stable[symbol] = borrowStableRate
-      ratesData.supply[symbol] = outStandingBorrows
-    })
-
-    reserveConfigResult.map(result => {
-      if (!result || !result.success) return
-      const address = result.input.params[0]
-      const reserveConfig = result.output
-      const reserveDict = reserves.find(reserve => reserve.address === address)
-      const symbol = reserveDict.symbol;
-
-      const isActive = reserveConfig.isActive
-      const borrowingEnabled = reserveConfig.borrowingEnabled
-      const stableBorrowRateEnabled = reserveConfig.stableBorrowRateEnabled
-
-      if (!isActive) {
-        delete ratesData.lend[symbol]
-        delete ratesData.borrow[symbol]
-        delete ratesData.borrow_stable[symbol]
-        delete ratesData.supply[symbol]
-        return
-      }
-
-      if (!borrowingEnabled) {
-        delete ratesData.borrow[symbol]
-        delete ratesData.borrow_stable[symbol]
-        return
-      }
-
-      if (!stableBorrowRateEnabled) {
-        delete ratesData.borrow_stable[symbol]
-      }
-    })
-
-    return ratesData;
-  }
 
   async function rates(timestamp, block) {
     // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
-    const aaveMarketRates = await multiMarketRates(aaveLendingPool, aaveReserves, block)
-    return aaveMarketRates
+    return await _multiMarketRates(aaveLendingPool, aaveReserves, block)
   }
-
 
 /*==================================================
   Exports
