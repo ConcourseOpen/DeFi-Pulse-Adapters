@@ -154,6 +154,7 @@
     },
     util: {
       getLogs: (options) => util('getLogs', { ...options }),
+      tokenList: () => util('tokenList'),
       kyberTokens: () => util('kyberTokens'),
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
@@ -163,6 +164,7 @@
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),
+      getBalances: (options) => eth('getBalances', options),
     },
     erc20: {
       info: (target) => erc20('info', { target }),

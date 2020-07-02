@@ -2,128 +2,123 @@
   Modules
   ==================================================*/
 
-  const sdk = require('../../sdk');
-  const axios = require('axios');
-  const _ = require('underscore');
-  const moment = require('moment');
-  const BigNumber = require('bignumber.js');
+const sdk = require('../../sdk');
+const axios = require('axios');
+const _ = require('underscore');
+const moment = require('moment');
+const BigNumber = require('bignumber.js');
 
 /*==================================================
   Helper Functions
   ==================================================*/
 
-  async function GenerateCallList(timestamp) {
-    let tokenConverters = [];
+async function GenerateCallList(timestamp) {
+  let tokenConverters = [];
 
-    let moreData = true;
-    let index = 0;
-    let pageFetchCount = 300;
+  let moreData = true;
+  let index = 0;
+  let pageFetchCount = 300;
 
-    while(moreData) {
-      let converters = await axios.get('https://api.bancor.network/0.1/converters', {
-        params: {
-          skip: index,
-          limit: pageFetchCount
-        }
-      });
-
-      converters = converters.data.data.page;
-
-      index += pageFetchCount;
-
-      tokenConverters = [
-        ...tokenConverters,
-        ...converters
-      ]
-
-      if(converters.length !== pageFetchCount) {
-        moreData = false;
+  while(moreData) {
+    let converters = await axios.get('https://api.bancor.network/0.1/converters', {
+      params: {
+        skip: index,
+        limit: pageFetchCount
       }
+    });
+
+    converters = converters.data.data.page;
+
+    index += pageFetchCount;
+
+    tokenConverters = [
+      ...tokenConverters,
+      ...converters
+    ];
+
+    if(converters.length !== pageFetchCount) {
+      moreData = false;
     }
-
-    tokenConverters = _.filter(tokenConverters, (converter) => {
-      let hasLength = converter.details.length == 1;
-      let isEthereum = converter.details[0].blockchain.type == 'ethereum';
-      let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
-      let existsAtTimestamp = createdTimestamp <= timestamp;
-
-      return hasLength && isEthereum && existsAtTimestamp;
-    });
-
-    let calls = [];
-
-    _.each(tokenConverters, (converter) => {
-      let details = converter.details[0];
-      let reserves = details.reserves;
-
-      let owners = _.map(converter.converters, (converter) => {
-        return converter.blockchainId;
-      });
-
-      _.each(owners, (owner) => {
-        if (owner === undefined) {
-          return;
-        }
-
-        _.each(reserves, (reserve) => {
-          let address = reserve.blockchainId;
-
-          calls.push({
-            target: address,
-            params: owner
-          })
-        })
-      });
-    });
-
-    return calls;
   }
+
+  tokenConverters = _.filter(tokenConverters, (converter) => {
+    let hasLength = converter.details.length > 0;
+    let isEthereum = converter.details[0].blockchain.type === 'ethereum';
+    let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
+    let existsAtTimestamp = createdTimestamp <= timestamp;
+
+    return hasLength && isEthereum && existsAtTimestamp;
+  });
+
+  let calls = [];
+
+  _.each(tokenConverters, (converter) => {
+    let details = converter.details[0];
+    let reserves = details.reserves;
+
+    let owners = _.map(converter.converters, (converter) => {
+      return converter.blockchainId;
+    });
+
+    _.each(owners, (owner) => {
+      if (owner === undefined) {
+        return;
+      }
+
+      _.each(reserves, (reserve) => {
+        let address = reserve.blockchainId;
+
+        calls.push({
+          target: address,
+          params: owner
+        })
+      })
+    });
+  });
+
+  return calls;
+}
 
 /*==================================================
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
-    let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
+async function tvl(timestamp, block) {
+  const ethAddress = '0x0000000000000000000000000000000000000000';
+  let balances = {
+    [ethAddress]: (await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block})).output
+  };
 
-    let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
-    };
+  const calls = await GenerateCallList(timestamp);
+  const ethAddresses = ['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'];
+  const ethBalanceCalls = calls.filter((call) => ethAddresses.includes(call.target.toLowerCase()));
 
-    let calls = await GenerateCallList(timestamp);
+  await (
+    Promise.all(ethBalanceCalls.map(async (call) => {
+      const ethBalance = (await sdk.api.eth.getBalance({target: call.params, block})).output;
+      balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
+    }))
+  );
 
-    let balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls,
-      abi: 'erc20:balanceOf'
-    });
+  const balanceOfResults = await sdk.api.abi.multiCall({
+    block,
+    calls,
+    abi: 'erc20:balanceOf'
+  });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let balance = balanceOf.output;
-        let address = balanceOf.input.target;
+  sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
-
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
-  }
+  return (await sdk.api.util.toSymbols(balances)).output;
+}
 
 /*==================================================
   Exports
   ==================================================*/
 
-  module.exports = {
-    name: 'Bancor',
-    token: 'BNT',
-    category: 'DEXes',
-    start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-    tvl
-  }
+module.exports = {
+  name: 'Bancor',
+  token: 'BNT',
+  category: 'DEXes',
+  start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
+  tvl,
+};
