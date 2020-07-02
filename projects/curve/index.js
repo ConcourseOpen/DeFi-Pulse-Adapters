@@ -89,13 +89,49 @@
 
     for(let [i, balance] of balancesResults.output.entries()) {
       if(!balance || !balance.output) continue;
-      balances[coinsResults.output[i].output] = balance.output
+      // Balance doesn't exist yet
+      const out = coinsResults.output[i].output;
+      if(!balances[out]) balances[out] = 0;
+      // Update balance
+      balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
     }
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    let { output } = (await sdk.api.util.toSymbols(balances));
+
+    const yTokens = [
+      { symbol: 'ySUSD', underlying: 'SUSD' },
+      { symbol: 'yUSDC', underlying: 'USDC' },
+      { symbol: 'ycDAI', underlying: 'cDAI' },
+      { symbol: 'yUSDT', underlying: 'USDT' },
+      { symbol: 'ycUSDC', underlying: 'cUSDC' },
+      { symbol: 'ycUSDT', underlying: 'cUSDT' },
+      { symbol: 'yBUSD', underlying: 'BUSD' },
+      { symbol: 'yDAI', underlying: 'DAI' },
+      { symbol: 'yTUSD', underlying: 'TUSD' },
+    ]
+
+    // Count y tokens as their underlying asset, ie ycDAI = cDAI
+    Object.keys(output).map(( key ) => {
+      const yToken = yTokens.filter( token => token.symbol === key)[0];
+      // is y token
+      if(yToken){
+        if(!output[yToken.underlying]) output[yToken.underlying] = 0;
+        // Update balance
+        output[yToken.underlying] = String(
+          parseFloat(output[yToken.underlying]) +
+          parseFloat(output[yToken.symbol])
+        );
+        // Delete wrapper
+        delete output[yToken.symbol];
+      }
+    });
+
+    console.log(output)
+
+    return output;
   }
 
-  async function rates(timestamp, block) {
+  /**async function rates(timestamp, block) {
     let yTokens = [
       //yTokens curve.fi/y
       '0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01',
@@ -130,7 +166,7 @@
         "type":"function"
       }
     })
-  }
+  }**/
 
 
 /*==================================================
