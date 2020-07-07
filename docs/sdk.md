@@ -91,7 +91,7 @@ let result = await sdk.api.util.toSymbols({
 
 ### getLogs(*object*)
 
-Convert a key/value list of token addresses/balances to decimal converted key/value list of symbols/balances.
+Get a list of event logs thrown by the smart contracts for a given set of arguments.
 
 ###### Arguments
 | Type                           | Description                                                                                                              |
