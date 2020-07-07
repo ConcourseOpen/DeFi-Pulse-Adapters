@@ -89,6 +89,60 @@ let result = await sdk.api.util.toSymbols({
 }
 ```
 
+### getLogs(*object*)
+
+Convert a key/value list of token addresses/balances to decimal converted key/value list of symbols/balances.
+
+###### Arguments
+| Type                           | Description                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| *object*                       | *(target)*: *string*, *(topic)*: *string*, *(keys)*: *array[*string*]*, *(fromBlock)*: *number*, *(toBlock)*: *number*   |
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
+| output                         | *array*                        | List of event logs                                           |
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.getLogs({
+  target: '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd',
+  topic: 'LOG_NEW_POOL(address,address)',
+  keys: ['topics'],
+  fromBlock: 9562480,
+  toBlock: 10411347,
+});
+```
+
+###### Result
+
+```js
+{
+  ethCallCount: 0,
+  output: [
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x000000000000000000000000165a50bc092f6870dc111c349bae5fc35147ac86"
+    ],
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x00000000000000000000000057755f7dec33320bca83159c26e93751bfd30fbe"
+    ],
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x000000000000000000000000e5d1fab0c5596ef846dcc0958d6d0b20e1ec4498"
+    ],
+    .....
+    .....
+  ]
+}
+```
+
 ### kyberTokens()
 
 Get a list of tokens supported by Kyber Network.
