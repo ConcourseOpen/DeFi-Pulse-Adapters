@@ -161,6 +161,31 @@ let result = await sdk.api.util.tokenList();
 ]
 ```
 
+### lookupBlock(*number*)
+
+Get the nearest block data for a given timestamp
+
+###### Arguments
+| Type                           | Description                                                  |
+| ------------------------------ | ------------------------------------------------------------ |
+| *number*                       | unix timestamp                                               |
+
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.lookupBlock(1594115200);
+```
+
+###### Result
+
+```js
+{
+  "timestamp": 1594112400,
+  "block": 10411347
+}
+```
+
 ## ERC20 - *sdk.api.erc20.___*
 
 ### symbol(*string*)
