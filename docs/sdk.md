@@ -89,6 +89,47 @@ let result = await sdk.api.util.toSymbols({
 }
 ```
 
+### kyberTokens()
+
+Get a list of tokens supported by Kyber Network.
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| output                         | *object*                       | *(address)*: *object(decimals, ethPrice, symbol)*                                  |
+
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.kyberTokens();
+```
+
+###### Result
+
+```js
+{
+  output: {
+    "0x41e5560054824ea6b0732e656e3ad64e20e94e45": {
+      "symbol": "CVC",
+      "decimals": 8,
+      "ethPrice": 0.000110522618759956
+    },
+    "0x6b175474e89094c44da98b954eedeac495271d0f": {
+      "symbol": "DAI",
+      "decimals": 18,
+      "ethPrice": 0.004182208587061177
+    },
+    "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf": {
+      "symbol": "DGX",
+      "decimals": 9,
+      "ethPrice": 0.22848731971224634
+    },
+    .......
+    .......
+}
+```
+
 ## ERC20 - *sdk.api.erc20.___*
 
 ### symbol(*string*)
