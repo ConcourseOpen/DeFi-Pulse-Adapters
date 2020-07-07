@@ -96,7 +96,7 @@ Get a list of tokens supported by Kyber Network.
 ###### Return Object
 | Name                           | Type                           | Description                                                  |
 | ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| output                         | *object*                       | *(address)*: *object(decimals, ethPrice, symbol)*                                  |
+| output                         | *object*                       | *(address)*: *object(decimals, ethPrice, symbol)*            |
 
 
 ###### Example Call
@@ -128,6 +128,37 @@ let result = await sdk.api.util.kyberTokens();
     .......
     .......
 }
+```
+
+### tokenList()
+
+Get DefiPulse supported token list.
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.tokenList();
+```
+
+###### Result
+
+```js
+[
+  {
+    "symbol": "DAI",
+    "contract": "0x6b175474e89094c44da98b954eedeac495271d0f"
+  },
+  {
+    "symbol": "WETH",
+    "contract": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+  },
+  {
+    "symbol": "WBTC",
+    "contract": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+  },
+  .......
+  .......
+]
 ```
 
 ## ERC20 - *sdk.api.erc20.___*
