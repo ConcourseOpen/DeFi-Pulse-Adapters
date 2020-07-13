@@ -42,7 +42,7 @@ const CSV = {
     });
   },
   getDate: () => (
-    new Date().toDateString()
+    new Date().toTimeString()
   ),
   getDefaultFields: () => (
     [
