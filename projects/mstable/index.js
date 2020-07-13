@@ -20,7 +20,7 @@ async function tvl(timestamp, block) {
     block
   })).output;
 
-  return { [mUSD]: totalSupply };
+  return (await sdk.api.util.toSymbols({ [mUSD]: totalSupply })).output;
 }
 
 /*==================================================
@@ -30,7 +30,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'mStable',
   token: null, // TODO - Add $MTA after launch
-  category: 'assets',
+  category: 'Assets',
   start: 1590624000, // May-28-2020 00:00:00
-  tvl
-}
+  tvl,
+};
