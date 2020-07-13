@@ -11,6 +11,7 @@
   const shell = require('shelljs');
 
   const Run = require('../sdk/run');
+  const CSV = require('./csv');
 
 /*==================================================
   Settings
@@ -25,10 +26,14 @@
   TestRun
   ==================================================*/
 
+  let cachedOutput = [];
+  let slug;
+
   function TestRun(project, timeUnit, timeOffset) {
     let label;
 
     let functions = [];
+    slug = project.slug;
 
     if(args.function) {
       if(project[args.function]) {
@@ -55,8 +60,9 @@
         if(runFunction == 'tvl') {
           this.timeout(tvlTimeLimit);
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
-          console.log(projectRun);
+          console.log(projectRun); // Logging
           this.test.value = projectRun;
+          cachedOutput.push(projectRun); // Add output to cache
           chai.expect(projectRun.output).to.be.an('object');
 
           _.each(projectRun.output, (value, symbol) => {
@@ -88,7 +94,10 @@
   }
 
   after('after all', async function() {
-    console.log('After all completed')
+    CSV.create({
+      output: cachedOutput,
+      slug,
+    });
   });
 
 /*==================================================
