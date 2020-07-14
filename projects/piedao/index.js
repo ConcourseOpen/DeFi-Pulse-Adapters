@@ -81,6 +81,6 @@
     name: 'PieDAO', // project name
     token: null,              // null, or token symbol if project has a custom token
     category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1585836606,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
+    start: 1585872000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl,                       // tvl adapter
   };
