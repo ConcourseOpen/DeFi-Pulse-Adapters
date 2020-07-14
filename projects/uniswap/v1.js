@@ -5,6 +5,11 @@ const START_BLOCK = 6627917
 const FACTORY = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95'
 const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase()
 
+// see https://github.com/ethereum/solidity/issues/3971
+const badEVMValue = new BigNumber(
+  '3963877391197344453575983046348115674221700746820753546331534351508065746944'
+)
+
 module.exports = async function tvl(timestamp, block) {
   const supportedTokens = await sdk.api.util
     .tokenList()
@@ -55,7 +60,7 @@ module.exports = async function tvl(timestamp, block) {
     (accumulator, tokenBalance) => {
       if (tokenBalance.success) {
         const balanceBigNumber = new BigNumber(tokenBalance.output)
-        if (!balanceBigNumber.isZero()) {
+        if (!balanceBigNumber.isZero() && !balanceBigNumber.eq(badEVMValue)) {
           const tokenAddress = tokenBalance.input.target.toLowerCase()
           accumulator[tokenAddress] = balanceBigNumber.toFixed()
         }
