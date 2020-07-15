@@ -8,19 +8,28 @@ const sdk = require('../../sdk');
 Settings
 ==================================================*/
 
-const mUSD = '0xe2f2a5C287993345a840Db3B0845fbC70f5935a5';
+const abi = require('./abi.json');
+const mUSD_BasketManager = '0x66126B4aA2a1C07536Ef8E5e8bD4EfDA1FdEA96D';
 
 /*==================================================
 Main
 ==================================================*/
 
 async function tvl(timestamp, block) {
-  const totalSupply = (await sdk.api.erc20.totalSupply({
-    target: mUSD,
-    block
-  })).output;
+  const res = await sdk.api.abi.call({
+    block,
+    target: mUSD_BasketManager,
+    abi: abi['getBassets'],
+  });
+  const bAssets = res.output[0];
 
-  return (await sdk.api.util.toSymbols({ [mUSD]: totalSupply })).output;
+  const lockedTokens = {};
+
+  bAssets.forEach(b => {
+    lockedTokens[b[0]] = b[5]
+  });
+
+  return (await sdk.api.util.toSymbols(lockedTokens)).output;
 }
 
 /*==================================================
@@ -29,8 +38,8 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'mStable',
-  token: null, // TODO - Add $MTA after launch
   category: 'Assets',
+  token: 'MTA',
   start: 1590624000, // May-28-2020 00:00:00
   tvl,
 };
