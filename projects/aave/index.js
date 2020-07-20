@@ -194,6 +194,12 @@
 
   async function rates(timestamp, block) {
     // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
+    const aaveReservesWithEth = aaveReserves
+    aaveReservesWithEth.push({
+      address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      symbol: "ETH",
+      decimals: 18,
+    });
     return await _multiMarketRates(aaveLendingPool, aaveReserves, block)
   }
 
