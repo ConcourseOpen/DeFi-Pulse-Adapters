@@ -1,0 +1,28 @@
+{
+	"collateral": {
+		"inputs": [],
+		"name": "collateral",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	"totalCollateral": {
+		"inputs": [],
+		"name": "totalCollateral",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+}
