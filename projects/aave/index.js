@@ -5,52 +5,74 @@
   const sdk = require('../../sdk');
   const _ = require('underscore');
   const BigNumber = require("bignumber.js");
+  const abi = require('./abi.json');
 
 /*==================================================
   Settings
   ==================================================*/
 
-  const aaveReserves = [
-    '0x6b175474e89094c44da98b954eedeac495271d0f',
-    '0x0000000000085d4780B73119b644AE5ecd22b376',
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    '0x57ab1ec28d129707052df4df418d58a2d46d5f51',
-    '0x80fB784B7eD66730e8b1DBd9820aFD29931aab03',
-    '0x0d8775f648430679a709e98d2b0cb6250d2887ef',
-    '0x1985365e9f78359a9B6AD760e32412f4a445E862',
-    '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
-    '0x514910771af9ca656af840dff83e8264ecf986ca',
-    '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
-    '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-    '0x0f5d2fb29fb7d3cfee444a200298f468908cc942',
-    '0xe41d2489571d322189246dafa5ebde1f4699f498',
-    '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
-    '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
-  ];
-
   const aaveLendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
-
-  const uniswapReserves = [
-    "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-    "0x97dec872013f6b5fb443861090ad931542878126",
-    "0xf173214c720f58e03e194085b1db28b50acdeead",
-    "0x2a1530c4c41db0b0b2bb646cb5eb1a67b7158667",
-    "0xcaa7e4656f6a2b59f5f99c745f91ab26d1210dce",
-    "0x2c4bd064b998838076fa341a83d007fc2fa50957",
-    "0xe9cf7887b93150d4f2da7dfc6d502b216438f244",
-  ];
+  const aaveLendingPool = "0x398eC7346DcD622eDc5ae82352F02bE94C62d119";
+  let aaveReserves = []
 
   const uniswapLendingPoolCore = "0x1012cfF81A1582ddD0616517eFB97D02c5c17E25";
+  const uniswapLendingPool = "0x2F60C3EB259D63dcCa81fDE7Eaa216D9983D7C60";
+  let uniswapReserves = []
 
 /*==================================================
   Helper Functions
-==================================================*/
+  ==================================================*/
+
+  async function _getAssets(lendingPoolCore) {
+    const reserves = (
+      await sdk.api.abi.call({
+        target: lendingPoolCore,
+        abi: abi["getReserves"],
+      })
+    ).output;
+
+    const decimalsOfReserve = (
+      await sdk.api.abi.multiCall({
+      calls: _.map(reserves, (reserve) => ({
+        target: reserve
+      })),
+      abi: "erc20:decimals"
+    })
+    ).output;
+
+    const symbolsOfReserve = (
+      await sdk.api.abi.multiCall({
+      calls: _.map(reserves, reserve => ({
+        target: reserve
+      })),
+      abi: "erc20:symbol"
+    })
+    ).output;
+
+    let assets = []
+    
+    reserves.map((reserve, i) => {
+      if (reserve === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return;
+
+      let symbol;
+      switch(reserve) {
+        case "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": // MKR doesn't include symbol in contract 🤷‍♂️
+          symbol = { output: 'MKR' }; break
+        default:
+          symbol = symbolsOfReserve[i]
+      }
+  
+      const decimals = decimalsOfReserve[i]
+      if (decimals.success) {
+        assets.push({ address: reserve, symbol: symbol.output, decimals: decimals.output })
+      }
+    })
+  
+    return assets
+  }
 
   async function _multiMarketTvl(lendingPoolCore, reserves, block) {
-    let _balances = {
+    let balances = {
       "0x0000000000000000000000000000000000000000": (
         await sdk.api.eth.getBalance({ target: lendingPoolCore, block })
       ).output,
@@ -59,15 +81,114 @@
     const balanceOfResults = await sdk.api.abi.multiCall({
       block,
       calls: _.map(reserves, (reserve) => ({
-        target: reserve,
+        target: reserve.address,
         params: lendingPoolCore,
       })),
       abi: "erc20:balanceOf",
     });
 
-    sdk.util.sumMultiBalanceOf(_balances, balanceOfResults);
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-    return _balances;
+    return balances;
+  }
+
+  async function _multiMarketRates(lendingPool, reserves, block) {
+    const calls = _.map(reserves, (reserve) => ({
+      target: lendingPool,
+      params: reserve.address,
+    }));
+
+    const reserveDataResults = (
+      await sdk.api.abi.multiCall({
+        block,
+        calls,
+        abi: abi["getReserveData"],
+      })
+    ).output;
+
+    const reserveConfigResult = (
+      await sdk.api.abi.multiCall({
+        block,
+        calls,
+        abi: abi["getReserveConfigurationData"],
+      })
+    ).output;
+
+    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
+
+    reserveDataResults.map((result) => {
+      if (!result || !result.success) return;
+      const address = result.input.params[0];
+      const reserveData = result.output;
+      const reserveDict = reserves.find(
+        (reserve) => reserve.address === address
+      );
+      const symbol = reserveDict.symbol;
+
+      const outStandingBorrows = BigNumber(reserveData.totalLiquidity)
+        .minus(BigNumber(reserveData.availableLiquidity))
+        .div(10 ** reserveDict.decimals)
+        .toFixed();
+      const lendRate = BigNumber(reserveData.liquidityRate)
+        .div(10 ** 25)
+        .toFixed();
+      const borrowRate = BigNumber(reserveData.variableBorrowRate)
+        .div(10 ** 25)
+        .toFixed();
+      const borrowStableRate = BigNumber(reserveData.stableBorrowRate)
+        .div(10 ** 25)
+        .toFixed();
+
+      ratesData.lend[symbol] = lendRate;
+      ratesData.borrow[symbol] = borrowRate;
+      ratesData.borrow_stable[symbol] = borrowStableRate;
+      ratesData.supply[symbol] = outStandingBorrows;
+    });
+
+    reserveConfigResult.map((result) => {
+      if (!result || !result.success) return;
+      const address = result.input.params[0];
+      const reserveConfig = result.output;
+      const reserveDict = reserves.find(
+        (reserve) => reserve.address === address
+      );
+      const symbol = reserveDict.symbol;
+
+      const isActive = reserveConfig.isActive;
+      const borrowingEnabled = reserveConfig.borrowingEnabled;
+      const stableBorrowRateEnabled = reserveConfig.stableBorrowRateEnabled;
+
+      if (!isActive) {
+        delete ratesData.lend[symbol];
+        delete ratesData.borrow[symbol];
+        delete ratesData.borrow_stable[symbol];
+        delete ratesData.supply[symbol];
+        return;
+      }
+
+      if (!borrowingEnabled) {
+        delete ratesData.borrow[symbol];
+        delete ratesData.borrow_stable[symbol];
+        return;
+      }
+
+      if (!stableBorrowRateEnabled) {
+        delete ratesData.borrow_stable[symbol];
+      }
+    });
+
+    return ratesData;
+  }
+
+  async function getReserves() {
+    if (aaveReserves.length === 0) {
+      aaveReserves = await _getAssets(aaveLendingPoolCore);
+    }
+
+    if (uniswapReserves.length === 0) {
+      // Does not take into account Uniswap LP assets (not yet supported on DeFiPulse)
+      uniswapReserves = await _getAssets(uniswapLendingPoolCore);
+    }
   }
 
 /*==================================================
@@ -75,6 +196,7 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
+    await getReserves()
     let balances = await _multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
     
     const uniswapMarketTvlBalances = await _multiMarketTvl(
@@ -98,13 +220,34 @@
   }
 
 /*==================================================
+  Rates
+  ==================================================*/
+
+  async function rates(timestamp, block) {
+    await getReserves()
+  
+    // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
+    const aaveReservesWithEth = aaveReserves
+    aaveReservesWithEth.push({
+      address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      symbol: "ETH",
+      decimals: 18,
+    });
+    return await _multiMarketRates(aaveLendingPool, aaveReserves, block)
+  }
+
+/*==================================================
   Exports
   ==================================================*/
 
   module.exports = {
-    name: 'Aave',
-    token: 'LEND',
-    category: 'lending',
-    start: 1578355200,  // 01/07/2020 @ 12:00am (UTC)
-    tvl
+    name: "Aave",
+    website: "https://aave.com",
+    token: "LEND",
+    category: "lending",
+    start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
+    tvl,
+    rates,
+    term: "1 block",
+    variability: "medium",
   };

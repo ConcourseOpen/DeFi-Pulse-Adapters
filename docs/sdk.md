@@ -47,6 +47,199 @@ Example:
 
 # Methods
 
+## Utility - *sdk.api.util.___*
+  
+### toSymbols(*object*)
+
+Convert a key/value list of token addresses/balances to decimal converted key/value list of symbols/balances.
+
+###### Arguments
+| Type                           | Description                                                  |
+| ------------------------------ | ------------------------------------------------------------ |
+| *object*                       | *(address)*: *number/string*                                 |
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
+| output                         | *object*                       | *(symbol)*: *number/string*                                  |
+
+For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. **toSymbols** accepts key/value pairs of token addresses and balances, and will return the resulting key/value pairs of symbols and decimal converted balances.
+
+the SDK server maintains an extensive list of symbol and decimal values for popular token addresses, but if no stored information is available a fallback is used to call erc20 contract methods to retrieve symbol and decimal values. In most cases this means no Ethereum node calls will need to be made to convert addresses to symbols - If you need to work with an address/symbol that doesn't have data listed, please advise the DeFi Pulse team so we can add it.
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.toSymbols({
+  '0x0000000000000000000000000000000000000000': '1000000000000000000', // ETH
+  '0x6B175474E89094C44Da98b954EedeAC495271d0F': '2000000000000000000'  // DAI
+});
+```
+
+###### Result
+
+```js
+{
+  ethCallCount: 0,
+  output: {
+    ETH: '1',
+    DAI: '2'
+  }
+}
+```
+
+### getLogs(*object*)
+
+Get a list of event logs thrown by the smart contracts for a given set of arguments.
+
+###### Arguments
+| Type                           | Description                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| *object*                       | *(target)*: *string*, *(topic)*: *string*, *(keys)*: *array[*string*]*, *(fromBlock)*: *number*, *(toBlock)*: *number*   |
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
+| output                         | *array*                        | List of event logs                                           |
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.getLogs({
+  target: '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd',
+  topic: 'LOG_NEW_POOL(address,address)',
+  keys: ['topics'],
+  fromBlock: 9562480,
+  toBlock: 10411347,
+});
+```
+
+###### Result
+
+```js
+{
+  ethCallCount: 0,
+  output: [
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x000000000000000000000000165a50bc092f6870dc111c349bae5fc35147ac86"
+    ],
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x00000000000000000000000057755f7dec33320bca83159c26e93751bfd30fbe"
+    ],
+    [
+      "0x8ccec77b0cb63ac2cafd0f5de8cdfadab91ce656d262240ba8a6343bccc5f945",
+      "0x00000000000000000000000018fa2ac3c88112e36eff15370346f9aff3161fd1",
+      "0x000000000000000000000000e5d1fab0c5596ef846dcc0958d6d0b20e1ec4498"
+    ],
+    .....
+    .....
+  ]
+}
+```
+
+### kyberTokens()
+
+Get a list of tokens supported by Kyber Network.
+
+###### Return Object
+| Name                           | Type                           | Description                                                  |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| output                         | *object*                       | *(address)*: *object(decimals, ethPrice, symbol)*            |
+
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.kyberTokens();
+```
+
+###### Result
+
+```js
+{
+  output: {
+    "0x41e5560054824ea6b0732e656e3ad64e20e94e45": {
+      "symbol": "CVC",
+      "decimals": 8,
+      "ethPrice": 0.000110522618759956
+    },
+    "0x6b175474e89094c44da98b954eedeac495271d0f": {
+      "symbol": "DAI",
+      "decimals": 18,
+      "ethPrice": 0.004182208587061177
+    },
+    "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf": {
+      "symbol": "DGX",
+      "decimals": 9,
+      "ethPrice": 0.22848731971224634
+    },
+    .......
+    .......
+}
+```
+
+### tokenList()
+
+Get DefiPulse supported token list.
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.tokenList();
+```
+
+###### Result
+
+```js
+[
+  {
+    "symbol": "DAI",
+    "contract": "0x6b175474e89094c44da98b954eedeac495271d0f"
+  },
+  {
+    "symbol": "WETH",
+    "contract": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+  },
+  {
+    "symbol": "WBTC",
+    "contract": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+  },
+  .......
+  .......
+]
+```
+
+### lookupBlock(*number*)
+
+Get the nearest block data for a given timestamp
+
+###### Arguments
+| Type                           | Description                                                  |
+| ------------------------------ | ------------------------------------------------------------ |
+| *number*                       | unix timestamp                                               |
+
+
+###### Example Call
+
+```js
+let result = await sdk.api.util.lookupBlock(1594115200);
+```
+
+###### Result
+
+```js
+{
+  "timestamp": 1594112400,
+  "block": 10411347
+}
+```
+
 ## ERC20 - *sdk.api.erc20.___*
 
 ### symbol(*string*)

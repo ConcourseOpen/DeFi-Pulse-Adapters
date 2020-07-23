@@ -78,7 +78,6 @@
     name: 'Balancer',
     token: null,
     category: 'dexes',
-    contributesTo: [],
     start : 1582761600, // 02/27/2020 @ 12:00am (UTC)
     tvl
   }
