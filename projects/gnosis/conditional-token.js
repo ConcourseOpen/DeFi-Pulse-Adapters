@@ -10,6 +10,7 @@ const { api: { abi, util } } = require('../../sdk');
 
 const START_BLOCK = 8623608;
 const PROTOCOL_ADDRESS = '0xc59b0e4de5f1248c1140964e0ff287b192407e0c';
+const TOKENS_TO_IGNORE = new Set();
 
 /*==================================================
   Helper Functions
