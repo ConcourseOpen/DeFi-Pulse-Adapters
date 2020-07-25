@@ -70,5 +70,6 @@ module.exports = {
   token: 'YFI',
   category: 'Assets',
   start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
-  tvl
+  tvl,
+  contributesTo: ['Curve'],
 };
