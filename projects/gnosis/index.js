@@ -3,6 +3,7 @@
 ==================================================*/
 
 const { api: { abi, util }, util: utilBase } = require('../../sdk');
+const { tvl: conditionalTokenTvl } = require('./conditional-token')
 
 /*==================================================
   Settings
@@ -37,6 +38,9 @@ const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
 ==================================================*/
 
 async function tvl(_, block) {
+  // Start promised TVL of Conditional Token
+  const promisedConditionalTokenTvl = conditionalTokenTvl(_, block)
+  
   // Snag all token addresses that have been listed on GP
   const { output: events } = await util.getLogs({
     keys: [],
@@ -52,27 +56,33 @@ async function tvl(_, block) {
   const tokenList =
     events
       .reduce((acc, { data }) => {
-        const tokenAddress = getTokenAddressFromLogData(data);
-        if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc;
+        const tokenAddress = getTokenAddressFromLogData(data)
+        if (TOKENS_TO_IGNORE.has(tokenAddress)) return acc
 
-        const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block);
+        const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block)
         return acc.concat(tokenWithCallData)
       }, []);
 
-  // [0] Batch call all ERC20 balances from the G-Protocol
-  // [1] Resolve initial ethBalance promise
-  const erc20Balances = await abi.multiCall({
+  // Batch call all ERC20 balances from the G-Protocol & resolve conditionalToken balance promise
+  const [protocolErc20Balances, conditionalTokenErc20Balances] = await Promise.all([
+    abi.multiCall({
       block,
       abi: 'erc20:balanceOf',
       calls: tokenList
-    });
+    }), 
+    promisedConditionalTokenTvl,
+  ])
+
+  const combinedErc20Balances = {
+    output: protocolErc20Balances.output.concat(conditionalTokenErc20Balances.output)
+  }
 
   const balances = {
     // GP only accepts WETH
     '0x0000000000000000000000000000000000000000': '0',
   };
 
-  utilBase.sumMultiBalanceOf(balances, erc20Balances);
+  utilBase.sumMultiBalanceOf(balances, combinedErc20Balances);
 
   return (await util.toSymbols(balances)).output;
 }
@@ -82,9 +92,9 @@ async function tvl(_, block) {
 ==================================================*/
 
 module.exports = {
-  name: 'Gnosis Protocol',
-  category: 'DEXes',
+  name: 'Gnosis',
   token: 'OWL',
+  category: 'DEXes',
   start: 1579811423, // Thu, 23 Jan 2020 20:30:23 GMT
   tvl,
 };
