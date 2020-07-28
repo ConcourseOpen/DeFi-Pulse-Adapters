@@ -78,7 +78,7 @@
   module.exports = {
     name: 'Synthetix',
     token: 'SNX',
-    category: 'derivatives',
+    category: 'Derivatives',
     start: 1565287200,  // Fri Aug 09 2019 00:00:00
     tvl,
   };
