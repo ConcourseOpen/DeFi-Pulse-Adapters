@@ -34,7 +34,6 @@
       [met]: metBalance,
       "0x0000000000000000000000000000000000000000": ethBalance,
     };
-    sdk.util.sumMultiBalanceOf(balances, metBalance);
 
     return balances;
   }
@@ -48,6 +47,6 @@
     website: 'https://metronome.io',
     token: 'MET',
     category: 'assets',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1527029758,        // block 5659894 
+    start: 1527076766,        // block 5659904
     tvl,
   };
