@@ -56,7 +56,7 @@ Feel free to add additional files and folders within your project adapter direct
 
 ## The TVL Function
 
-The main tvl function of a project adater is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection if historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+The main tvl function of a project adapter is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
 ```js
 async function tvl(timestamp, block) {
@@ -134,7 +134,7 @@ These illustrate the most common SDK interactions for most adapters - running on
 
 If the SDK doesn't provide required methods to implement your project adapter, please contact a member of the DeFi Pulse team so we can add necessary support where applicable, and/or collaborate to find a suitable alternative solution.
 
-In some cases not all neccessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation with the DeFi Pulse team.
+In some cases not all necessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation with the DeFi Pulse team.
 
 ## Metadata
 
@@ -218,7 +218,7 @@ npm run validate -- --project=_template
 ```
   _template project export format
     ✓ has a valid name
-    ✓ categoy matches one of the defined options
+    ✓ category matches one of the defined options
     ✓ has a valid start time
     ✓ should have a run method
 
