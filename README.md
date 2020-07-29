@@ -44,7 +44,7 @@ Please fork this repository before you start building your adapter and then work
 
 # Writing a Project Adapter
 
-Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings. 
+Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings.
 
 ```
 projects
@@ -108,7 +108,7 @@ async function run(timestamp, block) {
 }
 ```
 
-To retrieve it's locked balances, the `bancor` adapter needs to check a main address for it's ETH balance, as well as check a list of token adapters for specific token balances. An SDK provides standardized methods for querying contracts for values and other common interactions, and wherever possible is the preferred method of retrieving data. 
+To retrieve it's locked balances, the `bancor` adapter needs to check a main address for it's ETH balance, as well as check a list of token adapters for specific token balances. An SDK provides standardized methods for querying contracts for values and other common interactions, and wherever possible is the preferred method of retrieving data.
 
 ```js
 const  sdk = require('../../sdk');
@@ -170,8 +170,23 @@ The project's name and protocol token are simple values shown in the UI and API 
 
 While writing your adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
+## Historical CSV view
+After running the test suite, a historical CSV is generated containing all tracked tokens and their balances beginning the projects "start" date. You can use this folder to gain better insight into the output of your adapters and verify accuracy.
+
+| timestamp        | date           | block  | ETH  |
+| ------------- |:-------------:| -----:|-----:|
+| 1538006400      | Wed Sep 26 2018 20:00:00 | 6405884 | 22.64 |
+| 1549324800 | Mon Feb 04 2019 19:00:00     | 7175712 |  25452.34 |
+| 1554940800      | Wed Apr 10 2019 20:00:00   | 7543456   |   53152.81 |
+
+Check the
+```
+/CSV folder
+```
+
 ```
 npm run test -- --project=_template
+npm run validate -- --project=yearn
 ```
 
 The `test` command will run a project adapter once for the latest hourly point, perform some basic checks on it's output, and log the result.
@@ -246,4 +261,3 @@ npm run validate -- --project=_template
 ```
 
 This test suite will only log verbose results and adapter output in the event of a problem
-
