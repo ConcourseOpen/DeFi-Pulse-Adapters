@@ -36,7 +36,7 @@
     };
     sdk.util.sumMultiBalanceOf(balances, metBalance);
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -47,7 +47,7 @@
     name: 'Metronome',
     website: 'https://metronome.io',
     token: 'MET',
-    category: 'assets',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1527029758,        // block 5659894 
     tvl,
   };
