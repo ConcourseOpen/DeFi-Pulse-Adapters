@@ -21,7 +21,19 @@
       "startTimestamp": 1591609517,
       "smartPool": "0x9A48BD0EC040ea4f1D3147C025cd4076A2e71e3e",
       "balancerPool": "0x1Ee383389c621C37Ee5Aa476F88413A815083c5D"
-    }
+    },
+    // DeFi Small Cap
+    {
+      "startTimestamp": 1596442617,
+      "smartPool": "0xad6a626ae2b43dcb1b39430ce496d2fa0365ba9c",
+      "balancerPool": "0x94743cfaa3fdc62e9693572314b5ee377eba5d11"
+    },
+    // DeFi Large Cap
+    {
+      "startTimestamp": 1591609517,
+      "smartPool": "0x24D1917c1ae6C085e6b68B6c1A41B8f9dE5bd441",
+      "balancerPool": "0x71c4f1a8d95ad1faa0f893b74ca67fdf53ee63fb"
+    },
   ];
 
 /*==================================================
