@@ -121,6 +121,6 @@
     name: 'dForce',
     token: 'DF',
     category: 'assets',
-    start: 1565024553, // Jul-25-2019 02:17:24 AM +UTC
+    start: 1564165044, // Jul-27-2019 02:17:24 AM +UTC
     tvl
   }
