@@ -5,6 +5,7 @@
 const sdk = require('../../sdk');
 const abi = require('./abi');
 const _ = require('underscore');
+const BigNumber = require('bignumber.js');
 
 /*==================================================
   Settings
@@ -72,7 +73,7 @@ async function tvl(timestamp, block) {
     if(tokenBalance.success) {
       const valueInToken = tokenBalance.output;
       const yTokenAddress = tokenBalance.input.target;
-      balances[yTokenToUnderlyingToken[yTokenAddress]] += valueInToken;
+      balances[yTokenToUnderlyingToken[yTokenAddress]] = BigNumber(balances[yTokenToUnderlyingToken[yTokenAddress]]).plus(valueInToken);
     }
   });
 
@@ -108,7 +109,7 @@ async function tvl(timestamp, block) {
     if(tokenBalanceResult.success) {
       const valueInToken = tokenBalanceResult.output;
       const yVaultAddress = tokenBalanceResult.input.target;
-      balances[yVaultToUnderlyingToken[yVaultAddress]] += valueInToken;
+      balances[yVaultToUnderlyingToken[yVaultAddress]] = BigNumber(balances[yVaultToUnderlyingToken[yVaultAddress]]).plus(valueInToken);
     }
   });
 
