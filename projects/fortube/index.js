@@ -45,7 +45,6 @@ async function getErc20Assets(block) {
         }
     });
 
-    console.log("erc20Assets: ", erc20Assets);
     return erc20Assets;
 }
 
@@ -73,7 +72,6 @@ async function tvl(timestamp, block) {
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-    console.log("balances: ", balances);
     return balances;
 }
 
@@ -83,8 +81,9 @@ async function tvl(timestamp, block) {
 
 module.exports = {
     name: "ForTube",
-    token: null,
+    website: 'https://for.tube',
+    token: "FOR",
     category: "Lending",
-    start: 1596294236, // Aug-01-2020 03:03:56 PM +UTC
+    start: 1596294236, // Aug-01-2020 03:03:56 PM +UTC, block 10574574 
     tvl,
 };
