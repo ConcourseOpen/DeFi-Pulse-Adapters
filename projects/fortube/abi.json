@@ -1,0 +1,114 @@
+{
+    "getCollateralMarketsLength": {
+        "constant": true,
+        "inputs": [],
+        "name": "getCollateralMarketsLength",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "collateralTokens": {
+        "constant": true,
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "collateralTokens",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "mkts": {
+        "constant": true,
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "mkts",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "accrualBlockNumber",
+                "type": "uint256"
+            },
+            {
+                "internalType": "int256",
+                "name": "supplyRate",
+                "type": "int256"
+            },
+            {
+                "internalType": "int256",
+                "name": "demondRate",
+                "type": "int256"
+            },
+            {
+                "internalType": "contract IInterestRateModel",
+                "name": "irm",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "totalSupply",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "supplyIndex",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "totalBorrows",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "borrowIndex",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "totalReserves",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "minPledgeRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "liquidationDiscount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "decimals",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    }
+}
