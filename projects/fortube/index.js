@@ -123,8 +123,8 @@
     name: "ForTube",
     website: 'https://for.tube',
     token: "FOR",
-    category: "Lending",
-    start: 1596294236, // Aug-01-2020 03:03:56 PM +UTC, block 10574574 
+    category: "lending",
+    start: 1596384000, // 2020/8/3 00:00:00 +UTC
     tvl,
     rates,
     term: '1 block',
