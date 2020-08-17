@@ -93,8 +93,8 @@ async function tvl(_, block) {
 
 module.exports = {
   name: 'Gnosis',
-  token: 'OWL',
   category: 'DEXes',
+  token: 'GNO',
   start: 1579811423, // Thu, 23 Jan 2020 20:30:23 GMT
   tvl,
 };
