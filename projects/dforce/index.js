@@ -95,17 +95,21 @@
 
     await (
       Promise.all(yieldMarkets.map(async (yieldMarket) => {
-        let marketTVL = (await sdk.api.abi.call({
-          block,
-          target: yieldMarket,
-          abi: abi['getBaseData']
-        })).output;
+        try {
+          let marketTVL = (await sdk.api.abi.call({
+            block,
+            target: yieldMarket,
+            abi: abi['getBaseData']
+          })).output;
 
-        const _balance = marketTVL['4'] || 0;
+          const _balance = marketTVL['4'] || 0;
 
-        balances[yieldUnderlyingTokens[yieldMarket]] = BigNumber(balances[yieldUnderlyingTokens[yieldMarket]] || 0)
-          .plus(_balance)
-          .toFixed();
+          balances[yieldUnderlyingTokens[yieldMarket]] = BigNumber(balances[yieldUnderlyingTokens[yieldMarket]] || 0)
+            .plus(_balance)
+            .toFixed();
+        } catch (error) {
+          console.error(error)
+        }
       }))
     );
 
