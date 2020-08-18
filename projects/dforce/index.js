@@ -112,11 +112,6 @@
     return (await sdk.api.util.toSymbols(balances)).output;
   }
 
-(async ()=> {
-  const data = await tvl(10679290, 10679290);
-  data
-})()
-
 /*==================================================
   Exports
   ==================================================*/
