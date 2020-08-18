@@ -93,25 +93,29 @@
 
     sdk.util.sumMultiBalanceOf(balances, swapBalanceResults);
 
-    _.each(yieldMarkets, async yieldMarket => {
-      let marketTVL = (await sdk.api.abi.call({
-        block,
-        target: yieldMarket,
-        abi: abi['getBaseData']
-      })).output;
+    await (
+      Promise.all(yieldMarkets.map(async (yieldMarket) => {
+        let marketTVL = (await sdk.api.abi.call({
+          block,
+          target: yieldMarket,
+          abi: abi['getBaseData']
+        })).output;
 
-      if (BigNumber(marketTVL['4']).toNumber() <= 0) {
-        console.log('error: ', marketTVL['4']);
-        return;
-      }
+        const _balance = marketTVL['4'] || 0;
 
-      balances[yieldUnderlyingTokens[yieldMarket]] = BigNumber(balances[yieldUnderlyingTokens[yieldMarket]] || 0)
-      .plus(BigNumber(marketTVL['4']))
-      .toFixed();
-    });
+        balances[yieldUnderlyingTokens[yieldMarket]] = BigNumber(balances[yieldUnderlyingTokens[yieldMarket]] || 0)
+          .plus(_balance)
+          .toFixed();
+      }))
+    );
 
     return (await sdk.api.util.toSymbols(balances)).output;
   }
+
+(async ()=> {
+  const data = await tvl(10679290, 10679290);
+  data
+})()
 
 /*==================================================
   Exports
