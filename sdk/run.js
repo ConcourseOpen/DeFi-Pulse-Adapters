@@ -19,13 +19,29 @@
         timestamp = moment().utcOffset(0).startOf(timeUnit).add(timeOffset, timeUnit).unix();
       }
 
-      let point = await sdk.api.util.lookupBlock(timestamp);
+      let point;
+      let output;
+      switch(project.chain) {
+        case "Kava":
+          point = await sdk.kavaApi.util.lookupBlock(timestamp, timeUnit);
 
-      await sdk.api.util.resetEthCallCount();
-      let output = await project[runFunction](point.timestamp, point.block);
-      if(runFunction == 'tvl') {
-        output = (await sdk.api.util.toSymbols(output)).output;
-        output = (await sdk.api.util.unwrap({balances: output, block: point.block})).output;
+          output = await project[runFunction](point.timestamp, point.block);
+          if(runFunction == 'tvl') {
+            output = (await sdk.kavaApi.util.toSymbols(output)).output;
+            output = (await sdk.kavaApi.util.unwrap({balances: output, block: point.block})).output;
+          }
+          break;
+        default:
+          point = await sdk.api.util.lookupBlock(timestamp);
+
+          await sdk.api.util.resetEthCallCount();
+
+          output = await project[runFunction](point.timestamp, point.block);
+          if(runFunction == 'tvl') {
+            output = (await sdk.api.util.toSymbols(output)).output;
+            output = (await sdk.api.util.unwrap({balances: output, block: point.block})).output;
+          }
+          break;
       }
 
       let ethCallCount = await sdk.api.util.getEthCallCount();

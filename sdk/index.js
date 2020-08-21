@@ -1,4 +1,5 @@
 module.exports = {
   api: require('./api'),
-  util: require('./util')
+  util: require('./util'),
+  kavaApi: require('./kavaApi')
 }
