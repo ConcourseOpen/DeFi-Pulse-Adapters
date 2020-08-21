@@ -29,7 +29,14 @@ const yTokenAddresses = [
 ];
 
 const yVaultAddresses = [
-  '0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e'  // y//USDC
+  '0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e',  // y//USDC
+  '0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c', // yUSD
+  '0x37d19d1c4E1fa9DC47bD1eA12f742a0887eDa74a', // yTUSD
+  '0xACd43E627e64355f1861cEC6d3a6688B31a6F952', // yDAI
+  '0x2f08119C6f07c006695E079AAFc638b8789FAf18', // yUSDT
+  '0xBA2E7Fed597fd0E3e70f5130BcDbbFE06bB94fe1', // yYFI
+  '0x29E240CFD7946BA20895a7a02eDb25C210f9f324', // yaLINK
+
 ]
 
 /*==================================================
