@@ -13,8 +13,13 @@
   Settings
   ==================================================*/
 
-  const markets = {}
-  const marketsToIgnore = ['0xBdf447B39D152d6A234B4c02772B8ab5D1783F72']
+  const markets = {};
+  const marketsToIgnore = ['0xBdf447B39D152d6A234B4c02772B8ab5D1783F72'];
+  const wETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+  const usdt = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+  const yCrv = '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8';
+  const yyCrv = '0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c';
+  const yETH = '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7';
 
 /*==================================================
   TVL
@@ -74,10 +79,43 @@ async function tvl(timestamp, block) {
     abi: abi['getCash'],
   });
 
+  const yVaultPrices = (await sdk.api.abi.multiCall({
+    block,
+    calls: [{target: yETH}, {target: yyCrv}],
+    abi: abi['getPricePerFullShare'],
+  })).output;
+
+  const yCrvPrice = (await sdk.api.abi.call({
+    block,
+    target: '0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51',
+    params: [],
+    abi: abi['get_virtual_price']
+  })).output;
+
+
   _.each(markets, (data, underlying) => {
     let getCash = _.find(cashes.output, (result) => result.success && result.input.target === data.cToken);
     if (getCash) {
-      balances[underlying] = BigNumber(getCash.output).toFixed();
+      if (underlying === yETH) {
+        const ethCash = BigNumber(balances[wETH] || 0);
+        const yETHCash = BigNumber(getCash.output).multipliedBy(yVaultPrices[0].output).div(1e18).integerValue();
+        balances[wETH] = ethCash.plus(yETHCash).toFixed();
+      } else if (underlying === yCrv) {
+        const usdtCash = BigNumber(balances[usdt] || 0);
+        const yCrvCash = BigNumber(getCash.output).multipliedBy(yCrvPrice).div(1e18).div(1e12).integerValue();
+        balances[usdt] = usdtCash.plus(yCrvCash).toFixed();
+      } else if (underlying === yyCrv) {
+        const usdtCash = BigNumber(balances[usdt] || 0);
+        const yyCrvCash = BigNumber(getCash.output).multipliedBy(yCrvPrice).div(1e18).div(1e12).multipliedBy(yVaultPrices[1].output).div(1e18).integerValue();
+        balances[usdt] = usdtCash.plus(yyCrvCash).toFixed();
+      } else {
+        if (underlying === usdt) {
+          const usdtCash = BigNumber(balances[usdt] || 0);
+          balances[underlying] = usdtCash.plus(getCash.output).toFixed();
+        } else {
+          balances[underlying] = BigNumber(getCash.output).toFixed();
+        }
+      }
     }
   });
 
