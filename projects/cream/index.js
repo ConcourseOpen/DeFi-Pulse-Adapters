@@ -194,7 +194,7 @@ async function rates(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'Cream Finance',
+  name: 'C.R.E.A.M. Finance',
   website: 'https://cream.finance',
   token: null,
   category: 'lending',
