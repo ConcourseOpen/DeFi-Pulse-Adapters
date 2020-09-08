@@ -21,9 +21,10 @@
       params: [0,200,0],
       abi: abi["getTokens"]
     });
-
+    // for when staking is ready
     let bzrxTokenAddress = "0x56d811088235F11C8920698a204A5010a788f4b3";
     let vbzrxTokenAddress = "0xB72B31907C1C95F3650b64b2469e08EdACeE5e8F";
+    
     let iTokens = [
       // sUSD
       {
