@@ -15,54 +15,16 @@
   async function tvl (timestamp, block) {
     let balances = {};
 
-    // const getTokensResult = await sdk.api.abi.call({
-    //   block,
-    //   target: '0xD8dc30d298CCf40042991cB4B96A540d8aFFE73a',
-    //   params: [0,200,0],
-    //   abi: abi["getTokens"]
-    // });
+    const getTokensResult = await sdk.api.abi.call({
+      block,
+      target: '0xD8dc30d298CCf40042991cB4B96A540d8aFFE73a',
+      params: [0,200,0],
+      abi: abi["getTokens"]
+    });
 
+    let bzrxTokenAddress = "0x56d811088235F11C8920698a204A5010a788f4b3";
+    let vbzrxTokenAddress = "0xB72B31907C1C95F3650b64b2469e08EdACeE5e8F";
     let iTokens = [
-      // bZx DAI iToken
-      {
-        iTokenAddress: "0x14094949152EDDBFcd073717200DA82fEd8dC960",
-        underlyingAddress: "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359"
-      },
-      // bZx ETH iToken
-      {
-        iTokenAddress: "0x77f973FCaF871459aa58cd81881Ce453759281bC",
-        underlyingAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-      },
-      // bZx USDC iToken
-      {
-        iTokenAddress: "0xF013406A0B1d544238083DF0B93ad0d2cBE0f65f",
-        underlyingAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-      },
-      // bZx WBTC iToken
-      {
-        iTokenAddress: "0xBA9262578EFef8b3aFf7F60Cd629d6CC8859C8b5",
-        underlyingAddress: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
-      },
-      // bZx BAT iToken
-      {
-        iTokenAddress: "0xA8b65249DE7f85494BC1fe75F525f568aa7dfa39",
-        underlyingAddress: "0x0D8775F648430679A709E98d2b0Cb6250d2887EF"
-      },
-      // bZx KNC iToken
-      {
-        iTokenAddress: "0x1cC9567EA2eB740824a45F8026cCF8e46973234D",
-        underlyingAddress: "0xdd974D5C2e2928deA5F71b9825b8b646686BD200"
-      },
-      // bZx REP iToken
-      {
-        iTokenAddress: "0xBd56E9477Fc6997609Cf45F84795eFbDAC642Ff1",
-        underlyingAddress: "0x1985365e9f78359a9B6AD760e32412f4a445E862"
-      },
-      // bZx ZRX iToken
-      {
-        iTokenAddress: "0xA7Eb2bc82df18013ecC2A6C533fc29446442EDEe",
-        underlyingAddress: "0xE41d2489571d322189246DaFA5ebDe1F4699F498"
-      },
       // sUSD
       {
         iTokenAddress: "0x49f4592E641820e928F9919Ef4aBd92a719B4b49",
@@ -119,18 +81,16 @@
         underlyingAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7"
       }
     ];
-    console.log("block", block, timestamp);
-    // console.log("getTokensResult", getTokensResult);
-    // if (getTokensResult && getTokensResult.output) {
-    //   _.each(getTokensResult.output, (token) => {
-    //     if(token[4] === '1') {
-    //       iTokens.push({
-    //         iTokenAddress: token[0],
-    //         underlyingAddress: token[1]
-    //       });
-    //     }
-    //   });
-    // }
+
+    _.each(getTokensResult.output, (token) => {
+      if(token[4] === '1') {
+        iTokens.push({
+          iTokenAddress: token[0],
+          underlyingAddress: token[1]
+        });
+      }
+    });
+    
 
 
     const iTokenCalls = _.map(iTokens, (iToken) => ({
@@ -162,10 +122,19 @@
 
     const kyberTokens = (await sdk.api.util.kyberTokens()).output;
 
-    balanceOfCalls = [
+    // Legacy bZx address
+    balanceOfCallsLegacy = [
       ..._.map(kyberTokens, (data, address) => ({
         target: address,
         params: '0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633'
+      }))
+    ];
+
+    // new bZx address
+    balanceOfCalls = [
+      ..._.map(kyberTokens, (data, address) => ({
+        target: address,
+        params: '0xd8ee69652e4e4838f2531732a46d1f7f584f0b7f'
       }))
     ];
 
@@ -175,8 +144,9 @@
       abi: 'erc20:balanceOf',
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResult);;
-
+    sdk.util.sumMultiBalanceOf(balances, balanceOfCallsLegacy);
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResult);
+    console.log(balances);
     return balances;
   }
 
