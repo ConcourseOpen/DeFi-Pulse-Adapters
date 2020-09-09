@@ -8,6 +8,7 @@ const _ = require('underscore');
 
 const abi = require('./abi');
 const itoken = require('./itoken');
+const { sum } = require('../../sdk/util');
 
 /*==================================================
   Main
@@ -74,6 +75,14 @@ let iTokensNew = [
   }
 ]
 
+let bzrxTokenAddress = "0x56d811088235F11C8920698a204A5010a788f4b3";
+let vbzrxTokenAddress = "0xB72B31907C1C95F3650b64b2469e08EdACeE5e8F";
+let bzxLetacyProtocolAddress = "0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633";
+let bzxProtocolAddress = "0xd8ee69652e4e4838f2531732a46d1f7f584f0b7f";
+// TODO for future staking
+let bzxStakingAddress = "0x576773CD0B51294997Ec4E4ff96c93d5E3AE9038";
+
+let mkrAddress = "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2";
 async function tvl(timestamp, block) {
   let balances = {};
 
@@ -83,9 +92,6 @@ async function tvl(timestamp, block) {
     params: [0, 200, 0],
     abi: abi["getTokens"]
   });
-  // for when staking is ready
-  let bzrxTokenAddress = "0x56d811088235F11C8920698a204A5010a788f4b3";
-  let vbzrxTokenAddress = "0xB72B31907C1C95F3650b64b2469e08EdACeE5e8F";
 
   _.each(getTokensResult.output, (token) => {
     if (token[4] === '1') {
@@ -121,7 +127,7 @@ async function tvl(timestamp, block) {
     if (supply.success && borrow.success) {
       const totalSupply = supply.output;
       const totalBorrow = borrow.output;
-      balances[iToken.underlyingAddress] = BigNumber(totalSupply).minus(totalBorrow).toFixed();
+      balances[iToken.underlyingAddress.toUpperCase()] = BigNumber(totalSupply).minus(totalBorrow).toFixed();
     }
   });
 
@@ -131,7 +137,7 @@ async function tvl(timestamp, block) {
   balanceOfCallsLegacy = [
     ..._.map(kyberTokens, (data, address) => ({
       target: address,
-      params: '0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633'
+      params: bzxLetacyProtocolAddress
     }))
   ];
 
@@ -139,9 +145,15 @@ async function tvl(timestamp, block) {
   balanceOfCalls = [
     ..._.map(kyberTokens, (data, address) => ({
       target: address,
-      params: '0xd8ee69652e4e4838f2531732a46d1f7f584f0b7f'
+      params: bzxProtocolAddress
     }))
   ];
+
+  const balanceOfResultLegacy = await sdk.api.abi.multiCall({
+    block,
+    calls: balanceOfCallsLegacy,
+    abi: 'erc20:balanceOf',
+  });
 
   const balanceOfResult = await sdk.api.abi.multiCall({
     block,
@@ -149,9 +161,37 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf',
   });
 
-  sdk.util.sumMultiBalanceOf(balances, balanceOfCallsLegacy);
-  sdk.util.sumMultiBalanceOf(balances, balanceOfResult);
-  console.log(balances);
+  let balanceOfvBZRX = await sdk.api.abi.call({
+    target: vbzrxTokenAddress,
+    params: bzxProtocolAddress,
+    abi: 'erc20:balanceOf',
+    block
+  });
+  console.log("balanceOfvBZRX", balanceOfvBZRX);
+  function sumMultiBalanceOf(balances, results) {
+    _.each(results.output, (result) => {
+      if (result.success) {
+        let address = result.input.target;
+        let balance = result.output;
+
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
+        }
+        balances[address.toUpperCase()] = BigNumber(balances[address.toUpperCase()] || 0).plus(balance).toFixed();
+      }
+    });
+  }
+
+  sumMultiBalanceOf(balances, balanceOfResultLegacy);
+  sumMultiBalanceOf(balances, balanceOfResult);
+
+  if (balanceOfvBZRX.output) {
+    balance = BigNumber(balanceOfvBZRX.output)
+    balances[bzrxTokenAddress.toUpperCase()] = BigNumber(balances[bzrxTokenAddress.toUpperCase()]).plus(balance).toFixed();
+  }
+
+
+  console.log("json ", balances);
   return balances;
 }
 
@@ -193,10 +233,6 @@ async function rates(timestamp, block) {
     calls: iTokenUnderlyingCalls,
     abi: 'erc20:symbol'
   });
-  // console.log("underlyingSymbol", underlyingSymbol);
-  // _.each(underlyingSymbol.output, (symbol) => {
-  //   console.log("target", symbol.input.target);
-  // });
 
   _.each(iTokensNew, (iToken) => {
     const supply = _.find(supplyInterestRate.output, (result) => (result.input.target === iToken.iTokenAddress));
@@ -204,25 +240,16 @@ async function rates(timestamp, block) {
     const totalBorrow = _.find(totalAssetBorrow.output, (result) => (result.input.target === iToken.iTokenAddress));
     let symbol = _.find(underlyingSymbol.output, (result) => (result.input.target === iToken.underlyingAddress));
 
-    if (iToken.underlyingAddress.toUpperCase() == "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2".toUpperCase()) {
+    if (iToken.underlyingAddress.toUpperCase() == mkrAddress.toUpperCase()) {
       symbol.output = "MKR";
     }
 
-    console.log("symbol", symbol.output);
-    console.log("supply", supply.output);
-    console.log("borrow", borrow.output);
-    console.log("totalBorrow", totalBorrow.output);
-    console.log("");
     ratesData.lend[symbol.output] = String(supply.output / 1e18);
     ratesData.borrow[symbol.output] = String(borrow.output / 1e18);
     ratesData.supply[symbol.output] = String(totalBorrow.output);
   });
 
-
-  // iToken supplyInterestRate - lendRate
-  // iToken avgBorrowInterestRate - borrowRate
-  // iToken totalAssetBorrow - total supply
-  console.log("ratesData", JSON.stringify(ratesData));
+  console.log("ratesData", ratesData);
   return ratesData;
 }
 
