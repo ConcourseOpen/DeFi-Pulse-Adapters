@@ -110,5 +110,80 @@
         "payable": false,
         "stateMutability": "view",
         "type": "function"
+    },
+    "underlying": {
+        "constant": true,
+        "inputs": [],
+        "name": "underlying",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "getAllMarkets": {
+        "constant": true,
+        "payable": false,
+        "inputs": [],
+        "name": "getAllMarkets",
+        "outputs": [
+            {
+                "internalType": "contract IFToken[]",
+                "name": "",
+                "type": "address[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "APR": {
+        "constant": true,
+        "payable": false,
+        "inputs": [],
+        "name": "APR",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "APY": {
+        "constant": true,
+        "payable": false,
+        "inputs": [],
+        "name": "APY",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    "totalBorrows": {
+        "constant": true,
+        "payable": false,
+        "inputs": [],
+        "name": "totalBorrows",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     }
 }
+

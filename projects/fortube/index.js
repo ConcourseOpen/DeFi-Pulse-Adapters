@@ -11,7 +11,10 @@
       Settings
       ==================================================*/
   const ForTube = "0xE48BC2Ba0F2d2E140382d8B5C8f261a3d35Ed09C";
+  const ForTubeV2 = "0x936E6490eD786FD0e0f0C1b1e4E1540b9D41F9eF";
   const EthAddress = "0x0000000000000000000000000000000000000000";
+  const EthAddressV2 = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+  const V2BLOCK = 10808868;
   
   async function getCollateralMarketsLength(block) {
     return (
@@ -49,6 +52,66 @@
     return erc20Assets;
   }
   
+  async function allUnderlyingMarkets(block) {
+    let fTokens = await getAllMarkets(block);
+    let erc20AssetsV2 = [];
+    let underlyings = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(fTokens, (fToken) => ({
+        target: fToken,
+        params: [],
+      })),
+      abi: abi['underlying']
+    });
+
+    _.each(underlyings.output, (result) => {
+      if (result.success && result.output != EthAddressV2) {
+        erc20AssetsV2.push(result.output);
+      }
+    });
+    return erc20AssetsV2;
+  }
+
+  async function getAllMarkets(block) {
+    return (await sdk.api.abi.call({
+      block,
+      target: ForTubeV2,
+      abi: abi['getAllMarkets'],
+    })).output;
+  }
+
+  async function multiGet(name, block) {
+    let fTokens = await getAllMarkets(block);
+    return (await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(fTokens, (fToken) => ({
+        target: fToken,
+        params: [],
+      })),
+      abi: abi[name],
+    })).output;
+  }
+
+  async function getUnderlyingInfo(ftoken, block) {
+    let underlying = (await sdk.api.abi.call({
+      block,
+      target: ftoken,
+      params: [],
+      abi: abi["underlying"],
+    })).output;
+
+    if (underlying == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      return { decimals: 18, symbol: "ETH" }
+    }
+
+    if (underlying == "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2") {
+      return { decimals: 18, symbol: "MKR" }
+    }
+
+    let info = await sdk.api.erc20.info(underlying);
+    return { decimals: info.output.decimals, symbol: info.output.symbol }
+  }
+
   /*==================================================
       TVL
       ==================================================*/
@@ -70,7 +133,24 @@
     balances[EthAddress] = (
       await sdk.api.eth.getBalance({ target: ForTube, block })
     ).output;
-  
+
+    //10808868 is First Deposit Tx blockNumber in ForTube V2
+    if (block > V2BLOCK) {
+      balances[EthAddress] += (await sdk.api.eth.getBalance({ target: ForTubeV2, block })).output;
+
+      let erc20AssetsV2 = await allUnderlyingMarkets(block);
+      let balanceOfResultsV2 = await sdk.api.abi.multiCall({
+        block,
+        calls: _.map(erc20AssetsV2, (assetV2) => ({
+          target: assetV2,
+          params: ForTubeV2,
+        })),
+        abi: "erc20:balanceOf",
+      });
+
+      sdk.util.sumMultiBalanceOf(balances, balanceOfResultsV2);
+    }
+
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
   
     return balances;
@@ -111,7 +191,35 @@
         ratesData.supply[symbol] = BigNumber(market.output.totalBorrows).div(10 ** decimals).toFixed();
       }
     })));
-  
+
+    //V2
+    if (block > V2BLOCK) {
+      let APRs = await multiGet('APR', block);
+      let APYs = await multiGet('APY', block);
+      let Supplies = await multiGet('totalBorrows', block);
+
+      await (Promise.all(APRs.map(async (APR) => {
+        if (APR.success) {
+          let info = await getUnderlyingInfo(APR.input.target, block);
+          ratesData.borrow[info.symbol] = String((APR.output / 1e18) * 100);
+        }
+      })));
+
+      await (Promise.all(APYs.map(async (APY) => {
+        if (APY.success) {
+          let info = await getUnderlyingInfo(APY.input.target, block);
+          ratesData.lend[info.symbol] = String((APY.output / 1e18) * 100);
+        }
+      })));
+
+      await (Promise.all(Supplies.map(async (supply) => {
+        if (supply.success) {
+          let info = await getUnderlyingInfo(supply.input.target, block);
+          ratesData.supply[info.symbol] = BigNumber(supply.output).div(10 ** info.decimals).toFixed();
+        }
+      })));
+    }
+
     return ratesData;
   }
   
