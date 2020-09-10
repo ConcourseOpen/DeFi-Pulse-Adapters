@@ -136,7 +136,8 @@
 
     //10808868 is First Deposit Tx blockNumber in ForTube V2
     if (block > V2BLOCK) {
-      balances[EthAddress] += (await sdk.api.eth.getBalance({ target: ForTubeV2, block })).output;
+      const ethBalance2 = (await sdk.api.eth.getBalance({ target: ForTubeV2, block })).output;
+      balances[EthAddress] = BigNumber(balances[EthAddress]).plus(ethBalance2).toFixed();
 
       let erc20AssetsV2 = await allUnderlyingMarkets(block);
       let balanceOfResultsV2 = await sdk.api.abi.multiCall({
