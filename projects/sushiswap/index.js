@@ -12,7 +12,7 @@ async function tvl(timestamp, block) {
   v2[ETH] = v2[WETH];
   delete v2[WETH];
 
-  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)));
+  const tokenAddresses = new Set(Object.keys(v2));
 
   const balances = (
     Array
