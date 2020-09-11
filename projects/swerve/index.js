@@ -28,7 +28,7 @@
 
 
     for(let [i, totalSupply] of totalSupplyResults.output.entries()) {
-      balances[totalSupply.input.target] = totalSupply.output
+      balances[totalSupply.input.target] = totalSupply.output * 1.002 //add multiplier
     }
 
     return balances;
