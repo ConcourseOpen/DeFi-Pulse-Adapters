@@ -1,9 +1,19 @@
-const BigNumber = require('bignumber.js')
-
+/*==================================================
+  Modules
+  ==================================================*/
+const BigNumber = require('bignumber.js');
+const sdk = require('../../sdk');
 const v2TVL = require('./v2');
 
-const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
-const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase();
+/*==================================================
+  Settings
+  ==================================================*/
+const ETH = '0x0000000000000000000000000000000000000000';
+const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+
+/*==================================================
+  TVL
+  ==================================================*/
 
 async function tvl(timestamp, block) {
   const [v2] = await Promise.all([v2TVL(timestamp, block)]);

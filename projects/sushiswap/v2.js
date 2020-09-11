@@ -1,13 +1,22 @@
+/*==================================================
+  Modules
+  ==================================================*/
 const BigNumber = require('bignumber.js');
-
 const sdk = require('../../sdk');
 const token0 = require('./abis/token0.json');
 const token1 = require('./abis/token1.json');
 const getReserves = require('./abis/getReserves.json');
 
+
+/*==================================================
+  Settings
+  ==================================================*/
 const START_BLOCK = 10794229;
 const FACTORY = '0xc0aee478e3658e2610c5f7a4a2e1777ce9e4f2ac';
 
+/*==================================================
+  TVL
+  ==================================================*/
 module.exports = async function tvl(_, block) {
   const supportedTokens = await (
     sdk
@@ -28,33 +37,38 @@ module.exports = async function tvl(_, block) {
       })
   ).output;
 
-  const pairAddresses = logs
-    // sometimes the full log is emitted
-    .map((log) =>
-      typeof log === 'string' ? log : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`
-    )
-    // lowercase
-    .map((pairAddress) => pairAddress.toLowerCase());
+  const pairAddresses = (
+    logs
+      .map((log) =>         // sometimes the full log is emitted
+        typeof log === 'string' ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()
+      )
+  );
 
   const [token0Addresses, token1Addresses] = await Promise.all([
-    sdk.api.abi
-      .multiCall({
-        abi: token0,
-        calls: pairAddresses.map((pairAddress) => ({
-          target: pairAddress,
-        })),
-        block,
-      })
-      .then(({ output }) => output),
-    sdk.api.abi
-      .multiCall({
-        abi: token1,
-        calls: pairAddresses.map((pairAddress) => ({
-          target: pairAddress,
-        })),
-        block,
-      })
-      .then(({ output }) => output),
+    (
+      await sdk
+        .api
+        .abi
+        .multiCall({
+          abi: token0,
+          calls: pairAddresses.map((pairAddress) => ({
+            target: pairAddress,
+          })),
+          block,
+        })
+    ).output,
+    (
+      await sdk
+        .api
+        .abi
+        .multiCall({
+          abi: token1,
+          calls: pairAddresses.map((pairAddress) => ({
+            target: pairAddress,
+          })),
+          block,
+        })
+    ).output,
   ]);
 
   const pairs = {};
@@ -86,14 +100,18 @@ module.exports = async function tvl(_, block) {
     }
   });
 
-  const reserves = (await sdk.api.abi
-    .multiCall({
-      abi: getReserves,
-      calls: Object.keys(pairs).map((pairAddress) => ({
-        target: pairAddress,
-      })),
-      block,
-    })).output;
+  const reserves = (
+    await sdk
+      .api
+      .abi
+      .multiCall({
+        abi: getReserves,
+        calls: Object.keys(pairs).map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      })
+  ).output;
 
   return reserves.reduce((accumulator, reserve, i) => {
     if (reserve.success) {
