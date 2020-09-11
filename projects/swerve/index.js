@@ -22,9 +22,9 @@
       abi: 'erc20:totalSupply'
     })
 
-    let swaps = [
-       '0x329239599afB305DA0A2eC69c58F8a6697F9F88d',
-     ]
+//    let swaps = [
+//       '0x329239599afB305DA0A2eC69c58F8a6697F9F88d',
+//     ]
 
 
     for(let [i, totalSupply] of totalSupplyResults.output.entries()) {
