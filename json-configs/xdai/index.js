@@ -1,4 +1,4 @@
-const sdk = require('defipulse-sdk/sdk');
+const sdk = require('../../sdk');
 
 module.exports = {
   name: 'xDai',
