@@ -22,13 +22,32 @@
       abi: 'erc20:totalSupply'
     })
 
-//    let swaps = [
-//       '0x329239599afB305DA0A2eC69c58F8a6697F9F88d',
-//     ]
-
+    let swaps = [
+       '0x329239599afB305DA0A2eC69c58F8a6697F9F88d',
+     ]
+    
+    let virtualPriceCalls = swaps.map(token => ({ target: token }))
+    let virtualPriceResults = await sdk.api.abi.multiCall({
+      block,
+      calls: virtualPriceCalls,
+      abi: {
+        "name": "get_virtual_price",
+        "outputs": [
+         {
+          "type": "uint256",
+          "name": "out"
+         }
+        ],
+        "inputs": [],
+        "constant": true,
+        "payable": false,
+        "type": "function",
+        "gas": 1084167
+      }
+    })
 
     for(let [i, totalSupply] of totalSupplyResults.output.entries()) {
-      balances[totalSupply.input.target] = totalSupply.output * 1.002 //add multiplier
+      balances[totalSupply.input.target] = totalSupply.output * virtualPriceResults.output[i].output //TVL in USD (non decimal-converted)
     }
 
     return balances;
