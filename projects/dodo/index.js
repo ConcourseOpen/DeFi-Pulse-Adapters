@@ -72,7 +72,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -82,7 +82,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "DODO",
   token: null,
-  category: "dexes",
+  category: "DEXes",
   start: 1597126986, // Aug-07-2020 03:56:08 PM +UTC
   tvl,
 };
