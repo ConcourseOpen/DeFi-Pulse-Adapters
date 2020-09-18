@@ -82,7 +82,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "DODO",
   token: null,
-  category: "DEXes",
-  start: 1596772568, // Aug-07-2020 03:56:08 PM +UTC
+  category: "dexes",
+  start: 1597126986, // Aug-07-2020 03:56:08 PM +UTC
   tvl,
 };
