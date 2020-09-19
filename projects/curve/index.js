@@ -25,9 +25,11 @@
       '0x06364f10B501e868329afBc005b3492902d6C763',
       '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
       '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714',
+      '0x4CA9b3063Ec5866A4B82E437059D2C43d1be596F',
+      '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
     ]
 
-    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2, 3]
+    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2, 3, 2, 3]
 
     let balancesCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
@@ -36,7 +38,7 @@
 
     let balancesResults = await sdk.api.abi.multiCall({
       block,
-      calls: balancesCalls,
+      calls: balancesCalls.slice(0, balancesCalls.length-2),
       abi: {
         "name": "balances",
         "outputs": [
@@ -57,6 +59,32 @@
         "gas": 2250
       },
     })
+
+    let balancesResults2 = await sdk.api.abi.multiCall({
+      block,
+      calls: balancesCalls.slice(-2),
+      abi: {
+        "name": "balances",
+        "outputs": [
+         {
+          "type": "uint256",
+          "name": "out"
+         }
+        ],
+        "inputs": [
+         {
+          "type": "uint256",
+          "name": "arg0"
+         }
+        ],
+        "constant": true,
+        "payable": false,
+        "type": "function",
+        "gas": 2250
+      },
+    })
+
+    balancesResults = [...balancesResults, ...balancesResults2]
 
     let coinsCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
