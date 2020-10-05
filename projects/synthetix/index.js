@@ -7,13 +7,19 @@
   const _ = require('underscore');
   const abi = require('./abi');
   const pageResults = require('graph-results-pager');
+  const { synthetix, Network } = require('@synthetixio/js');
+  const { ethers } = require('ethers');
 
 /*==================================================
   Settings
 ==================================================*/
-
-  const snxContract = '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F';
-  const stateAddress = '0x4b9Ca5607f1fF8019c1C6A3c2f0CC8de622D5B82';
+  const snxjs = synthetix(process.env.INFURA_KEY ? {
+    network: Network.Mainnet,
+    provider: new ethers.providers.InfuraProvider(
+      'homestead',
+      process.env.INFURA_KEY
+    )
+  }  : { network: Network.Mainnet });
   const snxGraphEndpoint = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix';
 
 /*==================================================
@@ -22,30 +28,37 @@
 
   async function tvl (timestamp, block) {
 
-    let totalSNXLocked = new BigNumber(0);
+    let totalTopStakersSNXLocked = new BigNumber(0);
+    let totalTopStakersSNX = new BigNumber(0);
 
     const holders = await SNXHolders(block);
 
     const issuanceRatio = (await sdk.api.abi.call({
       block,
-      target: stateAddress,
+      target: snxjs.contracts.SynthetixState.address,
       abi: abi['issuanceRatio']
     })).output;
 
     const ratio = (await sdk.api.abi.multiCall({
       block,
       abi: abi['collateralisationRatio'],
-      calls: _.map(holders, holder => ({ target: snxContract, params: holder.id }))
+      calls: _.map(holders, holder => ({ target: snxjs.contracts.Synthetix.address, params: holder.id }))
     })).output;
 
     _.forEach(holders, (holder) => {
       let _collateral = holder.collateral;
       let _ratio = _.find(ratio, result => result.input.params[0] === holder.id).output;
       let locked = _collateral * Math.min(1, _ratio / issuanceRatio);
-      totalSNXLocked = totalSNXLocked.plus(locked);
+      totalTopStakersSNX = totalTopStakersSNX.plus(_collateral)
+      totalTopStakersSNXLocked = totalTopStakersSNXLocked.plus(locked);
     });
 
-    return { [snxContract]: totalSNXLocked.toFixed() };
+    const percentLocked = totalTopStakersSNXLocked.div(totalTopStakersSNX);
+    const unformattedSnxTotalSupply = await snxjs.contracts.Synthetix.totalSupply();
+    const snxTotalSupply = parseInt(snxjs.utils.formatEther(unformattedSnxTotalSupply));
+    const totalSNXLocked = percentLocked.times(snxTotalSupply);
+
+    return { [snxjs.contracts.Synthetix.address]: totalSNXLocked.toFixed() };
   }
 
   // Uses graph protocol to run through SNX contract. Since there is a limit of 100 results per query
