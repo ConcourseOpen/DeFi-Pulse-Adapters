@@ -50,7 +50,7 @@
       balances[totalSupply.input.target] = totalSupply.output * virtualPriceResults.output[i].output //TVL in USD (non decimal-converted)
     }
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 
@@ -61,7 +61,7 @@
   module.exports = {
     name: 'Swerve Finance',
     token: null,
-    category: 'dexes',
+    category: 'DEXes',
     start: 1599202211,        // September 4, 2020 6:50:11 AM UTC
     tvl
   }
