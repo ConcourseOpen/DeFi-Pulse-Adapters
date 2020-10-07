@@ -29,6 +29,7 @@
       getUnderlying('fTUSD',block),
       getUnderlying('fWBTC',block),
       getUnderlying('fRENBTC',block),
+      getUnderlying('fCRVRENWBTC',block),
     ];
 
     let results = await Promise.all(promises);
@@ -42,7 +43,7 @@
       '0x0000000000085d4780B73119b644AE5ecd22b376': results[4],   // TUSD
       '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': results[5],   // WBTC
       '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D': Math.trunc(results[6])  // RENBTC
-                                                      + Math.trunc(results[6]), //crvRENWBTC, estimate
+                                                      + Math.trunc(results[7]*Math.pow(10,-10)), //crvRENWBTC, estimate
       // TODO Uniswap LP underlying
     };
 
