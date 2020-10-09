@@ -30,9 +30,9 @@
     },
     // DeFi Large Cap
     {
-      "startTimestamp": 1591609517,
-      "smartPool": "0x24D1917c1ae6C085e6b68B6c1A41B8f9dE5bd441",
-      "balancerPool": "0x71c4f1a8d95ad1faa0f893b74ca67fdf53ee63fb"
+      "startTimestamp": 1601982824,
+      "smartPool": "0x78f225869c08d478c34e5f645d07a87d3fe8eb78",
+      "balancerPool": "0x0e5c1813587088378787e7dd6c9cb4cb01a0ea18"
     },
   ];
 
