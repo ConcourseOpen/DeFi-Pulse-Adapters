@@ -52,20 +52,21 @@ async function tvl(timestamp, block) {
     },
   ];
 
-  const { output: _totalETH } = await sdk.api.eth.getBalance({
+  const { output: _totalETH } = await sdk.api.abi.call({
     target: bankAddress,
     block,
+    abi: abi["totalETH"],
   });
 
   const totalETH = Bignumber(_totalETH);
 
-  const { output: _reservePool } = await sdk.api.abi.call({
+  const { output: _totalDebt } = await sdk.api.abi.call({
     target: bankAddress,
     block,
-    abi: abi["reservePool"],
+    abi: abi["glbDebtVal"],
   });
 
-  const reservePool = Bignumber(_reservePool);
+  const totalDebt = Bignumber(_totalDebt);
 
   const { output: _lpTokens } = await sdk.api.abi.multiCall({
     calls: pools.map((pool) => ({
@@ -103,8 +104,8 @@ async function tvl(timestamp, block) {
     Bignumber(_totalLpToken.output)
   );
 
-  const unUtilizedValue = totalETH.minus(reservePool);
-  console.log(unUtilizedValue.div(10 ** 18).toString());
+  const unUtilizedValue = totalETH.minus(totalDebt);
+
   let tvl = Bignumber(unUtilizedValue);
 
   for (let i = 0; i < lpTokens.length; i++) {
@@ -112,11 +113,10 @@ async function tvl(timestamp, block) {
       .times(totalETHOnStakings[i])
       .div(totalLpTokens[i])
       .times(Bignumber(2));
-    // console.log(pools[i].name, amount.div(10 ** 18).toString());
+
     tvl = tvl.plus(amount);
   }
 
-  // console.log(tvl.div(10 ** 18).toString(), block, timestamp);
   return {
     "0x0000000000000000000000000000000000000000": tvl.toString(), // ETH
   };
