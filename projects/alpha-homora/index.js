@@ -118,7 +118,7 @@ async function tvl(timestamp, block) {
   }
 
   return {
-    "0x0000000000000000000000000000000000000000": tvl.toString(), // ETH
+    "0x0000000000000000000000000000000000000000": tvl.toFixed(0), // ETH
   };
 }
 
