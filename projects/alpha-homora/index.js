@@ -107,17 +107,14 @@ async function tvl(timestamp, block) {
 
   let tvl = Bignumber(unUtilizedValue);
 
-  console.log(tvl.div(10 ** 18).toString());
   for (let i = 0; i < lpTokens.length; i++) {
     const amount = lpTokens[i]
       .times(totalETHOnStakings[i])
       .div(totalLpTokens[i])
       .times(Bignumber(2));
-    console.log(pools[i].name, amount.div(10 ** 18).toString());
+
     tvl = tvl.plus(amount);
   }
-
-  console.log(tvl.div(10 ** 18).toString(), block, timestamp);
 
   return {
     "0x0000000000000000000000000000000000000000": tvl, // ETH
