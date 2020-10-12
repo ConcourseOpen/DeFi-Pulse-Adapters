@@ -11,6 +11,17 @@ const Bignumber = require("bignumber.js");
   ==================================================*/
 
 async function tvl(timestamp, block) {
+  const startTimestamp = 1602054167;
+
+  const ethAddress = "0x0000000000000000000000000000000000000000";
+  let balances = {
+    [ethAddress]: "0", // ETH
+  };
+
+  if (timestamp < startTimestamp) {
+    return balances;
+  }
+
   const bankAddress = "0x67b66c99d3eb37fa76aa3ed1ff33e8e39f0b9c7a";
   const WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
@@ -117,9 +128,9 @@ async function tvl(timestamp, block) {
     tvl = tvl.plus(amount);
   }
 
-  return {
-    "0x0000000000000000000000000000000000000000": tvl.toFixed(0), // ETH
-  };
+  balances[ethAddress] = tvl.toFixed(0);
+
+  return balances;
 }
 
 /*==================================================
@@ -130,6 +141,6 @@ module.exports = {
   name: "Alpha Homora", // project name
   token: null, // null, or token symbol if project has a custom token
   category: "assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-  start: 1514764800, // unix timestamp (utc 0) specifying when the project began, or where live data begins
+  start: 1602054167, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };
