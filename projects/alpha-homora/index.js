@@ -93,7 +93,7 @@ async function tvl(timestamp, block) {
 
   const { output: _totalLpTokens } = await sdk.api.abi.multiCall({
     calls: pools.map((pool) => ({
-      target: pool.lpTokenAddress,
+      target: pool.lpStakingAddress,
     })),
     abi: abi["totalSupply"],
     block,
@@ -104,7 +104,7 @@ async function tvl(timestamp, block) {
   );
 
   const unUtilizedValue = totalETH.minus(reservePool);
-
+  console.log(unUtilizedValue.div(10 ** 18).toString());
   let tvl = Bignumber(unUtilizedValue);
 
   for (let i = 0; i < lpTokens.length; i++) {
@@ -112,12 +112,13 @@ async function tvl(timestamp, block) {
       .times(totalETHOnStakings[i])
       .div(totalLpTokens[i])
       .times(Bignumber(2));
-
+    // console.log(pools[i].name, amount.div(10 ** 18).toString());
     tvl = tvl.plus(amount);
   }
 
+  // console.log(tvl.div(10 ** 18).toString(), block, timestamp);
   return {
-    "0x0000000000000000000000000000000000000000": tvl, // ETH
+    "0x0000000000000000000000000000000000000000": tvl.toString(), // ETH
   };
 }
 
