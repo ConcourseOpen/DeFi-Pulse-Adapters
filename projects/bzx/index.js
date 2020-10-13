@@ -16,7 +16,7 @@ let iTokens = [
   // sUSD
   {
     iTokenAddress: "0x49f4592E641820e928F9919Ef4aBd92a719B4b49",
-    underlyingAddress: "0x57Ab1E02fEE23774580C119740129eAC7081e9D3"
+    underlyingAddress: "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"
   },
   // CHAI
   {
@@ -39,6 +39,8 @@ let registryContractAddress = "0xf0E474592B455579Fe580D610b846BdBb529C6F7";
 
 let mkrAddress = "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2";
 
+let v2DeployBlock = 10829970;
+let v2VestingDeployBlock = 10441197;
 /*==================================================
   Main
   ==================================================*/
@@ -62,20 +64,21 @@ async function tvl(timestamp, block) {
     }
   });
 
-  const getTokensResult = await sdk.api.abi.call({
-    block,
-    target: registryContractAddress,
-    params: [0, 200],
-    abi: registry["getTokens"]
-  });
-
-  _.each(getTokensResult.output, (token) => {
-    iTokensNew.push({
-      iTokenAddress: token[0],
-      underlyingAddress: token[1]
+  if (block > v2DeployBlock) {
+    const getTokensResult = await sdk.api.abi.call({
+      block,
+      target: registryContractAddress,
+      params: [0, 200],
+      abi: registry["getTokens"]
     });
-  });
 
+    _.each(getTokensResult.output, (token) => {
+      iTokensNew.push({
+        iTokenAddress: token[0],
+        underlyingAddress: token[1]
+      });
+    });
+  }
   iTokens = iTokens.concat(iTokensNew);
   const iTokenCalls = _.map(iTokens, (iToken) => ({
     target: iToken.iTokenAddress
@@ -134,12 +137,15 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf',
   });
 
-  let balanceOfvBZRX = await sdk.api.abi.call({
-    target: vbzrxTokenAddress,
-    params: bzxProtocolAddress,
-    abi: 'erc20:balanceOf',
-    block
-  });
+  let balanceOfvBZRX = {}
+  if (block > v2VestingDeployBlock) {
+    balanceOfvBZRX = await sdk.api.abi.call({
+      target: vbzrxTokenAddress,
+      params: bzxProtocolAddress,
+      abi: 'erc20:balanceOf',
+      block
+    });
+  }
 
   function sumMultiBalanceOf(balances, results) {
     _.each(results.output, (result) => {
@@ -159,8 +165,13 @@ async function tvl(timestamp, block) {
   sumMultiBalanceOf(balances, balanceOfResult);
 
   if (balanceOfvBZRX.output) {
-    balance = BigNumber(balanceOfvBZRX.output)
-    balances[bzrxTokenAddress.toUpperCase()] = BigNumber(balances[bzrxTokenAddress.toUpperCase()]).plus(balance).toFixed();
+    balance = BigNumber(balanceOfvBZRX.output);
+    beforeBalance = BigNumber(balances[bzrxTokenAddress.toUpperCase()]);
+    if (beforeBalance.isNaN()) {
+      beforeBalance = new BigNumber(0);
+    }
+    total = beforeBalance.plus(balance).toFixed();
+    balances[bzrxTokenAddress.toUpperCase()] = total;
   }
 
   return balances;
@@ -232,7 +243,7 @@ module.exports = {
   token: 'BZRX',
   category: 'lending',
   website: "https://bzx.network",
-  start: 1558742400,  // 05/25/2019(UTC)
+  start: 1559433540,  // Saturday, June 1, 2019 11:59:00 PM
   tvl,
   rates,
   term: "1 block",
