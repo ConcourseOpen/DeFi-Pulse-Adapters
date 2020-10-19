@@ -10,14 +10,14 @@
   ==================================================*/
 
   const fTokens = {
-    'fWETH':       {underlying: 'WETH', decimals: 18, contract: '0x8e298734681adbfC41ee5d17FF8B0d6d803e7098', created: 10861886 },
-    'fUSDC':       {underlying: 'USDC', decimals: 6,  contract: '0xc3F7ffb5d5869B3ade9448D094d81B0521e8326f', created: 10770105 },
-    'fUSDT':       {underlying: 'USDT', decimals: 6,  contract: '0xc7EE21406BB581e741FBb8B21f213188433D9f2F', created: 10770108 },
+    'fWETHv0':       {underlying: 'WETH', decimals: 18, contract: '0x8e298734681adbfC41ee5d17FF8B0d6d803e7098', created: 10861886 },
+    'fUSDCv0':       {underlying: 'USDC', decimals: 6,  contract: '0xc3F7ffb5d5869B3ade9448D094d81B0521e8326f', created: 10770105 },
+    'fUSDTv0':       {underlying: 'USDT', decimals: 6,  contract: '0xc7EE21406BB581e741FBb8B21f213188433D9f2F', created: 10770108 },
     'fTUSD':       {underlying: 'TUSD', decimals: 18, contract: '0x7674622c63Bee7F46E86a4A5A18976693D54441b', created: 10997721 },
-    'fDAI':        {underlying: 'DAI',  decimals: 18, contract: '0xe85C8581e60D7Cd32Bbfd86303d2A4FA6a951Dac', created: 10770103 },
-    'fWBTC':       {underlying: 'WBTC', decimals: 8,  contract: '0xc07EB91961662D275E2D285BdC21885A4Db136B0', created: 10802976 },
-    'fRENBTC':     {underlying: 'RENBTC', decimals: 8, contract: '0xfBe122D0ba3c75e1F7C80bd27613c9f35B81FEeC', created: 10802986 },
-    'fCRVRENWBTC': {underlying: 'CRVRENWBTC', decimals: 18, contract: '0x192E9d29D43db385063799BC239E772c3b6888F3', created: 10815917 },
+    'fDAIv0':        {underlying: 'DAI',  decimals: 18, contract: '0xe85C8581e60D7Cd32Bbfd86303d2A4FA6a951Dac', created: 10770103 },
+    'fWBTCv0':       {underlying: 'WBTC', decimals: 8,  contract: '0xc07EB91961662D275E2D285BdC21885A4Db136B0', created: 10802976 },
+    'fRENBTCv0':     {underlying: 'RENBTC', decimals: 8, contract: '0xfBe122D0ba3c75e1F7C80bd27613c9f35B81FEeC', created: 10802986 },
+    'fCRVRENWBTCv0': {underlying: 'CRVRENWBTC', decimals: 18, contract: '0x192E9d29D43db385063799BC239E772c3b6888F3', created: 10815917 },
     'fUNI_ETH-DAI_v0': {underlying: 'UNI_ETH-DAI', decimals: 18, contract: '0x1a9F22b4C385f78650E7874d64e442839Dc32327', created: 10883048, type:'UNI' },
     'fUNI_ETH-USDC_v0': {underlying: 'UNI_ETH-USDC', decimals: 18, contract: '0x63671425ef4D25Ec2b12C7d05DE855C143f16e3B', created: 10883030, type:'UNI' },
     'fUNI_ETH-USDT_v0': {underlying: 'UNI_ETH-USDT', decimals: 18, contract: '0xB19EbFB37A936cCe783142955D39Ca70Aa29D43c', created: 10883026, type:'UNI' },
@@ -26,6 +26,13 @@
     'fUNI_ETH-USDC': {underlying: 'UNI_ETH-USDC', decimals: 18, contract: '0xA79a083FDD87F73c2f983c5551EC974685D6bb36', created: 11041667, type:'UNI' },
     'fUNI_ETH-USDT': {underlying: 'UNI_ETH-USDT', decimals: 18, contract: '0x7DDc3ffF0612E75Ea5ddC0d6Bd4e268f70362Cff', created: 11011433, type:'UNI' },
     'fUNI_ETH-WBTC': {underlying: 'UNI_ETH-WBTC', decimals: 18, contract: '0x01112a60f427205dcA6E229425306923c3Cc2073', created: 11041683, type:'UNI' },
+    'fWETH':       {underlying: 'WETH', decimals: 18, contract: '0xFE09e53A81Fe2808bc493ea64319109B5bAa573e', created: 11086824 },
+    'fUSDC':       {underlying: 'USDC', decimals: 6,  contract: '0xf0358e8c3CD5Fa238a29301d0bEa3D63A17bEdBE', created: 11086842 },
+    'fUSDT':       {underlying: 'USDT', decimals: 6,  contract: '0x053c80eA73Dc6941F518a68E2FC52Ac45BDE7c9C', created: 11086849 },
+    'fDAI':        {underlying: 'DAI',  decimals: 18, contract: '0xab7FA2B2985BCcfC13c6D86b1D5A17486ab1e04C', created: 11086832 },
+    'fWBTC':       {underlying: 'WBTC', decimals: 8,  contract: '0x5d9d25c7C457dD82fc8668FFC6B9746b674d4EcB', created: 11068089 },
+    'fRENBTC':     {underlying: 'RENBTC', decimals: 8, contract: '0xC391d1b08c1403313B0c28D47202DFDA015633C4', created: 11086855 },
+    'fCRVRENWBTC': {underlying: 'CRVRENWBTC', decimals: 18, contract: '0x9aA8F427A17d6B0d91B6262989EdC7D45d6aEdf8', created: 11086865 },
   };
 
   const uniPools = {
@@ -41,14 +48,14 @@
 
   async function tvl(timestamp, block) {
     const promises = [
-      getUnderlying('fWETH',block),
-      getUnderlying('fDAI',block),
-      getUnderlying('fUSDC',block),
-      getUnderlying('fUSDT',block),
+      getUnderlying('fWETHv0',block),
+      getUnderlying('fDAIv0',block),
+      getUnderlying('fUSDCv0',block),
+      getUnderlying('fUSDTv0',block),
       getUnderlying('fTUSD',block),
-      getUnderlying('fWBTC',block),
-      getUnderlying('fRENBTC',block),
-      getUnderlying('fCRVRENWBTC',block),
+      getUnderlying('fWBTCv0',block),
+      getUnderlying('fRENBTCv0',block),
+      getUnderlying('fCRVRENWBTCv0',block),
       getUniswapUnderlying('fUNI_ETH-DAI_v0',block),
       getUniswapUnderlying('fUNI_ETH-USDC_v0',block),
       getUniswapUnderlying('fUNI_ETH-USDT_v0',block),
@@ -57,21 +64,38 @@
       getUniswapUnderlying('fUNI_ETH-USDC',block),
       getUniswapUnderlying('fUNI_ETH-USDT',block),
       getUniswapUnderlying('fUNI_ETH-WBTC',block),
+      getUnderlying('fWETH',block),
+      getUnderlying('fDAI',block),
+      getUnderlying('fUSDC',block),
+      getUnderlying('fUSDT',block),
+      getUnderlying('fWBTC',block),
+      getUnderlying('fRENBTC',block),
+      getUnderlying('fCRVRENWBTC',block),
     ];
 
     let results = await Promise.all(promises);
 
     let balances = {
-      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': results[0]                     // WETH
+      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2': results[0] + results[16]       // WETH
               + results[8][1] + results[9][1] + results[10][0] + results[11][1]    // WETH UNIv0
               + results[12][1] + results[13][1] + results[14][0] + results[15][1], // WETH UNI
-      '0x6B175474E89094C44Da98b954EedeAC495271d0F': results[1] + results[8][0] + results[12][0],  // DAI
-      '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': results[2] + results[9][0] + results[13][0],  // USDC
-      '0xdAC17F958D2ee523a2206206994597C13D831ec7': results[3] + results[10][1] + results[14][1], // USDT
-      '0x0000000000085d4780B73119b644AE5ecd22b376': results[4],                                   // TUSD
-      '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': results[5] + results[11][0] + results[15][0], // WBTC
-      '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D': Math.trunc(results[6])                        // RENBTC
-                                                      + Math.trunc(results[7]*Math.pow(10,-10)),  //crvRENWBTC, estimate
+      '0x6B175474E89094C44Da98b954EedeAC495271d0F': results[1] + results[17]       // DAI
+              + results[8][0]                                                      // DAI UNIv0
+              + results[12][0],                                                    // DAI UNI
+      '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': results[2] + results[18]       // USDC
+              + results[9][0]                                                      // USDC UNIv0
+              + results[13][0],                                                    // USDC UNI
+      '0xdAC17F958D2ee523a2206206994597C13D831ec7': results[3] + results[19]       // USDT
+              + results[10][1]                                                     // USDT UNIv0
+              + results[14][1],                                                    // USDT UNI
+      '0x0000000000085d4780B73119b644AE5ecd22b376': results[4],                    // TUSD
+      '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': results[5] + results[20]       // WBTC
+              + results[11][0]                                                     // WBTC UNIv0
+              + results[15][0],                                                    // WBTC UNI
+      '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D': Math.trunc(results[6])         // RENBTCv0
+              + Math.trunc(results[21])                                            // RENBTC
+              + Math.trunc(results[7]*Math.pow(10,-10))                            // crvRENWBTCv0, estimate
+              + Math.trunc(results[22]*Math.pow(10,-10)),                          // crvRENWBTC, estimate
     };
 
     return balances;
