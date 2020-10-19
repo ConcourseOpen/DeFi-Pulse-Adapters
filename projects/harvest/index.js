@@ -33,6 +33,7 @@
     'fWBTC':       {underlying: 'WBTC', decimals: 8,  contract: '0x5d9d25c7C457dD82fc8668FFC6B9746b674d4EcB', created: 11068089 },
     'fRENBTC':     {underlying: 'RENBTC', decimals: 8, contract: '0xC391d1b08c1403313B0c28D47202DFDA015633C4', created: 11086855 },
     'fCRVRENWBTC': {underlying: 'CRVRENWBTC', decimals: 18, contract: '0x9aA8F427A17d6B0d91B6262989EdC7D45d6aEdf8', created: 11086865 },
+    'fSUSHI_WBTC-TBTC': {underlying: 'SUSHI_WBTC-TBTC', decimals: 18, contract: '0xF553E1f826f42716cDFe02bde5ee76b2a52fc7EB', created: 11036219 },
   };
 
   const uniPools = {
@@ -44,6 +45,8 @@
                     token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
     'UNI_ETH-WBTC': {contract: '0xBb2b8038a1640196FbE3e38816F3e67Cba72D940', created: 10091097,
                     token0: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', token1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
+    'SUSHI_WBTC-TBTC': {contract: '0x2Dbc7dD86C6cd87b525BD54Ea73EBeeBbc307F68', created: 10994541,
+                    token0: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', token1: '0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa' },
   };
 
   async function tvl(timestamp, block) {
@@ -71,6 +74,7 @@
       getUnderlying('fWBTC',block),
       getUnderlying('fRENBTC',block),
       getUnderlying('fCRVRENWBTC',block),
+      getUniswapUnderlying('fSUSHI_WBTC-TBTC',block),
     ];
 
     let results = await Promise.all(promises);
@@ -91,11 +95,13 @@
       '0x0000000000085d4780B73119b644AE5ecd22b376': results[4],                    // TUSD
       '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': results[5] + results[20]       // WBTC
               + results[11][0]                                                     // WBTC UNIv0
-              + results[15][0],                                                    // WBTC UNI
-      '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D': Math.trunc(results[6])         // RENBTCv0
-              + Math.trunc(results[21])                                            // RENBTC
-              + Math.trunc(results[7]*Math.pow(10,-10))                            // crvRENWBTCv0, estimate
-              + Math.trunc(results[22]*Math.pow(10,-10)),                          // crvRENWBTC, estimate
+              + results[15][0]                                                     // WBTC UNI
+              + results[23][0]*Math.pow(10,-10) + results[23][1]*Math.pow(10,-10), // WBTC SUSHI
+      '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D': results[6]                     // RENBTCv0
+              + results[21]                                                        // RENBTC
+              + results[7]*Math.pow(10,-10)                                        // crvRENWBTCv0, estimate
+              + results[22]*Math.pow(10,-10),                                      // crvRENWBTC, estimate
+       // TODO attribute TBTC when supported
     };
 
     return balances;
