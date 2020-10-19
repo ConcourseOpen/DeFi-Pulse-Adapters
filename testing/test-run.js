@@ -18,7 +18,7 @@
 
   const tvlTimeLimit = 1000 * 60 * 5;
   const ratesTimeLimit = 30 * 1000;
-  const symbolLengthLimit = 6;
+  const symbolLengthLimit = 30;
   const ethCallCountLimit = 2000;
 
 /*==================================================
@@ -57,7 +57,7 @@
           this.test.value = projectRun;
           chai.expect(projectRun.output).to.be.an('object');
 
-          _.each(projectRun.output, (value, symbol) => {
+          _.each(projectRun.output, ({ balance: value }, symbol) => {
             let balance = BigNumber(value).toNumber();
             chai.expect(balance).to.be.a('number');
             chai.expect(balance).to.be.finite;

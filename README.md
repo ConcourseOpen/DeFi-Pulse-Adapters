@@ -44,7 +44,7 @@ Please fork this repository before you start building your adapter and then work
 
 # Writing a Project Adapter
 
-Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings. 
+Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings.
 
 ```
 projects
@@ -56,7 +56,7 @@ Feel free to add additional files and folders within your project adapter direct
 
 ## The TVL Function
 
-The main tvl function of a project adater is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection if historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+The main tvl function of a project adapter is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
 ```js
 async function tvl(timestamp, block) {
@@ -108,7 +108,7 @@ async function run(timestamp, block) {
 }
 ```
 
-To retrieve it's locked balances, the `bancor` adapter needs to check a main address for it's ETH balance, as well as check a list of token adapters for specific token balances. An SDK provides standardized methods for querying contracts for values and other common interactions, and wherever possible is the preferred method of retrieving data. 
+To retrieve it's locked balances, the `bancor` adapter needs to check a main address for it's ETH balance, as well as check a list of token adapters for specific token balances. An SDK provides standardized methods for querying contracts for values and other common interactions, and wherever possible is the preferred method of retrieving data.
 
 ```js
 const  sdk = require('../../sdk');
@@ -134,7 +134,7 @@ These illustrate the most common SDK interactions for most adapters - running on
 
 If the SDK doesn't provide required methods to implement your project adapter, please contact a member of the DeFi Pulse team so we can add necessary support where applicable, and/or collaborate to find a suitable alternative solution.
 
-In some cases not all neccessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation with the DeFi Pulse team.
+In some cases not all necessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation with the DeFi Pulse team.
 
 ## Metadata
 
@@ -170,8 +170,23 @@ The project's name and protocol token are simple values shown in the UI and API 
 
 While writing your adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
+## Historical CSV view
+After running the test suite, a historical CSV is generated containing all tracked tokens and their balances beginning the projects "start" date. You can use this folder to gain better insight into the output of your adapters and verify accuracy.
+
+| timestamp        | date           | block  | ETH  |
+| ------------- |:-------------:| -----:|-----:|
+| 1538006400      | Wed Sep 26 2018 20:00:00 | 6405884 | 22.64 |
+| 1549324800 | Mon Feb 04 2019 19:00:00     | 7175712 |  25452.34 |
+| 1554940800      | Wed Apr 10 2019 20:00:00   | 7543456   |   53152.81 |
+
+Check the
+```
+/CSV folder
+```
+
 ```
 npm run test -- --project=_template
+npm run validate -- --project=yearn
 ```
 
 The `test` command will run a project adapter once for the latest hourly point, perform some basic checks on it's output, and log the result.
@@ -218,7 +233,7 @@ npm run validate -- --project=_template
 ```
   _template project export format
     ✓ has a valid name
-    ✓ categoy matches one of the defined options
+    ✓ category matches one of the defined options
     ✓ has a valid start time
     ✓ should have a run method
 
@@ -246,4 +261,3 @@ npm run validate -- --project=_template
 ```
 
 This test suite will only log verbose results and adapter output in the event of a problem
-
