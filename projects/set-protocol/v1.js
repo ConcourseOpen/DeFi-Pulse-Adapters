@@ -17,12 +17,12 @@ const tokens = [
   '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
   '0x39AA39c021dfbaE8faC545936693aC917d5E7563', // cUSDC
   '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643', // cDAI
-]
+];
 
 const cTokensMap = {
   '0x39AA39c021dfbaE8faC545936693aC917d5E7563': '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // cUSDC: USDC
   '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643': '0x6B175474E89094C44Da98b954EedeAC495271d0F'  // cDAI: DAI
-}
+};
 
 /*==================================================
   TVL
@@ -70,7 +70,7 @@ module.exports = async function tvl(timestamp, block) {
   // Compute Balances
   _.each(balanceOfResults.output, (balanceOf) => {
     if(balanceOf.success) {
-      let address = balanceOf.input.target
+      let address = balanceOf.input.target;
 
       if (address in cTokensMap) {
         let addressOfUnderlying = cTokensMap[address];
