@@ -204,6 +204,70 @@ const BigNumber = require('bignumber.js');
     return balanceCalls;
   }
 
+  async function generateCallsByBlockchain(block) {
+    const registryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4';
+    const converterRegistryHex = '0x42616e636f72436f6e7665727465725265676973747279';
+
+    let result;
+
+    // get converter registry address
+    result = await sdk.api.abi.call({
+      target: registryAddress,
+      abi: abiContractRegistryAddressOf,
+      params: [converterRegistryHex],
+      block
+    });
+
+    const converterRegistryAddress = result.output;
+
+    // get pool anchor addresses
+    result = await sdk.api.abi.call({
+      target: converterRegistryAddress,
+      abi: abiConverterRegistryGetPools,
+      block
+    });
+
+    // get converter addresses
+    result = await sdk.api.abi.call({
+      target: converterRegistryAddress,
+      abi: abiRegistryGetConvertersBySmartTokens,
+      params: [result.output],
+      block
+    });
+
+    // get reserve token addresses (currently limited to 2)
+    const converterAddresses = result.output;
+    const reserveTokenCalls = [];
+    for (let i = 0; i < converterAddresses.length; i++) {
+      reserveTokenCalls.push({
+        target: converterAddresses[i],
+        params: [0]
+      });
+      reserveTokenCalls.push({
+        target: converterAddresses[i],
+        params: [1]
+      });
+    }
+
+    result = await sdk.api.abi.multiCall({
+      calls: reserveTokenCalls,
+      abi: abiConverterConnectorTokens,
+      block
+    });
+
+    // create reserve balance calls
+    const balanceCalls = [];
+    for (let i = 0; i < result.output.length; i++) {
+      const item = result.output[i];
+      balanceCalls.push({
+        target: item.output,
+        params: [item.input.target]
+      });
+    }
+
+    return balanceCalls;
+  }
+
 /*==================================================
   TVL
   ==================================================*/
@@ -242,6 +306,8 @@ const BigNumber = require('bignumber.js');
 
     // filtering out bad balances (hacky)
     result.output = result.output.filter((item) => item.success && item.output.length < 60);
+
+    sdk.util.sumMultiBalanceOf(balances, result);
 
     sdk.util.sumMultiBalanceOf(balances, result);
 
