@@ -125,46 +125,57 @@
         sdk.api.abi.call({ block, target: fTokens[token].contract, abi: abi['fABIUnderlyingUnit'], })
       ];
 
-      let results = await Promise.all(promises);
+      try {
+	let results = await Promise.all(promises);
+        if (results.length === 0) {
+          return 0;
+        }
 
-      let fBalance = BigNumber(results[0].output);
-      let fSharePrice = BigNumber(results[1].output);
-      let fUnderlyingUnit = BigNumber(results[2].output);
+        let fBalance = BigNumber(results[0].output);
+        let fSharePrice = BigNumber(results[1].output);
+        let fUnderlyingUnit = BigNumber(results[2].output);
 
-      if (!fSharePrice.isEqualTo(ERROR)) {
-        return fBalance.times(fSharePrice).div(fUnderlyingUnit);
+        if (!fSharePrice.isEqualTo(ERROR)) {
+          return fBalance.times(fSharePrice).div(fUnderlyingUnit);
+        }
       }
+      catch {}
     }
     return 0;
-}
-
-async function getUniswapUnderlying(token,block) {
-  if (block > fTokens[token].created) {
-    underlyingPool = uniPools[fTokens[token].underlying];
-    const promises = [
-      sdk.api.abi.call({ block, target: fTokens[token].contract, abi: 'erc20:totalSupply', }),
-      sdk.api.abi.call({ block, target: fTokens[token].contract, abi: abi['fABISharePrice'], }),
-      sdk.api.abi.call({ block, target: fTokens[token].contract, abi: abi['fABIUnderlyingUnit'], }),
-      sdk.api.abi.call({ block, target: underlyingPool.contract, abi: 'erc20:totalSupply', }),
-      sdk.api.abi.call({ block, target: underlyingPool.contract, abi: abi['uniABIReserves'], }),
-    ];
-
-    let results = await Promise.all(promises);
-
-    let poolBalance = BigNumber(results[0].output);
-    let poolSharePrice = BigNumber(results[1].output);
-    let poolUnderlyingUnit = BigNumber(results[2].output);
-    let poolUnderlyingBalance = BigNumber(results[3].output);
-    let poolUnderlyingReservesToken0 = BigNumber(results[4].output[0]);
-    let poolUnderlyingReservesToken1 = BigNumber(results[4].output[1]);
-    let poolFraction = poolBalance.times(poolSharePrice).div(poolUnderlyingUnit).div(poolUnderlyingBalance);
-
-    if (!poolFraction.isNaN() && !poolSharePrice.isEqualTo(ERROR)) {
-      return [ poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1) ];
-    }
   }
 
-  return [0, 0];
+  async function getUniswapUnderlying(token,block) {
+    if (block > fTokens[token].created) {
+      underlyingPool = uniPools[fTokens[token].underlying];
+      const promises = [
+        sdk.api.abi.call({ block, target: fTokens[token].contract, abi: 'erc20:totalSupply', }),
+        sdk.api.abi.call({ block, target: fTokens[token].contract, abi: abi['fABISharePrice'], }),
+        sdk.api.abi.call({ block, target: fTokens[token].contract, abi: abi['fABIUnderlyingUnit'], }),
+        sdk.api.abi.call({ block, target: underlyingPool.contract, abi: 'erc20:totalSupply', }),
+        sdk.api.abi.call({ block, target: underlyingPool.contract, abi: abi['uniABIReserves'], }),
+      ];
+
+      try {
+        let results = await Promise.all(promises);
+        if (results.length === 0) {
+          return [0,0];
+        }
+
+        let poolBalance = BigNumber(results[0].output);
+        let poolSharePrice = BigNumber(results[1].output);
+        let poolUnderlyingUnit = BigNumber(results[2].output);
+        let poolUnderlyingBalance = BigNumber(results[3].output);
+        let poolUnderlyingReservesToken0 = BigNumber(results[4].output[0]);
+        let poolUnderlyingReservesToken1 = BigNumber(results[4].output[1]);
+        let poolFraction = poolBalance.times(poolSharePrice).div(poolUnderlyingUnit).div(poolUnderlyingBalance);
+
+        if (!poolFraction.isNaN() && !poolSharePrice.isEqualTo(ERROR)) {
+          return [ poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1) ];
+        }
+      }
+      catch {}
+    }
+    return [0, 0];
 }
 
 /*==================================================
