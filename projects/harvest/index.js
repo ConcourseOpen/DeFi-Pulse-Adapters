@@ -172,7 +172,7 @@
       try {
         let results = await Promise.all(promises);
         if (results.length === 0) {
-          return [0,0];
+          return [0, 0];
         }
 
         let poolBalance = BigNumber(results[0].output);
@@ -197,7 +197,7 @@
 	try {
           let abridged_results = await Promise.all(abridged_promises);
           if (abridged_results.length === 0) {
-            return 0;
+            return [0, 0];
           }
           let poolBalance = BigNumber(results[0].output);
           let poolUnderlyingBalance = BigNumber(results[1].output);
