@@ -16,132 +16,68 @@
   async function generateCallsByAPI(timestamp) {
     let tokenConverters = [];
 
-  let moreData = true;
-  let index = 0;
-  let pageFetchCount = 300;
+    let moreData = true;
+    let index = 0;
+    let pageFetchCount = 300;
 
-  while(moreData) {
-    let converters = await axios.get('https://api.bancor.network/0.1/converters', {
-      params: {
-        skip: index,
-        limit: pageFetchCount
+    while(moreData) {
+      let converters = await axios.get('https://api.bancor.network/0.1/converters', {
+        params: {
+          skip: index,
+          limit: pageFetchCount
+        }
+      });
+
+      converters = converters.data.data.page;
+
+      index += pageFetchCount;
+
+      tokenConverters = [
+        ...tokenConverters,
+        ...converters
+      ];
+
+      if(converters.length !== pageFetchCount) {
+        moreData = false;
       }
-    });
-
-    converters = converters.data.data.page;
-
-    index += pageFetchCount;
-
-    tokenConverters = [
-      ...tokenConverters,
-      ...converters
-    ];
-
-    if(converters.length !== pageFetchCount) {
-      moreData = false;
     }
-  }
 
-  tokenConverters = _.filter(tokenConverters, (converter) => {
-    let hasLength = converter.details.length > 0;
-    let isEthereum = converter.details[0].blockchain.type === 'ethereum';
-    let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
-    let existsAtTimestamp = createdTimestamp <= timestamp;
+    tokenConverters = _.filter(tokenConverters, (converter) => {
+      let hasLength = converter.details.length > 0;
+      let isEthereum = converter.details[0].blockchain.type === 'ethereum';
+      let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
+      let existsAtTimestamp = createdTimestamp <= timestamp;
 
-    return hasLength && isEthereum && existsAtTimestamp;
-  });
-
-  let calls = [];
-
-  _.each(tokenConverters, (converter) => {
-    let details = converter.details[0];
-    let reserves = details.reserves;
-
-    let owners = _.map(converter.converters, (converter) => {
-      return converter.blockchainId;
+      return hasLength && isEthereum && existsAtTimestamp;
     });
 
-    _.each(owners, (owner) => {
-      if (owner === undefined) {
-        return;
-      }
+    let calls = [];
 
-      _.each(reserves, (reserve) => {
-        let address = reserve.blockchainId;
+    _.each(tokenConverters, (converter) => {
+      let details = converter.details[0];
+      let reserves = details.reserves;
 
-        calls.push({
-          target: address,
-          params: owner
+      let owners = _.map(converter.converters, (converter) => {
+        return converter.blockchainId;
+      });
+
+      _.each(owners, (owner) => {
+        if (owner === undefined) {
+          return;
+        }
+
+        _.each(reserves, (reserve) => {
+          let address = reserve.blockchainId;
+
+          calls.push({
+            target: address,
+            params: owner
+          })
         })
-      })
-    });
-  });
-
-  return calls;
-}
-
-  async function generateCallsByBlockchain(block) {
-    const registryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4';
-    const converterRegistryHex = '0x42616e636f72436f6e7665727465725265676973747279';
-
-    let result;
-
-    // get converter registry address
-    result = await sdk.api.abi.call({
-      target: registryAddress,
-      abi: abiContractRegistryAddressOf,
-      params: [converterRegistryHex],
-      block
-    });
-
-    const converterRegistryAddress = result.output;
-
-    // get pool anchor addresses
-    result = await sdk.api.abi.call({
-      target: converterRegistryAddress,
-      abi: abiConverterRegistryGetPools,
-      block
-    });
-
-    // get converter addresses
-    result = await sdk.api.abi.call({
-      target: converterRegistryAddress,
-      abi: abiRegistryGetConvertersBySmartTokens,
-      params: [result.output],
-      block
-    });
-
-    // get reserve token addresses (currently limited to 2)
-    const converterAddresses = result.output;
-    const reserveTokenCalls = [];
-    for (let i = 0; i < converterAddresses.length; i++) {
-      reserveTokenCalls.push({
-        target: converterAddresses[i],
-        params: [0]
       });
-      reserveTokenCalls.push({
-        target: converterAddresses[i],
-        params: [1]
-      });
-    }
-
-    result = await sdk.api.abi.multiCall({
-      calls: reserveTokenCalls,
-      abi: abiConverterConnectorTokens,
-      block
     });
 
-    // create reserve balance calls
-    const balanceCalls = [];
-    for (let i = 0; i < result.output.length; i++) {
-      const item = result.output[i];
-      balanceCalls.push({
-        target: item.output,
-        params: [item.input.target]
-      });
-    }
-
-    return balanceCalls;
+    return calls;
   }
 
   async function generateCallsByBlockchain(block) {
@@ -249,34 +185,17 @@
 
     sdk.util.sumMultiBalanceOf(balances, result);
 
-    sdk.util.sumMultiBalanceOf(balances, result);
-
-  await (
-    Promise.all(ethBalanceCalls.map(async (call) => {
-      const ethBalance = (await sdk.api.eth.getBalance({target: call.params, block})).output;
-      balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
-    }))
-  );
-
-  const balanceOfResults = await sdk.api.abi.multiCall({
-    block,
-    calls,
-    abi: 'erc20:balanceOf'
-  });
-
-  sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-
-  return (await sdk.api.util.toSymbols(balances)).output;
-}
+    return balances;
+  }
 
 /*==================================================
   Exports
   ==================================================*/
 
-module.exports = {
-  name: 'Bancor',
-  token: 'BNT',
-  category: 'DEXes',
-  start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-  tvl,
-};
+  module.exports = {
+    name: 'Bancor',
+    token: 'BNT',
+    category: 'DEXes',
+    start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
+    tvl,
+  };
