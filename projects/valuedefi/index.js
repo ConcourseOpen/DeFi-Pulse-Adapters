@@ -270,8 +270,8 @@ async function valueLiquidTvl(timestamp, block) {
 async function tvl(timestamp, block) {
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
   const valueLiquid = await valueLiquidTvl(timestamp, block);
-  const vault = await vaultTvl(timestamp, block)
-  const totalTvl = mergeBalance([seedPoolStake, valueLiquid, vault]);
+  const vault = await vaultTvl(timestamp, block);
+  const totalTvl =await mergeBalance([seedPoolStake, valueLiquid, vault]);
 
   return (await sdk.api.util.toSymbols(totalTvl)).output;
 }
