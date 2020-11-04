@@ -9,10 +9,8 @@
  /*==================================================
   Vars
   ==================================================*/
-
   const loopringExchangeAddr = '0x944644Ea989Ec64c2Ab9eF341D383cEf586A5777';
   const wedexExchangeAddr = '0xD97D09f3bd931a14382ac60f156C1285a56Bb51B';
-
   const listedTokens = [
     "0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD", // LRC
     "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT
@@ -51,9 +49,22 @@
       abi: 'erc20:balanceOf'
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+    _.each(balanceOfResults.output, (balanceOf) => {
+      if(balanceOf.success) {
+        let balance = balanceOf.output;
+        let address = balanceOf.input.target;
 
-    return balances;
+        if (BigNumber(balance).toNumber() <= 0) {
+          return;
+        }
+
+        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+      }
+    });
+
+    let symbolBalances = await sdk.api.util.toSymbols(balances);
+
+    return symbolBalances.output;
   }
 
 /*==================================================
@@ -63,7 +74,7 @@
   module.exports = {
     name: 'Loopring',
     token: 'LRC',
-    category: 'dexes',
+    category: 'DEXes',
     start: 1574241665, // 11/20/2019 @ 09:21AM (UTC)
     tvl
   }

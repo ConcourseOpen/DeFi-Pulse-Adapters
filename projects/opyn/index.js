@@ -98,7 +98,7 @@
       });
     }
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -108,7 +108,7 @@
 module.exports = {
   name: 'Opyn',
   token: null,
-  category: 'derivatives',
+  category: 'Derivatives',
   start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
   tvl
 }

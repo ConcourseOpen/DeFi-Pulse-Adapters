@@ -35,13 +35,13 @@ async function tvl(timestamp, block) {
       }, {})
   );
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'SushiSwap',
   token: 'SUSHI',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1599214239, // 09/04/2020 @ 10:10:39am (UTC)
   tvl,
 };

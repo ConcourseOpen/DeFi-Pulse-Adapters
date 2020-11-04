@@ -11,6 +11,7 @@
   const shell = require('shelljs');
 
   const Run = require('../sdk/run');
+  const CSV = require('./csv');
 
 /*==================================================
   Settings
@@ -18,17 +19,21 @@
 
   const tvlTimeLimit = 1000 * 60 * 5;
   const ratesTimeLimit = 30 * 1000;
-  const symbolLengthLimit = 30;
+  const symbolLengthLimit = 7;
   const ethCallCountLimit = 2000;
 
 /*==================================================
   TestRun
   ==================================================*/
 
+  let cachedOutput = [];
+  let slug;
+
   function TestRun(project, timeUnit, timeOffset) {
     let label;
 
     let functions = [];
+    slug = project.slug;
 
     if(args.function) {
       if(project[args.function]) {
@@ -51,14 +56,16 @@
       }
 
       it(label, async function() {
+
         if(runFunction == 'tvl') {
           this.timeout(tvlTimeLimit);
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
           this.test.value = projectRun;
-          chai.expect(projectRun.output).to.be.an('object');
+          cachedOutput.push(projectRun); // Add output to cache
+          chai.expect(projectRun.output).to.be.an('array');
 
-          _.each(projectRun.output, ({ balance: value }, symbol) => {
-            let balance = BigNumber(value).toNumber();
+          _.each(projectRun.output, ({ symbol, address, balance }) => {
+            balance = BigNumber(balance).toNumber();
             chai.expect(balance).to.be.a('number');
             chai.expect(balance).to.be.finite;
             chai.expect(balance).to.be.at.least(0);
@@ -84,6 +91,13 @@
       });
     }
   }
+
+  after('after all', async function() {
+    CSV.create({
+      output: cachedOutput,
+      slug,
+    });
+  });
 
 /*==================================================
   Exports

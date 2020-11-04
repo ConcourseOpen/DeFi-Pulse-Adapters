@@ -114,6 +114,20 @@
       });
     });
 
+
+    let balanceOfResults = await sdk.api.abi.multiCall({
+      block,
+      calls,
+      abi: 'erc20:balanceOf'
+    });
+
+    _.each(balanceOfResults.output, (balanceOf) => {
+      if(balanceOf.success) {
+        let address = balanceOf.input.target
+        balances[address] = BigNumber(balances[address] || 0).plus(balanceOf.output).toFixed();
+      }
+    });
+
     let lastReserveRunsResults = await sdk.api.abi.multiCall({
       block,
       calls: _.map(tokenAddresses, (tokenAddress) => {
@@ -161,15 +175,22 @@
       });
     });
 
-    let balanceOfResults = await sdk.api.abi.multiCall({
+    let actualBalances = await sdk.api.abi.multiCall({
       block: block,
-      calls: [...calls, ...aCalls],
+      calls: aCalls,
       abi: 'erc20:balanceOf'
     });
 
-    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+    _.each(actualBalances.output, (actualBalance) => {
+      if(actualBalance.success) {
+        let address = actualBalance.input.target
+        balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
+      }
+    });
 
-    return balances;
+    let symbolBalances = await sdk.api.util.toSymbols(balances);
+
+    return symbolBalances.output;
   }
 
 /*==================================================
@@ -204,7 +225,7 @@
   module.exports = {
     name: 'Nuo Network',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     start: 1548115200,  // 01/22/2019 @ 12:00am (UTC)
     tvl,
     rates,

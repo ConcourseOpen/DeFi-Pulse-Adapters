@@ -85,22 +85,16 @@
     const converterRegistryHex = '0x42616e636f72436f6e7665727465725265676973747279';
 
     let result;
-    let converterRegistryAddress;
 
-    if (block < 9195218) {
-        converterRegistryAddress = '0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518';
-    }
-    else {
-        // get converter registry address
-        result = await sdk.api.abi.call({
-        target: registryAddress,
-        abi: abiContractRegistryAddressOf,
-        params: [converterRegistryHex],
-        block
-        });
+    // get converter registry address
+    result = await sdk.api.abi.call({
+      target: registryAddress,
+      abi: abi['abiContractRegistryAddressOf'],
+      params: [converterRegistryHex],
+      block
+    });
 
-        converterRegistryAddress = result.output;
-    }
+    const converterRegistryAddress = result.output;
 
     // get pool anchor addresses
     result = await sdk.api.abi.call({
@@ -201,7 +195,7 @@
   module.exports = {
     name: 'Bancor',
     token: 'BNT',
-    category: 'dexes',
+    category: 'DEXes',
     start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
     tvl,
   };

@@ -29,7 +29,7 @@ async function tvl(timestamp, block) {
     lockedTokens[b[0]] = b[5]
   });
 
-  return lockedTokens;
+  return (await sdk.api.util.toSymbols(lockedTokens)).output;
 }
 
 /*==================================================
@@ -38,8 +38,8 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'mStable',
+  category: 'Assets',
   token: 'MTA',
-  category: 'assets',
   start: 1590624000, // May-28-2020 00:00:00
-  tvl
-}
+  tvl,
+};

@@ -96,13 +96,8 @@ async function tvl(timestamp, block) {
       balances[target] = balances[target].plus(BigNumber(output)); 
     }
   });
-  
 
-
-  
-
-
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -110,9 +105,9 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'dfi.money',
+  name: 'DFI.money',
   token: 'YFII',
-  category: 'assets',
+  category: 'Assets',
   start: 1600185600,    // 09/16/2020 @ 12:00am (UTC+8)
   tvl,
 };

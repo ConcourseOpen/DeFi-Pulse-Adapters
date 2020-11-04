@@ -137,7 +137,7 @@ async function tvl(timestamp, block) {
     abi: 'erc20:balanceOf',
   });
 
-  let balanceOfvBZRX = {}
+  let balanceOfvBZRX = {};
   if (block > v2VestingDeployBlock) {
     balanceOfvBZRX = await sdk.api.abi.call({
       target: vbzrxTokenAddress,
@@ -174,7 +174,7 @@ async function tvl(timestamp, block) {
     balances[bzrxTokenAddress.toUpperCase()] = total;
   }
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 
@@ -241,7 +241,7 @@ async function rates(timestamp, block) {
 module.exports = {
   name: 'bZx',
   token: 'BZRX',
-  category: 'lending',
+  category: 'Lending',
   website: "https://bzx.network",
   start: 1559433540,  // Saturday, June 1, 2019 11:59:00 PM
   tvl,

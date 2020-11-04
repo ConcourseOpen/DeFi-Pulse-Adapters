@@ -23,16 +23,16 @@
   USDx
   ==================================================*/
 
-  const usdxReservedTokens = [PAX, TUSD, USDC]
+  const usdxReservedTokens = [PAX, TUSD, USDC];
 
-  const usdxPool = '0x786bF554473f9aB733Fd683C528212492A23D895' // USDx Stablecoin Pool
+  const usdxPool = '0x786bF554473f9aB733Fd683C528212492A23D895'; // USDx Stablecoin Pool
 
   /*==================================================
   xSwap Protocol
   ==================================================*/
-  const swapPoolReserves = [BUSD, DAI, HUSD, PAX, TUSD, USDC, USDT, USDx]
+  const swapPoolReserves = [BUSD, DAI, HUSD, PAX, TUSD, USDC, USDT, USDx];
 
-  const swapPool = '0x03eF3f37856bD08eb47E2dE7ABc4Ddd2c19B60F2' // xSwap
+  const swapPool = '0x03eF3f37856bD08eb47E2dE7ABc4Ddd2c19B60F2'; // xSwap
 
   /*==================================================
   dToken Protocol
@@ -43,7 +43,7 @@
     '0x55BCf7173C8840d5517424eD19b7bbF11CFb9F2B', // dTUSD
     '0x16c9cF62d8daC4a38FB50Ae5fa5d51E9170F3179', // dUSDC
     '0x868277d475E0e475E38EC5CdA2d9C83B5E1D9fc8', // dUSDT
-  ]
+  ];
 
   const yieldUnderlyingTokens = {
     '0x02285AcaafEB533e03A7306C55EC031297df9224': DAI,
@@ -51,15 +51,15 @@
     '0x55BCf7173C8840d5517424eD19b7bbF11CFb9F2B': TUSD,
     '0x16c9cF62d8daC4a38FB50Ae5fa5d51E9170F3179': USDC,
     '0x868277d475E0e475E38EC5CdA2d9C83B5E1D9fc8': USDT,
-  }
+  };
 
 
 
   /*==================================================
     GOLDx Protocol
     ==================================================*/
-    goldxReserve  = '0x45804880De22913dAFE09f4980848ECE6EcbAf78'  // PAXG
-    goldxProtocol = '0x355C665e101B9DA58704A8fDDb5FeeF210eF20c0'  // GOLDx
+    goldxReserve  = '0x45804880De22913dAFE09f4980848ECE6EcbAf78';  // PAXG
+    goldxProtocol = '0x355C665e101B9DA58704A8fDDb5FeeF210eF20c0';  // GOLDx
 
 /*==================================================
   TVL
@@ -117,7 +117,7 @@
       }))
     );
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -127,7 +127,7 @@
   module.exports = {
     name: 'dForce',
     token: 'DF',
-    category: 'assets',
+    category: 'Assets',
     start: 1564165044, // Jul-27-2019 02:17:24 AM +UTC
-    tvl
-  }
+    tvl,
+  };

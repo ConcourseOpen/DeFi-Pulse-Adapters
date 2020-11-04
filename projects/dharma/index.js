@@ -278,7 +278,9 @@
       }
     }
 
-    return balances;
+    symbolBalances = await sdk.api.util.toSymbols(balances);
+
+    return symbolBalances.output;
   }
 
 /*==================================================
@@ -288,7 +290,7 @@
   module.exports = {
     name: 'Dharma',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     contributesTo: ['Compound'],
     start: 1526947200, // 05/22/2018 @ 12:00am (UTC)
     tvl

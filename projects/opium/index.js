@@ -41,7 +41,7 @@
       }
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -51,7 +51,7 @@
   module.exports = {
     name: 'Opium Network',
     token: null,
-    category: 'derivatives',
+    category: 'Derivatives',
     start: 1579601633, // 2020-01-21T10:13:53+00:00
-    tvl
-  }
+    tvl,
+  };
