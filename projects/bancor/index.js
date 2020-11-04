@@ -87,8 +87,9 @@
     let result;
     let converterRegistryAddress;
 
+    //set converter registry address
     if (block < 9195218) {
-        converterRegistryAddress = '0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518';
+      converterRegistryAddress = '0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518';
     }
     else {
         // get converter registry address
@@ -193,10 +194,6 @@
 
     return (await sdk.api.util.toSymbols(balances)).output;
   }
-
-/*==================================================
-  Exports
-  ==================================================*/
 
   module.exports = {
     name: 'Bancor',
