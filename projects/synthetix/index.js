@@ -45,7 +45,7 @@
       totalSNXLocked = totalSNXLocked.plus(locked);
     });
 
-    return (await sdk.api.util.toSymbols({ [snxContract]: totalSNXLocked.toFixed() })).output;
+    return { [snxContract]: totalSNXLocked.toFixed() };
   }
 
   // Uses graph protocol to run through SNX contract. Since there is a limit of 100 results per query
@@ -78,7 +78,7 @@
   module.exports = {
     name: 'Synthetix',
     token: 'SNX',
-    category: 'Derivatives',
+    category: 'derivatives',
     start: 1565287200,  // Fri Aug 09 2019 00:00:00
     tvl,
   };

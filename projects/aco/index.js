@@ -5,7 +5,7 @@
   const sdk = require('../../sdk');
   const _ = require('underscore');
   const abi = require('./abi');
-  const { default: BigNumber } = require('bignumber.js');
+const { default: BigNumber } = require('bignumber.js');
 
   const START_BLOCK = 10104891;
   const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';  
@@ -40,7 +40,7 @@
       abi: abi.collateral,
     });
 
-    let collateralAddressMap = {};
+    let collateralAddressMap = {}
 
     _.each(collateralResult.output, (result) => {
       if(result.success) {
@@ -56,12 +56,11 @@
       abi: abi.totalCollateral,
     });
 
-    let balances = {"0x0000000000000000000000000000000000000000": "0"};
+    let balances = {"0x0000000000000000000000000000000000000000": "0"}
 
     _.each(totalCollateralResult.output, (result) => {
       if(result.success) {
-        const colateralAddress = collateralAddressMap[result.input.target];
-
+        var colateralAddress = collateralAddressMap[result.input.target]
         if (!balances[colateralAddress]) {
           balances[colateralAddress] = "0"
         }
@@ -70,7 +69,7 @@
       }
     });
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -80,7 +79,7 @@
   module.exports = {
     name: 'ACO',
     token: 'AUC',
-    category: 'Derivatives',
+    category: 'derivatives',
     start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
-    tvl,
-  };
+    tvl
+  }

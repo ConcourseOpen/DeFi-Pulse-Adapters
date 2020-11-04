@@ -5,7 +5,7 @@
   const sdk = require('../../sdk');
   const abi = require('./abi.json');
   const BigNumber = require('bignumber.js');
-  const ERROR = BigNumber("3963877391197344453575983046348115674221700746820753546331534351508065746944");
+  const ERROR = BigNumber("3963877391197344453575983046348115674221700746820753546331534351508065746944")
 
 /*==================================================
   TVL
@@ -114,7 +114,7 @@
        // TODO attribute TBTC when supported
     };
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
   async function getUnderlying(token, block) {
@@ -227,7 +227,7 @@
     name: 'Harvest Finance', // project name
     website: 'https://harvest.finance',
     token: 'FARM',            // null, or token symbol if project has a custom token
-    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1598893200,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl                       // tvl adapter
   };

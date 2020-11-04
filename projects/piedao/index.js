@@ -82,7 +82,7 @@
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -92,7 +92,7 @@
   module.exports = {
     name: 'PieDAO', // project name
     token: null,              // null, or token symbol if project has a custom token
-    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1585872000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl,                       // tvl adapter
   };

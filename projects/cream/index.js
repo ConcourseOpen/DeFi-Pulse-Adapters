@@ -119,7 +119,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -197,7 +197,7 @@ module.exports = {
   name: 'C.R.E.A.M. Finance',
   website: 'https://cream.finance',
   token: null,
-  category: 'Lending',
+  category: 'lending',
   start: 1596412800, // 08/03/2020 @ 12:00am (UTC)
   tvl,
   rates,

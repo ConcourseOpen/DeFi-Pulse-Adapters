@@ -123,7 +123,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -133,7 +133,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'yearn.finance',
   token: 'YFI',
-  category: 'Assets',
+  category: 'assets',
   start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
   tvl,
   contributesTo: ['Curve','Aave'],

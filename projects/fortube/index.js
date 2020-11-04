@@ -154,7 +154,7 @@
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
   
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
   
   /*==================================================
@@ -232,7 +232,7 @@
     name: "ForTube",
     website: 'https://for.tube',
     token: "FOR",
-    category: "Lending",
+    category: "lending",
     start: 1596384000, // 2020/8/3 00:00:00 +UTC
     tvl,
     rates,

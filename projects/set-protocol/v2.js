@@ -2,7 +2,7 @@ const sdk = require('../../sdk');
 const BigNumber = require('bignumber.js');
 const _ = require('underscore');
 
-const SUPPLY_SCALE = BigNumber("10").pow(18);
+const SUPPLY_SCALE = BigNumber("10").pow(18)
 const START_BLOCK = 10830496;
 const EXTERNAL_POSITION = '1';
 
@@ -67,7 +67,7 @@ module.exports = async function tvl(timestamp, block) {
       const componentAddress = position[0];
       const positionUnits = BigNumber(position[2]);
       
-      const isExternalPosition = position[3] === EXTERNAL_POSITION;
+      const isExternalPosition = position[3] == EXTERNAL_POSITION;
       if (isExternalPosition) {
         uniswapPositions[componentAddress] = BigNumber(uniswapPositions[componentAddress] || 0).plus((positionUnits).times(setSupply)).toFixed();
       } else {

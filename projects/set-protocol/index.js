@@ -2,7 +2,6 @@
   Modules
   ==================================================*/
 
-  const sdk = require('../../sdk');
   const v1TVL = require('./v1');
   const v2TVL = require('./v2');
 
@@ -29,9 +28,7 @@
         }, {})
     );
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -41,7 +38,7 @@
   module.exports = {
     name: 'Set Protocol',
     token: null,
-    category: 'Assets',
+    category: 'assets',
     start: 1554848955,  // 04/09/2019 @ 10:29pm (UTC)
     tvl
-  };
+  }

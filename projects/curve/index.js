@@ -108,7 +108,7 @@
       { symbol: 'yBUSD', underlying: 'BUSD', contract: '0x4fabb145d64652a948d72533023f6e7a623c7c53' },
       { symbol: 'yDAI', underlying: 'DAI', contract: '0x6b175474e89094c44da98b954eedeac495271d0f' },
       { symbol: 'yTUSD', underlying: 'TUSD', contract: '0x0000000000085d4780b73119b644ae5ecd22b376' },
-    ];
+    ]
 
     // Count y tokens as their underlying asset, ie ycDAI = cDAI
     output.map(( _token ) => {
@@ -135,7 +135,7 @@
     });
 
     output = output.filter((_token) => !yTokens.find( token => token.symbol === _token.symbol));
-
+    
     return output;
   }
 

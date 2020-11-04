@@ -52,7 +52,7 @@ async function tvl(timestamp, block) {
 
   await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -62,7 +62,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'DeversiFi',
   token: 'NEC',
-  category: 'DEXes',
+  category: 'dexes',
   start: 1590969600, // 06/01/2020
   tvl,
 };

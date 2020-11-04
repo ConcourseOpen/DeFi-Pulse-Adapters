@@ -84,7 +84,7 @@ async function tvl(_, block) {
 
   utilBase.sumMultiBalanceOf(balances, combinedErc20Balances);
 
-  return (await util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -93,8 +93,8 @@ async function tvl(_, block) {
 
 module.exports = {
   name: 'Gnosis',
-  category: 'DEXes',
   token: 'GNO',
+  category: 'dexes',
   start: 1579811423, // Thu, 23 Jan 2020 20:30:23 GMT
   tvl,
 };

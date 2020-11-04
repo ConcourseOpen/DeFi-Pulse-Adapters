@@ -20,8 +20,7 @@
     ==================================================*/
 
   async function tvl(timestamp, block) {
-    let ampCapacity;
-    const fxcCapacity = (await sdk.api.erc20.balanceOf({
+    fxcCapacity = (await sdk.api.erc20.balanceOf({
       target: flexacoin,
       owner: fxcStaking,
       block: block,
@@ -38,12 +37,11 @@
       ampCapacity = 0;
     }
 
-    return (await sdk.api.util.toSymbols({
+    return {
       [flexacoin]: fxcCapacity,
       [amp]: ampCapacity
-    })).output;
+    };
   }
-
   /*==================================================
     Exports
     ==================================================*/
@@ -52,7 +50,7 @@
     name: 'Flexa',
     website: 'https://flexa.network',
     token: null,
-    category: 'Payments',
+    category: 'payments',
     start: 1546646400, // 01/05/2019
     tvl,
   };

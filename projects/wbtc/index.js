@@ -22,7 +22,7 @@
       abi: abi['totalSupply'],
     })).output;
 
-    return (await sdk.api.util.toSymbols({ [wbtcContract]: totalSupply })).output;
+    return { [wbtcContract]: totalSupply };
   }
 
 /*==================================================
@@ -32,7 +32,7 @@
   module.exports = {
     name: 'WBTC',
     token: null,
-    category: 'Assets',
-    start: 1543104000,  // 11/25/2018 @ 12:00am (UTC)
+    category: 'assets',
+    start: 1543095952,  // Nov-24-2018 09:45:52 PM +UTC
     tvl,
   };

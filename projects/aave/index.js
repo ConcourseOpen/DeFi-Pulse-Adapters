@@ -13,11 +13,11 @@
 
   const aaveLendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
   const aaveLendingPool = "0x398eC7346DcD622eDc5ae82352F02bE94C62d119";
-  let aaveReserves = [];
+  let aaveReserves = []
 
   const uniswapLendingPoolCore = "0x1012cfF81A1582ddD0616517eFB97D02c5c17E25";
   const uniswapLendingPool = "0x2F60C3EB259D63dcCa81fDE7Eaa216D9983D7C60";
-  let uniswapReserves = [];
+  let uniswapReserves = []
 
   const aaveStakingContract = "0x4da27a545c0c5b758a6ba100e3a049001de870f5";
   const aaveTokenAddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
@@ -62,7 +62,7 @@
     })
     ).output;
 
-    let assets = [];
+    let assets = []
     
     reserves.map((reserve, i) => {
       if (reserve === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return;
@@ -70,16 +70,16 @@
       let symbol;
       switch(reserve) {
         case "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": // MKR doesn't include symbol in contract 🤷‍♂️
-          symbol = { output: 'MKR' }; break;
+          symbol = { output: 'MKR' }; break
         default:
           symbol = symbolsOfReserve[i]
       }
   
-      const decimals = decimalsOfReserve[i];
+      const decimals = decimalsOfReserve[i]
       if (decimals.success) {
         assets.push({ address: reserve, symbol: symbol.output, decimals: decimals.output })
       }
-    });
+    })
   
     return assets
   }
@@ -209,7 +209,7 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    await getReserves();
+    await getReserves()
     let balances = await _multiMarketTvl(aaveLendingPoolCore, aaveReserves, block);
     
     const uniswapMarketTvlBalances = await _multiMarketTvl(
@@ -229,8 +229,9 @@
       }
     });
 
-    balances[aaveTokenAddress] = await _stakingTvl(block);
-    return (await sdk.api.util.toSymbols(balances)).output;
+    const stakedAaveAmount = await _stakingTvl(block);
+    balances[aaveTokenAddress] = stakedAaveAmount;
+    return balances;
   }
 
 /*==================================================
@@ -238,17 +239,15 @@
   ==================================================*/
 
   async function rates(timestamp, block) {
-    await getReserves();
+    await getReserves()
   
     // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
-    const aaveReservesWithEth = aaveReserves;
-
+    const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
       address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       symbol: "ETH",
       decimals: 18,
     });
-
     return await _multiMarketRates(aaveLendingPool, aaveReserves, block)
   }
 
@@ -260,7 +259,7 @@
     name: "Aave",
     website: "https://aave.com",
     token: "LEND",
-    category: "Lending",
+    category: "lending",
     start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
     rates,

@@ -21,7 +21,7 @@
       target: vethContractAddress,
     })).output;
 
-    return (await sdk.api.util.toSymbols({ [ethAddress]: ethBalance })).output;
+    return { [ethAddress]: ethBalance };
   }
 
 /*==================================================
@@ -31,7 +31,7 @@
   module.exports = {
     name: 'Veil',
     token: null,
-    category: 'Derivatives',
+    category: 'derivatives',
     start: 1545177600, // 12/19/2018 @ 12:00am (UTC)
     tvl,
   };

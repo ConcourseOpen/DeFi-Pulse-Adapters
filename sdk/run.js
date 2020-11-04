@@ -23,6 +23,11 @@
 
       await sdk.api.util.resetEthCallCount();
       let output = await project[runFunction](point.timestamp, point.block);
+      if(runFunction == 'tvl') {
+        output = (await sdk.api.util.toSymbols(output)).output;
+        output = (await sdk.api.util.unwrap({balances: output, block: point.block})).output;
+      }
+
       let ethCallCount = await sdk.api.util.getEthCallCount();
 
       return {

@@ -77,13 +77,13 @@
       [renZECContract]: zecTotalSupply
     };
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
   module.exports = {
     name: "RenVM",
     token: "REN",
-    category: "Assets",
+    category: "assets",
     // FIXME: Need a more accurate date here, where all assets are available, however, it is relatively fair to start at the time mainnet was officially launched
     start: 1590537600, // May-27-2020 00:00:00 PM +UTC
     tvl,

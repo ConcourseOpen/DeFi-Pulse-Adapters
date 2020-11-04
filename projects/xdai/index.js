@@ -69,9 +69,7 @@
       }
     });
 
-    const symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -81,7 +79,7 @@
   module.exports = {
     name: 'xDai',
     token: null,
-    category: 'Payments',
+    category: 'payments',
     start: 1539028166,
     tvl
   };

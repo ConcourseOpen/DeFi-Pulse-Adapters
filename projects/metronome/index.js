@@ -35,7 +35,7 @@
       "0x0000000000000000000000000000000000000000": ethBalance,
     };
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -46,7 +46,7 @@
     name: 'Metronome',
     website: 'https://metronome.io',
     token: 'MET',
-    category: 'Assets',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'assets',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1527076766,        // block 5659904
     tvl,
   };

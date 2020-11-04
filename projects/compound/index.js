@@ -144,7 +144,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
@@ -252,15 +252,15 @@ async function rates(timestamp, block) {
   Exports
   ==================================================*/
 
-  module.exports = {
-    name: 'Compound',
-    website: 'https://compound.finance',
-    token: null,
-    category: 'Lending',
-    start: 1538006400, // 09/27/2018 @ 12:00am (UTC)
-    tvl,
-    rates,
-    term: '1 block',
-    permissioning: 'Open',
-    variability: 'Medium',
-  };
+module.exports = {
+  name: 'Compound',
+  website: 'https://compound.finance',
+  token: null,
+  category: 'lending',
+  start: 1538006400, // 09/27/2018 @ 12:00am (UTC)
+  tvl,
+  rates,
+  term: '1 block',
+  permissioning: 'Open',
+  variability: 'Medium',
+};

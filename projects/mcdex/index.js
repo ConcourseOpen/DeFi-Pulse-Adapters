@@ -26,7 +26,7 @@ async function GenerateCallList() {
       id2Info[id].collateralTokenAddress = status.perpetualStorage.collateralTokenAddress;
     }
   });
-  let calls = [];
+  let calls = []
   _.map(id2Info, (info, id) => {
     if (info.collateralTokenAddress && info.perpetualAddress) {
       calls.push({
@@ -56,8 +56,7 @@ async function GenerateCallList() {
     });
 
     await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -68,7 +67,7 @@ async function GenerateCallList() {
     name: 'MCDEX',
     website: 'https://mcdex.io',
     token: 'MCB',
-    category: 'Derivatives',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1592478252,        // block 10289326
+    category: 'derivatives',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    start: 1592478252,        // block 10289326 
     tvl,
   };

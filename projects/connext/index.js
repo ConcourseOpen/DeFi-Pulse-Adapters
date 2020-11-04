@@ -23,7 +23,7 @@
       abi: abi['totalChannelToken'],
     })).output;
 
-    return (await sdk.api.util.toSymbols({[tokenDenominationAddress]: totalChannelToken})).output;
+    return {[tokenDenominationAddress]: totalChannelToken};
   }
 
 /*==================================================

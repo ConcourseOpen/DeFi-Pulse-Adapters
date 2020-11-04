@@ -270,10 +270,9 @@ async function valueLiquidTvl(timestamp, block) {
 async function tvl(timestamp, block) {
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
   const valueLiquid = await valueLiquidTvl(timestamp, block);
-  const vault = await vaultTvl(timestamp, block);
-  const totalTvl =await mergeBalance([seedPoolStake, valueLiquid, vault]);
-
-  return (await sdk.api.util.toSymbols(totalTvl)).output;
+  const vault = await vaultTvl(timestamp, block)
+  const totalTvl = mergeBalance([seedPoolStake, valueLiquid, vault]);
+  return totalTvl;
 }
 /*==================================================
   Exports
@@ -281,7 +280,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'valuedefi',
   token: null,
-  category: 'DEXes',
+  category: 'dexes',
   start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
   tvl,
 };
