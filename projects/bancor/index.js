@@ -2,72 +2,12 @@
   Modules
   ==================================================*/
 
+  const abi = require('./abi');
   const sdk = require('../../sdk');
   const axios = require('axios');
   const _ = require('underscore');
   const moment = require('moment');
   const BigNumber = require('bignumber.js');
-
-  /*==================================================
-  ABIs
-  ==================================================*/
-
-  const abiContractRegistryAddressOf = {
-    "inputs": [{
-      "internalType": "bytes32",
-      "name": "_contractName",
-      "type": "bytes32"
-    }],
-    "name": "addressOf",
-    "outputs": [{
-      "internalType": "address",
-      "name": "",
-      "type": "address"
-    }],
-    "stateMutability": "view",
-    "type": "function"
-  };
-  const abiConverterRegistryGetPools = {
-    "inputs": [],
-    "name": "getLiquidityPools",
-    "outputs": [{
-      "internalType": "address[]",
-      "name": "",
-      "type": "address[]"
-    }],
-    "stateMutability": "view",
-    "type": "function"
-  };
-  const abiRegistryGetConvertersBySmartTokens = {
-    "inputs": [{
-      "internalType": "address[]",
-      "name": "_smartTokens",
-      "type": "address[]"
-    }],
-    "name": "getConvertersBySmartTokens",
-    "outputs": [{
-      "internalType": "contract IConverter[]",
-      "name": "",
-      "type": "address[]"
-    }],
-    "stateMutability": "view",
-    "type": "function"
-  };
-  const abiConverterConnectorTokens = {
-    "inputs": [{
-      "internalType": "uint256",
-      "name": "",
-      "type": "uint256"
-    }],
-    "name": "connectorTokens",
-    "outputs": [{
-      "internalType": "contract IERC20Token",
-      "name": "",
-      "type": "address"
-    }],
-    "stateMutability": "view",
-    "type": "function"
-  };
 
   /*==================================================
   Helper Functions
@@ -165,14 +105,14 @@
     // get pool anchor addresses
     result = await sdk.api.abi.call({
       target: converterRegistryAddress,
-      abi: abiConverterRegistryGetPools,
+      abi: abi['abiConverterRegistryGetPools'],
       block
     });
 
     // get converter addresses
     result = await sdk.api.abi.call({
       target: converterRegistryAddress,
-      abi: abiRegistryGetConvertersBySmartTokens,
+      abi: abi['abiRegistryGetConvertersBySmartTokens'],
       params: [result.output],
       block
     });
@@ -193,7 +133,7 @@
 
     result = await sdk.api.abi.multiCall({
       calls: reserveTokenCalls,
-      abi: abiConverterConnectorTokens,
+      abi: abi['abiConverterConnectorTokens'],
       block
     });
 
