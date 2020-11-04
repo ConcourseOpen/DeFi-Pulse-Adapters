@@ -62,10 +62,10 @@
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
           this.test.value = projectRun;
           cachedOutput.push(projectRun); // Add output to cache
-          chai.expect(projectRun.output).to.be.an('object');
+          chai.expect(projectRun.output).to.be.an('array');
 
-          _.each(projectRun.output, (value, symbol) => {
-            let balance = BigNumber(value).toNumber();
+          _.each(projectRun.output, ({ symbol, address, balance }) => {
+            balance = BigNumber(balance).toNumber();
             chai.expect(balance).to.be.a('number');
             chai.expect(balance).to.be.finite;
             chai.expect(balance).to.be.at.least(0);
