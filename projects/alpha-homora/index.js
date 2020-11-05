@@ -11,8 +11,7 @@ const axios = require("axios");
   TVL
   ==================================================*/
 
-async function tvl(timestamp, a) {
-  const block = 11183610;
+async function tvl(timestamp, block) {
   const startTimestamp = 1602054167;
 
   const ethAddress = "0x0000000000000000000000000000000000000000";
@@ -33,8 +32,12 @@ async function tvl(timestamp, a) {
 
   const pools = data.pools;
 
-  const uniswapPools = pools.filter((pool) => pool.name !== "WETH/SUSHI");
-  const sushiswapPools = pools.filter((pool) => pool.name === "WETH/SUSHI");
+  const uniswapPools = pools.filter(
+    (pool) => pool.exchange === "Uniswap" || pool.exchange === "IndexCoop"
+  );
+  const sushiswapPools = pools.filter(
+    (pool) => pool.exchange === "Sushiswap" || pool.exchange === "Pickle"
+  );
 
   const { output: _totalETH } = await sdk.api.abi.call({
     target: bankAddress,
@@ -79,7 +82,7 @@ async function tvl(timestamp, a) {
     })),
   ];
 
-  const lpTokens = _lpTokens.map((_lpToken) => Bignumber(_lpToken.output));
+  const lpTokens = _lpTokens.map((_lpToken) => Bignumber(_lpToken.output || 0));
 
   const { output: _totalETHOnStakings } = await sdk.api.abi.multiCall({
     calls: pools.map((pool) => ({
@@ -91,7 +94,7 @@ async function tvl(timestamp, a) {
   });
 
   const totalETHOnStakings = _totalETHOnStakings.map((stake) =>
-    Bignumber(stake.output)
+    Bignumber(stake.output || 0)
   );
 
   const { output: _totalLpTokens } = await sdk.api.abi.multiCall({
@@ -103,19 +106,21 @@ async function tvl(timestamp, a) {
   });
 
   const totalLpTokens = _totalLpTokens.map((_totalLpToken) =>
-    Bignumber(_totalLpToken.output)
+    Bignumber(_totalLpToken.output || 0)
   );
 
   const unUtilizedValue = totalETH.minus(totalDebt);
 
   let tvl = Bignumber(unUtilizedValue);
   for (let i = 0; i < lpTokens.length; i++) {
-    const amount = lpTokens[i]
-      .times(totalETHOnStakings[i])
-      .div(totalLpTokens[i])
-      .times(Bignumber(2));
+    if (totalLpTokens[i].gt(0)) {
+      const amount = lpTokens[i]
+        .times(totalETHOnStakings[i])
+        .div(totalLpTokens[i])
+        .times(Bignumber(2));
 
-    tvl = tvl.plus(amount);
+      tvl = tvl.plus(amount);
+    }
   }
 
   balances[ethAddress] = tvl.toFixed(0);
