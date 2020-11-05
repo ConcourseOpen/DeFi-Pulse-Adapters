@@ -198,7 +198,7 @@
   module.exports = {
     name: 'Bancor',
     token: 'BNT',
-    category: 'dexes',
+    category: 'DEXes',
     start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
     tvl,
   };
