@@ -62,6 +62,7 @@
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
           this.test.value = projectRun;
           cachedOutput.push(projectRun); // Add output to cache
+          console.log("projectRun: %o", projectRun)
           chai.expect(projectRun.output).to.be.an('array');
 
           _.each(projectRun.output, ({ symbol, address, balance }) => {
