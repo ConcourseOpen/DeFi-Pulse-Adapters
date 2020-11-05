@@ -46,6 +46,6 @@ module.exports = {
   name: 'tBTC',
   token: 'KEEP',
   category: 'assets',
-  start: 1594730497,   // 07/14/2020 @ 12:41pm (UTC)
+  start: 1600214400,   // 09/16/2020 @ 12:00am (UTC)
   tvl
 }
