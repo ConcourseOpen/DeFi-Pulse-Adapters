@@ -20,7 +20,7 @@ async function tvl(timestamp, block) {
   };
 
   if (timestamp < startTimestamp) {
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
   const { data } = await axios.get(
