@@ -3,11 +3,11 @@
 ==================================================*/
 
 const sdk = require('../../sdk');
-const _ = require('underscore');
 const getCurrentTokens = require('./abis/getCurrentTokens.json');
 const getReserves = require('./abis/getReserves.json');
 const token0 = require('./abis/token0.json');
 const token1 = require('./abis/token1.json');
+const _ = require('underscore');
 const BigNumber = require("bignumber.js");
 
 /*==================================================
@@ -49,7 +49,7 @@ const configs = {
     ]
   }
 
-};
+}
 
 /*==================================================
   Main
@@ -62,7 +62,6 @@ async function singleVaultTvl(timestamp, block) {
     })),
     abi: 'erc20:totalSupply',
   })).output.map(value => value.output);
-
   const balances = {};
   _.forEach(totalSupplies, (totalSupply, index) => {
     let balance = new BigNumber(totalSupply || 0);
@@ -70,7 +69,6 @@ async function singleVaultTvl(timestamp, block) {
     let total = new BigNumber(balances[asset] || 0);
     balances[asset] = balance.plus(total).toFixed();
   });
-
   return balances
 }
 
@@ -108,34 +106,28 @@ async function uniSwapPairInfo(pairAddresses, timestamp, block) {
       abi: 'erc20:totalSupply',
     }).then(({output}) => output.map(value => value.output))
   ]);
-
-  return (
-    pairAddresses.map((value, index) => {
+  return pairAddresses.map((value, index) => {
     return {
-      reserve0: reserves[index]['_reserve0'] || 0,
-      reserve1: reserves[index]['_reserve1'] || 0,
+      reserve0: reserves[index] ? reserves[index]['_reserve0'] : null,
+      reserve1: reserves[index] ? reserves[index]['_reserve1'] : null,
       token0: token0Addresses[index],
       token1: token1Addresses[index],
       totalSupply: totalSupplies[index],
     }
-  }));
+  })
 }
 
-async function mergeBalance(balanceList) {
-  const globalBalances = {};
-
-  for (const balances of balanceList) {
+async function mergeBalance(array) {
+  const globalBalances = {}
+  for (const balances of array) {
     for (const asset in balances) {
-      if (balances.hasOwnProperty(asset)) {
-        const balance = new BigNumber(balances[asset] || 0);
-        const _asset = asset.toLowerCase();
-        let total = new BigNumber(globalBalances[_asset] || 0);
-        globalBalances[_asset] = balance.plus(total).toFixed();
-      }
+      const balance = new BigNumber(balances[asset] || 0)
+      let total = new BigNumber(globalBalances[asset.toLowerCase()] || 0);
+      globalBalances[asset.toLowerCase()] = balance.plus(total).toFixed();
     }
   }
 
-  return globalBalances
+  return (await sdk.api.util.toSymbols(globalBalances)).output;
 }
 
 async function uNIv2LPVaultTvl(timestamp, block) {
@@ -148,22 +140,22 @@ async function uNIv2LPVaultTvl(timestamp, block) {
   })).output.map(value => value.output);
 
   const pairs = configs.vault.uniV2LP.map(value => value.underlyingToken);
-  const pairInfos = await uniSwapPairInfo(pairs, timestamp, block);
-  const balanceOfResult = [];
-
+  const pairInfos = await uniSwapPairInfo(pairs, timestamp, block)
+  const balanceOfResult = []
   for (let index = 0; index < configs.vault.uniV2LP.length; index++) {
-    let vaultSupply = new BigNumber(totalVaultSupplies[index] || 0);
+    let vaultSupply = new BigNumber(totalVaultSupplies[index] || 0)
     let {reserve0, reserve1, token0, token1, totalSupply} = pairInfos[index];
-    balanceOfResult.push({
-      address: token0,
-      balance: new BigNumber(reserve0).times(vaultSupply).div(totalSupply).toFixed()
-    });
-    balanceOfResult.push({
-      address: token1,
-      balance: new BigNumber(reserve1).times(vaultSupply).div(totalSupply).toFixed()
-    });
+    if (reserve0 && reserve1 && token0 && token1 && totalSupply) {
+      balanceOfResult.push({
+        address: token0,
+        balance: new BigNumber(reserve0).times(vaultSupply).div(totalSupply).toFixed()
+      })
+      balanceOfResult.push({
+        address: token1,
+        balance: new BigNumber(reserve1).times(vaultSupply).div(totalSupply).toFixed()
+      })
+    }
   }
-
   const balances = {};
   _.forEach(balanceOfResult, (result) => {
     let balance = new BigNumber(result.balance || 0);
@@ -171,7 +163,6 @@ async function uNIv2LPVaultTvl(timestamp, block) {
     let total = new BigNumber(balances[asset] || 0);
     balances[asset] = balance.plus(total).toFixed();
   });
-
   return balances
 }
 
@@ -181,7 +172,7 @@ async function vaultTvl(timestamp, block) {
 
 async function seedPoolStakeTvl(timestamp, block) {
   const balances = {};
-  const pools = configs.seed;
+  const pools = configs.seed
   let balanceOfCalls = [];
   _.forEach(pools, (pool) => {
     balanceOfCalls = [
@@ -198,14 +189,12 @@ async function seedPoolStakeTvl(timestamp, block) {
     calls: balanceOfCalls,
     abi: 'erc20:balanceOf',
   })).output;
-
   _.forEach(balanceOfResult, (result) => {
     let balance = new BigNumber(result.output || 0);
     let asset = result.input.target;
     let total = new BigNumber(balances[asset] || 0);
     balances[asset] = balance.plus(total).toFixed();
   });
-
   return balances;
 }
 
@@ -270,11 +259,14 @@ async function valueLiquidTvl(timestamp, block) {
 async function tvl(timestamp, block) {
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
   const valueLiquid = await valueLiquidTvl(timestamp, block);
-  const vault = await vaultTvl(timestamp, block);
-  const totalTvl =await mergeBalance([seedPoolStake, valueLiquid, vault]);
-
-  return (await sdk.api.util.toSymbols(totalTvl)).output;
+  const vault = await vaultTvl(timestamp, block)
+  return mergeBalance([seedPoolStake, valueLiquid, vault]);
 }
+
+(async () => {
+  const data = await tvl(1601424000, 8782565)
+  console.log("data: %o", data)
+})()
 /*==================================================
   Exports
 ==================================================*/
