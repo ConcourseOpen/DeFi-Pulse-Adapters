@@ -124,9 +124,14 @@ async function tvl(timestamp, block) {
   }
 
   balances[ethAddress] = tvl.toFixed(0);
+  console.log(balances)
   return (await sdk.api.util.toSymbols(balances)).output;
 }
 
+(async () => {
+  const data = await tvl(1602115200, 8834143)
+  console.log("data: %o", data)
+})()
 /*==================================================
   Exports
   ==================================================*/
