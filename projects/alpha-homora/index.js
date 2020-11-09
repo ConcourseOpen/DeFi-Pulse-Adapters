@@ -127,7 +127,7 @@ async function tvl(timestamp, block) {
   console.log(balances)
   return (await sdk.api.util.toSymbols(balances)).output;
 }
-chore: alpha homora validations
+
 /*==================================================
   Exports
   ==================================================*/
