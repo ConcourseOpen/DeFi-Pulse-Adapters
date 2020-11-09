@@ -6,7 +6,8 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
-  const abi = require('./abi');
+  const factoryAbi = require('./abis/factory');
+  const otokenAbi = require('./abis/otoken');
 
 /*==================================================
   Settings
@@ -15,11 +16,6 @@
   const factoriesAddresses = [
     "0xb529964F86fbf99a6aA67f72a27e59fA3fa4FEaC", // ocToken Factory Address
     "0xcC5d905b9c2c8C9329Eb4e25dc086369D6C7777C"  // oEth Factory Address
-  ]
-
-  const tokenAddresses = [
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-    '0x6B175474E89094C44Da98b954EedeAC495271d0F' // DAI
   ]
 
 /*==================================================
@@ -34,7 +30,7 @@
       let numberOfOptionsContracts = (
         await sdk.api.abi.call({
           target: factoriesAddresses[i],
-          abi: abi.getNumberOfOptionsContracts,
+          abi: factoryAbi.getNumberOfOptionsContracts,
         })
       ).output;
 
@@ -51,7 +47,7 @@
       let optionsContracts = (
         await sdk.api.abi.multiCall({
           calls: getOptionsContractsCalls,
-          abi: abi.getOptionsContracts
+          abi: factoryAbi.getOptionsContracts
         })
       ).output;
 
@@ -63,7 +59,35 @@
           ...optionsAddresses,
           contracts.output
         ]
+      });    
+      
+      // batch getCollateralAsset calls
+      let getCollateralAssetCalls = [];
+
+      for(let j = 0; j < optionsAddresses; j++) {
+        getCollateralAssetCalls.push({
+          target: optionsAddresses[j]
+        })
+      }
+
+      // get list of options collateral assets
+      let optionsCollateral = (
+        await sdk.api.abi.multiCall({
+          calls: getCollateralAssetCalls,
+          abi: otokenAbi.getCollateralAsset
+        })
+      ).output;
+
+      let optionsCollateralAddresses = []
+
+      _.each(optionsCollateral, async (collateralAsset) => {        
+        optionsCollateralAddresses = [
+          ...optionsCollateralAddresses,
+          collateralAsset.output
+        ]
       });
+
+      console.log(optionsCollateralAddresses)
 
       // get ETH balance
       _.each(optionsAddresses, async (optionAddress) => {
@@ -73,14 +97,14 @@
 
       // batch balanceOf calls
       let balanceOfCalls = [];
+      let i = 0;
 
-      _.each(optionsAddresses, (optionsAddress) => {
-        _.each(tokenAddresses, (tokenAddress) => {
-          balanceOfCalls.push({
-            target: tokenAddress,
-            params: [optionsAddress]
-          });
+      _.each(optionsAddresses, async (optionsAddress) => {
+        balanceOfCalls.push({
+          target: optionsCollateralAddresses[i],
+          params: [optionsAddress]
         });
+        i++;
       });
 
       // get tokens balances

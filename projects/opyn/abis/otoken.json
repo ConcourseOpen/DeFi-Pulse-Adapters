@@ -1,0 +1,30 @@
+{
+  "getCollateralAsset": {
+    "constant": true,
+    "inputs": [],
+    "name": "collateral",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getRandomData": {
+    "constant": true,
+    "inputs": [],
+    "name": "getVaultOwnersLength",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
