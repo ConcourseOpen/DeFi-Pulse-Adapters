@@ -127,12 +127,7 @@ async function tvl(timestamp, block) {
   console.log(balances)
   return (await sdk.api.util.toSymbols(balances)).output;
 }
-
-(async () => {
-  const data = await tvl(1202115200, 8834143)
-  console.log("data: %o", data)
-})()
-
+chore: alpha homora validations
 /*==================================================
   Exports
   ==================================================*/
