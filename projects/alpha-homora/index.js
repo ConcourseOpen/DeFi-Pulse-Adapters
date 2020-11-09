@@ -129,9 +129,10 @@ async function tvl(timestamp, block) {
 }
 
 (async () => {
-  const data = await tvl(1602115200, 8834143)
+  const data = await tvl(1202115200, 8834143)
   console.log("data: %o", data)
 })()
+
 /*==================================================
   Exports
   ==================================================*/
