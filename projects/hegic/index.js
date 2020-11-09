@@ -27,10 +27,12 @@
 
     const [ETHResponse, WBTCResponse] = await Promise.all([ETHRequest, WBTCRequest])
 
-    return {
+    const balances = {
       '0x0000000000000000000000000000000000000000': ETHResponse.output,
       '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': WBTCResponse.output,
     };
+
+    return (await sdk.api.util.toSymbols(balances)).output
   }
 
 /*==================================================
