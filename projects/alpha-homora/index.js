@@ -12,14 +12,16 @@ const axios = require("axios");
   ==================================================*/
 
 async function tvl(timestamp, block) {
+
   const startTimestamp = 1602054167;
+  const startBlock = 11007158;
 
   const ethAddress = "0x0000000000000000000000000000000000000000";
   let balances = {
     [ethAddress]: "0", // ETH
   };
 
-  if (timestamp < startTimestamp) {
+  if (timestamp < startTimestamp || block < startBlock) {
     return (await sdk.api.util.toSymbols(balances)).output;
   }
 
