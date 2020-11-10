@@ -16,6 +16,10 @@ async function tvl(timestamp, block) {
   const startTimestamp = 1602054167;
   const startBlock = 11007158;
 
+  let point = await sdk.api.util.lookupBlock(timestamp);
+  timestamp = point.timestamp
+  block = point.block
+
   const ethAddress = "0x0000000000000000000000000000000000000000";
   let balances = {
     [ethAddress]: "0", // ETH
@@ -129,7 +133,12 @@ async function tvl(timestamp, block) {
   console.log(balances)
   return (await sdk.api.util.toSymbols(balances)).output;
 }
+(async () => {
+  const data = await tvl(1603584000, 11007158)
+  console.log("data: %o", data)
+})()
 
+// 1602374400, 8853336
 /*==================================================
   Exports
   ==================================================*/
@@ -141,3 +150,6 @@ module.exports = {
   start: 1602054167, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };
+
+// 1603584000, 8942803
+// 1604102400, 8978525
