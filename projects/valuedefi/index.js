@@ -263,10 +263,12 @@ async function tvl(timestamp, block) {
   return mergeBalance([seedPoolStake, valueLiquid, vault]);
 }
 
-// (async () => {
-//   const data = await tvl(1601424000, 8782565)
-//   console.log("data: %o", data)
-// })()
+(async () => {
+  const data = await tvl(1604581200, 11197348)
+  console.log("data: %o", data)
+})()
+
+// 1604581200, 9011071 
 /*==================================================
   Exports
 ==================================================*/
@@ -277,3 +279,4 @@ module.exports = {
   start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
   tvl,
 };
+
