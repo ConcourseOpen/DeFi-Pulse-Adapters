@@ -6,8 +6,9 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
-  const factoryAbi = require('./abis/factory');
-  const otokenAbi = require('./abis/otoken');
+  const getNumberOfOptionsContractsAbi = require('./abis/getNumberOfOptionsContracts.json');
+  const optionsContractsAbi = require('./abis/optionsContracts.json');
+  const collateralAbi = require('./abis/collateral.json');
 
 /*==================================================
   Settings
@@ -23,6 +24,14 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
+    const supportedTokens = await (
+      sdk
+        .api
+        .util
+        .tokenList()
+        .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
+    );
+  
     let balances = {};
 
     for(let i = 0; i < factoriesAddresses.length; i++) {
@@ -30,7 +39,7 @@
       let numberOfOptionsContracts = (
         await sdk.api.abi.call({
           target: factoriesAddresses[i],
-          abi: factoryAbi.getNumberOfOptionsContracts,
+          abi: getNumberOfOptionsContractsAbi,
         })
       ).output;
 
@@ -47,7 +56,7 @@
       let optionsContracts = (
         await sdk.api.abi.multiCall({
           calls: getOptionsContractsCalls,
-          abi: factoryAbi.getOptionsContracts
+          abi: optionsContractsAbi
         })
       ).output;
 
@@ -70,13 +79,22 @@
         })
       }
 
+      // console.log(
+      //   await sdk.api.abi.call({
+      //     target: optionsAddresses[0],
+      //     abi: otokenAbi.getRandomData
+      //   })
+      // )
+
       // get list of options collateral assets
       let optionsCollateral = (
         await sdk.api.abi.multiCall({
           calls: getCollateralAssetCalls,
-          abi: otokenAbi.getCollateralAsset
+          abi: collateralAbi
         })
       ).output;
+
+      console.log(optionsCollateral)
 
       let optionsCollateralAddresses = []
 
@@ -97,14 +115,16 @@
 
       // batch balanceOf calls
       let balanceOfCalls = [];
-      let i = 0;
+      let j = 0;
 
       _.each(optionsAddresses, async (optionsAddress) => {
-        balanceOfCalls.push({
-          target: optionsCollateralAddresses[i],
-          params: [optionsAddress]
-        });
-        i++;
+        if (supportedTokens.includes(optionsCollateralAddresses[j])) {
+          balanceOfCalls.push({
+            target: optionsCollateralAddresses[j],
+            params: [optionsAddress]
+          });
+        }
+        j++;
       });
 
       // get tokens balances
@@ -121,6 +141,8 @@
         }
       });
     }
+
+    console.log(balances)
 
     return balances;
   }
