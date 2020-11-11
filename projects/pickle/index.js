@@ -155,7 +155,7 @@ async function getUnderlying(token, block) {
 
     return BigNumber(balance.output);
   }
-  return BigNumber(balance);
+  return BigNumber(0);
 }
 
 async function getUniswapUnderlying(token, block) {
