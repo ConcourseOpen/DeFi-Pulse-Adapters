@@ -114,38 +114,32 @@ async function tvl(timestamp, block) {
 
   let balances = {
     // WETH
-    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": BigNumber(pUNIDAI[1])
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": pUNIDAI[1]
       .plus(pUNIUSDC[1])
       .plus(pUNIUSDT[0])
       .plus(pUNIWBTC[1])
       .toFixed(18),
 
     // DAI
-    "0x6B175474E89094C44Da98b954EedeAC495271d0F": BigNumber(pDAI)
+    "0x6B175474E89094C44Da98b954EedeAC495271d0F": pDAI
       .plus(pUNIDAI[0])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
       .toFixed(18),
 
     // USDC
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": BigNumber(
-      pUNIUSDC[0]
-    ).toFixed(6),
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0].toFixed(6),
 
     // USDT
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7": BigNumber(
-      pUNIUSDT[1]
-    ).toFixed(6),
+    "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1].toFixed(6),
 
     // WBTC
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": BigNumber(
-      pUNIWBTC[0]
-    ).toFixed(8), // TBTC SUSHI
+    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0].toFixed(8),
 
     // RenBTC
-    "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": BigNumber(
-      prenCRV(results[22]).times(BigNumber("10").pow(-10))
-    ).toFixed(8),
+    "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
+      .times(BigNumber("10").pow(-10))
+      .toFixed(8),
   };
 
   return balances;
@@ -159,9 +153,9 @@ async function getUnderlying(token, block) {
       abi: abi["balance"],
     });
 
-    return balance;
+    return BigNumber(balance.output);
   }
-  return 0;
+  return BigNumber(balance);
 }
 
 async function getUniswapUnderlying(token, block) {
@@ -188,9 +182,11 @@ async function getUniswapUnderlying(token, block) {
 
     const poolUnderlyingReservesToken0 = BigNumber(reserves.output[0]);
     const poolUnderlyingReservesToken1 = BigNumber(reserves.output[1]);
-    const poolFraction = balance.div(totalSupply);
+    const poolFraction = BigNumber(balance.output).div(
+      BigNumber(totalSupply.output)
+    );
 
-    if (!poolFraction.isNaN() && !poolSharePrice.isEqualTo(ERROR)) {
+    if (!poolFraction.isNaN() && !poolFraction.isEqualTo(ERROR)) {
       return [
         poolFraction.times(poolUnderlyingReservesToken0),
         poolFraction.times(poolUnderlyingReservesToken1),
@@ -198,7 +194,7 @@ async function getUniswapUnderlying(token, block) {
     }
   }
 
-  return [0, 0];
+  return [BigNumber(0), BigNumber(0)];
 }
 
 /*==================================================
