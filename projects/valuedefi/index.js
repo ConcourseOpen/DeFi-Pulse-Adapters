@@ -263,10 +263,6 @@ async function tvl(timestamp, block) {
   return mergeBalance([seedPoolStake, valueLiquid, vault]);
 }
 
-(async () => {
-  const data = await tvl(1604581200, 11197348)
-  console.log("data: %o", data)
-})()
 
 // 1604581200, 9011071 
 /*==================================================
