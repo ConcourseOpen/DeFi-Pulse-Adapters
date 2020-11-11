@@ -135,10 +135,8 @@ async function tvl(timestamp, block) {
   return (await sdk.api.util.toSymbols(balances)).output;
 }
 
-(async () => {
-  const data = await tvl(1602115200, 8834143)
-  console.log("data: %o", data)
-})()
+
+// 1602374400, 8853336
 /*==================================================
   Exports
   ==================================================*/

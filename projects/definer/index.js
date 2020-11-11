@@ -73,6 +73,9 @@ const utility = {
 }
 
 async function tvl(timestamp, block) {
+  let point = await sdk.api.util.lookupBlock(timestamp);
+  timestamp = point.timestamp
+  block = point.block
   let balances = {
     '0x000000000000000000000000000000000000000E': "0",// ETH
     '0x6B175474E89094C44Da98b954EedeAC495271d0F': "0",// DAI
@@ -86,10 +89,10 @@ async function tvl(timestamp, block) {
     '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2': "0",
     '0x514910771AF9Ca656af840dff83E8264EcF986CA': "0"
   };
+  console.log({block: 10819469})
   if (block > 10819469) {
     // Get all Tokens in the market
     let markets = await utility.getMarkets(block);
-
     // Get Bank
     let banksContract = await utility.getBankContract(block, markets);
 
@@ -99,9 +102,9 @@ async function tvl(timestamp, block) {
       }
     });
   }
+  // return balances
   return (await sdk.api.util.toSymbols(balances)).output;;
 }
-
 /*==================================================
   Exports
   ==================================================*/
@@ -110,7 +113,7 @@ module.exports = {
   website: 'https://definer.org/',
   token: "FIN",
   category: 'Lending',
-  start: 10819493, // 09-08-2020 06:55:19 AM +UTC
+  start: 1596956119, // 09-08-2020 06:55:19 AM +UTC
   tvl,
   term: '1 block',
   permissioning: 'Open',
