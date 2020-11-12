@@ -12,7 +12,6 @@ const BigNumber = require("bignumber.js");
 
 const AssetAddress = "0x6a2469944d3F0AA54531DfA6dCB4350F4A150b67";
 const EnvAddress = "0x3719C6ff935623A7B125952df5D849ef53B08cAc";
-const QUSDAddress = "0x59d4CCC94A9C4C3d3b4bA2Aa343a9bDF95145DD1";
 const BalanceAddress = "0x2336817CCC263B17725D7c15D687510D1d10a1b6";
 
 // /*==================================================
@@ -34,15 +33,6 @@ async function _tokens() {
 
 async function tvl(timestamp, block) {
   let balances = {};
-
-  balances[QUSDAddress] = (
-    await sdk.api.abi.call({
-      block,
-      target: BalanceAddress,
-      abi: abi.balance.gsupply,
-    })
-  ).output;
-
   let tokens = await _tokens();
 
   for (let i in tokens) {
@@ -60,6 +50,7 @@ async function tvl(timestamp, block) {
       : new BigNumber(output);
   }
 
+  console.log("balances: ", balances);
   return balances;
 }
 
