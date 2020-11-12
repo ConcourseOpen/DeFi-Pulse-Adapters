@@ -49,8 +49,6 @@ async function tvl(timestamp, block) {
       ? balances[token].plus(output)
       : new BigNumber(output);
   }
-
-  console.log("balances: ", balances);
   return balances;
 }
 
