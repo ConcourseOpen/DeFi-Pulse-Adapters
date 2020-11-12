@@ -12,13 +12,14 @@ const axios = require("axios");
   ==================================================*/
 
 async function tvl(timestamp, block) {
-
   const startTimestamp = 1602054167;
   const startBlock = 11007158;
 
   let point = await sdk.api.util.lookupBlock(timestamp);
   timestamp = point.timestamp
   block = point.block
+
+  console.log({block, timestamp})
 
   const ethAddress = "0x0000000000000000000000000000000000000000";
   let balances = {
@@ -134,8 +135,6 @@ async function tvl(timestamp, block) {
   return (await sdk.api.util.toSymbols(balances)).output;
 }
 
-
-// 1602374400, 8853336
 /*==================================================
   Exports
   ==================================================*/
@@ -147,6 +146,3 @@ module.exports = {
   start: 1602054167, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };
-
-// 1603584000, 8942803
-// 1604102400, 8978525

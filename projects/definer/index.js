@@ -89,7 +89,7 @@ async function tvl(timestamp, block) {
     '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2': "0",
     '0x514910771AF9Ca656af840dff83E8264EcF986CA': "0"
   };
-  console.log({block, timestamp})
+  
   if (block > 10819469) {
     // Get all Tokens in the market
     let markets = await utility.getMarkets(block);
@@ -104,7 +104,6 @@ async function tvl(timestamp, block) {
   }
   return (await sdk.api.util.toSymbols(balances)).output;
 }
-
 /*==================================================
   Exports
   ==================================================*/
