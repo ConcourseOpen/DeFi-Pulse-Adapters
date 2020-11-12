@@ -138,24 +138,12 @@
         if (!fSharePrice.isEqualTo(ERROR)) {
           return fBalance.times(fSharePrice).div(fUnderlyingUnit);
         }
-      } catch (error) {
-        // if shareprice unavailable, assume shareprice is 1
-        const abridged_promises = [
-          sdk.api.abi.call({ block, target: fTokens[token].contract, abi: 'erc20:totalSupply', }),
-        ];
-
-	      try {
-          let abridged_results = await Promise.all(abridged_promises);
-
-          if (abridged_results.length === 0) {
-            return 0;
-          }
-
-          return BigNumber(abridged_results[0].output);
-        } catch (error) {
-	        console.error(error);
-        }
-      }
+	else {
+          // if shareprice is ERROR, assume shareprice is 1
+	  return fBalance;
+	}
+      } catch (error) { return 0 }
+      // if shareprice unavailable, assume shareprice is 0
     }
     return 0;
   }
@@ -183,39 +171,21 @@
         let poolUnderlyingBalance = BigNumber(results[3].output);
         let poolUnderlyingReservesToken0 = BigNumber(results[4].output[0]);
         let poolUnderlyingReservesToken1 = BigNumber(results[4].output[1]);
-        let poolFraction = poolBalance.times(poolSharePrice).div(poolUnderlyingUnit).div(poolUnderlyingBalance);
-
-        if (!poolFraction.isNaN() && !poolSharePrice.isEqualTo(ERROR)) {
-          return [ poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1) ];
-        }
-      } catch (error) {
-        // if shareprice unavailable, assume shareprice is 1
-        const abridged_promises = [
-          sdk.api.abi.call({ block, target: fTokens[token].contract, abi: 'erc20:totalSupply', }),
-          sdk.api.abi.call({ block, target: underlyingPool.contract, abi: 'erc20:totalSupply', }),
-          sdk.api.abi.call({ block, target: underlyingPool.contract, abi: abi['uniABIReserves'], }),
-        ];
-
-	      try {
-          let abridged_results = await Promise.all(abridged_promises);
-          if (abridged_results.length === 0) {
-            return [0, 0];
-          }
-
-          let poolBalance = BigNumber(results[0].output);
-          let poolUnderlyingBalance = BigNumber(results[1].output);
-          let poolUnderlyingReservesToken0 = BigNumber(results[2].output[0]);
-          let poolUnderlyingReservesToken1 = BigNumber(results[2].output[1]);
-          let poolFraction = poolBalance.div(poolUnderlyingBalance);
-          if ( !poolFraction.isNaN() ) {
+	if (!poolSharePrice.isEqualTo(ERROR)) {
+          let poolFraction = poolBalance.times(poolSharePrice).div(poolUnderlyingUnit).div(poolUnderlyingBalance);
+          if (!poolFraction.isNaN()) {
             return [ poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1) ];
           }
-        } catch (error) {
-	        console.error(error);
-        }
-      }
+	}
+	else {
+        // if shareprice is ERROR, assume shareprice is 1
+          let poolFraction = poolBalance.div(poolUnderlyingBalance);
+          if (!poolFraction.isNaN()) {
+            return [ poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1) ];
+          }
+	}
+      } catch (error) { return [0, 0] } // if shareprice unavailable, assume shareprice is 0
     }
-
     return [0, 0];
   }
 
