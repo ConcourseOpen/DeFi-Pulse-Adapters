@@ -58,7 +58,7 @@
     const snxTotalSupply = parseInt(snxjs.utils.formatEther(unformattedSnxTotalSupply));
     const totalSNXLocked = percentLocked.times(snxTotalSupply);
 
-    return { [snxjs.contracts.Synthetix.address]: totalSNXLocked.times(Math.pow(10,18)).toFixed() };
+    return (await sdk.api.util.toSymbols({ [snxjs.contracts.Synthetix.address]: totalSNXLocked.times(Math.pow(10,18)).toFixed() })).output;
   }
 
   // Uses graph protocol to run through SNX contract. Since there is a limit of 100 results per query
