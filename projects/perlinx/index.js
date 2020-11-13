@@ -12,8 +12,9 @@ const BigNumber = require('bignumber.js');
   ==================================================*/
 
 const perlinX = '0x5Fa19F612dfd39e6754Bb2E8300E681d1C589Dd4';
-const perlErc20 = '0xeca82185adCE47f39c684352B0439f030f860318'
-
+const perlErc20 = '0xeca82185adCE47f39c684352B0439f030f860318';
+const startBlock = 10923466;
+const startTimestamp = 1600923600;
 /*==================================================
   TVL
   ==================================================*/
@@ -23,7 +24,13 @@ async function tvl(timestamp, block) {
     timestamp = point.timestamp
     block = point.block
     
-    let balances = {};
+    let balances = {
+        [perlErc20] : "0"
+    };
+
+     if (timestamp < startTimestamp || block < startBlock) {
+        return (await sdk.api.util.toSymbols(balances)).output;
+    };
 
     const synthCount = await sdk.api.abi.call({
         target: perlinX,
@@ -35,6 +42,7 @@ async function tvl(timestamp, block) {
     for (let i = 0; i < synthCount.output; i++) {
         counts.push(i)
     }
+
     const synths = await sdk.api.abi.multiCall({
         block,
         calls: _.map(counts, (count) => {
@@ -87,8 +95,11 @@ async function tvl(timestamp, block) {
             balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
         }
     });
+
+    
     return (await sdk.api.util.toSymbols(balances)).output;
 }
+
 
 /*==================================================
   Exports
