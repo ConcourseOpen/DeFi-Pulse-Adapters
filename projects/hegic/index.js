@@ -38,7 +38,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'HEGIC',
+    name: 'Hegic',
     token: 'HEGIC',
     category: 'derivatives',
     start: 1602360000, // Oct-10-2020 08:00:00 PM +UTC,
