@@ -20,7 +20,9 @@ const perlErc20 = '0xeca82185adCE47f39c684352B0439f030f860318'
 
 async function tvl(timestamp, block) {
 
-    let balances = {};
+    let balances = {
+        [perlErc20] : 0
+    };
 
     const synthCount = await sdk.api.abi.call({
         target: perlinX,
