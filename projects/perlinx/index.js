@@ -12,7 +12,7 @@ const BigNumber = require('bignumber.js');
   ==================================================*/
 
 const perlinX = '0x5Fa19F612dfd39e6754Bb2E8300E681d1C589Dd4';
-
+const perlErc20 = '0xeca82185adCE47f39c684352B0439f030f860318'
 
 /*==================================================
   TVL
@@ -22,18 +22,17 @@ async function tvl(timestamp, block) {
 
     let balances = {};
 
-    const poolCount = await sdk.api.abi.call({
+    const synthCount = await sdk.api.abi.call({
         target: perlinX,
-        abi: abi.poolCount,
+        abi: abi.synthCount,
         block
     });
 
     let counts = []
-    for (let i = 0; i < poolCount.output; i++) {
+    for (let i = 0; i < synthCount.output; i++) {
         counts.push(i)
     }
-
-    const pools = await sdk.api.abi.multiCall({
+    const synths = await sdk.api.abi.multiCall({
         block,
         calls: _.map(counts, (count) => {
             return {
@@ -41,54 +40,39 @@ async function tvl(timestamp, block) {
                 params: count
             }
         }),
-        abi: abi.arrayPerlinPools
-    });
+        abi: abi.arraySynths
+    })
+    const synthAddresses = _.map(synths.output, (item) => item.output)
 
-    let activePools = await sdk.api.abi.multiCall({
-        block,
-        calls: _.map(pools.output, (pool) => {
+    const emps = (await sdk.api.abi.multiCall({
+        calls: _.map(synthAddresses, (address) => {
             return {
                 target: perlinX,
-                params: pool.output
+                params: address
             }
         }),
-        abi: abi.poolIsListed
+        abi: abi.mapSynth_EMP,
+    }));
+
+    const empAddresses = _.map(emps.output, (item) => item.output)
+
+
+    let calls = [];
+
+    _.forEach(empAddresses, (empAddress) => {
+        calls.push({
+            target: perlErc20,
+            params: empAddress,
+        });
     });
 
-    activePools = _.map(activePools.output, (pool) => {
-        return {
-            address: pool.input.params[0],
-            active: pool.output
-        }
-    })
-    activePools = _.filter(activePools, (pool) => pool.active)
-
-    const poolTokenData = (await sdk.api.abi.multiCall({
-        calls: _.map(activePools, (activePool) => ({ target: activePool.address })),
-        abi: abi.getCurrentTokens,
-    })).output;
-
-    let poolCalls = [];
-
-    _.forEach(poolTokenData, (poolToken) => {
-        let poolTokens = poolToken.output;
-        let poolAddress = poolToken.input.target;
-
-        _.forEach(poolTokens, (token) => {
-            poolCalls.push({
-                target: token,
-                params: poolAddress,
-            });
-        })
-    });
-
-    let poolBalances = (await sdk.api.abi.multiCall({
+    let synthBalances = (await sdk.api.abi.multiCall({
         block,
-        calls: poolCalls,
+        calls: calls,
         abi: 'erc20:balanceOf'
     })).output;
 
-    _.each(poolBalances, (balanceOf) => {
+    _.each(synthBalances, (balanceOf) => {
         if (balanceOf.success) {
             let balance = balanceOf.output;
             let address = balanceOf.input.target;
@@ -112,6 +96,6 @@ module.exports = {
     name: 'PerlinX',
     token: null,
     category: 'derivatives',
-    start: 1598529600,
+    start: 1600905600,
     tvl
 }
