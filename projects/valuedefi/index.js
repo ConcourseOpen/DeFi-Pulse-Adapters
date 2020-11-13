@@ -265,7 +265,7 @@ async function tvl(timestamp, block) {
   Exports
 ==================================================*/
 module.exports = {
-  name: 'valuedefi',
+  name: 'Value Defi',
   token: null,
   category: 'DEXes',
   start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
