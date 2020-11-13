@@ -55,7 +55,7 @@
       }
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -66,6 +66,6 @@
     name: 'Kyber',
     token: 'KNC',
     category: 'DEXes',
-    start: 1546515458,  // Jan-03-2019 11:37:38 AM +UTC
+    start: 1546560000,  // Jan-03-2019 11:37:38 AM +UTC
     tvl,
   };
