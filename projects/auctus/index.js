@@ -8,12 +8,12 @@
   const { default: BigNumber } = require('bignumber.js');
 
   const START_BLOCK = 10104891;
-  const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';  
+  const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';
 
 /*==================================================
   TVL
   ==================================================*/
-  
+
   const getTokenAddressFromLogData = data => '0x' + data.substring(154, 194);
 
   async function tvl(timestamp, block) {
@@ -31,7 +31,7 @@
       const address = getTokenAddressFromLogData(log.data);
       acoOptionsAddresses.push(address)
     });
-    
+
     let collateralResult = await sdk.api.abi.multiCall({
       block,
       calls: _.map(acoOptionsAddresses, (option) => ({
@@ -78,7 +78,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'ACO',
+    name: 'Auctus',
     token: 'AUC',
     category: 'Derivatives',
     start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
