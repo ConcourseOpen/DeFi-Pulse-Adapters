@@ -19,7 +19,6 @@
     "mocha": "^7.0.0",
     "moment": "^2.24.0",
     "shelljs": "^0.8.3",
-    "@synthetixio/js": "0.1.2",
     "terminal-kit": "^1.35.2",
     "underscore": "^1.9.1",
     "web3-utils": "^1.2.6"
