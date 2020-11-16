@@ -51,7 +51,11 @@
                     token0: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', token1: '0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa' },
   };
 
-  async function tvl(timestamp, block) {
+async function tvl(timestamp, block) {
+    let point = await sdk.api.util.lookupBlock(timestamp);
+    console.log(point)
+    timestamp = point.timestamp
+    block = point.block
     const promises = [
       getUnderlying('fWETHv0',block),
       getUnderlying('fDAIv0',block),
