@@ -104,7 +104,7 @@ async function tvl(timestamp, block) {
           }
 
         return {
-            [WBTC_ADDRESS] : channelCapacity.toFixed()
+            [WBTC_ADDRESS] : channelCapacity.times(Math.pow(10, 8)).toFixed()
         }
 }
 
