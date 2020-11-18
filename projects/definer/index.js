@@ -7,6 +7,7 @@ const sdk = require('../../sdk');
   Settings
   ==================================================*/
 const GLOBAL_CONFIG_ADDRESS = "0xa13B12D2c2EC945bCAB381fb596481735E24D585";
+const SAVINGS_ADDRESS = '0x7a9E457991352F8feFB90AB1ce7488DF7cDa6ed5';
 const abi = require('./abi.json');
 
 /*==================================================
@@ -70,7 +71,19 @@ const utility = {
       calls: callsArray
     })).output;
   },
+
+   async getCtokenValue (block,ctoken) {
+    let cEthToken =  await sdk.api.abi.call({
+      target: ctoken ,
+      params: SAVINGS_ADDRESS,
+      abi: 'erc20:balanceOf',
+      block
+    });
+    return cEthToken.output;
+  }
 }
+
+
 
 async function tvl(timestamp, block) {
   let point = await sdk.api.util.lookupBlock(timestamp);
@@ -78,7 +91,6 @@ async function tvl(timestamp, block) {
   block = point.block
   let balances = {
     '0x000000000000000000000000000000000000000E': "0",// ETH
-    '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5': "0",// CETH
     '0x6B175474E89094C44Da98b954EedeAC495271d0F': "0",// DAI
     '0x0000000000085d4780B73119b644AE5ecd22b376': "0",
     '0xdAC17F958D2ee523a2206206994597C13D831ec7': "0",
@@ -102,7 +114,10 @@ async function tvl(timestamp, block) {
         balances[result.input.params] = result.output;
       }
     });
+    balances['0x0000000000000000000000000000000000000000'] = balances['0x000000000000000000000000000000000000000E'];
+    delete balances['0x000000000000000000000000000000000000000E'];
   }
+  
   return (await sdk.api.util.toSymbols(balances)).output;
 }
 /*==================================================
