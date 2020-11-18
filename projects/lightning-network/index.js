@@ -111,6 +111,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
     name: 'Lightning Network',
+    chain: 'Bitcoin',
     token: null,
     category: 'Payments',
     start: 1516406400,
