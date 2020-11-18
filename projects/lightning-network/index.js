@@ -5,6 +5,7 @@ const axios = require("axios");
 const moment = require("moment");
 const papa = require("papaparse");
 const _ = require("underscore");
+const sdk = require('../../sdk');
 
 // Scrapers
 const Scraper1ML = require("./utils/Scraper1ML.js");
@@ -103,9 +104,9 @@ async function tvl(timestamp, block) {
             throw "Unable to determine LN channel capacity."
           }
 
-        return {
+        return (await sdk.api.util.toSymbols({
             [WBTC_ADDRESS] : channelCapacity.times(Math.pow(10, 8)).toFixed()
-        }
+        })).output;
 }
 
 module.exports = {
