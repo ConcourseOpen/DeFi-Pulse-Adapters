@@ -13,8 +13,8 @@ Welcome to the DeFiPulse Project Template Repository! This purpose of this repo 
 
 # Documentation Links
 
-[SDK Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md)
-[Token Adapter Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/tokens/tokens.md)
+[SDK Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md) <br/>
+[Token Adapter Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/tokens/README.md)
 
 # Getting Started with the Adapter
 
