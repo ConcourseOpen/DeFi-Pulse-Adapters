@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "test": "mocha testing/test/*.js",
-    "validate": "mocha testing/validate/*.js"
+    "validate": "mocha testing/validate/*.js",
+    "test-token": "mocha tokens/testing/test/*.js",
+    "validate-token": "mocha tokens/testing/validate/*.js"
   },
   "dependencies": {
     "argv": "0.0.2",
