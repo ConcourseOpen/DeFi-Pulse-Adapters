@@ -91,8 +91,7 @@ async function tvl(timestamp, block) {
     balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
   }
 
-  let { output } = (await sdk.api.util.toSymbols(balances));
-  return output;
+  return balances;
 }
 
 
@@ -104,6 +103,6 @@ module.exports = {
   name: 'Swerve Finance',
   token: 'SWRV',
   category: 'dexes',
-  start: 1599202211,        // September 4, 2020 6:50:11 AM UTC
+  start: 1599264000,        // 09/05/2020 @ 12:00am (UTC)
   tvl
 }
