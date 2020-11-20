@@ -31,14 +31,15 @@ async function tvl(timestamp, block) {
   const bankAddress = data.bankAddress.toLowerCase();
   const WETHAddress = data.WETHAddress.toLowerCase();
 
-  const pools = data.pools;
+  let pools = data.pools;
 
   const uniswapPools = pools.filter(
     (pool) => pool.exchange === "Uniswap" || pool.exchange === "IndexCoop"
   );
   const sushiswapPools = pools.filter(
-    (pool) => pool.exchange === "Sushiswap" || pool.exchange === "Pickle"
+    (pool) => pool.exchange === "Sushi" || pool.exchange === "Pickle"
   );
+  pools = [...uniswapPools, ...sushiswapPools];
 
   const { output: _totalETH } = await sdk.api.abi.call({
     target: bankAddress,
