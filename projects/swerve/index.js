@@ -12,6 +12,8 @@ _.flatMap = _.compose(_.flatten, _.map);
   ==================================================*/
 
 async function tvl(timestamp, block) {
+  let balances = {};
+
   // both declarations are in array format, since Swerve will be supporting more pools soon :)
   const poolAddrs = [
     '0x329239599afB305DA0A2eC69c58F8a6697F9F88d',
@@ -100,8 +102,8 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'Swerve Finance',
-  token: null,
-  category: 'DEXes',
+  token: 'SWRV',
+  category: 'dexes',
   start: 1599202211,        // September 4, 2020 6:50:11 AM UTC
   tvl
 }
