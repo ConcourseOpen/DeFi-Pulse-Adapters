@@ -23,6 +23,7 @@
 
       await sdk.api.util.resetEthCallCount();
       let output = await project[runFunction](point.timestamp, point.block);
+      console.log(output)
       let ethCallCount = await sdk.api.util.getEthCallCount();
 
       return {
