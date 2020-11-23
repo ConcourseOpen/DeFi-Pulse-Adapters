@@ -29,7 +29,7 @@ const yTokenAddresses = [
 
 const yVaultAddresses = [
   '0xec0d8D3ED5477106c6D4ea27D90a60e594693C90', // yGUSD (added - November 2020)
-  '0x9cA85572E6A3EbF24dEDd195623F188735A5179', // y3CRV (added - November 2020)
+  '0x9cA85572E6A3EbF24dEDd195623F188735A5179f', // y3CRV (added - November 2020)
   '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7', // yETH
   '0xBA2E7Fed597fd0E3e70f5130BcDbbFE06bB94fe1', // yYFI
   '0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c', // yyCRV (counted in yearn v2)
