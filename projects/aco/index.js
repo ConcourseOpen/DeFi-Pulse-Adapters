@@ -41,6 +41,20 @@
       const address = getTokenAddressFromNewAcoTokenLogData(log.data);
       acoOptionsAddresses.push(address)
     });
+
+    const logs2 = (await sdk.api.util
+      .getLogs({
+        keys: [],
+        toBlock: block,
+        target: FACTORY,
+        fromBlock: START_BLOCK,
+        topic: 'NewAcoTokenData(address,address,bool,uint256,uint256,address,address,address)',
+      })).output;
+
+      logs2.forEach((log) => {
+      const address = getTokenAddressFromNewAcoTokenLogData(log.data);
+      acoOptionsAddresses.push(address)
+    });
     
     let collateralResult = await sdk.api.abi.multiCall({
       block,
