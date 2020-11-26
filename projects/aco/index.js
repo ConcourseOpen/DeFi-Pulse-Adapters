@@ -174,6 +174,6 @@
     name: 'ACO',
     token: 'AUC',
     category: 'derivatives',
-    start: 1589932800,   // 06/20/2020 @ 12:00:00am (UTC)
+    start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
     tvl
   }
