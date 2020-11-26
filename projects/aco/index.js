@@ -8,15 +8,15 @@
   const { default: BigNumber } = require('bignumber.js');
 
   const START_BLOCK = 10104891;
-  const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';  
+  const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';
   const POOLS_FACTORY = '0x4db1d076ed0a3f2bb9b105d96edfb1671916f6ca';
   const VAULTS = '0x2Ce43b4570Ad9DEAb8CFE6258B42DB7301e3b6C0';
-  const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000';  
+  const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 /*==================================================
   TVL
   ==================================================*/
-  
+
   const getTokenAddressFromNewAcoTokenLogData = data => '0x' + data.substring(154, 194);
 
   const getPoolAddressFromNewAcoPoolLogData = data => '0x' + data.substring(410, 450);
@@ -41,7 +41,7 @@
       const address = getTokenAddressFromNewAcoTokenLogData(log.data);
       acoOptionsAddresses.push(address)
     });
-    
+
     let collateralResult = await sdk.api.abi.multiCall({
       block,
       calls: _.map(acoOptionsAddresses, (option) => ({
@@ -138,7 +138,7 @@
       const address = getVaultAddressFromSetAcoVaultLogData(log.topics[1]);
       acoVaultsAddresses.push(address)
     });
-    
+
     let balancesResult = await sdk.api.abi.multiCall({
       block,
       calls: _.map(acoVaultsAddresses, (vault) => ({
@@ -174,6 +174,6 @@
     name: 'ACO',
     token: 'AUC',
     category: 'derivatives',
-    start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
+    start: 1589932800,   // 06/20/2020 @ 12:00:00am (UTC)
     tvl
   }
