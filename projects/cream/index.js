@@ -134,7 +134,7 @@ async function rates(timestamp, block) {
   };
 
 
-  const markets = await getMarkets();
+  const markets = await getMarkets(block);
 
   const calls = _.map(markets, (data, underlying) => ({
     target: data.cToken,
