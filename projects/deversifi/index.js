@@ -29,7 +29,12 @@
     '0xec67005c4e498ec7f55e092bd1d35cbc47c91892', // COMP
     '0x0d8775f648430679a709e98d2b0cb6250d2887ef', // MLN
     '0x514910771af9ca656af840dff83e8264ecf986ca', // BAT
-    '0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d' // LINK
+    '0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d', // LINK
+    '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f', // SNX
+    '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
+    '0xeef9f339514298c6a857efcfc1a762af84438dee', // HEZ
+    '0xa117000000f279d81a1d3cc75430faa017fa5a2e', // ANT
+    '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b' // DPI
   ];
 
 /*==================================================
