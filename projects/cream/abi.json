@@ -2,7 +2,7 @@
     "totalBorrows": {
       "constant":true,
       "inputs":[
-  
+
       ],
       "name":"totalBorrows",
       "outputs":[
@@ -18,7 +18,7 @@
     "borrowRatePerBlock": {
       "constant":true,
       "inputs":[
-  
+
       ],
       "name":"borrowRatePerBlock",
       "outputs":[
@@ -34,7 +34,7 @@
     "supplyRatePerBlock": {
       "constant":true,
       "inputs":[
-  
+
       ],
       "name":"supplyRatePerBlock",
       "outputs":[
@@ -123,6 +123,32 @@
       "stateMutability": "view",
       "type": "function",
       "signature": "0x77c7b8fc"
+    },
+    "getSpotPrice": {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenOut",
+          "type": "address"
+        }
+      ],
+      "name": "getSpotPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "spotPrice",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x15e84af9"
     }
   }
-  
