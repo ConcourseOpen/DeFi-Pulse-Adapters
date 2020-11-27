@@ -2,7 +2,7 @@
   Modules
 ==================================================*/
 
-const { api: { abi, util }, util: utilBase } = require('../../sdk');
+const { api: { abi, util } } = require('../../sdk');
 
 /*==================================================
   Settings
@@ -10,9 +10,6 @@ const { api: { abi, util }, util: utilBase } = require('../../sdk');
 
 const START_BLOCK = 8623608;
 const PROTOCOL_ADDRESS = '0xc59b0e4de5f1248c1140964e0ff287b192407e0c';
-/* 
-* Set of tokens to ignore
-*/
 const TOKENS_TO_IGNORE = new Set();
 
 /*==================================================
@@ -34,7 +31,7 @@ const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
   Main
 ==================================================*/
 
-async function tvl(timestamp, block) {
+async function tvl(_, block) {
   // Snag all token addresses that have been listed on Gnosis Conditional Token
   const { output: events } = await util.getLogs({
     keys: [],
@@ -58,17 +55,11 @@ async function tvl(timestamp, block) {
   
   // [0] Batch call all ERC20 balances from the Gnosis Conditional Token contract
   // [1] Resolve initial ethBalance promise
-  const erc20Balances = await abi.multiCall({
+  const balances = await abi.multiCall({
     block,
     abi: 'erc20:balanceOf',
     calls: tokenList
   });
-
-  const balances = {
-    '0x0000000000000000000000000000000000000000': '0',
-  };
-
-  utilBase.sumMultiBalanceOf(balances, erc20Balances);
 
   return balances;
 }
@@ -78,9 +69,5 @@ async function tvl(timestamp, block) {
 ==================================================*/
 
 module.exports = {
-  name: 'Gnosis Conditional Token',
-  token: null,
-  category: 'derivatives',
-  start: 1569488751, // Sep-26-2019 09:05:51 AM UTC
   tvl,
-};
+}

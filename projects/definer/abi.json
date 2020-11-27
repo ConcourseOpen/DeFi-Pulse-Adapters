@@ -1,52 +1,62 @@
 {
-  "INITIAL_SUPPLY": {
+  "tokenInfoRegistry": {
     "constant": true,
     "inputs": [],
-    "name": "INITIAL_SUPPLY",
+    "name": "tokenInfoRegistry",
     "outputs": [
       {
+        "internalType": "contract TokenRegistry",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  "totalSupply": {
-    "constant": true,
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  "balanceOf":  {
-    "constant": true,
-    "inputs":  [
-      {
-        "name": "_owner",
         "type": "address"
       }
     ],
-    "name": "balanceOf",
-    "outputs":  [{"name": "","type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
-  "totalUpgraded": {
+  "bank": {
     "constant": true,
     "inputs": [],
-    "name": "totalUpgraded",
+    "name": "bank",
     "outputs": [
       {
+        "internalType": "contract Bank",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getTokens": {
+    "constant": true,
+    "inputs": [],
+    "name": "getTokens",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getPoolAmount": {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getPoolAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }

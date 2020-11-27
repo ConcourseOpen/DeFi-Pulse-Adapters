@@ -99,35 +99,43 @@
     let { output } = (await sdk.api.util.toSymbols(balances));
 
     const yTokens = [
-      { symbol: 'ySUSD', underlying: 'SUSD' },
-      { symbol: 'yUSDC', underlying: 'USDC' },
+      { symbol: 'ySUSD', underlying: 'SUSD', contract: '0x57ab1ec28d129707052df4df418d58a2d46d5f51' },
+      { symbol: 'yUSDC', underlying: 'USDC', contract: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' },
       { symbol: 'ycDAI', underlying: 'cDAI' },
-      { symbol: 'yUSDT', underlying: 'USDT' },
+      { symbol: 'yUSDT', underlying: 'USDT', contract: '0xdac17f958d2ee523a2206206994597c13d831ec7' },
       { symbol: 'ycUSDC', underlying: 'cUSDC' },
       { symbol: 'ycUSDT', underlying: 'cUSDT' },
-      { symbol: 'yBUSD', underlying: 'BUSD' },
-      { symbol: 'yDAI', underlying: 'DAI' },
-      { symbol: 'yTUSD', underlying: 'TUSD' },
+      { symbol: 'yBUSD', underlying: 'BUSD', contract: '0x4fabb145d64652a948d72533023f6e7a623c7c53' },
+      { symbol: 'yDAI', underlying: 'DAI', contract: '0x6b175474e89094c44da98b954eedeac495271d0f' },
+      { symbol: 'yTUSD', underlying: 'TUSD', contract: '0x0000000000085d4780b73119b644ae5ecd22b376' },
     ]
 
     // Count y tokens as their underlying asset, ie ycDAI = cDAI
-    Object.keys(output).map(( key ) => {
-      const yToken = yTokens.filter( token => token.symbol === key)[0];
+    output.map(( _token ) => {
+      const yToken = yTokens.filter( token => token.symbol === _token.symbol)[0];
       // is y token
-      if(yToken){
-        if(!output[yToken.underlying]) output[yToken.underlying] = 0;
+      if(yToken) {
+        let _data = output.find((t) => t.symbol === yToken.underlying);
+
+        if(!_data) {
+          _data = {
+            symbol: yToken.underlying,
+            address: yToken.contract,
+            balance: 0,
+          };
+
+          output.push(_data);
+        }
         // Update balance
-        output[yToken.underlying] = String(
-          parseFloat(output[yToken.underlying]) +
-          parseFloat(output[yToken.symbol])
+        _data.balance = String(
+          parseFloat(_data.balance) +
+          parseFloat(_token.balance)
         );
-        // Delete wrapper
-        delete output[yToken.symbol];
       }
     });
 
-    console.log(output)
-
+    output = output.filter((_token) => !yTokens.find( token => token.symbol === _token.symbol));
+    
     return output;
   }
 

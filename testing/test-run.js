@@ -18,7 +18,7 @@
 
   const tvlTimeLimit = 1000 * 60 * 5;
   const ratesTimeLimit = 30 * 1000;
-  const symbolLengthLimit = 7;
+  const symbolLengthLimit = 30;
   const ethCallCountLimit = 2000;
 
 /*==================================================
