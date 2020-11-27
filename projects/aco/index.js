@@ -27,14 +27,38 @@
   const getStrikeAssetAddressFromNewAcoPoolLogData = data => '0x' + data.substring(26, 66);
 
   async function tvl(timestamp, block) {
-    const logs = (await sdk.api.util
-      .getLogs({
+    var logsPromises = await Promise.all([
+      sdk.api.util.getLogs({
         keys: [],
         toBlock: block,
         target: FACTORY,
         fromBlock: START_BLOCK,
         topic: 'NewAcoToken(address,address,bool,uint256,uint256,address,address)',
-      })).output;
+      }),
+      sdk.api.util.getLogs({
+        keys: [],
+        toBlock: block,
+        target: FACTORY,
+        fromBlock: START_BLOCK,
+        topic: 'NewAcoTokenData(address,address,bool,uint256,uint256,address,address,address)',
+      }),
+      sdk.api.util.getLogs({
+        keys: [],
+        toBlock: block,
+        target: POOLS_FACTORY,
+        fromBlock: START_BLOCK,
+        topic: 'NewAcoPool(address,address,bool,uint256,uint256,uint256,uint256,uint256,bool,address,address)',
+      }),
+      sdk.api.util.getLogs({
+        keys: [],
+        toBlock: block,
+        target: VAULTS,
+        fromBlock: START_BLOCK,
+        topic: 'AcoVault(address,bool)',
+      })
+    ])
+
+    const logs = logsPromises[0].output;
 
     let acoOptionsAddresses = [];
     logs.forEach((log) => {
@@ -42,16 +66,8 @@
       acoOptionsAddresses.push(address)
     });
 
-    const logs2 = (await sdk.api.util
-      .getLogs({
-        keys: [],
-        toBlock: block,
-        target: FACTORY,
-        fromBlock: START_BLOCK,
-        topic: 'NewAcoTokenData(address,address,bool,uint256,uint256,address,address,address)',
-      })).output;
-
-      logs2.forEach((log) => {
+    const logs2 = logsPromises[1].output;
+    logs2.forEach((log) => {
       const address = getTokenAddressFromNewAcoTokenLogData(log.data);
       acoOptionsAddresses.push(address)
     });
@@ -94,14 +110,7 @@
       }
     });
 
-    const newAcoPoolLogs = (await sdk.api.util
-      .getLogs({
-        keys: [],
-        toBlock: block,
-        target: POOLS_FACTORY,
-        fromBlock: START_BLOCK,
-        topic: 'NewAcoPool(address,address,bool,uint256,uint256,uint256,uint256,uint256,bool,address,address)',
-      })).output;
+    const newAcoPoolLogs = logsPromises[2].output;
 
     let acoPools = {};
     newAcoPoolLogs.forEach((log) => {
@@ -138,14 +147,7 @@
       }))
     );
 
-    const setVaultLog = (await sdk.api.util
-      .getLogs({
-        keys: [],
-        toBlock: block,
-        target: VAULTS,
-        fromBlock: START_BLOCK,
-        topic: 'AcoVault(address,bool)',
-      })).output;
+    const setVaultLog = logsPromises[3].output;
 
     let acoVaultsAddresses = [];
     setVaultLog.forEach((log) => {
