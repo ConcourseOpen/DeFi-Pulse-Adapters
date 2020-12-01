@@ -2,27 +2,27 @@
   Modules
 ==================================================*/
 
-  const abi = require('./abi');
   const sdk = require('../../../sdk');
 
 /*==================================================
   Settings
 ==================================================*/
 
-  const wbtcContract = '0x3212b29E33587A00FB1C83346f5dBFA69A458923';
+  const imbtcContract = '0x3212b29e33587a00fb1c83346f5dbfa69a458923';
 
 /*==================================================
   Main
 ==================================================*/
 
   async function balance (timestamp, block) {
-    const totalSupply = (await sdk.api.abi.call({
-      block,
-      target: wbtcContract,
-      abi: abi['totalSupply'],
-    })).output;
+    const btcTotalSupply = (
+      await sdk.api.erc20.totalSupply({
+        block,
+        target: imbtcContract
+      })
+    ).output;
 
-    return { [wbtcContract]: totalSupply };
+    return { [imbtcContract]: btcTotalSupply };
   }
 
 /*==================================================
