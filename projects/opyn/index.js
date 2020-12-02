@@ -6,27 +6,24 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
-  const abi = require('./abi');
+  const getNumberOfOptionsContractsAbi = require('./abis/getNumberOfOptionsContracts.json');
+  const optionsContractsAbi = require('./abis/optionsContracts.json');
+  const collateralAbi = require('./abis/collateral.json');
 
 /*==================================================
   Settings
   ==================================================*/
 
   const factoriesAddresses = [
-    "0xb529964F86fbf99a6aA67f72a27e59fA3fa4FEaC", // ocToken Factory Address
-    "0xcC5d905b9c2c8C9329Eb4e25dc086369D6C7777C"  // oEth Factory Address
-  ]
-
-  const tokenAddresses = [
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-    '0x6B175474E89094C44Da98b954EedeAC495271d0F' // DAI
+    "0xb529964F86fbf99a6aA67f72a27e59fA3fa4FEaC",
+    "0xcC5d905b9c2c8C9329Eb4e25dc086369D6C7777C"
   ]
 
 /*==================================================
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
+  async function tvl(timestamp, block) {  
     let balances = {};
 
     for(let i = 0; i < factoriesAddresses.length; i++) {
@@ -34,7 +31,7 @@
       let numberOfOptionsContracts = (
         await sdk.api.abi.call({
           target: factoriesAddresses[i],
-          abi: abi.getNumberOfOptionsContracts,
+          abi: getNumberOfOptionsContractsAbi,
         })
       ).output;
 
@@ -51,7 +48,8 @@
       let optionsContracts = (
         await sdk.api.abi.multiCall({
           calls: getOptionsContractsCalls,
-          abi: abi.getOptionsContracts
+          abi: optionsContractsAbi,
+          block
         })
       ).output;
 
@@ -63,6 +61,33 @@
           ...optionsAddresses,
           contracts.output
         ]
+      });    
+      
+      // batch getCollateralAsset calls
+      let getCollateralAssetCalls = [];
+
+      _.each(optionsAddresses, (optionAddress) => {
+        getCollateralAssetCalls.push({
+          target: optionAddress
+        })
+      })
+
+      // get list of options collateral assets
+      let optionsCollateral = (
+        await sdk.api.abi.multiCall({
+          calls: getCollateralAssetCalls,
+          abi: collateralAbi,
+          block
+        })
+      ).output;
+
+      let optionsCollateralAddresses = []
+
+      _.each(optionsCollateral, async (collateralAsset) => {        
+        optionsCollateralAddresses = [
+          ...optionsCollateralAddresses,
+          collateralAsset.output
+        ]
       });
 
       // get ETH balance
@@ -73,16 +98,18 @@
 
       // batch balanceOf calls
       let balanceOfCalls = [];
+      let j = 0;
 
-      _.each(optionsAddresses, (optionsAddress) => {
-        _.each(tokenAddresses, (tokenAddress) => {
+      _.each(optionsCollateralAddresses, async (optionCollateralAddress) => {
+        if(optionCollateralAddress != "0x0000000000000000000000000000000000000000") {
           balanceOfCalls.push({
-            target: tokenAddress,
-            params: [optionsAddress]
+            target: optionCollateralAddress,
+            params: [optionsAddresses[j]]
           });
-        });
+        }
+        j++;
       });
-
+ 
       // get tokens balances
       const balanceOfResults = await sdk.api.abi.multiCall({
         block,
@@ -90,12 +117,7 @@
         abi: "erc20:balanceOf"
       });
 
-      _.each(balanceOfResults.output, (balanceOf) => {
-        if(balanceOf.success) {
-          let address = balanceOf.input.target
-          balances[address] = BigNumber(balances[address] || 0).plus(balanceOf.output).toFixed();
-        }
-      });
+      await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
     }
 
     return balances;
