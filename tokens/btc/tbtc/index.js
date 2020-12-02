@@ -30,8 +30,8 @@
   ==================================================*/
 
   module.exports = {
-    name: 'TBTC',
-    symbol: 'tBTC',
+    name: 'tBTC',
+    symbol: 'TBTC',
     type: 'decentralized',
     start: 1600214400,   // 09/16/2020 @ 12:00am (UTC)
     balance,
