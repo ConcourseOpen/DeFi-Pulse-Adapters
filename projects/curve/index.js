@@ -38,7 +38,7 @@
 
     let balancesResults = await sdk.api.abi.multiCall({
       block,
-      calls: balancesCalls.slice(0, balancesCalls.length-2),
+      calls: balancesCalls.slice(0, balancesCalls.length-5),
       abi: {
         "name": "balances",
         "outputs": [
@@ -62,7 +62,7 @@
 
     let balancesResults2 = await sdk.api.abi.multiCall({
       block,
-      calls: balancesCalls.slice(-2),
+      calls: balancesCalls.slice(-5),
       abi: {
         "name": "balances",
         "outputs": [
@@ -84,8 +84,6 @@
       },
     })
 
-    balancesResults = [...balancesResults, ...balancesResults2]
-
     let coinsCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
     })
@@ -93,7 +91,7 @@
 
     let coinsResults = await sdk.api.abi.multiCall({
       block,
-      calls: coinsCalls,
+      calls: coinsCalls.slice(0, coinsCalls.length-5),
       abi:  {
         "name": "coins",
         "outputs": [
@@ -115,10 +113,45 @@
       },
     })
 
+    let coinsResults2 = await sdk.api.abi.multiCall({
+      block,
+      calls: coinsCalls.slice(-5),
+      abi:  {
+        "name": "coins",
+        "outputs": [
+         {
+          "type": "address",
+          "name": "out"
+         }
+        ],
+        "inputs": [
+         {
+          "type": "uint256",
+          "name": "arg0"
+         }
+        ],
+        "constant": true,
+        "payable": false,
+        "type": "function",
+        "gas": 2190
+      },
+    })
+
     for(let [i, balance] of balancesResults.output.entries()) {
       if(!balance || !balance.output) continue;
       // Balance doesn't exist yet
       const out = coinsResults.output[i].output;
+      if(!balances[out]) balances[out] = 0;
+      // Update balance
+      balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
+    }
+
+    for(let [i, balance] of balancesResults2.output.entries()) {
+      console.log(balance)
+      if(!balance || !balance.output) continue;
+      // Balance doesn't exist yet
+      const out = coinsResults2.output[i].output;
+      console.log(out)
       if(!balances[out]) balances[out] = 0;
       // Update balance
       balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
