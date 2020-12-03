@@ -43,7 +43,7 @@
         toBlock: block
       }),
 
-      block <= 11053389 ?
+      block >= 11053389 ?
       sdk.api.util.getLogs({
           target: '0x136d6F80Bb3A853D151686BFED2c9309Aea6dDec',
           topic: 'LOG_NEW_POOL(address,address)',
@@ -52,7 +52,7 @@
           toBlock: block
         }) : Promise.resolve({ output: [] }),
 
-      block <= 11099537 ?
+      block >= 11099537 ?
       sdk.api.util.getLogs({
         target: '0x0d3303Ffaf107cD732396570Bf07b2dbd79B619f',
         topic: 'LOG_NEW_POOL(address,address)',
