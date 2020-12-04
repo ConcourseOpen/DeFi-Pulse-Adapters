@@ -27,9 +27,17 @@
       '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714',
       '0x4CA9b3063Ec5866A4B82E437059D2C43d1be596F',
       '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
+      '0x4f062658EaAF2C1ccf8C8e36D6824CDf41167956',
+      '0x3eF6A01A0f81D6046290f3e2A8c5b843e738E604',
+      '0x8474DdbE98F5aA3179B3B3F5942D724aFcdec9f6',
+      '0xC18cC39da8b11dA8c3541C598eE022258F9744da',
+      '0xC25099792E9349C7DD09759744ea681C7de2cb66',
+      '0x3E01dD8a5E1fb3481F0F589056b428Fc308AF0Fb',
+      '0x0f9cb53Ebe405d49A0bbdBD291A65Ff571bC83e1',
+      '0x8038C01A0390a8c547446a0b2c18fc9aEFEcc10c'
     ]
 
-    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2, 3, 2, 3]
+    let coins = [2, 2, 2, 3, 4, 4, 2, 4, 4, 2, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2]
 
     let balancesCalls = _.flatMap(swaps, (token, i) => {
       return Array.from(Array(coins[i]), (e, idx) =>({target: token, params: idx}))
@@ -38,7 +46,7 @@
 
     let balancesResults = await sdk.api.abi.multiCall({
       block,
-      calls: balancesCalls.slice(0, balancesCalls.length-5),
+      calls: balancesCalls.slice(0, balancesCalls.length-21),
       abi: {
         "name": "balances",
         "outputs": [
@@ -62,7 +70,7 @@
 
     let balancesResults2 = await sdk.api.abi.multiCall({
       block,
-      calls: balancesCalls.slice(-5),
+      calls: balancesCalls.slice(-21),
       abi: {
         "name": "balances",
         "outputs": [
@@ -91,7 +99,7 @@
 
     let coinsResults = await sdk.api.abi.multiCall({
       block,
-      calls: coinsCalls.slice(0, coinsCalls.length-5),
+      calls: coinsCalls.slice(0, coinsCalls.length-21),
       abi:  {
         "name": "coins",
         "outputs": [
@@ -115,7 +123,7 @@
 
     let coinsResults2 = await sdk.api.abi.multiCall({
       block,
-      calls: coinsCalls.slice(-5),
+      calls: coinsCalls.slice(-21),
       abi:  {
         "name": "coins",
         "outputs": [
@@ -147,15 +155,16 @@
     }
 
     for(let [i, balance] of balancesResults2.output.entries()) {
-      console.log(balance)
       if(!balance || !balance.output) continue;
       // Balance doesn't exist yet
       const out = coinsResults2.output[i].output;
-      console.log(out)
       if(!balances[out]) balances[out] = 0;
       // Update balance
       balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
     }
+
+    delete balances['0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490'];
+    delete balances['0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3'];
 
     let { output } = (await sdk.api.util.toSymbols(balances));
 
