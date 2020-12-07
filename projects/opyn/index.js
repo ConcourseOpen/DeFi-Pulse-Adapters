@@ -57,10 +57,12 @@
       let optionsAddresses = []
 
       _.each(optionsContracts, async (contracts) => {
-        optionsAddresses = [
-          ...optionsAddresses,
-          contracts.output
-        ]
+        if(contracts.output != null) {
+          optionsAddresses = [
+            ...optionsAddresses,
+            contracts.output
+          ]  
+        }
       });    
       
       // batch getCollateralAsset calls
@@ -84,10 +86,12 @@
       let optionsCollateralAddresses = []
 
       _.each(optionsCollateral, async (collateralAsset) => {        
-        optionsCollateralAddresses = [
-          ...optionsCollateralAddresses,
-          collateralAsset.output
-        ]
+        if(collateralAsset.output != null) {
+          optionsCollateralAddresses = [
+            ...optionsCollateralAddresses,
+            collateralAsset.output
+          ]  
+        }
       });
 
       // get ETH balance
@@ -131,6 +135,6 @@ module.exports = {
   name: 'Opyn',
   token: null,
   category: 'derivatives',
-  start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
+  start: 1581555600,  // 02/13/2020 @ 01:00AM (UTC)
   tvl
 }
