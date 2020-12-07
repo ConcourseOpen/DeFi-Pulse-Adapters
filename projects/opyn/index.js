@@ -135,6 +135,6 @@ module.exports = {
   name: 'Opyn',
   token: null,
   category: 'derivatives',
-  start: 1581555600,  // 02/13/2020 @ 01:00AM (UTC)
+  start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
   tvl
 }
