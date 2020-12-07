@@ -119,78 +119,78 @@
 
     let balances = {
       '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2':                         // asset: WETH
-	      BigNumber(results[0])                                         // fWETHv0
-	      .plus(BigNumber(results[16]))                                 // fWETH
+              BigNumber(results[0])                                         // fWETHv0
+              .plus(BigNumber(results[16]))                                 // fWETH
               .plus(BigNumber(results[8][1]))                               // fUNI-DAI:WETHv0
-	      .plus(BigNumber(results[9][1]))                               // fUNI-USDC:WETHv0
-	      .plus(BigNumber(results[10][0]))                              // fUNI-WETH:USDTv0
-	      .plus(BigNumber(results[11][1]))                              // fUNI-WBTC:WETHv0
+              .plus(BigNumber(results[9][1]))                               // fUNI-USDC:WETHv0
+              .plus(BigNumber(results[10][0]))                              // fUNI-WETH:USDTv0
+              .plus(BigNumber(results[11][1]))                              // fUNI-WBTC:WETHv0
               .plus(BigNumber(results[12][1]))                              // fUNI-DAI:WETH
-	      .plus(BigNumber(results[13][1]))                              // fUNI-USDC:WETH
-	      .plus(BigNumber(results[14][0]))                              // fUNI-WETH:USDT
-	      .plus(BigNumber(results[15][1]))                              // fUNI-WBTC:WETH
+              .plus(BigNumber(results[13][1]))                              // fUNI-USDC:WETH
+              .plus(BigNumber(results[14][0]))                              // fUNI-WETH:USDT
+              .plus(BigNumber(results[15][1]))                              // fUNI-WBTC:WETH
               .plus(BigNumber(results[24][1]))                              // fSUSHI-DAI:WETH
-	      .plus(BigNumber(results[25][1]))                              // fSUSHI-USDC:WETH
-	      .plus(BigNumber(results[26][0]))                              // fSUSHI-WETH:USDT
-	      .plus(BigNumber(results[27][1]))                              // fSUSHI-WBTC:WETH
-	      .plus(BigNumber(results[28][1]))                              // fSUSHI-DPI:WETH
+              .plus(BigNumber(results[25][1]))                              // fSUSHI-USDC:WETH
+              .plus(BigNumber(results[26][0]))                              // fSUSHI-WETH:USDT
+              .plus(BigNumber(results[27][1]))                              // fSUSHI-WBTC:WETH
+              .plus(BigNumber(results[28][1]))                              // fSUSHI-DPI:WETH
               .toFixed(0), // 18 decimals
       '0x6B175474E89094C44Da98b954EedeAC495271d0F':                         // asset: DAI
-	      BigNumber(results[1])                                         // fDAIv0
-	      .plus(results[17])                                            // fDAI
-              .plus(results[8][0])                                          // fUNI-DAI:WETHv0
-              .plus(results[12][0])                                         // fUNI-DAI:WETH
+              BigNumber(results[1])                                         // fDAIv0
+              .plus(BigNumber(results[17]))                                 // fDAI
+              .plus(BigNumber(results[8][0]))                               // fUNI-DAI:WETHv0
+              .plus(BigNumber(results[12][0]))                              // fUNI-DAI:WETH
               .plus(BigNumber(results[24][0]))                              // fSUSHI-DAI:WETH
-	      .toFixed(0), // 18 decimals
+              .toFixed(0), // 18 decimals
       '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48':                         // asset: USDC
-	      BigNumber(results[2])                                         // fUSDCv0
-	      .plus(results[18])                                            // fUSDC
-              .plus(results[9][0])                                          // fUNI-USDC:WETHv0
-              .plus(results[13][0])                                         // fUNI-USDC:WETH
-	      .plus(BigNumber(results[25][0]))                              // fSUSHI-USDC:WETH
-	      .plus(BigNumber(results[32]))                                 // fCRV-COMP, estimate
-	      .plus(BigNumber(results[34]))                                 // fCRV-YPOOL, estimate
-	      .plus(BigNumber(results[35]))                                 // fCRV-3POOl, estimate
-	      .toFixed(0), // 6 decimals
+              BigNumber(results[2])                                         // fUSDCv0
+              .plus(BigNumber(results[18]))                                 // fUSDC
+              .plus(BigNumber(results[9][0]))                               // fUNI-USDC:WETHv0
+              .plus(BigNumber(results[13][0]))                              // fUNI-USDC:WETH
+              .plus(BigNumber(results[25][0]))                              // fSUSHI-USDC:WETH
+              .plus(BigNumber(results[32]))                                 // fCRV-COMP, estimate
+              .plus(BigNumber(results[34]))                                 // fCRV-YPOOL, estimate
+              .plus(BigNumber(results[35]))                                 // fCRV-3POOl, estimate
+              .toFixed(0), // 6 decimals
       '0xdAC17F958D2ee523a2206206994597C13D831ec7':                         // asset: USDT
-	      BigNumber(results[3])                                         // fUSDTv0
-	      .plus(BigNumber(results[19]))                                 // fUSDT
+              BigNumber(results[3])                                         // fUSDTv0
+              .plus(BigNumber(results[19]))                                 // fUSDT
               .plus(BigNumber(results[10][1]))                              // fUNI-WETH:USDTv0
               .plus(BigNumber(results[14][1]))                              // fUNI-WETH:USDT
-	      .plus(BigNumber(results[26][1]))                              // fSUSHI-WETH:USDT
-	      .toFixed(0), // 6 decimals
+              .plus(BigNumber(results[26][1]))                              // fSUSHI-WETH:USDT
+              .toFixed(0), // 6 decimals
       '0x0000000000085d4780B73119b644AE5ecd22b376':                         // asset: TUSD
-	      BigNumber(results[4])                                         // fTUSD
-	      .toFixed(0), // 18 decimals
+              BigNumber(results[4])                                         // fTUSD
+              .toFixed(0), // 18 decimals
       '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599':                         // asset: WBTC
-	      BigNumber(results[5])                                         // fWBTCv0
-	      .plus(BigNumber(results[20]))                                 // fWBTC
+              BigNumber(results[5])                                         // fWBTCv0
+              .plus(BigNumber(results[20]))                                 // fWBTC
               .plus(BigNumber(results[11][0]))                              // fUNI-WBTC:WETHv0
               .plus(BigNumber(results[15][0]))                              // fUNI-WBTC:WETH
               .plus(BigNumber(results[23][0]))                              // fSUSHI-WBTC:TBTC
-	      .plus(BigNumber(results[27][0]))                              // fSUSHI-WBTC:WETH
-	      .toFixed(0), // 8 decimals
+              .plus(BigNumber(results[27][0]))                              // fSUSHI-WBTC:WETH
+              .toFixed(0), // 8 decimals
       '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D':                         // asset: renBTC
-	      BigNumber(results[6])                                         // fRENBTCv0
+              BigNumber(results[6])                                         // fRENBTCv0
               .plus(BigNumber(results[21]))                                 // fRENBTC
               .plus(BigNumber(results[7]).times(BigNumber("10").pow(-10)))  // fCRV-RENWBTCv0, estimate
               .plus(BigNumber(results[22]).times(BigNumber("10").pow(-10))) // fCRV-RENWBTC, estimate
-	      .toFixed(0), // 8 decimals
+              .toFixed(0), // 8 decimals
       '0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa':                         // asset: TBTC
               BigNumber(results[23][1])                                     // fSUSHI-WBTC:TBTC SUSHI
-	      .plus(BigNumber(results[36]))                                 // fCRV-TBTC, estimate
+              .plus(BigNumber(results[36]))                                 // fCRV-TBTC, estimate
               .toFixed(0), // 18 decimals
       '0xdF574c24545E5FfEcb9a659c229253D4111d87e1':                         // asset: HUSD
-	      BigNumber(results[30]).times(BigNumber("10").pow(-10))        // fCRV-HUSD, estimate
-	      .toFixed(0), // 8 decimals
+              BigNumber(results[30]).times(BigNumber("10").pow(-10))        // fCRV-HUSD, estimate
+              .toFixed(0), // 8 decimals
       '0x4fabb145d64652a948d72533023f6e7a623c7c53':                         // asset: BUSD
-	      BigNumber(results[31])                                        // fCRV-BUSD, estimate
-	      .toFixed(0), // 18 decimals
+              BigNumber(results[31])                                        // fCRV-BUSD, estimate
+              .toFixed(0), // 18 decimals
       '0x0316EB71485b0Ab14103307bf65a021042c6d380':                         // asset: HBTC
-	      BigNumber(results[29])                                        // fCRV-HBTC, estimate
-	      .toFixed(0), // 18 decimals
+              BigNumber(results[29])                                        // fCRV-HBTC, estimate
+              .toFixed(0), // 18 decimals
       '0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b':                         // asset: DPI
-	      BigNumber(results[28][0])                                     // fSUSHI-DPI:WETH
+              BigNumber(results[28][0])                                     // fSUSHI-DPI:WETH
               .toFixed(0), // 18 decimals
       // TODO don't attribute CRV pools 1:1, factor virtualprice
       // TODO don't attribute all of CRV-RENWBTC to renBTC
@@ -202,7 +202,7 @@
       // TODO don't attribute all of CRV-BUSD to BUSD
       // TODO don't attribute all of CRV-HBTC to HBTC
     };
-    console.table(balances);
+    //console.table(balances);
     return balances;
   }
 
@@ -215,7 +215,7 @@
       ];
 
       try {
-	let results = await Promise.all(promises);
+        let results = await Promise.all(promises);
         if (results.length === 0) {
           return 0;
         }
