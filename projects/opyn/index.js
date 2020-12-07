@@ -57,10 +57,12 @@
       let optionsAddresses = []
 
       _.each(optionsContracts, async (contracts) => {
-        optionsAddresses = [
-          ...optionsAddresses,
-          contracts.output
-        ]
+        if(contracts.output != null) {
+          optionsAddresses = [
+            ...optionsAddresses,
+            contracts.output
+          ]  
+        }
       });    
       
       // batch getCollateralAsset calls
@@ -84,10 +86,12 @@
       let optionsCollateralAddresses = []
 
       _.each(optionsCollateral, async (collateralAsset) => {        
-        optionsCollateralAddresses = [
-          ...optionsCollateralAddresses,
-          collateralAsset.output
-        ]
+        if(collateralAsset.output != null) {
+          optionsCollateralAddresses = [
+            ...optionsCollateralAddresses,
+            collateralAsset.output
+          ]  
+        }
       });
 
       // get ETH balance
