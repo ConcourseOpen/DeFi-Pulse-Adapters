@@ -1,3 +1,4 @@
+const sdk = require('../../sdk');
 const BigNumber = require("bignumber.js");
 const v2TVL = require("./v2");
 const { ETH, WETH, DEFI_SWAP_LAUNCH_DATE } = require("./constant");
@@ -20,13 +21,13 @@ async function tvl(timestamp, block) {
     {}
   );
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: "DeFi Swap",
   token: "CRO",
-  category: "dexes",
+  category: "DEXes",
   start: DEFI_SWAP_LAUNCH_DATE,
   tvl,
 };
