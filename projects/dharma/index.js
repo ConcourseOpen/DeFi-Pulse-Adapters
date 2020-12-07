@@ -77,10 +77,10 @@
   ]
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {
       '0x0000000000000000000000000000000000000000': '0', // ETH
     };
@@ -278,9 +278,7 @@
       }
     }
 
-    symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return balances;
   }
 
 /*==================================================
@@ -290,8 +288,8 @@
   module.exports = {
     name: 'Dharma',
     token: null,
-    category: 'Lending',
+    category: 'lending',
     contributesTo: ['Compound'],
-    dataStartTimestamp : 1526947200, // 05/22/2018 @ 12:00am (UTC)
-    run
+    start: 1526947200, // 05/22/2018 @ 12:00am (UTC)
+    tvl
   }

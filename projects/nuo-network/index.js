@@ -6,6 +6,7 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
   const moment = require('moment');
+  const axios = require('axios');
 
 /*==================================================
   Settings
@@ -23,7 +24,8 @@
     '0xdd974D5C2e2928deA5F71b9825b8b646686BD200', // KNC
     '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
     '0x514910771AF9Ca656af840dff83E8264EcF986CA', // LINK
-    '0x0000000000085d4780B73119b644AE5ecd22b376'  // TUSD
+    '0x0000000000085d4780B73119b644AE5ecd22b376', // TUSD
+    '0xc011a72400e58ecd99ee497cf89e3775d4bd732f'  // SNX
   ]
 
   const escrows = [
@@ -32,6 +34,7 @@
   ]
 
   const reserveAddress = '0x64d14595152b430cf6940da15c6e39545c7c5b7e';
+  const accountFactoryAddr = '0x4e9d7f37eadc6fef64b5f5dccc4deb6224667677';
 
   const abi = {
     lastReserveRuns: {
@@ -75,17 +78,32 @@
       "payable":false,
       "stateMutability":"view",
       "type":"function"
+    },
+    accounts: {
+      "constant": true,
+      "inputs": [],
+      "name": "getAllAccounts",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     }
   }
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     let calls = [];
+    let aCalls = [];
 
     _.each(escrows, (escrow) => {
       _.each(tokenAddresses, (tokenAddress) => {
@@ -94,19 +112,6 @@
           params: escrow
         })
       });
-    });
-
-    let balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls,
-      abi: 'erc20:balanceOf'
-    });
-
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let address = balanceOf.input.target
-        balances[address] = BigNumber(balances[address] || 0).plus(balanceOf.output).toFixed();
-      }
     });
 
     let lastReserveRunsResults = await sdk.api.abi.multiCall({
@@ -141,9 +146,55 @@
       }
     });
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
+    let accounts = await sdk.api.abi.call({
+      target: accountFactoryAddr,
+      abi: abi.accounts,
+      block
+    });
 
-    return symbolBalances.output;
+    _.each(accounts.output, (account) => {
+      _.each(tokenAddresses, (tokenAddress) => {
+        aCalls.push({
+          target: tokenAddress,
+          params: account
+        })
+      });
+    });
+
+    let balanceOfResults = await sdk.api.abi.multiCall({
+      block: block,
+      calls: [...calls, ...aCalls],
+      abi: 'erc20:balanceOf'
+    });
+
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+
+    return balances;
+  }
+
+/*==================================================
+  Rates
+  ==================================================*/
+
+  async function rates(timestamp, block) {
+    // realtime only
+    let reserves = (await axios.get('https://api.nuoscan.io/overview?primary_currency_short_name=USD')).data.data.reserves;
+
+    let rates = {
+      lend: {},
+      borrow: {}
+    }
+
+    _.each(reserves, (reserve) => {
+      if(reserve.lend_rate) {
+        rates.lend[reserve.currency.short_name] = Number(reserve.lend_rate);
+      }
+      if(reserve.borrow_rate) {
+        rates.borrow[reserve.currency.short_name] = Number(reserve.borrow_rate);
+      }
+    });
+
+    return rates;
   }
 
 /*==================================================
@@ -153,7 +204,12 @@
   module.exports = {
     name: 'Nuo Network',
     token: null,
-    category: 'Lending',
+    category: 'lending',
     start: 1548115200,  // 01/22/2019 @ 12:00am (UTC)
-    run
+    tvl,
+    rates,
+    permissioning: 'Open',
+    variability: 'High',
+    website: 'https://www.nuo.network/',
+    term: '1 Day'
   }

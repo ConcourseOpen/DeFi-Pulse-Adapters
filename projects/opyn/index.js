@@ -1,0 +1,136 @@
+/*==================================================
+  Modules
+  ==================================================*/
+
+  const sdk = require('../../sdk');
+  const _ = require('underscore');
+  const BigNumber = require('bignumber.js');
+
+  const getNumberOfOptionsContractsAbi = require('./abis/getNumberOfOptionsContracts.json');
+  const optionsContractsAbi = require('./abis/optionsContracts.json');
+  const collateralAbi = require('./abis/collateral.json');
+
+/*==================================================
+  Settings
+  ==================================================*/
+
+  const factoriesAddresses = [
+    "0xb529964F86fbf99a6aA67f72a27e59fA3fa4FEaC",
+    "0xcC5d905b9c2c8C9329Eb4e25dc086369D6C7777C"
+  ]
+
+/*==================================================
+  TVL
+  ==================================================*/
+
+  async function tvl(timestamp, block) {  
+    let balances = {};
+
+    for(let i = 0; i < factoriesAddresses.length; i++) {
+      // number of created oTokens
+      let numberOfOptionsContracts = (
+        await sdk.api.abi.call({
+          target: factoriesAddresses[i],
+          abi: getNumberOfOptionsContractsAbi,
+        })
+      ).output;
+
+      // batch getOptionsContracts calls
+      let getOptionsContractsCalls = [];
+
+      for(let j = 0; j < numberOfOptionsContracts; j++) {
+        getOptionsContractsCalls.push({
+          target: factoriesAddresses[i],
+          params: j
+        })
+      }
+
+      let optionsContracts = (
+        await sdk.api.abi.multiCall({
+          calls: getOptionsContractsCalls,
+          abi: optionsContractsAbi,
+          block
+        })
+      ).output;
+
+      // list of options addresses
+      let optionsAddresses = []
+
+      _.each(optionsContracts, async (contracts) => {
+        optionsAddresses = [
+          ...optionsAddresses,
+          contracts.output
+        ]
+      });    
+      
+      // batch getCollateralAsset calls
+      let getCollateralAssetCalls = [];
+
+      _.each(optionsAddresses, (optionAddress) => {
+        getCollateralAssetCalls.push({
+          target: optionAddress
+        })
+      })
+
+      // get list of options collateral assets
+      let optionsCollateral = (
+        await sdk.api.abi.multiCall({
+          calls: getCollateralAssetCalls,
+          abi: collateralAbi,
+          block
+        })
+      ).output;
+
+      let optionsCollateralAddresses = []
+
+      _.each(optionsCollateral, async (collateralAsset) => {        
+        optionsCollateralAddresses = [
+          ...optionsCollateralAddresses,
+          collateralAsset.output
+        ]
+      });
+
+      // get ETH balance
+      _.each(optionsAddresses, async (optionAddress) => {
+        let balance = (await sdk.api.eth.getBalance({target: optionAddress, block})).output;
+        balances["0x0000000000000000000000000000000000000000"] = BigNumber(balances["0x0000000000000000000000000000000000000000"] || 0).plus(BigNumber(balance)).toFixed();
+      })
+
+      // batch balanceOf calls
+      let balanceOfCalls = [];
+      let j = 0;
+
+      _.each(optionsCollateralAddresses, async (optionCollateralAddress) => {
+        if(optionCollateralAddress != "0x0000000000000000000000000000000000000000") {
+          balanceOfCalls.push({
+            target: optionCollateralAddress,
+            params: [optionsAddresses[j]]
+          });
+        }
+        j++;
+      });
+ 
+      // get tokens balances
+      const balanceOfResults = await sdk.api.abi.multiCall({
+        block,
+        calls: balanceOfCalls,
+        abi: "erc20:balanceOf"
+      });
+
+      await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+    }
+
+    return balances;
+  }
+
+/*==================================================
+  Exports
+  ==================================================*/
+
+module.exports = {
+  name: 'Opyn',
+  token: null,
+  category: 'derivatives',
+  start: 1581542700,  // 02/12/2020 @ 09:25PM (UTC)
+  tvl
+}
