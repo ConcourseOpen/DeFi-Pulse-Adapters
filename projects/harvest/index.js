@@ -52,10 +52,6 @@
   };
 
 async function tvl(timestamp, block) {
-    let point = await sdk.api.util.lookupBlock(timestamp);
-    console.log(point)
-    timestamp = point.timestamp
-    block = point.block
     const promises = [
       getUnderlying('fWETHv0',block),
       getUnderlying('fDAIv0',block),
