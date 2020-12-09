@@ -30,9 +30,9 @@
   ==================================================*/
 
   module.exports = {
-    name: 'acBTC',
+    name: 'ACoconut BTC',
     symbol: 'acBTC',
     type: 'decentralized',
-    start: 1603337635,  // Oct-22-2020 03:33:55 PM +UTC
+    start: 1603380835,  // Oct-22-2020 03:33:55 PM +UTC
     balance,
   };
