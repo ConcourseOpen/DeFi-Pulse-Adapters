@@ -203,7 +203,7 @@
       // TODO don't attribute all of CRV-HBTC to HBTC
     };
     //console.table(balances);
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
   async function getUnderlying(token, block) {
