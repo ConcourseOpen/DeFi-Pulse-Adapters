@@ -31,9 +31,7 @@ _.each(args.tokens, (tokenAdapter) => {
       _.each(spotTests, (timestamp) => {
         run(tokenAdapter, timestamp);
       });
-
-      run(tokenAdapter, startDay);
+      run(tokenAdapter, startDay < tokenAdapter.start ? startDay + 86400 : startDay);
     });
   });
 });
-
