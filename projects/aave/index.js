@@ -34,6 +34,7 @@
         target: aaveTokenAddress,
         params: aaveStakingContract,
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
   }
@@ -206,11 +207,12 @@
     }
   }
 
-  async function getV2Data() {
+  async function getV2Data(block) {
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
         abi: abi["getAddressesProvidersList"],
+        block
       })
     ).output;
 
@@ -221,6 +223,7 @@
           params: "0x1",
         })),
         abi: abi["getAddress"],
+        block
       })
     ).output;
 
@@ -230,6 +233,7 @@
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
+        block
       })
     ).output;
 
@@ -243,7 +247,8 @@
         calls: _.map(aTokenAddresses, (aToken) => ({
           target: aToken
         })),
-        abi: abi["getUnderlying"]
+        abi: abi["getUnderlying"],
+        block
       })
     ).output
 
@@ -253,6 +258,7 @@
           target: underlying.output,
         })),
         abi: "erc20:decimals",
+        block
       })
     ).output;
 
@@ -262,6 +268,7 @@
           target: underlying.output,
         })),
         abi: "erc20:symbol",
+        block
       })
     ).output;
 
@@ -276,6 +283,7 @@
           params: aToken,
         })),
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
 
@@ -326,22 +334,27 @@
     });
 
     // Staking TVL
-    const stakedAaveAmount = await _stakingTvl(block);
-    balances[aaveTokenAddress] = balances[aaveTokenAddress] ?
-      BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed() :
-      stakedAaveAmount
+    if (block >= 10926829 ) {
+      const stakedAaveAmount = await _stakingTvl(block);
+      balances[aaveTokenAddress] = balances[aaveTokenAddress] ?
+        BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed() :
+        stakedAaveAmount
+    } 
 
     // V2 TVLs
-    const v2Data = await getV2Data();
-    v2Data.map(data => {
-      if (balances[data.underlying]) {
-        balances[data.underlying] = BigNumber(balances[data.underlying])
-          .plus(data.balance)
-          .toFixed();
-      } else {
-        balances[data.underlying] = data.balance;
-      }
-    })
+    if (block >= 11360925) {
+      const v2Data = await getV2Data(block);
+      v2Data.map(data => {
+        if (balances[data.underlying]) {
+          balances[data.underlying] = BigNumber(balances[data.underlying])
+            .plus(data.balance)
+            .toFixed();
+        } else {
+          balances[data.underlying] = data.balance;
+        }
+      })
+  
+    }
 
     return (await sdk.api.util.toSymbols(balances)).output;
   }
