@@ -39,7 +39,7 @@ module.exports = {
     name: 'Matic Network',
     website: 'https://matic.network',
     token: 'MATIC',
-    category: '...', // Allowed values : {'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'}
+    category: 'payments',
     start: 1514764800,
     tvl
 }
