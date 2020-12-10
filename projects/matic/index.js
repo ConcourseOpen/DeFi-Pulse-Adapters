@@ -101,6 +101,6 @@ module.exports = {
     website: 'https://matic.network',
     token: 'MATIC',
     category: 'payments',
-    start: 1514764800,
+    start: 1590824836, // Sat May 30 13:17:16 2020
     tvl
 }
