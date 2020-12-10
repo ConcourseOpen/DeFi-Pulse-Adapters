@@ -148,9 +148,9 @@
               .plus(BigNumber(results[9][0]))                               // fUNI-USDC:WETHv0
               .plus(BigNumber(results[13][0]))                              // fUNI-USDC:WETH
               .plus(BigNumber(results[25][0]))                              // fSUSHI-USDC:WETH
-              .plus(BigNumber(results[32]))                                 // fCRV-COMP, estimate
-              .plus(BigNumber(results[34]))                                 // fCRV-YPOOL, estimate
-              .plus(BigNumber(results[35]))                                 // fCRV-3POOl, estimate
+              .plus(BigNumber(results[32]).times(BigNumber("10").pow(-12))) // fCRV-COMP, estimate
+              .plus(BigNumber(results[34]).times(BigNumber("10").pow(-12))) // fCRV-YPOOL, estimate
+              .plus(BigNumber(results[35]).times(BigNumber("10").pow(-12))) // fCRV-3POOl, estimate
               .toFixed(0), // 6 decimals
       '0xdAC17F958D2ee523a2206206994597C13D831ec7':                         // asset: USDT
               BigNumber(results[3])                                         // fUSDTv0
@@ -202,7 +202,7 @@
       // TODO don't attribute all of CRV-BUSD to BUSD
       // TODO don't attribute all of CRV-HBTC to HBTC
     };
-    //console.table(balances);
+    //console.table(balances); // for testing
     return balances;
   }
 
