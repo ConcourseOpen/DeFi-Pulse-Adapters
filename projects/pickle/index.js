@@ -141,59 +141,66 @@ async function tvl(timestamp, block) {
       .times(BigNumber("10").pow(-10))
       .toFixed(8),
   };
-
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 async function getUnderlying(token, block) {
   if (block > pTokens[token].created) {
-    const balance = await sdk.api.abi.call({
-      block,
-      target: pTokens[token].contract,
-      abi: abi["balance"],
-    });
+    try {
+      const balance = await sdk.api.abi.call({
+        block,
+        target: pTokens[token].contract,
+        abi: abi["balance"],
+      });
+  
+      return BigNumber(balance.output);
+    } catch (e) {
+      return BigNumber(0);
+    }
 
-    return BigNumber(balance.output);
   }
   return BigNumber(0);
 }
 
 async function getUniswapUnderlying(token, block) {
   if (block > pTokens[token].created) {
-    const underlyingPool = uniPools[pTokens[token].underlying];
+    try {
+      const underlyingPool = uniPools[pTokens[token].underlying];
 
-    const [totalSupply, reserves, balance] = await Promise.all([
-      sdk.api.abi.call({
-        block,
-        target: underlyingPool.contract,
-        abi: "erc20:totalSupply",
-      }),
-      sdk.api.abi.call({
-        block,
-        target: underlyingPool.contract,
-        abi: abi["getReserves"],
-      }),
-      sdk.api.abi.call({
-        block,
-        target: pTokens[token].contract,
-        abi: abi["balance"],
-      }),
-    ]);
-
-    const poolUnderlyingReservesToken0 = BigNumber(reserves.output[0]);
-    const poolUnderlyingReservesToken1 = BigNumber(reserves.output[1]);
-    const poolFraction = BigNumber(balance.output).div(
-      BigNumber(totalSupply.output)
-    );
-
-    if (!poolFraction.isNaN() && !poolFraction.isEqualTo(ERROR)) {
-      return [
-        poolFraction.times(poolUnderlyingReservesToken0),
-        poolFraction.times(poolUnderlyingReservesToken1),
-      ];
+      const [totalSupply, reserves, balance] = await Promise.all([
+        sdk.api.abi.call({
+          block,
+          target: underlyingPool.contract,
+          abi: "erc20:totalSupply",
+        }),
+        sdk.api.abi.call({
+          block,
+          target: underlyingPool.contract,
+          abi: abi["getReserves"],
+        }),
+        sdk.api.abi.call({
+          block,
+          target: pTokens[token].contract,
+          abi: abi["balance"],
+        }),
+      ]);
+  
+      const poolUnderlyingReservesToken0 = BigNumber(reserves.output[0]);
+      const poolUnderlyingReservesToken1 = BigNumber(reserves.output[1]);
+      const poolFraction = BigNumber(balance.output).div(
+        BigNumber(totalSupply.output)
+      );
+  
+      if (!poolFraction.isNaN() && !poolFraction.isEqualTo(ERROR)) {
+        return [
+          poolFraction.times(poolUnderlyingReservesToken0),
+          poolFraction.times(poolUnderlyingReservesToken1),
+        ];
+      }
+    } catch (e) {
+      return [BigNumber(0), BigNumber(0)];
     }
   }
-
   return [BigNumber(0), BigNumber(0)];
 }
 
@@ -205,7 +212,7 @@ module.exports = {
   name: "Pickle Finance", // project name
   website: "https://pickle.finance",
   token: "PICKLE", // null, or token symbol if project has a custom token
-  category: "assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: "Assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1598893200, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };
