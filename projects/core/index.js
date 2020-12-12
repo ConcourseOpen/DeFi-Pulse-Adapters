@@ -141,10 +141,10 @@ async function getTokenUnderlyingReserves(token, defaultReserve, _timestamp, blo
 function flattenUnderlyingReserves(underlyingReserves) {
   const reserves = {};
 
-  underlyingReserves.forEach(pairReserves => {
-    pairReserves.forEach(tokenReserves => {
-      tokenReserves.forEach(underlyingReserves => {
-        Object.keys(underlyingReserves).forEach(address => {
+  _.each(underlyingReserves, pairReserves => {
+    _.each(pairReserves, tokenReserves => {
+      _.each(tokenReserves, underlyingReserves => {
+        _.each(Object.keys(underlyingReserves), address => {
           const tokenReserve = new BigNumber(underlyingReserves[address]);
           reserves[address] = (reserves[address] || zero).plus(tokenReserve);
         });
@@ -152,7 +152,7 @@ function flattenUnderlyingReserves(underlyingReserves) {
     });
   });
 
-  Object.keys(reserves).forEach(address => {
+  _.each(Object.keys(reserves), address => {
     reserves[address] = reserves[address].toFixed();
   });
 
