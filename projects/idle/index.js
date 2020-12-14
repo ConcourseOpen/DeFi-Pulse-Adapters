@@ -206,7 +206,7 @@ async function tvl(timestamp, block) {
     });
   });
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
@@ -214,6 +214,6 @@ module.exports = {
   token: null,
   start: 1605817213,
   name: 'Idle Finance',
-  category: 'lending',
+  category: 'Lending',
   website: 'https://idle.finance'
 };
