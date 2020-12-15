@@ -15,13 +15,15 @@
   const bcdpmanagerAddress = '0x3f30c2381CD8B917Dd96EB2f1A4F96D91324BBed';
   const ethIlk = '0x4554482d41000000000000000000000000000000000000000000000000000000';
   const firstBlock = 11257606
- 
+
 /*==================================================
   TVL
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    if(block < firstBlock) return {'0x0000000000000000000000000000000000000000' : '0'};
+    if (block < firstBlock) {
+      return (await sdk.api.util.toSymbols({'0x0000000000000000000000000000000000000000': '0'})).output
+    }
 
     const cdpiRes = await sdk.api.abi.call(
       {block,
@@ -45,10 +47,10 @@
 
     let totalBalance = new BigNumber(0);
     ethBalances.forEach(balance => totalBalance = totalBalance.plus(new BigNumber(balance)));
-    
+
     const balances = {'0x0000000000000000000000000000000000000000' : totalBalance.toString(10)};
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output
   }
 
 /*==================================================
@@ -58,7 +60,7 @@
   module.exports = {
     name: 'B.Protocol',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     contributesTo: ['Maker'],
     start: 1605380632,  // 11/14/2020 @ 7:03pm (UTC)
     tvl,
