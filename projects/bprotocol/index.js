@@ -21,7 +21,9 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {
-    if(block < firstBlock) return {'0x0000000000000000000000000000000000000000' : '0'};
+    if(block < firstBlock){
+      return (await sdk.api.util.toSymbols({'0x0000000000000000000000000000000000000000' : '0'})).output;
+    }
 
     const cdpiRes = await sdk.api.abi.call(
       {block,
@@ -48,7 +50,7 @@
 
     const balances = {'0x0000000000000000000000000000000000000000' : totalBalance.toString(10)};
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -58,7 +60,7 @@
   module.exports = {
     name: 'B.Protocol',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     contributesTo: ['Maker'],
     start: 1605380632,  // 11/14/2020 @ 7:03pm (UTC)
     tvl,
