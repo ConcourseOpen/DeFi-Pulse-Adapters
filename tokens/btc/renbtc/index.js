@@ -25,7 +25,7 @@
       })
     ).output;
 
-    return (await sdk.api.util.toSymbols({ [renbtcTokenContract]: btcTotalSupply })).output;
+    return { [renbtcTokenContract]: btcTotalSupply };
   }
 
 /*==================================================

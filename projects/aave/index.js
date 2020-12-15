@@ -13,11 +13,11 @@
 
   const aaveLendingPoolCore = "0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3";
   const aaveLendingPool = "0x398eC7346DcD622eDc5ae82352F02bE94C62d119";
-  let aaveReserves = [];
+  let aaveReserves = []
 
   const uniswapLendingPoolCore = "0x1012cfF81A1582ddD0616517eFB97D02c5c17E25";
   const uniswapLendingPool = "0x2F60C3EB259D63dcCa81fDE7Eaa216D9983D7C60";
-  let uniswapReserves = [];
+  let uniswapReserves = []
 
   const aaveStakingContract = "0x4da27a545c0c5b758a6ba100e3a049001de870f5";
   const aaveTokenAddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
@@ -34,7 +34,6 @@
         target: aaveTokenAddress,
         params: aaveStakingContract,
         abi: "erc20:balanceOf",
-        block
       })
     ).output;
   }
@@ -65,7 +64,7 @@
     })
     ).output;
 
-    let assets = [];
+    let assets = []
     
     reserves.map((reserve, i) => {
       if (reserve === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return;
@@ -73,16 +72,16 @@
       let symbol;
       switch(reserve) {
         case "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2": // MKR doesn't include symbol in contract 🤷‍♂️
-          symbol = { output: 'MKR' }; break;
+          symbol = { output: 'MKR' }; break
         default:
           symbol = symbolsOfReserve[i]
       }
   
-      const decimals = decimalsOfReserve[i];
+      const decimals = decimalsOfReserve[i]
       if (decimals.success) {
         assets.push({ address: reserve, symbol: symbol.output, decimals: decimals.output })
       }
-    });
+    })
   
     return assets
   }
@@ -207,12 +206,11 @@
     }
   }
 
-  async function getV2Data(block) {
+  async function getV2Data() {
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
         abi: abi["getAddressesProvidersList"],
-        block
       })
     ).output;
 
@@ -223,7 +221,6 @@
           params: "0x1",
         })),
         abi: abi["getAddress"],
-        block
       })
     ).output;
 
@@ -233,15 +230,12 @@
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
-        block
       })
     ).output;
 
     let aTokenAddresses = []
     aTokenMarketData.map(aTokensData => {
-      if (aTokensData.output && aTokensData.output.length) {
-        aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
-      }
+      aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
     })
 
     const underlyingAddresses = (
@@ -249,8 +243,7 @@
         calls: _.map(aTokenAddresses, (aToken) => ({
           target: aToken
         })),
-        abi: abi["getUnderlying"],
-        block
+        abi: abi["getUnderlying"]
       })
     ).output
 
@@ -260,7 +253,6 @@
           target: underlying.output,
         })),
         abi: "erc20:decimals",
-        block
       })
     ).output;
 
@@ -270,7 +262,6 @@
           target: underlying.output,
         })),
         abi: "erc20:symbol",
-        block
       })
     ).output;
 
@@ -285,7 +276,6 @@
           params: aToken,
         })),
         abi: "erc20:balanceOf",
-        block
       })
     ).output;
 
@@ -318,6 +308,7 @@
     // V1 TVLs
     await getV1Reserves()
     let balances = await _multiMarketV1Tvl(aaveLendingPoolCore, aaveReserves, block);
+
     const uniswapMarketTvlBalances = await _multiMarketV1Tvl(
       uniswapLendingPoolCore,
       uniswapReserves,
@@ -336,29 +327,24 @@
     });
 
     // Staking TVL
-    if (block >= 10926829 ) {
-      const stakedAaveAmount = await _stakingTvl(block);
-      balances[aaveTokenAddress] = balances[aaveTokenAddress] ?
-        BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed() :
-        stakedAaveAmount
-    } 
+    const stakedAaveAmount = await _stakingTvl(block);
+    balances[aaveTokenAddress] = balances[aaveTokenAddress] ?
+      BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed() :
+      stakedAaveAmount
 
     // V2 TVLs
-    if (block >= 11360925) {
-      const v2Data = await getV2Data(block);
-      v2Data.map(data => {
-        if (balances[data.underlying]) {
-          balances[data.underlying] = BigNumber(balances[data.underlying])
-            .plus(data.balance)
-            .toFixed();
-        } else {
-          balances[data.underlying] = data.balance;
-        }
-      })
-  
-    }
+    const v2Data = await getV2Data();
+    v2Data.map(data => {
+      if (balances[data.underlying]) {
+        balances[data.underlying] = BigNumber(balances[data.underlying])
+          .plus(data.balance)
+          .toFixed();
+      } else {
+        balances[data.underlying] = data.balance;
+      }
+    })
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   }
 
 /*==================================================
@@ -369,8 +355,7 @@
     await getV1Reserves()
   
     // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
-    const aaveReservesWithEth = aaveReserves;
-
+    const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
       address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       symbol: "ETH",
@@ -387,7 +372,7 @@
     name: "Aave",
     website: "https://aave.com",
     token: "AAVE",
-    category: "Lending",
+    category: "lending",
     start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
     rates,

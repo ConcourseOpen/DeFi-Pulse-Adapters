@@ -141,7 +141,7 @@ async function tvl(timestamp, block) {
       .times(BigNumber("10").pow(-10))
       .toFixed(8),
   };
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 async function getUnderlying(token, block) {
