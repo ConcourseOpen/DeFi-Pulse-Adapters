@@ -74,7 +74,7 @@
                     token0: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', token1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
   };
 
-  async function tvl(timestamp, block) {
+async function tvl(timestamp, block) {
     const promises = [
       getUnderlying('fWETHv0',block),                 // 0
       getUnderlying('fDAIv0',block),
@@ -202,8 +202,8 @@
       // TODO don't attribute all of CRV-BUSD to BUSD
       // TODO don't attribute all of CRV-HBTC to HBTC
     };
-    //console.table(balances); // for testing
-    return balances;
+    //console.table(balances);
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
   async function getUnderlying(token, block) {
@@ -286,7 +286,7 @@
     name: 'Harvest Finance', // project name
     website: 'https://harvest.finance',
     token: 'FARM',            // null, or token symbol if project has a custom token
-    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1598893200,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl                       // tvl adapter
   };

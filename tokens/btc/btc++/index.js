@@ -22,7 +22,7 @@
       })
     ).output;
 
-    return { [btcPlusPlusTokenContract]: btcTotalSupply };
+    return (await sdk.api.util.toSymbols({ [btcPlusPlusTokenContract]: btcTotalSupply })).output;
   }
 
 /*==================================================
