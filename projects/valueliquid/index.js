@@ -62,7 +62,7 @@ async function valueLiquidTvl(timestamp, block) {
     }
   });
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 async function tvl(timestamp, block) {
@@ -75,7 +75,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'valueliquid',
   token: null,
-  category: 'dexes',
+  category: 'DEXes',
   start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
   tvl,
 };
