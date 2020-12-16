@@ -49,22 +49,9 @@
       abi: 'erc20:balanceOf'
     });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let balance = balanceOf.output;
-        let address = balanceOf.input.target;
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
-    });
-
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
-
-    return symbolBalances.output;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
