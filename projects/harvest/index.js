@@ -148,9 +148,6 @@
               .plus(BigNumber(results[9][0]))                               // fUNI-USDC:WETHv0
               .plus(BigNumber(results[13][0]))                              // fUNI-USDC:WETH
               .plus(BigNumber(results[25][0]))                              // fSUSHI-USDC:WETH
-              .plus(BigNumber(results[32]).times(BigNumber("10").pow(-12))) // fCRV-COMP, estimate
-              .plus(BigNumber(results[34]).times(BigNumber("10").pow(-12))) // fCRV-YPOOL, estimate
-              .plus(BigNumber(results[35]).times(BigNumber("10").pow(-12))) // fCRV-3POOl, estimate
               .toFixed(0), // 6 decimals
       '0xdAC17F958D2ee523a2206206994597C13D831ec7':                         // asset: USDT
               BigNumber(results[3])                                         // fUSDTv0
@@ -183,26 +180,35 @@
       '0xdF574c24545E5FfEcb9a659c229253D4111d87e1':                         // asset: HUSD
               BigNumber(results[30]).times(BigNumber("10").pow(-10))        // fCRV-HUSD, estimate
               .toFixed(0), // 8 decimals
-      '0x4fabb145d64652a948d72533023f6e7a623c7c53':                         // asset: BUSD
-              BigNumber(results[31])                                        // fCRV-BUSD, estimate
-              .toFixed(0), // 18 decimals
       '0x0316EB71485b0Ab14103307bf65a021042c6d380':                         // asset: HBTC
               BigNumber(results[29])                                        // fCRV-HBTC, estimate
               .toFixed(0), // 18 decimals
       '0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b':                         // asset: DPI
               BigNumber(results[28][0])                                     // fSUSHI-DPI:WETH
               .toFixed(0), // 18 decimals
+      '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8':                         // asset: CRV-YPOOL
+              BigNumber(results[34])                                        // fCRV-YPOOL
+              .toFixed(0), // 18 decimals
+      '0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2':                         // asset: CRV-COMPOUND
+              BigNumber(results[32])                                        // fCRV-COMP
+              .toFixed(0), // 18 decimals
+      '0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B':                         // asset: CRV-BUSD
+              BigNumber(results[31])                                        // fCRV-BUSD
+              .toFixed(0), // 18 decimals
+      '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490':                         // asset: CRV-3POOL
+              BigNumber(results[35])                                        // fCRV-3POOl
+              .plus(BigNumber(results[33]))                                 // fCRV-USDN, estimate
+              .toFixed(0), // 18 decimals
       // TODO don't attribute CRV pools 1:1, factor virtualprice
+      // TODO don't attribute all of CRV-HUSD to HUSD
       // TODO don't attribute all of CRV-RENWBTC to renBTC
       // TODO don't attribute all of CRV-TBTC to TBTC
-      // TODO don't attribute all of CRV-YPOOL to USDC
-      // TODO don't attribute all of CRV-3POOL to USDC
-      // TODO don't attribute all of CRV-COMP to USDC
-      // TODO don't attribute all of CRV-HUSD to HUSD
-      // TODO don't attribute all of CRV-BUSD to BUSD
       // TODO don't attribute all of CRV-HBTC to HBTC
+      // TODO don't attribute all of CRV-USDN to to CRV-3POOL
     };
-    //console.table(balances); // for testing
+    //let supported = await sdk.api.util.tokenList();
+    //console.table(supported); // print supported assets
+    console.table(balances); // for testing
     return balances;
   }
 
