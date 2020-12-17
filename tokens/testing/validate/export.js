@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const args = require('../args');
 const types = [
+  'hybrid',
   'custodial',
   'synthetic',
   'decentralized',
