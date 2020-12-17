@@ -35,7 +35,7 @@
   module.exports = {
     name: 'renBTC',
     symbol: 'RENBTC',
-    type: 'decentralized',
+    type: 'hybrid',
     start: 1585154848,
     balance,
   };
