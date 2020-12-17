@@ -32,7 +32,7 @@
   module.exports = {
     name: 'pNetwork BTC',
     symbol: 'pBTC',
-    type: 'custodial',
+    type: 'hybrid',
     start: 1583366400,   // 03/05/2020 @ 12:00am (UTC)
     balance,
   };

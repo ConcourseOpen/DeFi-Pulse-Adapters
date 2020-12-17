@@ -32,7 +32,7 @@
   module.exports = {
     name: 'Huobi BTC',
     symbol: 'HBTC',
-    type: 'decentralized',
+    type: 'custodial',
     start: 1575905983,
     balance,
   };
