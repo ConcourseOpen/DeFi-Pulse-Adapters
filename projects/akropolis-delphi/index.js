@@ -24,7 +24,7 @@ async function getTotalStaked(address, block, startBlock) {
 }
 
 async function tvl(timestamp, block) {
-  return {
+  return (await sdk.api.util.toSymbols({
     [akroTokenAddress]: await getTotalStaked(
       akroStakingPool,
       block,
@@ -35,13 +35,13 @@ async function tvl(timestamp, block) {
       block,
       adelStartBlock
     ),
-  };
+  })).output;;
 }
 
 module.exports = {
   name: "Akropolis Delphi",
   token: "ADEL",
-  category: "assets",
+  category: "Assets",
   start: 1597225618, // Wed, 12 Aug 2020 09:46:58 GMT
   tvl,
 };
