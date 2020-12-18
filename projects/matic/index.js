@@ -7,11 +7,18 @@ async function tvl(timestamp, block) {
     const posERC20Predicate = '0x40ec5B33f54e0E8A33A975908C5BA1c14e5BbbDf'
     const plasmaDepositManager = '0x401F6c983eA34274ec46f84D70b31C151321188b'
 
+    const maticToken = '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0'
+    const stakeManager = '0x5e3Ef299fDDf15eAa0432E6e66473ace8c13D908'
+
     let balances = {
         [etherAddress]: (await sdk.api.eth.getBalance({ target: posEtherPredicate, block })).output
     }
 
     const posTokens = [
+        {
+            target: maticToken,
+            params: stakeManager
+        },
         {
             target: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
             params: posERC20Predicate
