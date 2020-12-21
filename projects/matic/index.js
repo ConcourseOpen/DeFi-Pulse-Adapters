@@ -99,9 +99,10 @@ async function tvl(timestamp, block) {
         block
     })
 
-    balances[etherAddress] = balances[etherAddress] ? new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[2].output) : lockedPlasmaBalances.output[2].output;
-
-    lockedPlasmaBalances.output[2].output = '0';
+    if (lockedPlasmaBalances.output[2].success) {
+        balances[etherAddress] =new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[2].output)
+        lockedPlasmaBalances.output[2].output = '0';
+    }
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
 
