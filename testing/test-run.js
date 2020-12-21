@@ -75,7 +75,7 @@
       });
 
       afterEach('save output', async function() {
-        let time = moment.unix(this.currentTest.value.timestamp).utcOffset(0).format()
+        let time = moment.unix(this.currentTest.value.timestamp).utcOffset(0).format('YYYY-MM-DD_HH-mm-ss');
         let path = `output/${project.slug}/${runFunction}`;
         let name = `${time}.json`;
 
