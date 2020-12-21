@@ -1,4 +1,5 @@
 const sdk = require('../../sdk');
+const BigNumber = require("bignumber.js");
 
 async function tvl(timestamp, block) {
     const etherAddress = '0x0000000000000000000000000000000000000000'
@@ -97,6 +98,10 @@ async function tvl(timestamp, block) {
         abi: 'erc20:balanceOf',
         block
     })
+
+    balances[etherAddress] = balances[etherAddress] ? new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[2].output) : lockedPlasmaBalances.output[2].output;
+
+    lockedPlasmaBalances.output[2].output = '0';
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
 
