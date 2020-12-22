@@ -164,13 +164,13 @@ async function tvl(timestamp, block) {
   const underlyingReserves = await Promise.all(pairInfo.map(info => getPairUnderlyingReserves(info, timestamp, block)));
   const balances = flattenUnderlyingReserves(underlyingReserves);
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'cvault.finance',
   token: 'CORE',
-  category: 'assets',
+  category: 'Assets',
   start: 1601142406,    // 2020-09-26 17:46:46 (UTC)
   tvl
 };
