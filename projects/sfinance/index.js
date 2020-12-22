@@ -159,7 +159,7 @@
       balances[out] = String(parseFloat(balances[out]) + parseFloat(balance.output));
     }
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output
   }
 
 /*==================================================
@@ -169,7 +169,7 @@
   module.exports = {
     name: 'S Finance',
     token: 'SFG',
-    category: 'dexes',
+    category: 'DEXes',
     // #1 susdv2 pool started
     // start: 1600758000, // 09/22/2020 @ 03:00:00pm +UTC
     // #2 dfi pool started
