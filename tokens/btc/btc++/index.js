@@ -32,7 +32,7 @@
   module.exports = {
     name: 'PieDAO BTC++',
     symbol: 'BTC++',
-    type: 'decentralized',
+    type: 'hybrid',
     start: 1585916707,
     balance,
   };
