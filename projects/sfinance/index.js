@@ -28,12 +28,16 @@
     { address: '0x3ba734D5E4E78801Ab22CF55C5760e121E1C2C42',
       coinNums: 5
     },
-    // qian (USDG/USD5)
+    // qian (QUSD/USD5)
     { address: '0x6E7a0bf2EeC3A4b2B4a7bbBD372238bF68f1174c',
       coinNums: 2
     },
     // gate (USDG/USD5)
     { address: '0xF3B8CC654eA571df3682E2B4800fE22886Ae4976',
+      coinNums: 2
+    },
+    // binance (BUSD/USD5)
+    { address: '0xb759B7a071942425301Cf398d7f892B5ae9eC5Af',
       coinNums: 2
     }
   ]
