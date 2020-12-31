@@ -12,7 +12,7 @@
   Settings
   ==================================================*/
 
-  const renCrv = "0x49849C98ae39Fff122806C06791Fa73784FB3675"; 
+  const renCrv = "0x49849C98ae39Fff122806C06791Fa73784FB3675";
   const sbtcCrv = "0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3";
   const tbtcCrv = "0x64eda51d3Ad40D56b9dFc5554E06F94e1Dd786Fd";
   const uniBadgerWbtc = "0xcd7989894bc033581532d2cd88da5db0a4b12859";
@@ -20,7 +20,7 @@
   const sushiWbtcEth = "0xceff51756c56ceffca006cd410b03ffc46dd3a58";
 
   const UNI_SUBGRAPH = 'uniswap/uniswap-v2';
-  const SUSHI_SUBGRAPH = 'sushiswap/exchange';  
+  const SUSHI_SUBGRAPH = 'sushiswap/exchange';
 
   // Platforms are used to find the underlying balances / values of LP tokens
   const platforms = {
@@ -116,8 +116,8 @@ async function _handleCurve(token, underlyingAmounts){
   async function tvl(timestamp, block) {
 
     // We calculate the TVL for badger by retrieving the total minted wrapped tokens * their
-    // respective Price Per Full Share.  This gives the amount of the underlying tokens.  To 
-    // find the value of the underlying tokens, we retrieve the pool composition from their 
+    // respective Price Per Full Share.  This gives the amount of the underlying tokens.  To
+    // find the value of the underlying tokens, we retrieve the pool composition from their
     // respective platforms and multiply by the percentage holdings
 
     let settPpfs = {};
@@ -192,7 +192,8 @@ async function _handleCurve(token, underlyingAmounts){
         balances[key] = BigNumber(value).div(divisor)
       }
     })
-    return balances
+
+    return (await sdk.api.util.toSymbols(balances)).output
   }
 
 
@@ -203,7 +204,7 @@ async function _handleCurve(token, underlyingAmounts){
   module.exports = {
     name: 'BadgerDAO',        // project name
     token: 'BADGER',          // null, or token symbol if project has a custom token
-    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1607059800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl                       // tvl adapter
   }
