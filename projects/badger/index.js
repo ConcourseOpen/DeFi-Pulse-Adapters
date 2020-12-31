@@ -4,7 +4,7 @@
 
   const sdk = require('../../sdk');
   const settAbi = require('./abis/Sett.json');
-  const geyserAbi = require('./abis/BadgerGeyser.json');
+  const axios = require('axios');
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
 
@@ -12,30 +12,116 @@
   Settings
   ==================================================*/
 
-  const renCrv = "0x49849C98ae39Fff122806C06791Fa73784FB3675";
+  const renCrv = "0x49849C98ae39Fff122806C06791Fa73784FB3675"; 
   const sbtcCrv = "0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3";
   const tbtcCrv = "0x64eda51d3Ad40D56b9dFc5554E06F94e1Dd786Fd";
   const uniBadgerWbtc = "0xcd7989894bc033581532d2cd88da5db0a4b12859";
+  const sushiBadgerWbtc = "0x110492b31c59716ac47337e616804e3e3adc0b4a";
+  const sushiWbtcEth = "0xceff51756c56ceffca006cd410b03ffc46dd3a58";
 
+  const UNI_SUBGRAPH = 'uniswap/uniswap-v2';
+  const SUSHI_SUBGRAPH = 'sushiswap/exchange';  
+
+  // Platforms are used to find the underlying balances / values of LP tokens
+  const platforms = {
+    "curve": [renCrv, sbtcCrv, tbtcCrv],
+    "uniswap": [uniBadgerWbtc],
+    "sushi": [sushiBadgerWbtc, sushiWbtcEth]
+  }
+
+  // Setts are the badger vaults that users invest in
   const setts = {
-    "0x6dEf55d2e18486B9dDfaA075bc4e4EE0B28c1545": renCrv,        // native.renCrv sett
-    "0xd04c48A53c111300aD41190D63681ed3dAd998eC": sbtcCrv,       // native.sbtcCrv sett
-    "0xb9D076fDe463dbc9f915E5392F807315Bf940334": tbtcCrv,       // native.tbtcCrv sett
-    "0x235c9e24D3FB2FAFd58a2E49D454Fdcd2DBf7FF1": uniBadgerWbtc, // native.uniBadgerWbtc sett
-    "0xAf5A1DECfa95BAF63E0084a35c62592B774A2A87": renCrv,        // harvest.renCrv sett
+    "0x6dEf55d2e18486B9dDfaA075bc4e4EE0B28c1545": renCrv,          // native.renCrv sett
+    "0xd04c48A53c111300aD41190D63681ed3dAd998eC": sbtcCrv,         // native.sbtcCrv sett
+    "0xb9D076fDe463dbc9f915E5392F807315Bf940334": tbtcCrv,         // native.tbtcCrv sett
+    "0x235c9e24D3FB2FAFd58a2E49D454Fdcd2DBf7FF1": uniBadgerWbtc,   // native.uniBadgerWbtc sett
+    "0xAf5A1DECfa95BAF63E0084a35c62592B774A2A87": renCrv,          // harvest.renCrv sett
+    "0x758a43ee2bff8230eeb784879cdcff4828f2544d": sushiWbtcEth,    // sushi.wbtcEth sett
+    "0x1862A18181346EBd9EdAf800804f89190DeF24a5": sushiBadgerWbtc  // sushi.badgerWbtc sett
   };
+
+  const crvTokens = {
+    [renCrv]: '0xeb4c2781e4eba804ce9a9803c67d0893436bb27d',
+    [sbtcCrv]: '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6',
+    [tbtcCrv]: '0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa'
+  }
+
+  const decimals = {
+    "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": 8,   // wBTC
+    "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d": 8,   // renBTC
+    "0x3472A5A71965499acd81997a54BBA8D852C6E53d": 18,  // badger
+    "0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6": 18,  // sBTC
+    "0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa": 18,  // tBTC
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": 18   // eth
+  }
+
+  let balances = {};
+
+/*==================================================
+  PLATFORM SPECIFIC
+  ==================================================*/
+async function _getPairValue(url, address, holdings) {
+  let response = await axios.post('https://api.thegraph.com/subgraphs/name/' + url, JSON.stringify({
+        query: `
+        {
+          pair(id:"${address.toLowerCase()}") {
+            reserve0
+            reserve1
+            token0 {
+              id
+            }
+            token1 {
+              id
+            }
+            totalSupply
+          }
+        }`
+      })
+    )
+  let data = response.data
+
+  const holdingsRatio = parseFloat(holdings) / parseFloat(data.data.pair.totalSupply);
+  const token0Holdings = parseFloat(data.data.pair.reserve0) * holdingsRatio;
+  const token1Holdings = parseFloat(data.data.pair.reserve1) * holdingsRatio;
+  const token0address = data.data.pair.token0.id;
+  const token1address = data.data.pair.token1.id;
+
+  let returnValue = [ {[token0address]: token0Holdings}, {[token1address]: token1Holdings} ]
+  return returnValue
+}
+
+async function _getCurveVirtualPrice(token, holdings) {
+  let url = 'https://www.curve.fi/raw-stats/rens-1m.json'
+  if (token === tbtcCrv){
+    url = 'https://www.curve.fi/raw-stats/tbtc-1m.json'
+  }
+  let response = await axios.get(url)
+  let data = response.data
+  return BigNumber(holdings).multipliedBy(BigNumber(data[0].virtual_price).div(10**18))
+}
+
+async function _handleCurve(token, underlyingAmounts){
+  let crvBalance = await _getCurveVirtualPrice(token, underlyingAmounts)
+  if (balances[crvTokens[token]] > 0) {
+    balances[crvTokens[token]] = BigNumber(balances[crvTokens[token]]).plus(crvBalance)
+  } else {
+    balances[crvTokens[token]] = crvBalance;
+  }
+  return
+}
 
 /*==================================================
   TVL
   ==================================================*/
-
   async function tvl(timestamp, block) {
 
     // We calculate the TVL for badger by retrieving the total minted wrapped tokens * their
-    // respective Price Per Full Share.
+    // respective Price Per Full Share.  This gives the amount of the underlying tokens.  To 
+    // find the value of the underlying tokens, we retrieve the pool composition from their 
+    // respective platforms and multiply by the percentage holdings
 
     let settPpfs = {};
-    let balances = {};
+    let underlyingAmounts = {};
 
      // Get Price Per Full Share for each sett token
     const bTokenPpfs = await sdk.api.abi.multiCall({
@@ -66,11 +152,47 @@
       if(bTokenSupply.success) {
         const valueInToken = bTokenSupply.output;
         const underlyingAddress = setts[bTokenSupply.input.target];
-        balances[underlyingAddress] = BigNumber(valueInToken).multipliedBy(settPpfs[underlyingAddress])
+        if (underlyingAmounts[underlyingAddress] > 0) {
+          underlyingAmounts[underlyingAddress] = BigNumber(valueInToken).multipliedBy(settPpfs[underlyingAddress]).plus(underlyingAmounts[underlyingAddress])
+        } else {
+          underlyingAmounts[underlyingAddress] = BigNumber(valueInToken).multipliedBy(settPpfs[underlyingAddress])
+        }
       }
     });
 
-    return balances;
+    // For each platform, iterate through the contracts and find their underlying
+    await Promise.all(platforms['curve'].map(async (token) => {
+      await _handleCurve(token, underlyingAmounts[token])
+    }))
+
+    await Promise.all(platforms['sushi'].map(async (token) => {
+      let underlyingTokenBalance = await _getPairValue(SUSHI_SUBGRAPH, token, !!underlyingAmounts[token] ? underlyingAmounts[token] : 0)
+      underlyingTokenBalance.forEach((pair) => {
+        if (balances[Object.keys(pair)[0]] > 0) {
+          balances[Object.keys(pair)[0]] = BigNumber(balances[Object.keys(pair)[0]]).plus(pair[Object.keys(pair)[0]])
+        } else {
+          balances[Object.keys(pair)[0]] = pair[Object.keys(pair)[0]]
+        }
+      })
+    }))
+
+    await Promise.all(platforms['uniswap'].map(async (token) => {
+      let underlyingTokenBalance = await _getPairValue(UNI_SUBGRAPH, token, !!underlyingAmounts[token] ? underlyingAmounts[token] : 0)
+      underlyingTokenBalance.forEach((pair) => {
+        if (balances[Object.keys(pair)[0]] > 0) {
+          balances[Object.keys(pair)[0]] = BigNumber(balances[Object.keys(pair)[0]]).plus(pair[Object.keys(pair)[0]])
+        } else {
+          balances[Object.keys(pair)[0]] = pair[Object.keys(pair)[0]]
+        }
+      })
+    }))
+    _.map(balances, (value, key) => {
+      if (decimals[key] < 18) {
+        let divisor = 10 ** (18 - decimals[key])
+        balances[key] = BigNumber(value).div(divisor)
+      }
+    })
+    return balances
   }
 
 
