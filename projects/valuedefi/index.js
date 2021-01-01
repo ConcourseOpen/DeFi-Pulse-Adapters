@@ -46,6 +46,30 @@ const configs = {
         contract: "0xcBf57fE64075340B54769FAa594dF279aE99c370",
         underlyingToken: "0xBb2b8038a1640196FbE3e38816F3e67Cba72D940"
       }
+    ],
+    cVaultUniV2LP: [
+      {
+        // ETH-USDC
+        contract: "0x7c175a3Fd4d2f14E40Ac418a1e004Dfc8Edd3ba8",
+        underlyingToken: "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
+      },
+      {
+        // ETH-WBTC
+        contract: "0x555DdD7C3999010cfF0AE3671D31Cb376fa638f0",
+        underlyingToken: "0xceff51756c56ceffca006cd410b03ffc46dd3a58"
+      }
+    ],
+    cVaultBalancer: [
+      {
+        // ETH-USDC
+        contract: "0x53Aa48B2AC0071A6ce61Ddb3BA4e41D395B2DB51",
+        underlyingToken: "0x8a649274e4d777ffc6851f13d23a86bbfa2f2fbf"
+      },
+      {
+        // ETH-WBTC
+        contract: "0xcBf57fE64075340B54769FAa594dF279aE99c370",
+        underlyingToken: "0xBb2b8038a1640196FbE3e38816F3e67Cba72D940"
+      }
     ]
   }
 
@@ -197,69 +221,11 @@ async function seedPoolStakeTvl(timestamp, block) {
   return balances;
 }
 
-async function valueLiquidTvl(timestamp, block) {
-  let balances = {
-    '0x0000000000000000000000000000000000000000': '0', // ETH
-  };
-
-  let poolLogs = await sdk.api.util.getLogs({
-    target: '0xEbC44681c125d63210a33D30C55FD3d37762675B',
-    topic: 'LOG_NEW_POOL(address,address)',
-    keys: ['topics'],
-    fromBlock: 10961776,
-    toBlock: block
-  });
-
-  let poolCalls = [];
-
-  let pools = _.map(poolLogs.output, (poolLog) => {
-    return `0x${poolLog[2].slice(26)}`
-  });
-
-  const poolTokenData = (await sdk.api.abi.multiCall({
-    calls: _.map(pools, (poolAddress) => ({target: poolAddress})),
-    abi: getCurrentTokens,
-  })).output;
-
-  _.forEach(poolTokenData, (poolToken) => {
-    let poolTokens = poolToken.output;
-    let poolAddress = poolToken.input.target;
-
-    _.forEach(poolTokens, (token) => {
-      poolCalls.push({
-        target: token,
-        params: poolAddress,
-      });
-    })
-  });
-
-  let poolBalances = (await sdk.api.abi.multiCall({
-    block,
-    calls: poolCalls,
-    abi: 'erc20:balanceOf'
-  })).output;
-
-  _.each(poolBalances, (balanceOf) => {
-    if (balanceOf.success) {
-      let balance = balanceOf.output;
-      let address = balanceOf.input.target;
-
-      if (new BigNumber(balance).toNumber() <= 0) {
-        return;
-      }
-
-      balances[address] = new BigNumber(balances[address] || 0).plus(balance).toFixed();
-    }
-  });
-
-  return balances;
-}
 
 async function tvl(timestamp, block) {
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
-  const valueLiquid = await valueLiquidTvl(timestamp, block);
   const vault = await vaultTvl(timestamp, block)
-  return mergeBalance([seedPoolStake, valueLiquid, vault]);
+  return mergeBalance([seedPoolStake, vault]);
 }
 /*==================================================
   Exports
