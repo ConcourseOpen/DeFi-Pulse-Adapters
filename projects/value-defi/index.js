@@ -141,7 +141,7 @@ async function singleVaultTvl(timestamp, block) {
    })
  }
 
-async function mergeBalance(array) {
+async function mergeBalance(array, symbols = true) {
   const globalBalances = {}
   for (const balances of array) {
     for (const asset in balances) {
@@ -151,7 +151,12 @@ async function mergeBalance(array) {
     }
   }
 
-  return (await sdk.api.util.toSymbols(globalBalances)).output;
+  if (symbols) {
+    return (await sdk.api.util.toSymbols(globalBalances)).output;
+  } else {
+    return globalBalances;
+  }
+
 }
 
 async function uNIv2LPVaultTvl(timestamp, block) {
@@ -189,7 +194,7 @@ async function uNIv2LPVaultTvl(timestamp, block) {
  }
 
 async function vaultTvl(timestamp, block) {
-  return mergeBalance([await singleVaultTvl(timestamp, block), await uNIv2LPVaultTvl(timestamp, block)])
+  return mergeBalance([await singleVaultTvl(timestamp, block), await uNIv2LPVaultTvl(timestamp, block)], false)
 }
 
 async function seedPoolStakeTvl(timestamp, block) {
@@ -223,7 +228,7 @@ async function seedPoolStakeTvl(timestamp, block) {
 
 async function tvl(timestamp, block) {
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
-  const vault = await vaultTvl(timestamp, block)
+  const vault = await vaultTvl(timestamp, block);
   return mergeBalance([seedPoolStake, vault]);
 }
 
