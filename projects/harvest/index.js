@@ -41,7 +41,7 @@
     'fCRV-HUSD':  {underlying: 'CRV-HUSD',  decimals: 18, contract: '0x29780C39164Ebbd62e9DDDE50c151810070140f2', created: 11380823 },
     'fCRV-BUSD':  {underlying: 'CRV-BUSD',  decimals: 18, contract: '0x4b1cBD6F6D8676AcE5E412C78B7a59b4A1bbb68a', created: 11257802 },
     'fCRV-COMP':  {underlying: 'CRV-COMP',  decimals: 18, contract: '0x998cEb152A42a3EaC1f555B1E911642BeBf00faD', created: 11257781 },
-    'fCRV-USDN':  {underlying: 'CRV-USDN',  decimals: 18, contract: '0x683E683fBE6Cf9b635539712c999f3B3EdCB8664', created: 11257784 }, 
+    'fCRV-USDN':  {underlying: 'CRV-USDN',  decimals: 18, contract: '0x683E683fBE6Cf9b635539712c999f3B3EdCB8664', created: 11257784 },
     'fCRV-YPOOL': {underlying: 'CRV-YPOOL', decimals: 18, contract: '0x0FE4283e0216F94f5f9750a7a11AC54D3c9C38F3', created: 11152258 },
     'fCRV-3POOL': {underlying: 'CRV-3POOL', decimals: 18, contract: '0x71B9eC42bB3CB40F017D8AD8011BE8e384a95fa5', created: 11159005 },
     'fSUSHI-WBTC:TBTC': {underlying: 'SUSHI-WBTC:TBTC', decimals: 18, contract: '0xF553E1f826f42716cDFe02bde5ee76b2a52fc7EB', created: 11036219 },
@@ -148,9 +148,6 @@
               .plus(BigNumber(results[9][0]))                               // fUNI-USDC:WETHv0
               .plus(BigNumber(results[13][0]))                              // fUNI-USDC:WETH
               .plus(BigNumber(results[25][0]))                              // fSUSHI-USDC:WETH
-              .plus(BigNumber(results[32]).times(BigNumber("10").pow(-12))) // fCRV-COMP, estimate
-              .plus(BigNumber(results[34]).times(BigNumber("10").pow(-12))) // fCRV-YPOOL, estimate
-              .plus(BigNumber(results[35]).times(BigNumber("10").pow(-12))) // fCRV-3POOl, estimate
               .toFixed(0), // 6 decimals
       '0xdAC17F958D2ee523a2206206994597C13D831ec7':                         // asset: USDT
               BigNumber(results[3])                                         // fUSDTv0
@@ -183,26 +180,32 @@
       '0xdF574c24545E5FfEcb9a659c229253D4111d87e1':                         // asset: HUSD
               BigNumber(results[30]).times(BigNumber("10").pow(-10))        // fCRV-HUSD, estimate
               .toFixed(0), // 8 decimals
-      '0x4fabb145d64652a948d72533023f6e7a623c7c53':                         // asset: BUSD
-              BigNumber(results[31])                                        // fCRV-BUSD, estimate
-              .toFixed(0), // 18 decimals
       '0x0316EB71485b0Ab14103307bf65a021042c6d380':                         // asset: HBTC
               BigNumber(results[29])                                        // fCRV-HBTC, estimate
               .toFixed(0), // 18 decimals
       '0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b':                         // asset: DPI
               BigNumber(results[28][0])                                     // fSUSHI-DPI:WETH
               .toFixed(0), // 18 decimals
+      '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8':                         // asset: CRV-YPOOL
+              BigNumber(results[34])                                        // fCRV-YPOOL
+              .toFixed(0), // 18 decimals
+      '0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2':                         // asset: CRV-COMPOUND
+              BigNumber(results[32])                                        // fCRV-COMP
+              .toFixed(0), // 18 decimals
+      '0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B':                         // asset: CRV-BUSD
+              BigNumber(results[31])                                        // fCRV-BUSD
+              .toFixed(0), // 18 decimals
+      '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490':                         // asset: CRV-3POOL
+              BigNumber(results[35])                                        // fCRV-3POOl
+              .plus(BigNumber(results[33]))                                 // fCRV-USDN, estimate
+              .toFixed(0), // 18 decimals
       // TODO don't attribute CRV pools 1:1, factor virtualprice
+      // TODO don't attribute all of CRV-HUSD to HUSD
       // TODO don't attribute all of CRV-RENWBTC to renBTC
       // TODO don't attribute all of CRV-TBTC to TBTC
-      // TODO don't attribute all of CRV-YPOOL to USDC
-      // TODO don't attribute all of CRV-3POOL to USDC
-      // TODO don't attribute all of CRV-COMP to USDC
-      // TODO don't attribute all of CRV-HUSD to HUSD
-      // TODO don't attribute all of CRV-BUSD to BUSD
       // TODO don't attribute all of CRV-HBTC to HBTC
+      // TODO don't attribute all of CRV-USDN to to CRV-3POOL
     };
-    //console.table(balances);
     return (await sdk.api.util.toSymbols(balances)).output;
   }
 
