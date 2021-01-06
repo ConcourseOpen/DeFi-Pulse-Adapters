@@ -14,19 +14,19 @@ async function tvl(timestamp, block) {
     const poolTVL = await sdk.api.abi.call({
       target: POOL,
       abi: abi['poolValue'],
-      block: block 
+      block: block
     });
     const truTVL = await sdk.api.abi.call({
       target: TRU,
       params: RATING,
       abi: 'erc20:balanceOf',
-      block: block 
+      block: block
     });
-    
+
     balances[TUSD] = poolTVL.output;
     balances[TRU] = truTVL.output;
-    
-    return balances;
+
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 
@@ -34,8 +34,8 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'TrueFi',               // project name
   website: 'https://app.truefi.com',
-  token: 'TRU',              
-  category: 'lending',          // Lending
+  token: 'TRU',
+  category: 'Lending',          // Lending
   start: 1605830400,            // 11/20/2020 @ 12:00am (UTC)
   tvl                           // tvl adapter
 }
