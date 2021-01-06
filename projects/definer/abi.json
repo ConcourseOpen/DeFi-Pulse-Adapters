@@ -1,5 +1,5 @@
 {
-  "tokenInfoRegistry": {
+  "global:tokenInfoRegistry": {
     "constant": true,
     "inputs": [],
     "name": "tokenInfoRegistry",
@@ -14,7 +14,7 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "bank": {
+  "global:bank": {
     "constant": true,
     "inputs": [],
     "name": "bank",
@@ -29,7 +29,7 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "getTokens": {
+  "tokenRegistry:getTokens": {
     "constant": true,
     "inputs": [],
     "name": "getTokens",
@@ -44,7 +44,22 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "getPoolAmount": {
+  "tokenRegistry:getCTokens": {
+    "constant": true,
+    "inputs": [],
+    "name": "getCTokens",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "cTokens",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "bank:getPoolAmount": {
     "constant": true,
     "inputs": [
       {
@@ -64,5 +79,110 @@
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  "bank:getTokenState": {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getTokenState",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "deposits",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "loans",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "collateral",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "bank:getCapitalUtilizationRatio": {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getCapitalUtilizationRatio",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "bank:getCapitalCompoundRatio": {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getCapitalCompoundRatio",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "ctoken:supplyRatePerBlock": {
+    "constant": true,
+    "inputs": [],
+    "name": "supplyRatePerBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function",
+    "signature": "0xae9d70b0"
+  },
+  "ctoken:borrowRatePerBlock": {
+    "constant": true,
+    "inputs": [],
+    "name": "borrowRatePerBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function",
+    "signature": "0xf8f9da28"
   }
 }
