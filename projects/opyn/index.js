@@ -23,7 +23,7 @@
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
+  async function tvl(timestamp, block) {  
     const supportedTokens = await (
       sdk
         .api
@@ -31,7 +31,7 @@
         .tokenList()
         .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
     );
-
+  
     let balances = {};
 
     for(let i = 0; i < factoriesAddresses.length; i++) {
@@ -93,13 +93,13 @@
 
       let optionsCollateralAddresses = []
 
-      _.each(optionsCollateral, async (collateralAsset) => {
-        // only consider supported tokens
+      _.each(optionsCollateral, async (collateralAsset) => {     
+        // only consider supported tokens   
         if((collateralAsset.output.toLowerCase() != null) && (collateralAsset.output.toLowerCase() !== "0x0000000000000000000000000000000000000000") && (supportedTokens.includes(collateralAsset.output.toLowerCase())) && (!optionsCollateralAddresses.includes(collateralAsset.output.toLowerCase())) ) {
           optionsCollateralAddresses = [
             ...optionsCollateralAddresses,
             collateralAsset.output.toLowerCase()
-          ]
+          ]  
         }
       });
 
@@ -117,7 +117,7 @@
           balanceOfCalls.push({
             target: optionCollateralAddress,
             params: [optionAddress]
-          });
+          });  
         })
       });
 
