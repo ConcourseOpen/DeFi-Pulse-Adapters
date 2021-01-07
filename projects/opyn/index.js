@@ -24,6 +24,14 @@
   ==================================================*/
 
   async function tvl(timestamp, block) {  
+    const supportedTokens = await (
+      sdk
+        .api
+        .util
+        .tokenList()
+        .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
+    );
+  
     let balances = {};
 
     for(let i = 0; i < factoriesAddresses.length; i++) {
@@ -85,11 +93,12 @@
 
       let optionsCollateralAddresses = []
 
-      _.each(optionsCollateral, async (collateralAsset) => {        
-        if(collateralAsset.output != null) {
+      _.each(optionsCollateral, async (collateralAsset) => {     
+        // only consider supported tokens   
+        if((collateralAsset.output.toLowerCase() != null) && (collateralAsset.output.toLowerCase() !== "0x0000000000000000000000000000000000000000") && (supportedTokens.includes(collateralAsset.output.toLowerCase())) && (!optionsCollateralAddresses.includes(collateralAsset.output.toLowerCase())) ) {
           optionsCollateralAddresses = [
             ...optionsCollateralAddresses,
-            collateralAsset.output
+            collateralAsset.output.toLowerCase()
           ]  
         }
       });
@@ -102,16 +111,14 @@
 
       // batch balanceOf calls
       let balanceOfCalls = [];
-      let j = 0;
 
       _.each(optionsCollateralAddresses, async (optionCollateralAddress) => {
-        if(optionCollateralAddress != "0x0000000000000000000000000000000000000000") {
+        optionsAddresses.forEach((optionAddress) => {
           balanceOfCalls.push({
             target: optionCollateralAddress,
-            params: [optionsAddresses[j]]
-          });
-        }
-        j++;
+            params: [optionAddress]
+          });  
+        })
       });
  
       // get tokens balances
