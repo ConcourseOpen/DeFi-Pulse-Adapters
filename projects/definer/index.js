@@ -61,7 +61,7 @@ const utility = {
     return currentMarkets;
   },
 
-  async getBankContract(block, markets) {
+  async getBankPoolAmounts(block, markets) {
     let bankAddress = await utility.getBankAddressByGlobalConfig(block);
     let callsArray = [];
     markets.forEach(element => {
@@ -249,7 +249,7 @@ const utility = {
       let borrowRatePerBlock;
       let depositRatePerBlock;
       if (item.ctoken) {
-        let supplyRatePerBlockCompValue = BigNumber(item.supplyRatePerBlockComp).times(0.6).toFixed(0);
+        let supplyRatePerBlockCompValue = BigNumber(item.supplyRatePerBlockComp).times(0.4).toFixed(0);
         let borrowRatePerBlockCompValue = BigNumber(item.borrowRatePerBlockComp).times(0.6).toFixed(0);
         // supply*0.4+borrow*0.6
         borrowRatePerBlock = BigNumber(supplyRatePerBlockCompValue).plus(borrowRatePerBlockCompValue).toFixed(0);
@@ -321,9 +321,9 @@ async function tvl(timestamp, block) {
     let markets = await utility.getMarkets(block);
 
     // Get Bank
-    let banksContract = await utility.getBankContract(block, markets);
+    let banksPoolAmounts = await utility.getBankPoolAmounts(block, markets);
 
-    banksContract.forEach(result => {
+    banksPoolAmounts.forEach(result => {
       if (result.success === true) {
         balances[result.input.params] = result.output;
       }
