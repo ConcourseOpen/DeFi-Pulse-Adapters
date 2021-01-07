@@ -21,11 +21,11 @@ const configs = {
       stakingContract: "0xC2D55CE14a8e04AEF9B6bCfD105079b63C6a0AC8",
       tokens: ['0xdAC17F958D2ee523a2206206994597C13D831ec7', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0x0000000000085d4780B73119b644AE5ecd22b376', '0x6B175474E89094C44Da98b954EedeAC495271d0F']
     },
-    {
-      // YFV Governance Vault
-      stakingContract: "0x07eb8CB8AEdB581a2d73cc29F6c7860226808Ca2",
-      tokens: ["0x45f24BaEef268BB6d63AEe5129015d69702BCDfa"],
-    }
+    // {
+    //   // YFV Governance Vault
+    //   stakingContract: "0x07eb8CB8AEdB581a2d73cc29F6c7860226808Ca2",
+    //   tokens: ["0x45f24BaEef268BB6d63AEe5129015d69702BCDfa"],
+    // }
 
   ],
   vault: {
@@ -234,6 +234,7 @@ async function cVaultBalancerTvl(timestamp, block) {
   const poolTokenData = (await sdk.api.abi.multiCall({
     calls: _.map(pools, (poolAddress) => ({target: poolAddress})),
     abi: getCurrentTokens,
+    block
   })).output;
   const totalSupplies = (await sdk.api.abi.multiCall({
     block,
@@ -357,6 +358,10 @@ async function seedPoolStakeTvl(timestamp, block) {
 
 
 async function tvl(timestamp, block) {
+  if (block < 10915393) {
+    const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
+    return await mergeBalance([seedPoolStake]);
+  }
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
   const vault = await vaultTvl(timestamp, block);
   return await mergeBalance([seedPoolStake, vault]);
@@ -369,6 +374,6 @@ module.exports = {
   name: 'Value DeFi',
   token: null,
   category: 'Assets',
-  start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
+  start: 1597751065,  // 09/30/2020 @ 4:36am (UTC)
   tvl,
 };
