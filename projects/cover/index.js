@@ -16,7 +16,7 @@ async function tvl(timestamp, block) {
     target: COVER_PROTOCOL_FACTORY,
     abi: abi['getAllProtocolAddresses'],
   })).output;
-  
+
   const covers = _.flatten(await sdk.api.abi.multiCall({
     block,
     abi: abi['getProtocolDetails'],
@@ -51,13 +51,13 @@ async function tvl(timestamp, block) {
     }
   })
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'Cover Protocol',
   token: 'COVER',
-  category: 'derivatives',
+  category: 'Derivatives',
   start: 1605830400, // Nov-20-2020 12am UTC
   tvl
 }
