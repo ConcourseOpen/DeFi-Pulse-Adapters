@@ -119,6 +119,33 @@ const utility = {
       calls: callsArray
     })).output;
   },
+
+  // Get cTokens
+  async getCTokens(block, markets) {
+    let tokenRegistryAddress = await utility.getTokenRegistryAddressByGlobalConfig(block);
+    let callsArray = [];
+    let allTokenObj = {};
+    markets.forEach(token_address => {
+      allTokenObj[token_address] = "";
+      callsArray.push({
+        target: tokenRegistryAddress,
+        params: token_address
+      });
+    });
+    let cToken = (await sdk.api.abi.multiCall({
+      block,
+      abi: abi['tokenRegistry:getCToken'],
+      calls: callsArray
+    })).output;
+
+    let zeroCTokenAddress = '0x0000000000000000000000000000000000000000';
+    cToken.forEach(item => {
+      if (item.success) {
+        allTokenObj[item.input.params[0]] = item.output === zeroCTokenAddress ? "" : item.output
+      }
+    });
+    return allTokenObj;
+  },
   // 
   async handlerTokenApr(block, markets) {
     // Year Total Blocks Number
@@ -126,31 +153,7 @@ const utility = {
 
     let targetTokenObj = {};
 
-    // Get TokenRegistry Address
-    let tokenRegistryAddress = await utility.getTokenRegistryAddressByGlobalConfig(block);
-    let ctokens = (await sdk.api.abi.call({
-      block,
-      target: tokenRegistryAddress,
-      params: [],
-      abi: abi['tokenRegistry:getCTokens'],
-    })).output;
-
-    // TODO: Handle the mapping relationship between tokens and ctokens
-    let allTokenObj = {
-      '0x000000000000000000000000000000000000000E': { cTokenAddress: "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5" },
-      '0x6B175474E89094C44Da98b954EedeAC495271d0F': { cTokenAddress: "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643" },
-      '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': { cTokenAddress: "0x39AA39c021dfbaE8faC545936693aC917d5E7563" },
-      '0xdAC17F958D2ee523a2206206994597C13D831ec7': { cTokenAddress: "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9" },
-      '0x0000000000085d4780B73119b644AE5ecd22b376': { cTokenAddress: "" },
-      '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2': { cTokenAddress: "" },
-      '0x0D8775F648430679A709E98d2b0Cb6250d2887EF': { cTokenAddress: "0x6C8c6b02E7b2BE14d4fA6022Dfd6d75921D90E4E" },
-      '0xE41d2489571d322189246DaFA5ebDe1F4699F498': { cTokenAddress: "0xB3319f5D18Bc0D84dD1b4825Dcde5d5f7266d407" },
-      '0x1985365e9f78359a9B6AD760e32412f4a445E862': { cTokenAddress: "0x158079Ee67Fce2f58472A96584A73C7Ab9AC95c1" },
-      '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': { cTokenAddress: "0xC11b1268C1A384e55C48c2391d8d480264A3A7F4" },
-      "0x514910771AF9Ca656af840dff83E8264EcF986CA": { cTokenAddress: "" },
-      "0x054f76beED60AB6dBEb23502178C52d6C5dEbE40": { cTokenAddress: "" },
-      "0x486792bcdb13F8aaCf85288D98850FA2804F95c7": { cTokenAddress: "" }
-    }
+    let allTokenObj = await utility.getCTokens(block, markets)
 
     let ctokenMapToken = {};
     let callsCompArray = [];
@@ -173,30 +176,30 @@ const utility = {
 
     let tempValue = BigNumber(3).times(Math.pow(10, 16)).toFixed(0);
     capitalUtilizationRatio.forEach(item => {
-      if (allTokenObj[item.input.params[0]].cTokenAddress) {
+      if (allTokenObj[item.input.params[0]]) {
         callsCompArray.push({
-          target: allTokenObj[item.input.params[0]].cTokenAddress
+          target: allTokenObj[item.input.params[0]]
         })
         capitalCompoundRatioArray.push({
           target: bankAddress,
           params: item.input.params[0]
 
         })
-        ctokenMapToken[allTokenObj[item.input.params[0]].cTokenAddress] = item.input.params[0];
+        ctokenMapToken[allTokenObj[item.input.params[0]]] = item.input.params[0];
       }
 
       if (item.success) {
-        // ((capitalUtilizationRatio * 15**16)/10**18)+3*10**16;
+        // ((capitalUtilizationRatio * 15*10**16)/10**18)+3*10**16;
         let notSupportCompBorrowRatePerBlock = (
           BigNumber(item.output)
-            .times(Math.pow(15, 16))
+            .times(15 * Math.pow(10, 16))
             .div(Math.pow(10, 18))
             .plus(tempValue)
             .div(yearTotalBlocksNumber)
         ).toFixed(0);
 
         targetTokenObj[item.input.params[0]] = {
-          ctoken: allTokenObj[item.input.params[0]].cTokenAddress || '',
+          ctoken: allTokenObj[item.input.params[0]] || '',
           capitalUtilizationRatio: item.output,
           notSupportCompBorrowRatePerBlock: notSupportCompBorrowRatePerBlock,
           supplyRatePerBlockComp: "",

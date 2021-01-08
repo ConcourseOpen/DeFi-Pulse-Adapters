@@ -44,15 +44,21 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "tokenRegistry:getCTokens": {
+  "tokenRegistry:getCToken": {
     "constant": true,
-    "inputs": [],
-    "name": "getCTokens",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getCToken",
     "outputs": [
       {
-        "internalType": "address[]",
-        "name": "cTokens",
-        "type": "address[]"
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "payable": false,
