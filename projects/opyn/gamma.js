@@ -12,7 +12,7 @@ const isWhitelistedCollateral = require('./abis/gamma/isWhitelistedCollateral.js
   Settings
 ==================================================*/
 
-const START_BLOCK = 11558278;
+const START_BLOCK = 11551118;
 const whitelist = "0xa5ea18ac6865f315ff5dd9f1a7fb1d41a30a6779";
 const marginPool = "0x5934807cc0654d46755ebd2848840b616256c6ef";
 
