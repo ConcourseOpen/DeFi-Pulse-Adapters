@@ -44,12 +44,12 @@ async function tvl(timestamp, block) {
 
   const balances = {};
   collateralBals.forEach((balance, index) => {
-    if (balances[collaterals[index]] > 0) {
-      balances[collaterals[index]].plus(balance);
+    if (balances[collaterals[index]]) {
+      balances[collaterals[index]] = balances[collaterals[index]].plus(balance);
     } else {
       balances[collaterals[index]] = new BigNumber(balance);
     }
-  })
+  });
 
   return balances;
 }
