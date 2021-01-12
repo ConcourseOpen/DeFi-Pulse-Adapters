@@ -49,7 +49,8 @@ async function tvl(timestamp, block) {
 
   sdk.util.sumMultiBalanceOf(balances, balanceOfMulticall);
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
+
 }
 
 /*==================================================
@@ -59,7 +60,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "DerivaDEX",
   token: "DDX",
-  category: "derivatives",
+  category: "Derivatives",
   start: 1607126400, // 12/5/2020 00:00:00 utc
   tvl,
 };
