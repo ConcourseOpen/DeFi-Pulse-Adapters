@@ -18,7 +18,7 @@ async function tvl(timestamp, block) {
     target: COVER_PROTOCOL_FACTORY,
     abi: abi['getAllProtocolAddresses'],
   })).output;
-  
+
   const covers = _.flatten(await sdk.api.abi.multiCall({
     block,
     abi: abi['getProtocolDetails'],
