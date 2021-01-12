@@ -35,5 +35,14 @@
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  "calcPoolValueInToken": {
+    "constant": true,
+    "inputs": [],
+    "name": "calcPoolValueInToken",
+    "outputs": [{ "name": "poolValueInToken", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
   }
 }
