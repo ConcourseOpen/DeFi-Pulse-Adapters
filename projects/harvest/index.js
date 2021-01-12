@@ -49,6 +49,10 @@
     'fSUSHI-USDC:WETH': {underlying: 'SUSHI-USDC:WETH', decimals: 18, contract: '0x01bd09A1124960d9bE04b638b142Df9DF942b04a', created: 11269722 },
     'fSUSHI-WETH:USDT': {underlying: 'SUSHI-WETH:USDT', decimals: 18, contract: '0x64035b583c8c694627A199243E863Bb33be60745', created: 11269716 },
     'fSUSHI-DAI:WETH':  {underlying: 'SUSHI-DAI:WETH',  decimals: 18, contract: '0x203E97aa6eB65A1A02d9E80083414058303f241E', created: 11269733 },
+    'fUNI-BAC:DAI': {underlying: 'UNI-BAC:DAI', decimals: 18, contract: '0x6Bccd7E983E438a56Ba2844883A664Da87E4C43b', created: 11608433 },
+    'fUNI-DAI:BAS': {underlying: 'UNI-DAI:BAS', decimals: 18, contract: '0xf8b7235fcfd5A75CfDcC0D7BC813817f3Dd17858', created: 11608445 },
+    'fSUSHI-MIC:USDT': {underlying: 'SUSHI-MIC:USDT', decimals: 18, contract: '0x6F14165c6D529eA3Bfe1814d0998449e9c8D157D', created: 11608456 },
+    'fSUSHI-MIS:USDT': {underlying: 'SUSHI-MIS:USDT', decimals: 18, contract: '0x145f39B3c6e6a885AA6A8fadE4ca69d64bab69c8', created: 11608466 },
   };
 
   const uniPools = {
@@ -72,6 +76,14 @@
                     token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
     'SUSHI-WBTC:WETH': {contract: '0xCEfF51756c56CeFFCA006cD410B03FFC46dd3a58', created: 0,
                     token0: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', token1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
+    'UNI-BAC:DAI': {contract: '0xd4405F0704621DBe9d4dEA60E128E0C3b26bddbD', created: 0,
+                    token0: '0x3449FC1Cd036255BA1EB19d65fF4BA2b8903A69a', token1: '0x6B175474E89094C44Da98b954EedeAC495271d0F' },
+    'UNI-DAI:BAS': {contract: '0x0379dA7a5895D13037B6937b109fA8607a659ADF', created: 0,
+                    token0: '0x6B175474E89094C44Da98b954EedeAC495271d0F', token1: '0xa7ED29B253D8B4E3109ce07c80fc570f81B63696' },
+    'SUSHI-MIC:USDT': {contract: '0xC9cB53B48A2f3A9e75982685644c1870F1405CCb', created: 0,
+                    token0: '0x368B3a58B5f49392e5C9E4C998cb0bB966752E51', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
+    'SUSHI-MIS:USDT': {contract: '0x066F3A3B7C8Fa077c71B9184d862ed0A4D5cF3e0', created: 0,
+                    token0: '0x4b4D2e899658FB59b1D518b68fe836B100ee8958', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
   };
 
   async function tvl(timestamp, block) {
@@ -113,6 +125,10 @@
       getUnderlying('fCRV-YPOOL',block),
       getUnderlying('fCRV-3POOL',block),              // 35
       getUnderlying('fCRV-TBTC',block),
+      getUniswapUnderlying('fUNI-BAC:DAI',block),
+      getUniswapUnderlying('fUNI-DAI:BAS',block),
+      getUniswapUnderlying('fSUSHI-MIC:USDT',block),
+      getUniswapUnderlying('fSUSHI-MIS:USDT',block),  // 40
     ];
 
     let results = await Promise.all(promises);
@@ -141,6 +157,8 @@
               .plus(BigNumber(results[8][0]))                               // fUNI-DAI:WETHv0
               .plus(BigNumber(results[12][0]))                              // fUNI-DAI:WETH
               .plus(BigNumber(results[24][0]))                              // fSUSHI-DAI:WETH
+              .plus(BigNumber(results[37][1]))                              // fSUSHI-BAC:DAI
+              .plus(BigNumber(results[38][0]))                              // fSUSHI-DAI:BAS
               .toFixed(0), // 18 decimals
       '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48':                         // asset: USDC
               BigNumber(results[2])                                         // fUSDCv0
@@ -155,6 +173,8 @@
               .plus(BigNumber(results[10][1]))                              // fUNI-WETH:USDTv0
               .plus(BigNumber(results[14][1]))                              // fUNI-WETH:USDT
               .plus(BigNumber(results[26][1]))                              // fSUSHI-WETH:USDT
+              .plus(BigNumber(results[39][1]))                              // fSUSHI-MIC:USDT
+              .plus(BigNumber(results[40][1]))                              // fSUSHI-MIS:USDT
               .toFixed(0), // 6 decimals
       '0x0000000000085d4780B73119b644AE5ecd22b376':                         // asset: TUSD
               BigNumber(results[4])                                         // fTUSD
@@ -199,6 +219,19 @@
               BigNumber(results[35])                                        // fCRV-3POOl
               .plus(BigNumber(results[33]))                                 // fCRV-USDN, estimate
               .toFixed(0), // 18 decimals
+      '0x3449FC1Cd036255BA1EB19d65fF4BA2b8903A69a':                         // asset: BAC
+              BigNumber(results[37][0])                                     // fSUSHI-BAC:DAI
+              .toFixed(0), // 18 decimals
+      '0xa7ED29B253D8B4E3109ce07c80fc570f81B63696':                         // asset: BAS
+              BigNumber(results[38][1])                                     // fSUSHI-DAI:BAS
+              .toFixed(0), // 18 decimals
+      '0x368B3a58B5f49392e5C9E4C998cb0bB966752E51':                         // asset: MIC
+              BigNumber(results[39][0])                                     // fSUSHI-MIC:USDT
+              .toFixed(0), // 18 decimals
+      '0x4b4D2e899658FB59b1D518b68fe836B100ee8958':                         // asset: MIS
+              BigNumber(results[40][0])                                     // fSUSHI-MIS:USDT
+              .toFixed(0), // 18 decimals
+
       // TODO don't attribute CRV pools 1:1, factor virtualprice
       // TODO don't attribute all of CRV-HUSD to HUSD
       // TODO don't attribute all of CRV-RENWBTC to renBTC
