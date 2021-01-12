@@ -9,6 +9,8 @@ const abi = require('./abi');
  * https://github.com/CoverProtocol/cover-core-v1/wiki
  */
 const COVER_PROTOCOL_FACTORY = "0xedfC81Bf63527337cD2193925f9C0cF2D537AccA";
+const YDAI_ADDRESS = '0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01';
+const DAI_ADDRESS = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
 
 async function tvl(timestamp, block) {
   const protocols = (await sdk.api.abi.call({
@@ -42,16 +44,38 @@ async function tvl(timestamp, block) {
     })),
   }).then(({ output }) => output.map(value => value.output));
 
+  const yDaiPrice = await getyDaiPrice(block);
+
   const balances = {};
   collateralBals.forEach((balance, index) => {
-    if (balances[collaterals[index]]) {
-      balances[collaterals[index]] = balances[collaterals[index]].plus(balance);
+    // replace yDai with Dai
+    let collateral = collaterals[index];
+    if (collateral === YDAI_ADDRESS) {
+      collateral = DAI_ADDRESS;
+      balance *= yDaiPrice;
+    }
+
+    if (balances[collateral]) {
+      balances[collateral] = balances[collateral].plus(balance);
     } else {
-      balances[collaterals[index]] = new BigNumber(balance);
+      balances[collateral] = new BigNumber(balance);
     }
   });
-
   return balances;
+}
+
+async function getyDaiPrice(block) {
+  const poolValueInToken = (await sdk.api.abi.call({
+    block,
+    abi: abi['calcPoolValueInToken'],
+    target: YDAI_ADDRESS
+  })).output;
+  const totalSupply = (await sdk.api.abi.call({
+    block,
+    target: YDAI_ADDRESS,
+    abi: 'erc20:totalSupply',
+  })).output;
+  return poolValueInToken / totalSupply;
 }
 
 module.exports = {
