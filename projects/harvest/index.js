@@ -53,6 +53,7 @@
     'fUNI-DAI:BAS': {underlying: 'UNI-DAI:BAS', decimals: 18, contract: '0xf8b7235fcfd5A75CfDcC0D7BC813817f3Dd17858', created: 11608445 },
     'fSUSHI-MIC:USDT': {underlying: 'SUSHI-MIC:USDT', decimals: 18, contract: '0x6F14165c6D529eA3Bfe1814d0998449e9c8D157D', created: 11608456 },
     'fSUSHI-MIS:USDT': {underlying: 'SUSHI-MIS:USDT', decimals: 18, contract: '0x145f39B3c6e6a885AA6A8fadE4ca69d64bab69c8', created: 11608466 },
+    'fCRV-OBTC':  {underlying: 'CRV-OBTC',  decimals: 18, contract: '0x966A70A4d3719A6De6a94236532A0167d5246c72', created: 11639716 },
   };
 
   const uniPools = {
@@ -129,6 +130,7 @@
       getUniswapUnderlying('fUNI-DAI:BAS',block),
       getUniswapUnderlying('fSUSHI-MIC:USDT',block),
       getUniswapUnderlying('fSUSHI-MIS:USDT',block),  // 40
+      getUnderlying('fCRV-OBTC',block),
     ];
 
     let results = await Promise.all(promises);
@@ -231,12 +233,16 @@
       '0x4b4D2e899658FB59b1D518b68fe836B100ee8958':                         // asset: MIS
               BigNumber(results[40][0])                                     // fSUSHI-MIS:USDT
               .toFixed(0), // 18 decimals
+      '0x8064d9Ae6cDf087b1bcd5BDf3531bD5d8C537a68':                         // asset: OBTC
+              BigNumber(results[41])                                        // fSUSHI-MIS:USDT
+              .toFixed(0), // 18 decimals
 
       // TODO don't attribute CRV pools 1:1, factor virtualprice
       // TODO don't attribute all of CRV-HUSD to HUSD
       // TODO don't attribute all of CRV-RENWBTC to renBTC
       // TODO don't attribute all of CRV-TBTC to TBTC
       // TODO don't attribute all of CRV-HBTC to HBTC
+      // TODO don't attribute all of CRV-OBTC to OBTC
       // TODO don't attribute all of CRV-USDN to to CRV-3POOL
     };
     //let supported = await sdk.api.util.tokenList();
