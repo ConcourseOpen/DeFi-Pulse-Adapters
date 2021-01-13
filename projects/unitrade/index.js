@@ -55,7 +55,7 @@ async function tvl(_, block) {
 }
 
 module.exports = {
-  name: "Unitrade",
+  name: "UniTrade",
   token: "TRADE",
   category: "dexes",
   start: 1603843200, // Oct-28-2020 00:00:00 PM +UTC
