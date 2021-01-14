@@ -1,0 +1,34 @@
+{
+  "getBalance": {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getTrackedAssets": {
+    "inputs": [],
+    "name": "getTrackedAssets",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "trackedAssets_",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
