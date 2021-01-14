@@ -1,0 +1,106 @@
+/*==================================================
+  Modules
+  ==================================================*/
+
+  const sdk = require('../../sdk');
+  const utils = require('web3-utils');
+  const _ = require('underscore');
+  const BigNumber = require('bignumber.js');
+  const { synthetix } = require('@synthetixio/js');
+
+  const abi = require('./abi');
+
+/*==================================================
+  TVL
+  ==================================================*/
+  const snxjs = synthetix({ network: 'mainnet' });
+  const syntheticAssets = snxjs.tokens.map(({ symbol, address }) => {
+    return {
+      symbol,
+      address
+    }
+  })
+  console.log(syntheticAssets)
+
+  async function tvl(timestamp, block) {
+    let balances = {
+      '0x0000000000000000000000000000000000000000': '0', // ETH
+    };
+    
+    let logs = (await sdk.api.util.getLogs({
+      target: '0x03D20ef9bdc19736F5e8Baf92D02C8661a5941F7',
+      topic: 'FundCreated(address,bool,string,string,address,uint256,uint256,uint256)',
+      fromBlock: 11106315 ,
+      toBlock: block,
+    })).output;
+
+    // Fund Addresses
+    const fundAddresses = logs
+    .map((log) =>
+      typeof log === 'string' ? log : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`
+    )
+    .map((address) => address.toLowerCase());
+
+    // this fetches raw token composition for every fund address
+    const fundData = (await sdk.api.abi.multiCall({
+      calls: _.map(fundAddresses, (address) => ({ target: address })),
+      abi: abi.getFundComposition,
+    })).output;
+   
+    const formattedFund = {}
+    _.forEach(fundData, (fund) => {
+      const fundAddress = fund.input.target;
+
+      if (fund.output) {
+        const synths = fund.output[0] // synth names
+        const amounts = fund.output[1] // erc20 token amounts (array of strings)
+        
+        const formattedSynthsList = synths.map(synth =>  {
+          const synthName = utils.hexToUtf8(synth)
+          const matchedSymbol = syntheticAssets.find(asset => asset.symbol === synthName)
+          const { address } = matchedSymbol;
+          return address
+        });
+        
+        const fundComposition = amounts.reduce((result, field, index) => {
+          // let value = BigNumber(field)
+          const value = Number(field)          
+          result[formattedSynthsList[index]] = value;
+          return result; // result is an object
+        }, {})
+
+        formattedFund[fundAddress] = {
+          fundComposition: fundComposition
+        }
+      }
+
+      return fundAddress;
+    })
+    
+    const sumKeys = (acc, [key, value]) => {
+      if (acc[key]) return {...acc, [key]: acc[key] + value }
+      return {...acc, [key]: value }
+    }
+
+    const finalBalances = Object.values(formattedFund).reduce((acc, {fundComposition}) => {
+      const items = Object.entries(fundComposition)
+      return items.reduce(sumKeys, acc)
+    }, {})
+    console.log(finalBalances)
+
+    // format finalBalances from number to string values
+    
+    return balances;
+  }
+
+/*==================================================
+  Exports
+  ==================================================*/
+
+  module.exports = {
+    name: 'dHEDGE',
+    token: 'DHT',
+    category: 'assets',
+    start : 11106315, // 02/27/2020 @ 12:00am (UTC)
+    tvl
+  }
