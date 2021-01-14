@@ -23,10 +23,6 @@
   console.log(syntheticAssets)
 
   async function tvl(timestamp, block) {
-    let balances = {
-      '0x0000000000000000000000000000000000000000': '0', // ETH
-    };
-    
     let logs = (await sdk.api.util.getLogs({
       target: '0x03D20ef9bdc19736F5e8Baf92D02C8661a5941F7',
       topic: 'FundCreated(address,bool,string,string,address,uint256,uint256,uint256)',
@@ -63,10 +59,9 @@
         });
         
         const fundComposition = amounts.reduce((result, field, index) => {
-          // let value = BigNumber(field)
           const value = Number(field)          
           result[formattedSynthsList[index]] = value;
-          return result; // result is an object
+          return result; 
         }, {})
 
         formattedFund[fundAddress] = {
@@ -82,14 +77,16 @@
       return {...acc, [key]: value }
     }
 
-    const finalBalances = Object.values(formattedFund).reduce((acc, {fundComposition}) => {
+    const obj = Object.values(formattedFund).reduce((acc, {fundComposition}) => {
       const items = Object.entries(fundComposition)
       return items.reduce(sumKeys, acc)
     }, {})
-    console.log(finalBalances)
-
-    // format finalBalances from number to string values
     
+    const balances =  Object.keys(obj).reduce((acc, next) => {
+      acc[next] = BigNumber(obj[next]).toFixed()
+      return acc;
+    }, {});
+        
     return balances;
   }
 
