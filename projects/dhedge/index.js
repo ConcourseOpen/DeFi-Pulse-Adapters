@@ -20,7 +20,6 @@
       address
     }
   })
-  console.log(syntheticAssets)
 
   async function tvl(timestamp, block) {
     let logs = (await sdk.api.util.getLogs({
@@ -48,8 +47,8 @@
       const fundAddress = fund.input.target;
 
       if (fund.output) {
-        const synths = fund.output[0] // synth names
-        const amounts = fund.output[1] // erc20 token amounts (array of strings)
+        const synths = fund.output[0]
+        const amounts = fund.output[1]
         
         const formattedSynthsList = synths.map(synth =>  {
           const synthName = utils.hexToUtf8(synth)
