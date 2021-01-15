@@ -2,10 +2,11 @@
   Modules
   ==================================================*/
 
-  const _ = require('underscore');
-  const sdk = require('../../sdk');
-  const abi = require('./abi.json');
-  const BigNumber = require('bignumber.js');
+const _ = require('underscore');
+const sdk = require('../../sdk');
+const abi = require('./abi.json');
+const BigNumber = require('bignumber.js');
+const v2TVL = require('./v2');
 
 
 
@@ -13,11 +14,13 @@
   Settings
   ==================================================*/
 
-  const markets = {};
-  const marketsToIgnore = ['0xBdf447B39D152d6A234B4c02772B8ab5D1783F72'];
-  const wETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-  const yETH = '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7';
-  const CRETH2 = '0xcBc1065255cBc3aB41a6868c22d1f1C573AB89fd';
+const comptroller = '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258';
+const marketsToIgnore = ['0xBdf447B39D152d6A234B4c02772B8ab5D1783F72'];
+const crETH = '0xD06527D5e56A3495252A528C4987003b712860eE';
+const wETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+const yETH = '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7';
+const CRETH2 = '0xcBc1065255cBc3aB41a6868c22d1f1C573AB89fd';
+const CRETH2SLP = '0x71817445d11f42506f2d7f54417c935be90ca731';
 
 /*==================================================
   TVL
@@ -27,88 +30,149 @@
 async function getAllCTokens(block) {
   let cTokens = (await sdk.api.abi.call({
     block,
-    target: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
+    target: comptroller,
     params: [],
     abi: abi['getAllMarkets'],
   })).output;
-  return cTokens.filter(function(cToken) {
+  return cTokens.filter(function (cToken) {
     return marketsToIgnore.indexOf(cToken) === -1;
   })
 }
 
-async function getUnderlying(block, cToken) {
-  if (cToken === '0xD06527D5e56A3495252A528C4987003b712860eE') {
-    return '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; //crETH => WETH
-  }
-
-  return (await sdk.api.abi.call({
+async function getAllUnderlying(block, cTokens) {
+  const cErc20s = cTokens.filter(cToken => cToken !== crETH)
+  let allUnderlying = (await sdk.api.abi.multiCall({
     block,
-    target: cToken,
-    abi: abi['underlying'],
+    calls: _.map(cErc20s, (cErc20) => ({
+      target: cErc20
+    })),
+    abi: abi['underlying']
+  })).output;
+
+  allUnderlying.push({
+    input: {
+      target: crETH
+    },
+    success: true,
+    output: wETH
+  });
+  return allUnderlying;
+}
+
+async function getCashes(block, cTokens) {
+  return (await sdk.api.abi.multiCall({
+    block,
+    calls: _.map(cTokens, (cToken) => ({
+      target: cToken
+    })),
+    abi: abi['getCash']
   })).output;
 }
 
 // returns {[underlying]: {cToken, decimals, symbol}}
 async function getMarkets(block) {
-  let allCTokens = await getAllCTokens(block);
-  await (
-    Promise.all(allCTokens.map(async (cToken) => {
-      let underlying = await getUnderlying(block, cToken);
+  const allCTokens = await getAllCTokens(block);
+  const allUnderlying = await getAllUnderlying(block, allCTokens);
+  let [
+    underlyingDecimals,
+    underlyingSymbols
+  ] = await Promise.all([
+    sdk.api.abi.multiCall({
+      block,
+      calls: _.map(allUnderlying, (underlying) => ({
+        target: underlying.output
+      })),
+      abi: abi['decimals']
+    }),
+    sdk.api.abi.multiCall({
+      block,
+      calls: _.map(allUnderlying, (underlying) => ({
+        target: underlying.output
+      })),
+      abi: abi['symbol']
+    })
+  ])
 
-      if (!markets[underlying]) {
-        let info = await sdk.api.erc20.info(underlying);
-        markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
+  let markets = {};
+  _.each(allUnderlying, (underlying) => {
+    let decimals = _.find(underlyingDecimals.output, (decimals) => decimals.success && decimals.input.target === underlying.output);
+    let symbol = _.find(underlyingSymbols.output, (symbol) => symbol.success && symbol.input.target === underlying.output);
+    if (symbol && decimals) {
+      const cToken = underlying.input.target;
+      decimals = decimals.output;
+      symbol = symbol.output;
+      markets[underlying.output] = {
+        cToken,
+        decimals,
+        symbol
       }
-    }))
-  );
+    }
+  });
 
   return markets;
 }
 
 async function tvl(timestamp, block) {
   let balances = {};
-  let markets = await getMarkets(block);
 
-  let cashes = await sdk.api.abi.multiCall({
-    block,
-    calls: _.map(markets, (data, _) => ({
-      target: data.cToken,
-    })),
-    abi: abi['getCash'],
-  });
+  const cTokens = await getAllCTokens(block);
+  let [
+    allUnderlying,
+    cashes,
+    v2Balances,
+    yETHPirce,
+    creth2Reserve
+  ] = await Promise.all([
+    getAllUnderlying(block, cTokens),
+    getCashes(block, cTokens),
+    v2TVL(timestamp, block),
+    (block > 	10774539 ? sdk.api.abi.call({
+      block,
+      target: yETH,
+      params: [],
+      abi: abi['getPricePerFullShare']
+    }) : {
+      output: 1e18
+    }),
+    (block > 11508720 ? sdk.api.abi.call({
+      block,
+      target: CRETH2SLP,
+      params: [],
+      abi: abi['getReserves']
+    }) : {
+        output: {
+          _reserve0: 1,
+          _reserve1: 1
+        }
+      })
+  ]);
 
-  const yETHPirce = (await sdk.api.abi.call({
-    block,
-    target: yETH,
-    params: [],
-    abi: abi['getPricePerFullShare']
-  })).output;
+  yETHPirce = yETHPirce.output;
+  creth2Reserve = creth2Reserve.output;
+  balances = v2Balances;
 
-  const creth2Price =
-    block > 11282434 ?
-      (await sdk.api.abi.call({
-        block,
-        target: '0xbc338CA728a5D60Df7bc5e3AF5b6dF9DB697d942',
-        params: [wETH, CRETH2],
-        abi: abi['getSpotPrice']
-    })).output : 0;
+  // CRETH2 price = (WETH amount / CRETH2 amount) in Sushiswap pool
+  const creth2Price = BigNumber(creth2Reserve._reserve0).multipliedBy(1e18).div(creth2Reserve._reserve1).integerValue();
 
-
-  _.each(markets, (data, underlying) => {
-    let getCash = _.find(cashes.output, (result) => result.success && result.input.target === data.cToken);
-    if (getCash) {
+  _.each(cTokens, (cToken) => {
+    let getCash = _.find(cashes, (result) => result.success && result.input.target === cToken);
+    let underlying = _.find(allUnderlying, (result) => result.success && result.input.target === cToken);
+    if (getCash && underlying) {
+      getCash = getCash.output;
+      underlying = underlying.output;
       if (underlying === yETH) {
         const ethCash = BigNumber(balances[wETH] || 0);
-        const yETHCash = BigNumber(getCash.output).multipliedBy(yETHPirce).div(1e18).integerValue();
+        const yETHCash = BigNumber(getCash).multipliedBy(yETHPirce).div(1e18).integerValue();
         balances[wETH] = ethCash.plus(yETHCash).toFixed();
         delete balances[underlying];
       } else if (underlying === CRETH2) {
         const ethCash = BigNumber(balances[wETH] || 0);
-        const creth2Cash = BigNumber(getCash.output).multipliedBy(creth2Price).div(1e18).integerValue();
+        const creth2Cash = BigNumber(getCash).multipliedBy(creth2Price).div(1e18).integerValue();
         balances[wETH] = ethCash.plus(creth2Cash).toFixed();
         delete balances[underlying];
       } else {
-        balances[underlying] = BigNumber(getCash.output).toFixed();
+        const cash = BigNumber(balances[underlying] || 0);
+        balances[underlying] = cash.plus(BigNumber(getCash)).toFixed();
       }
     }
   });
