@@ -21,6 +21,7 @@ async function tvl(timestamp, block) {
   };
 
   const assetBalancesResult = await sdk.api.abi.multiCall({
+    abi: "erc20:balanceOf",
     block,
     calls: assets.reduce((arr, asset) => {
       if (asset.symbol !== "ETH") {
@@ -31,7 +32,6 @@ async function tvl(timestamp, block) {
       }
       return arr;
     }, []),
-    abi: "erc20:balanceOf",
   });
 
   sdk.util.sumMultiBalanceOf(balances, assetBalancesResult);
