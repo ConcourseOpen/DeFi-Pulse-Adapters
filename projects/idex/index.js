@@ -2,31 +2,51 @@
   Modules
   ==================================================*/
 
-  const sdk = require('../../sdk');
+const sdk = require("../../sdk");
+const { getAssets } = require("./api");
 
-const IDEX_CUSTODY_CONTRACT = '0xE5c405C5578d84c5231D3a9a29Ef4374423fA0c2';
+const IDEX_CUSTODY_CONTRACT = "0xE5c405C5578d84c5231D3a9a29Ef4374423fA0c2";
 
 /*==================================================
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
-    let balances = {
-      '0x0000000000000000000000000000000000000000': 1000000000000000000, // ETH
-      '0x6B175474E89094C44Da98b954EedeAC495271d0F': 2000000000000000000  // DAI
-    };
+async function tvl(timestamp, block) {
+  const assets = await getAssets();
 
-    return balances;
-  }
+  const balances = {
+    "0x0000000000000000000000000000000000000000": (
+      await sdk.api.eth.getBalance({ target: IDEX_CUSTODY_CONTRACT, block })
+    ).output
+  };
+
+  const assetBalancesResult = await sdk.api.abi.multiCall({
+    block,
+    calls: assets.reduce((arr, asset) => {
+      if (asset.symbol !== "ETH") {
+        arr.push({
+          target: asset.contractAddress,
+          params: IDEX_CUSTODY_CONTRACT,
+        });
+      }
+      return arr;
+    }, []),
+    abi: "erc20:balanceOf",
+  });
+
+  sdk.util.sumMultiBalanceOf(balances, assetBalancesResult);
+
+  return balances;
+}
 
 /*==================================================
   Exports
   ==================================================*/
 
-  module.exports = {
-    name: 'Template Project', // project name
-    token: null,              // null, or token symbol if project has a custom token
-    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-    tvl                       // tvl adapter
-  }
+module.exports = {
+  name: "IDEX", // project name
+  token: "IDEX", // null, or token symbol if project has a custom token
+  category: "DEXes", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  start: 1603166400, // unix timestamp (utc 0) specifying when the project began, 10-20-2020 UTC 0:00:00
+  tvl, // tvl adapter
+};
