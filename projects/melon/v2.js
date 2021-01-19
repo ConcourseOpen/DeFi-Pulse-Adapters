@@ -3,7 +3,6 @@
   ==================================================*/
 
 const BigNumber = require("bignumber.js");
-const _ = require("underscore");
 const abi = require('./abi');
 const sdk = require("../../sdk");
 
@@ -29,6 +28,7 @@ module.exports = async function tvl(timestamp, block) {
       .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
 
+  /* pull melon fund holding addresses */
   const logs = (await sdk.api.util
     .getLogs({
       keys: [],
@@ -38,7 +38,6 @@ module.exports = async function tvl(timestamp, block) {
       topic: 'VaultProxyDeployed(address,address,address,address,address,string)',
     })).output;
 
-  /* pull melon fund holding addresses */
   const vaultProxies = (
     logs
       .map((log) =>         // sometimes the full log is emitted
@@ -49,31 +48,31 @@ module.exports = async function tvl(timestamp, block) {
   const holdingTokensResults = (await sdk.api.abi
     .multiCall({
       block,
-      calls: _.map(vaultProxies, (vaultProxy) => {
-        target: vaultProxy
-      }),
+      calls: vaultProxies.map(vaultProxy => ({ target: vaultProxy })),
       abi: abi['getTrackedAssets'],
     })).output;
 
   const balanceOfCalls = holdingTokensResults
-    .filter(result => (result.success && supportedTokens.includes(result.output.toLowerCase())))
+    .filter(result => result.success)
     .map(result => (
-      result.output.map(token => ({ target: result.input.target, params: token }))
+      result.output
+      .filter(token => supportedTokens.includes(token.toLowerCase()))
+      .map(token => ({ target: token, params: result.input.target }))
     ))
     .reduce((a, b) => a.concat(b), []);
 
   const balanceOfResult = await sdk.api.abi.multiCall({
     block,
     calls: balanceOfCalls,
-    abi: abi['getBalance'],
+    abi: 'erc20:balanceOf',
   });
 
   /* combine token volumes on multiple funds */
-  _.forEach(balanceOfResult.output, (result) => {
+  balanceOfResult.output.forEach(result => {
     let balance = new BigNumber(result.output || 0);
     if (balance <= 0) return;
 
-    let asset = result.input.params[0];
+    let asset = result.input.target;
     let total = balances[asset];
 
     if (total) {
