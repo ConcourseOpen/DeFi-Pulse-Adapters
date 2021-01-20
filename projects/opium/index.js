@@ -3,18 +3,10 @@
   ==================================================*/
 
   const sdk = require('../../sdk');
+  const axios = require("axios");
   const _ = require('underscore');
+  const BigNumber = require('bignumber.js');
 
-/*==================================================
-  Settings
-  ==================================================*/
-
-  const tokenAddresses = [
-    '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359', // SAI
-    '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
-    '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',  // USDC
-    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',  // WETH
-  ];
 
 /*==================================================
   TVL
@@ -23,19 +15,30 @@
   async function tvl(timestamp, block) {
     const balances = {};
 
+    const { data } = await axios.get(
+      "https://static.opium.network/data/opium-addresses.json"
+    );
+
+    const calls = []
+    _.each(data.tokens, (token) => {
+      _.each(data.contracts, (contract) => {
+        calls.push({
+          target: token,
+          params: contract
+        })
+      })
+    })
+
     const balanceOfResults = await sdk.api.abi.multiCall({
       block,
-      calls: _.map(tokenAddresses, (address) => ({
-        target: address,
-        params: '0xafda317cb15967c2fd379885de227ca236e59cd3'
-      })),
+      calls,
       abi: 'erc20:balanceOf'
     });
 
     _.each(balanceOfResults.output, (balanceOf) => {
       if(balanceOf.success) {
-        const balance = balanceOf.output;
         const address = balanceOf.input.target;
+        const balance = balances[address] ? BigNumber(balanceOf.output).plus(BigNumber(balances[address])).toFixed().toString(): balanceOf.output;
 
         balances[address] = balance;
       }
