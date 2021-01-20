@@ -55,8 +55,7 @@ async function getY3CrvPrice(block) {
     block,
     target: y3Crv,
     params: [],
-    abi
-    : abi['getPricePerFullShare']
+    abi: abi['getPricePerFullShare']
   })).output;
 }
 
