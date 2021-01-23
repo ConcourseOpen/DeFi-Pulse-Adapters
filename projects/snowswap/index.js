@@ -123,7 +123,7 @@ module.exports = {
     name: 'Snowswap',
     website: 'https://snowswap.org/',
     token: 'SNOW',
-    category: "DEXes",
+    category: "dexes",
     start: 1611416644, // 01/23/2021 @ 3:44pm (UTC)
     tvl,
 };
