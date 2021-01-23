@@ -113,7 +113,6 @@ async function tvl(timestamp, block) {
             output[etherAddress] = Object.values(Pools[key]).reduce((accumulator, currentValue) => (BN(accumulator.plus(currentValue))))
         }
     }
-    console.log(output)
     return output;
 }
 /*==================================================
@@ -121,10 +120,10 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-    name: "Snowswap",
-    token: null,
+    name: 'Snowswap',
+    website: 'https://snowswap.org/',
+    token: 'SNOW',
     category: "DEXes",
     start: 1611416644, // 01/23/2021 @ 3:44pm (UTC)
     tvl,
 };
-tvl(0, 11712673);
