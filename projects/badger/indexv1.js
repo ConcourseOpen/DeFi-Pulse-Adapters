@@ -58,10 +58,14 @@ const underlyingTokenAddress = {
   '0xA207D69Ea6Fb967E54baA8639c408c31767Ba62D': uniBadgerWbtc, // native.uniBadgerWbtc geyser
   '0xAf5A1DECfa95BAF63E0084a35c62592B774A2A87': renCrv, // harvest.renCrv vault
   '0xeD0B7f5d9F6286d00763b0FFCbA886D8f9d56d5e': renCrv, // harvest.renCrv geyser
-  '0x1862A18181346EBd9EdAf800804f89190DeF24a5': sushiBadgerWbtc, // sushi.sushiBadgerWbtc
-  '0x758A43EE2BFf8230eeb784879CdcFF4828F2544D': sushiWbtcEth, // sushi.sushiWbtcEth
-  '0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6': sushiDiggWbtc, // sushi.diggWbtc
-  '0xC17078FDd324CC473F8175Dc5290fae5f2E84714': uniDiggWbtc, // uni.diggWbtc
+  '0x1862A18181346EBd9EdAf800804f89190DeF24a5': sushiBadgerWbtc, // sushi.sushiBadgerWbtc vault
+  '0xB5b654efBA23596Ed49FAdE44F7e67E23D6712e7': sushiBadgerWbtc, // sushi.sushiBadgerWbtc geyser
+  '0x758A43EE2BFf8230eeb784879CdcFF4828F2544D': sushiWbtcEth, // sushi.sushiWbtcEth vault
+  '0x612f681BCd12A0b284518D42D2DBcC73B146eb65': sushiWbtcEth, // sushi.sushiWbtcEth geyser
+  '0x88128580ACdD9c04Ce47AFcE196875747bF2A9f6': sushiDiggWbtc, // sushi.diggWbtc vault
+  '0x7f6fe274e172ac7d096a7b214c78584d99ca988b': sushiDiggWbtc, // sushi.diggWbtc geyser
+  '0xC17078FDd324CC473F8175Dc5290fae5f2E84714': uniDiggWbtc, // uni.diggWbtc vault
+  '0x0194B5fe9aB7e0C43a08aCbb771516fc057402e7': uniDiggWbtc, // uni.diggWbtc geyser
   '0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a': digg, // native.digg
 }
 
@@ -129,7 +133,6 @@ async function tvl(timestamp, block) {
       ).plus(valueInSett)
     }
   })
-  console.log('balance: ', balances)
   return balances
 }
 
