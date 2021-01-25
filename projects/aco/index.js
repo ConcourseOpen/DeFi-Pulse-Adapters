@@ -71,7 +71,7 @@
       const address = getTokenAddressFromNewAcoTokenLogData(log.data);
       acoOptionsAddresses.push(address)
     });
-    
+
     let collateralResult = await sdk.api.abi.multiCall({
       block,
       calls: _.map(acoOptionsAddresses, (option) => ({
@@ -187,7 +187,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'ACO',
+    name: 'Auctus',
     token: 'AUC',
     category: 'derivatives',
     start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
