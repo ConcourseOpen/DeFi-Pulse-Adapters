@@ -142,7 +142,7 @@
       multiCall: (options) => abi('multiCall', { ...options, chunk: {param: 'calls', length: 5000, combine: 'array'} })
     },
     cdp: {
-      getAssetsLocked: (options) => cdp('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} }),
+      getAssetsLocked: (options) => cdp('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 2000, combine: 'balances'} }),
       maker: {
         tokens: (options) => maker('tokens', { ...options }),
         getAssetsLocked: (options) => maker('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 3000, combine: 'balances'} })
