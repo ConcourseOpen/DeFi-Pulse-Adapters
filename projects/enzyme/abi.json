@@ -1,0 +1,15 @@
+{
+  "getTrackedAssets": {
+    "inputs": [],
+    "name": "getTrackedAssets",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "trackedAssets_",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
