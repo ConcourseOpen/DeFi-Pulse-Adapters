@@ -20,7 +20,6 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
-  console.log(balances);
 
   return (await sdk.api.util.toSymbols(balances)).output;
 }
