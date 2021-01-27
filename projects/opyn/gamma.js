@@ -45,8 +45,7 @@ module.exports = async function tvl(timestamp, block) {
             target: whitelist,
             abi: isWhitelistedCollateral,
             params: [collateralAsset],
-            fromBlock: START_BLOCK,
-            toBlock: block
+            block
           })
         ).output;
     
