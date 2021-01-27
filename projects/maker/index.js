@@ -54,11 +54,9 @@ async function tvl(timestamp, block) {
       target: MakerSCDConstants.WETH_ADDRESS,
       owner: MakerSCDConstants.TUB_ADDRESS
     })).output);
-    console.log(balances)
 
     if (block >= MakerMCDConstants.STARTBLOCK) {
       let joins = await getJoins(block);
-      console.log(joins)
 
       for (let join in joins) {
         let gem = (await sdk.api.abi.call({

@@ -1,4 +1,5 @@
 const BigNumber = require('bignumber.js')
+const sdk = require('../../sdk')
 
 const v1TVL = require('./convexity');
 const v2TVL = require('./gamma');
@@ -27,7 +28,7 @@ async function tvl(timestamp, block) {
       }, {})
   );
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
