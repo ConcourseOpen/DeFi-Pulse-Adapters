@@ -38,7 +38,9 @@ async function getJoins(block) {
     for (let ilk of ilks) {
       if (ilk.output) {
         let name = utils.hexToString(ilk.output);
-        joins[name.toString()] = ilk.input.target
+        if (name.substr(0, 3) !== 'PSM') {
+          joins[name.toString()] = ilk.input.target
+        }
       }
     }
   
@@ -52,9 +54,11 @@ async function tvl(timestamp, block) {
       target: MakerSCDConstants.WETH_ADDRESS,
       owner: MakerSCDConstants.TUB_ADDRESS
     })).output);
+    console.log(balances)
 
     if (block >= MakerMCDConstants.STARTBLOCK) {
       let joins = await getJoins(block);
+      console.log(joins)
 
       for (let join in joins) {
         let gem = (await sdk.api.abi.call({
@@ -62,6 +66,7 @@ async function tvl(timestamp, block) {
           target: joins[join],
           abi: MakerMCDConstants.gem
         })).output;
+        console.log(gem, join)
         let balance = (await sdk.api.erc20.balanceOf({
           target: gem,
           owner: joins[join],
