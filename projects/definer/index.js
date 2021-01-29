@@ -391,7 +391,7 @@ module.exports = {
   website: 'https://definer.org/',
   token: "FIN",
   category: 'Lending',
-  start: 10819493, // 09-08-2020 06:55:19 AM +UTC
+  start: 1596956119, // 09-08-2020 06:55:19 AM +UTC
   tvl,
   rates,
   term: '1 block',
