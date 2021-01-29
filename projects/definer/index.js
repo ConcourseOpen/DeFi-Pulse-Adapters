@@ -335,6 +335,8 @@ async function tvl(timestamp, block) {
     // cETH value
     balances['0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5'] = await utility.getCtokenValue(block, '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5');
   }
+  balances['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'] = balances['0x000000000000000000000000000000000000000E'];
+  delete balances['0x000000000000000000000000000000000000000E'];
 
   return (await sdk.api.util.toSymbols(balances)).output;
 }
