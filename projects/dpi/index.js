@@ -35,13 +35,13 @@ async function tvl(timestamp, block) {
 
   balances = Object.assign(balances, underlyingBalances);
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'DeFi Pulse Index',
   symbol: 'DPI',
-  category: 'derivatives',
+  category: 'Derivatives',
   start: 1599769488,  // Sep-10-2020 08:24:48 PM +UTC, block: 10836209
   tvl,
 };
