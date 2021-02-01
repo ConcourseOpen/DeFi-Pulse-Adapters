@@ -192,7 +192,7 @@ async function tvlV2(timestamp, block) {
         : 0
     )
   );
-  return totalCollateral;
+  return totalCollateral.isNaN() ? Bignumber(0) : totalCollateral;
 }
 
 async function getLpTokenPrices(lpTokens, block) {
