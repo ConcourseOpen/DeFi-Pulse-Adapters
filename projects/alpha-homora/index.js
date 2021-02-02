@@ -137,9 +137,6 @@ async function tvlV1(timestamp, block) {
 
       tvl = tvl.plus(amount);
     }
-  
-    balances[ethAddress] = tvl.toFixed(0);
-    return (await sdk.api.util.toSymbols(balances)).output;
   }
   return tvl;
 }
