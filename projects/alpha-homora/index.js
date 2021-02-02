@@ -4,7 +4,7 @@
 
 const sdk = require("../../sdk");
 const abi = require("./abi.json");
-const Bignumber = require("bignumber.js");
+const BigNumber = require("bignumber.js");
 const axios = require("axios");
 const { request, gql } = require("graphql-request");
 
@@ -23,7 +23,7 @@ async function tvl(timestamp, block) {
     tvlV2(timestamp, block),
   ]);
 
-  const tvl = Bignumber.sum(...tvls);
+  const tvl = BigNumber.sum(...tvls);
 
   balances[ethAddress] = tvl.toFixed(0);
 
@@ -35,7 +35,7 @@ async function tvlV1(timestamp, block) {
   const startBlock = 11007158;
 
   if (timestamp < startTimestamp || block < startBlock) {
-    return Bignumber(0);
+    return BigNumber(0);
   }
 
   const { data } = await axios.get(
@@ -62,7 +62,7 @@ async function tvlV1(timestamp, block) {
     abi: abi["totalETH"],
   });
 
-  const totalETH = Bignumber(_totalETH);
+  const totalETH = BigNumber(_totalETH);
 
   const { output: _totalDebt } = await sdk.api.abi.call({
     target: bankAddress,
@@ -70,7 +70,7 @@ async function tvlV1(timestamp, block) {
     abi: abi["glbDebtVal"],
   });
 
-  const totalDebt = Bignumber(_totalDebt);
+  const totalDebt = BigNumber(_totalDebt);
 
   // Uniswap Pools
   const { output: _UnilpTokens } = await sdk.api.abi.multiCall({
@@ -99,7 +99,7 @@ async function tvlV1(timestamp, block) {
     })),
   ];
 
-  const lpTokens = _lpTokens.map((_lpToken) => Bignumber(_lpToken.output || 0));
+  const lpTokens = _lpTokens.map((_lpToken) => BigNumber(_lpToken.output || 0));
 
   const { output: _totalETHOnStakings } = await sdk.api.abi.multiCall({
     calls: pools.map((pool) => ({
@@ -111,7 +111,7 @@ async function tvlV1(timestamp, block) {
   });
 
   const totalETHOnStakings = _totalETHOnStakings.map((stake) =>
-    Bignumber(stake.output || 0)
+    BigNumber(stake.output || 0)
   );
 
   const { output: _totalLpTokens } = await sdk.api.abi.multiCall({
@@ -123,18 +123,18 @@ async function tvlV1(timestamp, block) {
   });
 
   const totalLpTokens = _totalLpTokens.map((_totalLpToken) =>
-    Bignumber(_totalLpToken.output || 0)
+    BigNumber(_totalLpToken.output || 0)
   );
 
   const unUtilizedValue = totalETH.minus(totalDebt);
 
-  let tvl = Bignumber(unUtilizedValue);
+  let tvl = BigNumber(unUtilizedValue);
   for (let i = 0; i < lpTokens.length; i++) {
     if (totalLpTokens[i].gt(0)) {
       const amount = lpTokens[i]
         .times(totalETHOnStakings[i])
         .div(totalLpTokens[i])
-        .times(Bignumber(2));
+        .times(BigNumber(2));
 
       tvl = tvl.plus(amount);
     }
@@ -149,140 +149,180 @@ const wLiquidityGauge = "0xfdb4f97953150e47c8606758c13e70b5a789a7ec";
 const wStakingRewardIndex = "0x713df2ddda9c7d7bda98a9f8fcd82c06c50fbd90";
 const wStakingRewardPerp = "0xc4635854480fff80f742645da0310e9e59795c63";
 const AlphaHomoraV2GraphUrl = `https://api.thegraph.com/subgraphs/name/hermioneeth/alpha-homora-v2-mainnet`;
-const QUERY_POSITIONS_AT_BLOCK = gql`
-  query queryPositionsAtBlock($block: Int) {
-    positions(where: { collateralSize_gt: 0 }, block: { number: $block }) {
-      collateralToken {
-        token
-        tokenId
-      }
-      collateralSize
+const GET_TOTAL_COLLATERALS = gql`
+  query GET_TOTAL_COLLATERALS($block: Int) {
+    werc20Collaterals(block: { number: $block }) {
+      lpToken
+      amount
+    }
+    sushiswapCollaterals(block: { number: $block }) {
+      pid
+      amount
+    }
+    crvCollaterals(block: { number: $block }) {
+      pid
+      gid
+      amount
+    }
+    wstakingRewardCollaterals(block: { number: $block }) {
+      wtoken
+      amount
+    }
+  }
+`;
+const GET_CY_TOKEN = gql`
+  query GET_CY_TOKEN($cyToken: String, $block: Int) {
+    cyTokenStates(
+      where: { cyToken: $cyToken }
+      first: 1
+      orderBy: blockTimestamp
+      orderDirection: desc
+      block: { number: $block }
+    ) {
+      id
+      cyToken
+      safeboxBalance
+      exchangeRate
+      blockTimestamp
     }
   }
 `;
 
 async function tvlV2(timestamp, block) {
-  const data = await request(AlphaHomoraV2GraphUrl, QUERY_POSITIONS_AT_BLOCK, {
-    block,
-  });
-  const collaterals = await Promise.all(
-    data.positions.map(getPositionCollateral)
-  );
+  const [collaterals, cyTokens] = await Promise.all([
+    getTotalCollateral(block),
+    getCyTokens(block),
+  ]);
 
-  const lpTokens = Array.from(
-    new Set(
-      collaterals
+  const tokens = Array.from(
+    new Set([
+      ...collaterals
         .map((collateral) => collateral.lpTokenAddress)
-        .filter((lpToken) => !!lpToken)
-    )
+        .filter((lpToken) => !!lpToken),
+      ...cyTokens.map((cy) => cy.token).filter((token) => !!token),
+    ])
   );
 
-  const lpTokenPrices = await getLpTokenPrices(lpTokens, block);
+  const tokenPrices = await getTokenPrices(tokens, block);
 
-  const totalCollateral = Bignumber.sum(
+  const totalCollateralValue = BigNumber.sum(
     0, // Default value
     ...collaterals.map((collateral) =>
       collateral.lpTokenAddress in lpTokenPrices
-        ? Bignumber(collateral.collateralSize).times(
-            lpTokenPrices[collateral.lpTokenAddress]
+        ? BigNumber(collateral.amount).times(
+            tokenPrices[collateral.lpTokenAddress]
           )
         : 0
     )
   );
-  return totalCollateral;
+
+  const totalCyValue = BigNumber.sum(
+    0,
+    ...cyTokens.map((cy) =>
+      cy.token in lpTokenPrices
+        ? BigNumber(cy.amount).times(tokenPrices[cy.token])
+        : 0
+    )
+  );
+
+  return totalCollateralValue.plus(totalCyValue);
 }
 
-async function getLpTokenPrices(lpTokens, block) {
+async function getCyTokens(block) {
+  const { data: safebox } = await axios.get(
+    "https://homora-v2.alphafinance.io/static/safebox.json"
+  );
+  return Promise.all(
+    safebox.map(async (sb) => {
+      const cyToken = sb.cyTokenAddress;
+      const {
+        data: { cyTokenStates },
+      } = await request(AlphaHomoraV2GraphUrl, GET_CY_TOKEN, {
+        block,
+        cyToken,
+      });
+      const cyTokenState = cyTokenStates[0];
+      if (!cyTokenState) {
+        return { amount: new BigNumber(0), token: null };
+      }
+      const exchangeRate = new BigNumber(cyTokenState.exchangeRate).div(1e18);
+      const cyBalance = new BigNumber(cyTokenState.safeboxBalance);
+      return { amount: cyBalance.times(exchangeRate), token: sb.address };
+    })
+  );
+}
+
+async function getTokenPrices(tokens, block) {
   const { output: _ethPrices } = await sdk.api.abi.multiCall({
-    calls: lpTokens.map((lpToken) => ({
+    calls: tokens.map((token) => ({
       target: coreOracleAddress,
-      params: [lpToken],
+      params: [token],
     })),
     abi: abi["getETHPx"],
     block,
   });
 
-  const lpTokenPrices = {};
+  const tokenPrices = {};
   for (let i = 0; i < _ethPrices.length; i++) {
-    lpTokenPrices[lpTokens[i]] = Bignumber(_ethPrices[i].output).div(
-      Bignumber(2).pow(112)
+    tokenPrices[tokens[i]] = BigNumber(_ethPrices[i].output).div(
+      BigNumber(2).pow(112)
     );
   }
-  return lpTokenPrices;
+  return tokenPrices;
 }
 
-async function getPositionCollateral(position) {
-  const wToken = position.collateralToken.token;
-  const tokenId = position.collateralToken.tokenId;
+async function getTotalCollateral(block) {
+  const {
+    data: {
+      crvCollaterals,
+      sushiswapCollaterals,
+      werc20Collaterals,
+      wstakingRewardCollaterals,
+    },
+  } = await request(AlphaHomoraV2GraphUrl, GET_TOTAL_COLLATERALS, {
+    block,
+  });
 
-  const pool = await getPoolFromWToken(wToken, Bignumber(tokenId).toString());
+  const collaterals = [
+    ...crvCollaterals.map((coll) => {
+      const pool = pools.find(
+        (pool) =>
+          pool.wTokenAddress === wLiquidityGauge &&
+          Number(coll.pid) === pool.pid &&
+          Number(coll.gid) === pool.gid
+      );
+      return {
+        lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
+        amount: BigNumber(coll.amount),
+      };
+    }),
+    ...sushiswapCollaterals.map((coll) => {
+      const pool = pools.find(
+        (pool) =>
+          pool.wTokenAddress === wMasterChefAddress &&
+          Number(coll.pid) === pool.pid
+      );
+      return {
+        lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
+        amount: BigNumber(coll.amount),
+      };
+    }),
+    ...werc20Collaterals.map((coll) => ({
+      lpTokenAddress:
+        "0x" +
+        BigNumber(coll.lpToken).toString(16).padStart(40, "0").toLowerCase(),
+      amount: BigNumber(coll.amount),
+    })),
+    ...wstakingRewardCollaterals.map((coll) => {
+      const pool = pools.find((pool) => pool.wTokenAddress === coll.wtoken);
+      return {
+        lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
+        amount: BigNumber(coll.amount),
+      };
+    }),
+  ];
 
-  const lpTokenAddress = pool ? pool.lpTokenAddress : null;
-
-  return {
-    lpTokenAddress,
-    collateralSize: Bignumber(position.collateralSize),
-  };
-}
-
-async function getPoolFromWToken(wTokenAddress, id) {
-  const { data: pools } = await axios.get(
-    "https://homora-v2.alphafinance.io/static/pools.json"
-  );
-
-  let pool = null;
-  const _wTokenAddress = wTokenAddress.toLowerCase();
-
-  if (_wTokenAddress === werc20Address) {
-    const lpTokenAddress =
-      "0x" + Bignumber(id).toString(16).padStart(40, "0").toLowerCase();
-
-    for (const _pool of pools) {
-      if (
-        _pool.lpTokenAddress === lpTokenAddress &&
-        _pool.type === "Liquidity Providing"
-      ) {
-        pool = _pool;
-        break;
-      }
-    }
-  } else if (_wTokenAddress === wMasterChefAddress) {
-    const parsedId = Bignumber(id).toString(16).padStart(40, "0");
-    const pid = parseInt(parsedId.substr(0, 2));
-
-    for (const _pool of pools) {
-      if (
-        _pool.pid === pid &&
-        _wTokenAddress === _pool.wTokenAddress &&
-        _pool.type === "Yield Farming"
-      ) {
-        pool = _pool;
-        break;
-      }
-    }
-  } else if (_wTokenAddress === wLiquidityGauge) {
-    const pid = parseInt(id.substr(0, 2), 16);
-    const gid = parseInt(id.substr(2, 4), 16);
-
-    for (const _pool of pools) {
-      if (_pool.pid === pid && _wTokenAddress === _pool.wTokenAddress) {
-        pool = _pool;
-        break;
-      }
-    }
-  } else {
-    for (const _pool of pools) {
-      if (
-        _pool.wTokenAddress === _wTokenAddress &&
-        _pool.type === "Yield Farming"
-      ) {
-        pool = _pool;
-        break;
-      }
-    }
-  }
-
-  return pool;
+  return collaterals;
 }
 
 /*==================================================
