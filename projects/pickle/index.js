@@ -193,7 +193,7 @@ async function tvl(timestamp, block) {
       .plus(pSLPUSDC[1])
       .plus(pSLPUSDT[0])
       .plus(pSLPWBTC[1])
-      .plus(pYFIWBTC[1])
+      .plus(pSLPYFI[1])
       .toFixed(18),
 
     // DAI
