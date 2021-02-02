@@ -24,7 +24,6 @@ async function tvl(timestamp, block) {
   ]);
 
   const tvl = BigNumber.sum(...tvls);
-
   balances[ethAddress] = tvl.toFixed(0);
 
   return balances;
@@ -207,22 +206,24 @@ async function tvlV2(timestamp, block) {
 
   const totalCollateralValue = BigNumber.sum(
     0, // Default value
-    ...collaterals.map((collateral) =>
-      collateral.lpTokenAddress in tokenPrices
-        ? BigNumber(collateral.amount).times(
-            tokenPrices[collateral.lpTokenAddress]
-          )
-        : 0
-    )
+    ...collaterals.map((collateral) => {
+      if (collateral.lpTokenAddress in tokenPrices) {
+        return BigNumber(collateral.amount).times(
+          tokenPrices[collateral.lpTokenAddress]
+        );
+      }
+      return BigNumber(0);
+    })
   );
 
   const totalCyValue = BigNumber.sum(
     0,
-    ...cyTokens.map((cy) =>
-      cy.token in tokenPrices
-        ? BigNumber(cy.amount).times(tokenPrices[cy.token])
-        : 0
-    )
+    ...cyTokens.map((cy) => {
+      if (cy.token in tokenPrices) {
+        return BigNumber(cy.amount).times(tokenPrices[cy.token]);
+      }
+      return BigNumber(0);
+    })
   );
 
   return totalCollateralValue.plus(totalCyValue);
@@ -276,7 +277,7 @@ async function getTokenPrices(tokens, block) {
 
 async function getTotalCollateral(block) {
   const { data: pools } = await axios.get(
-    "https://homora-v2.alphafinance.io/static/safebox.json"
+    "https://homora-v2.alphafinance.io/static/pools.json"
   );
 
   const {
