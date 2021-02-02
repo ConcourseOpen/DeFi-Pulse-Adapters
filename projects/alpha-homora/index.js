@@ -211,7 +211,7 @@ async function tvlV2(timestamp, block) {
   const totalCollateralValue = BigNumber.sum(
     0, // Default value
     ...collaterals.map((collateral) =>
-      collateral.lpTokenAddress in lpTokenPrices
+      collateral.lpTokenAddress in tokenPrices
         ? BigNumber(collateral.amount).times(
             tokenPrices[collateral.lpTokenAddress]
           )
@@ -222,7 +222,7 @@ async function tvlV2(timestamp, block) {
   const totalCyValue = BigNumber.sum(
     0,
     ...cyTokens.map((cy) =>
-      cy.token in lpTokenPrices
+      cy.token in tokenPrices
         ? BigNumber(cy.amount).times(tokenPrices[cy.token])
         : 0
     )
@@ -238,12 +238,14 @@ async function getCyTokens(block) {
   return Promise.all(
     safebox.map(async (sb) => {
       const cyToken = sb.cyTokenAddress;
-      const {
-        data: { cyTokenStates },
-      } = await request(AlphaHomoraV2GraphUrl, GET_CY_TOKEN, {
-        block,
-        cyToken,
-      });
+      const { cyTokenStates } = await request(
+        AlphaHomoraV2GraphUrl,
+        GET_CY_TOKEN,
+        {
+          block,
+          cyToken,
+        }
+      );
       const cyTokenState = cyTokenStates[0];
       if (!cyTokenState) {
         return { amount: new BigNumber(0), token: null };
@@ -275,13 +277,15 @@ async function getTokenPrices(tokens, block) {
 }
 
 async function getTotalCollateral(block) {
+  const { data: pools } = await axios.get(
+    "https://homora-v2.alphafinance.io/static/safebox.json"
+  );
+
   const {
-    data: {
-      crvCollaterals,
-      sushiswapCollaterals,
-      werc20Collaterals,
-      wstakingRewardCollaterals,
-    },
+    crvCollaterals,
+    sushiswapCollaterals,
+    werc20Collaterals,
+    wstakingRewardCollaterals,
   } = await request(AlphaHomoraV2GraphUrl, GET_TOTAL_COLLATERALS, {
     block,
   });
@@ -294,6 +298,12 @@ async function getTotalCollateral(block) {
           Number(coll.pid) === pool.pid &&
           Number(coll.gid) === pool.gid
       );
+      if (!pool) {
+        return {
+          lpTokenAddress: null,
+          amount: BigNumber(0),
+        };
+      }
       return {
         lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
         amount: BigNumber(coll.amount),
@@ -305,6 +315,12 @@ async function getTotalCollateral(block) {
           pool.wTokenAddress === wMasterChefAddress &&
           Number(coll.pid) === pool.pid
       );
+      if (!pool) {
+        return {
+          lpTokenAddress: null,
+          amount: BigNumber(0),
+        };
+      }
       return {
         lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
         amount: BigNumber(coll.amount),
@@ -318,6 +334,12 @@ async function getTotalCollateral(block) {
     })),
     ...wstakingRewardCollaterals.map((coll) => {
       const pool = pools.find((pool) => pool.wTokenAddress === coll.wtoken);
+      if (!pool) {
+        return {
+          lpTokenAddress: null,
+          amount: BigNumber(0),
+        };
+      }
       return {
         lpTokenAddress: pool.lpTokenAddress ? pool.lpTokenAddress : null,
         amount: BigNumber(coll.amount),
