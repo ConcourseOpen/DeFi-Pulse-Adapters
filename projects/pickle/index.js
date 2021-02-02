@@ -86,6 +86,18 @@ const pTokens = {
     contract: "0x3261D9408604CC8607b687980D40135aFA26FfED",
     created: 11478790,
   },
+  pUNIBAC: {
+    underlying: "UNIV2_BAC_DAI",
+    decimals: 18,
+    contract: "0x2350fc7268F3f5a6cC31f26c38f706E41547505d",
+    created: 11601177,
+  },
+  pSLPMIC: {
+    underlying: "SLP_MIC_USDT",
+    decimals: 18,
+    contract: "0xC66583Dd4E25b3cfc8D881F6DbaD8288C7f5Fd30",
+    created: 11616982,
+  },
   pDAI: {
     underlying: "DAI",
     decimals: 18,
@@ -119,6 +131,12 @@ const uniPools = {
     token0: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
     token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   },
+  UNIV2_BAC_DAI: {
+    contract: "0xd4405F0704621DBe9d4dEA60E128E0C3b26bddbD",
+    created: 11355401,
+    token0: "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a",
+    token1: "0x6b175474e89094c44da98b954eedeac495271d0f",
+  },
   // Sushiswap Pools
   SLP_ETH_DAI: {
     contract: "0xC3D03e4F041Fd4cD388c549Ee2A29a9E5075882f",
@@ -150,6 +168,12 @@ const uniPools = {
     token0: "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
     token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   },
+  SLP_MIC_USDT: {
+    contract: "0xC9cB53B48A2f3A9e75982685644c1870F1405CCb",
+    created: 11549969,
+    token0: "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51",
+    token1: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  },
 };
 
 async function tvl(timestamp, block) {
@@ -166,6 +190,8 @@ async function tvl(timestamp, block) {
     pSLPUSDT,
     pSLPWBTC,
     pSLPYFI,
+    pUNIBAC,
+    pSLPMIC,
     pDAI,
   ] = await Promise.all([
     getUnderlying("psCRV-v2", block),
@@ -180,6 +206,8 @@ async function tvl(timestamp, block) {
     getUniswapUnderlying("pSLPUSDT", block),
     getUniswapUnderlying("pSLPWBTC", block),
     getUniswapUnderlying("pSLPYFI", block),
+    getUniswapUnderlying("pUNIBAC", block),
+    getUniswapUnderlying("pSLPMIC", block),
     getUnderlying("pDAI", block),
   ]);
 
@@ -200,6 +228,7 @@ async function tvl(timestamp, block) {
     "0x6B175474E89094C44Da98b954EedeAC495271d0F": pDAI
       .plus(pUNIDAI[0])
       .plus(pSLPDAI[0])
+      .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
       .toFixed(18),
@@ -212,6 +241,7 @@ async function tvl(timestamp, block) {
     // USDT
     "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1]
       .plus(pSLPUSDT[1])
+      .plus(pSLPMIC[1])
       .toFixed(6),
 
     // WBTC
@@ -221,6 +251,12 @@ async function tvl(timestamp, block) {
 
     // YFI
     "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(18),
+
+    // BAC
+    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(18),
+
+    // MIC
+    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(18),
 
     // RenBTC
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
