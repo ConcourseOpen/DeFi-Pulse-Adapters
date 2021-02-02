@@ -266,9 +266,10 @@ async function getTokenPrices(tokens, block) {
 
   const tokenPrices = {};
   for (let i = 0; i < _ethPrices.length; i++) {
-    tokenPrices[tokens[i]] = BigNumber(_ethPrices[i].output).div(
-      BigNumber(2).pow(112)
-    );
+    const price = BigNumber(_ethPrices[i].output).div(BigNumber(2).pow(112));
+    if (price.gte(0)) {
+      tokenPrices[tokens[i]] = price;
+    }
   }
   return tokenPrices;
 }
