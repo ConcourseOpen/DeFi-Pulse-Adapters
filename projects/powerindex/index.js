@@ -65,12 +65,12 @@ async function tvl(timestamp, block) {
     const balanceOf = poolBalances[i];
     const tokenAddress = balanceOf.input.target;
     const underlying = _.find(tokensUnderlyings, t => t.input.target === tokenAddress);
-    if(balanceOf.success) {
+    if (balanceOf.success) {
       const balance = balanceOf.output;
       const address = underlying.success ? underlying.output : tokenAddress;
 
       if (BigNumber(balance).toNumber() <= 0) {
-        return;
+        continue;
       }
 
       balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
