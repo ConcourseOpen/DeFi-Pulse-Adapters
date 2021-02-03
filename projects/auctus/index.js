@@ -9,7 +9,7 @@
 
   const START_BLOCK = 10104891;
   const FACTORY = '0x176b98ab38d1aE8fF3F30bF07f9B93E26F559C17';
-  const POOLS_FACTORY = '0x4db1d076ed0a3f2bb9b105d96edfb1671916f6ca';
+  const POOLS_FACTORY = '0xe28520DDB1b419Ac37eCDBB2c0F97c8Cf079CCC3';
   const VAULTS = '0x2Ce43b4570Ad9DEAb8CFE6258B42DB7301e3b6C0';
   const ETHER_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -19,7 +19,7 @@
 
   const getTokenAddressFromNewAcoTokenLogData = data => '0x' + data.substring(154, 194);
 
-  const getPoolAddressFromNewAcoPoolLogData = data => '0x' + data.substring(410, 450);
+  const getPoolAddressFromNewAcoPoolLogData = data => '0x' + data.substring(26, 66);
 
   const getVaultAddressFromSetAcoVaultLogData = data => '0x' + data.substring(26, 66);
 
@@ -47,7 +47,7 @@
         toBlock: block,
         target: POOLS_FACTORY,
         fromBlock: START_BLOCK,
-        topic: 'NewAcoPool(address,address,bool,uint256,uint256,uint256,uint256,uint256,bool,address,address)',
+        topic: 'NewAcoPool(address,address,bool,address,address)',
       }),
       sdk.api.util.getLogs({
         keys: [],
@@ -71,7 +71,7 @@
       const address = getTokenAddressFromNewAcoTokenLogData(log.data);
       acoOptionsAddresses.push(address)
     });
-    
+
     let collateralResult = await sdk.api.abi.multiCall({
       block,
       calls: _.map(acoOptionsAddresses, (option) => ({
@@ -187,7 +187,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'ACO',
+    name: 'Auctus',
     token: 'AUC',
     category: 'derivatives',
     start: 1590014400,   // 05/20/2020 @ 08:10:40pm (UTC)
