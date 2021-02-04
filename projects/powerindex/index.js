@@ -77,7 +77,7 @@ async function tvl(timestamp, block) {
     }
   }
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -87,7 +87,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'PowerIndex',
   token: null,
-  category: 'dexes',
+  category: 'DEXes',
   start : 1606768668, // 11/30/2021 @ 08:37am (UTC)
   tvl
 }
