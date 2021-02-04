@@ -2,9 +2,11 @@
   Modules
   ==================================================*/
 
-const BigNumber = require("bignumber.js");
+const BigNumber = require('bignumber.js');
+
 const abi = require('./abi');
-const sdk = require("../../sdk");
+const utils = require('./utils');
+const sdk = require('../../sdk');
 
 /*==================================================
   Settings
@@ -18,7 +20,6 @@ const START_BLOCK = 11639906;
   ==================================================*/
 
 module.exports = async function tvl(timestamp, block) {
-  let balances = {};
 
   const supportedTokens = await (
     sdk
@@ -69,11 +70,13 @@ module.exports = async function tvl(timestamp, block) {
   });
 
   /* combine token volumes on multiple funds */
+  const balances = {};
+
   balanceOfResult.output.forEach(result => {
     const balance = new BigNumber(result.output || 0);
     if (balance <= 0) return;
 
-    const asset = result.input.target;
+    const asset = result.input.target.toLowerCase();
     const total = balances[asset];
 
     if (total) {
@@ -219,6 +222,7 @@ module.exports = async function tvl(timestamp, block) {
 
           accumulator[pair.token0Address] = existingBalance
             .plus(token0Amount)
+            .integerValue()
             .toFixed()
         }
       }
@@ -236,6 +240,7 @@ module.exports = async function tvl(timestamp, block) {
 
           accumulator[pair.token1Address] = existingBalance
             .plus(token1Amount)
+            .integerValue()
             .toFixed()
         }
       }
@@ -244,17 +249,5 @@ module.exports = async function tvl(timestamp, block) {
     return accumulator
   }, {})
 
-  const tokenAddresses = new Set(Object.keys(balances).concat(Object.keys(uniswapBalances)));
-
-  return (
-    Array
-      .from(tokenAddresses)
-      .reduce((accumulator, tokenAddress) => {
-        const supportedTokenBalance = new BigNumber(balances[tokenAddress] || '0');
-        const uniswapTokenBalance = new BigNumber(uniswapBalances[tokenAddress] || '0');
-        accumulator[tokenAddress] = supportedTokenBalance.plus(uniswapTokenBalance).toFixed();
-
-        return accumulator
-      }, {})
-  );
+  return utils.mergeBalances(balances, uniswapBalances);
 }
