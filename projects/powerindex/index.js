@@ -23,11 +23,19 @@ async function tvl(timestamp, block) {
     keys: ['topics'],
     fromBlock: 11362346,
     toBlock: block
-  });
+  }).then(r => r.output);
+
+  poolLogs = poolLogs.concat(await sdk.api.util.getLogs({
+    target: '0x967D77f1fBb5fD1846Ce156bAeD3AAf0B13020D1',
+    topic: 'LOG_NEW_POOL(address,address,address)',
+    keys: ['topics'],
+    fromBlock: 11706591,
+    toBlock: block
+  }).then(r => r.output))
 
   let poolCalls = [];
 
-  let pools = _.map(poolLogs.output, (poolLog) => {
+  let pools = _.map(poolLogs, (poolLog) => {
     return `0x${poolLog[2].slice(26)}`
   });
 
@@ -57,12 +65,12 @@ async function tvl(timestamp, block) {
     const balanceOf = poolBalances[i];
     const tokenAddress = balanceOf.input.target;
     const underlying = _.find(tokensUnderlyings, t => t.input.target === tokenAddress);
-    if(balanceOf.success) {
+    if (balanceOf.success) {
       const balance = balanceOf.output;
       const address = underlying.success ? underlying.output : tokenAddress;
 
       if (BigNumber(balance).toNumber() <= 0) {
-        return;
+        continue;
       }
 
       balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
