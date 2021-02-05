@@ -39,19 +39,26 @@ async function tvl(_, block) {
     ...new Set(activeOrders.map((order) => order.tokenIn)),
   ]
   //getting Unitrade orderbook balance of specified tokens
-  const balances = (
+  let balances = (
     await sdk.api.abi.multiCall({
       abi: "erc20:balanceOf",
       calls: uniqueLockedTokenAddresses.map((address) => ({
         target: address,
         params: UNITRADE_ORDERBOOK,
       })),
+      block
     })
   ).output;
+
   //formatting fetched data
-  return balances.reduce((acc, item) => {
+  balances = balances.reduce((acc, item) => {
     return Object.assign(acc, { [item.input.target]: [item.output] });
   }, {});
+  
+  let ethBalance = (await sdk.api.eth.getBalance({target: UNITRADE_ORDERBOOK, block})).output;
+  balances['0x0000000000000000000000000000000000000000'] = ethBalance;
+
+  return balances;
 }
 
 module.exports = {
