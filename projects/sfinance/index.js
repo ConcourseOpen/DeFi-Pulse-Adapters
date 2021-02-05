@@ -39,6 +39,10 @@
     // binance (BUSD/USD5)
     { address: '0xb759B7a071942425301Cf398d7f892B5ae9eC5Af',
       coinNums: 2
+    },
+    // basis (BAC/DAI)
+    { address: '0xd626C03cAE9696E702828c0Ed4DEed5c33D30DD7',
+      coinNums: 2
     }
   ]
 
