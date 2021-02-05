@@ -171,6 +171,6 @@ module.exports = {
   token: null,
   website: 'https://defisaver.com/',
   category: 'lending',
-  start: 1601539031, // 01/10/2020 @ 9:57:11 (UTC)
+  start: 1588723200, // 06/05/2020 @ 02:00 (UTC)
   contributesTo: ['Maker', 'Compound', 'Aave'],
 };
