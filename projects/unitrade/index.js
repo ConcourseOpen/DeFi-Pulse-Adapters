@@ -58,7 +58,7 @@ async function tvl(_, block) {
   let ethBalance = (await sdk.api.eth.getBalance({target: UNITRADE_ORDERBOOK, block})).output;
   balances['0x0000000000000000000000000000000000000000'] = ethBalance;
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
