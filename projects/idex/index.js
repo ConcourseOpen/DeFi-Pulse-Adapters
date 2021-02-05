@@ -36,7 +36,7 @@ async function tvl(timestamp, block) {
 
   sdk.util.sumMultiBalanceOf(balances, assetBalancesResult);
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
