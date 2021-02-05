@@ -1,15 +1,51 @@
 require('dotenv').config();
 
 const {
-  assets, getAssetInfoByAddress, getAssetInfo, ilkToAsset, assetAmountInEth, assetAmountInWei,
+  getAssetInfoByAddress, getAssetInfo, ilkToAsset, assetAmountInEth, assetAmountInWei,
 } = require('@defisaver/tokens');
 
 const sdk = require('../../sdk');
-const { getEthPrice, getTokenPrices, getContractAddress, getContractMethod } = require('./utils');
+const { getPricesForAssetsAtTimestamp, getContractAddress, getContractMethod  } = require('./utils');
 
 const ETH_ADDR = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000';
 const REP_ADDR = '0x1985365e9f78359a9b6ad760e32412f4a445e862';
+
+const coingeckoIDs = {
+  'ETH': 'ethereum',
+  'WETH': 'ethereum',
+  'DAI': 'dai',
+  'MKR': 'maker',
+  'BAT': 'basic-attention-token',
+  'ZRX': '0x',
+  'KNC': 'kyber-network',
+  'REP': 'augur',
+  'REPv2': 'augur',
+  'USDC': 'usd-coin',
+  'WBTC': 'wrapped-bitcoin',
+  'DGD': 'digixdao',
+  'USDT': 'tether',
+  'SAI': 'sai',
+  'COMP': 'compound-governance-token',
+  'SUSD': 'nusd',
+  'TUSD': 'true-usd',
+  'BUSD': 'binance-usd',
+  'LEND': 'ethlend',
+  'LINK': 'chainlink',
+  'MANA': 'decentraland',
+  'SNX': 'havven',
+  'ENJ': 'enjincoin',
+  'REN': 'republic-protocol',
+  'CRV': 'curve-dao-token',
+  'YFI': 'yearn-finance',
+  'PAXUSD': 'paxos-standard',
+  'DPI': 'defipulse-index',
+  'UNI': 'uniswap',
+  'LRC': 'loopring',
+  'AAVE': 'aave',
+  'BAL': 'balancer',
+  'GUSD': 'gemini-dollar',
+};
 
 const getMakerData = async (balances, block) => {
   try {
@@ -71,7 +107,7 @@ const getCompoundData = async (balances, block, prices) => {
         const collUsd = assetAmountInEth(amount);
         const assetAddress = asset.address.toLowerCase();
         if (assetAddress === REP_ADDR) return;
-        balances[assetAddress] = (balances[assetAddress] || 0) + (collUsd / prices[assetAddress].usd);
+        balances[assetAddress] = (balances[assetAddress] || 0) + (collUsd / prices[asset.symbol]);
       });
     });
   } catch (error) {
@@ -98,8 +134,9 @@ const getAaveData = async (balances, block, prices) => {
       subData[4].forEach((amount, i) => {
         const collateralAsset = subData[2][i].toLowerCase();
         if (collateralAsset === ZERO_ADDR) return;
-        const collUsd = assetAmountInEth(amount) * prices[ETH_ADDR].usd;
-        balances[collateralAsset] = (balances[collateralAsset] || 0) + (collUsd / prices[collateralAsset].usd);
+        const collUsd = assetAmountInEth(amount) * prices['ETH'];
+        const asset = getAssetInfoByAddress(collateralAsset);
+        balances[collateralAsset] = (balances[collateralAsset] || 0) + (collUsd / prices[asset.symbol]);
       });
     });
   } catch (error) {
@@ -108,9 +145,7 @@ const getAaveData = async (balances, block, prices) => {
 };
 
 async function tvl(timestamp, block) {
-  const ethPrice = (await getEthPrice()).data.ethereum;
-  const prices = (await getTokenPrices(assets.map((a) => a.address))).data;
-  prices[ETH_ADDR] = ethPrice;
+  const prices = await getPricesForAssetsAtTimestamp(timestamp, coingeckoIDs)
 
   let balances = {};
 
