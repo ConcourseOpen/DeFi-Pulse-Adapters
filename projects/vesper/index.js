@@ -26,7 +26,7 @@ async function tvl(timestamp, block) {
   });
 
   const calls = []
-  let i = 0 
+  let i = 0
   while(i < parseInt(poolsCountResponse.output)) {
     calls.push({
       target: poolAddressListResponse.output,
@@ -38,7 +38,7 @@ async function tvl(timestamp, block) {
     calls,
     abi: abi["at"],
   });
-  
+
   _.each(poolListResponse.output, (response) => {
     if (response.success) {
       vesperPoolAddresses.push(response.output)
@@ -77,7 +77,6 @@ async function tvl(timestamp, block) {
     if (response.success) {
       const totalValue = response.output;
       const poolAddress = response.input.target;
-      console.log("tvl", totalValue);
       balances[collateralToken[poolAddress]] = totalValue;
     }
   });
