@@ -7,9 +7,8 @@ const abi = require('./abi.json')
 const BigNumber = require("bignumber.js");
 const _ = require("underscore");
 
-const vesperPoolAddresses = []
-
 async function tvl(timestamp, block) {
+  const vesperPoolAddresses = []
   const balances = {};
   const collateralToken = {};
   const controller = '0xa4F1671d3Aee73C05b552d57f2d16d3cfcBd0217'
@@ -77,7 +76,8 @@ async function tvl(timestamp, block) {
     if (response.success) {
       const totalValue = response.output;
       const poolAddress = response.input.target;
-      balances[collateralToken[poolAddress]] = totalValue;
+      const existingBalance = new BigNumber(balances[collateralToken[poolAddress]] || "0");
+      balances[collateralToken[poolAddress]] = existingBalance.plus(new BigNumber(totalValue)).toFixed();
     }
   });
   return balances;
@@ -94,5 +94,5 @@ module.exports = {
   category: "assets",
   start: 1608667205, // December 22 2020 at 8:00 PM UTC
   tvl,
-  contributesTo: ["Aave", "Maker"],
+  contributesTo: ["Aave", "Maker", "Compound"],
 };
