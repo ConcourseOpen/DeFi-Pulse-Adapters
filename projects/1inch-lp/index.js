@@ -131,6 +131,8 @@ async function tvlByVersion(factory, startBlock, block) {
     accumulator[token] = existingBalance
       .plus(balance)
       .toFixed()
+
+    return accumulator;
   }, {});
 }
 
