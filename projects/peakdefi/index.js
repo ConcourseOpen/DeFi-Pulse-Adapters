@@ -12,9 +12,7 @@
 
   const zeroAddress = '0x0000000000000000000000000000000000000000'
 
-  const fundContracts = [
-    '0x6DE5673d00D42323Fb2E7F34ADcA156280370876'  // Currently only this one is active
-  ]
+  const fundContract = '0x6DE5673d00D42323Fb2E7F34ADcA156280370876'
 
   const acceptableTokens = [
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
@@ -41,13 +39,11 @@
     let calls = [];
     let balances = {};
 
-    _.each(fundContracts, (fund) => {
-      _.each(acceptableTokens, (tokenAddress) => {
-        calls.push({
-          target: tokenAddress,
-          params: fund
-        })
-      });
+    _.each(acceptableTokens, (tokenAddress) => {
+      calls.push({
+        target: tokenAddress,
+        params: fundContract
+      })
     });
 
     const balanceOfResults = await sdk.api.abi.multiCall({
@@ -58,10 +54,9 @@
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
 
-    for(let fund of fundContracts) {
-      let balance = (await sdk.api.eth.getBalance({target: fund, block})).output;
-      balances[zeroAddress] = BigNumber(balances[zeroAddress] || 0).plus(balance).toFixed();
-    }
+    // Fetch ETH balance
+    let balance = (await sdk.api.eth.getBalance({target: fundContract, block})).output;
+    balances[zeroAddress] = BigNumber(balances[zeroAddress] || 0).plus(balance).toFixed();
 
     return balances;
   }
