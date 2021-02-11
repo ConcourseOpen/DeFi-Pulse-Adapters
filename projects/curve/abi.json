@@ -1,101 +1,101 @@
 {
-  "markets": {
-    "constant":true,
-    "inputs":[
-      {
-        "name":"",
-        "type":"address"
-      }
-    ],
-    "name":"markets",
-    "outputs":[
-      {
-        "name":"isSupported",
-        "type":"bool"
-      },
-      {
-        "name":"blockNumber",
-        "type":"uint256"
-      },
-      {
-        "name":"interestRateModel",
-        "type":"address"
-      },
-      {
-        "name":"totalSupply",
-        "type":"uint256"
-      },
-      {
-        "name":"supplyRateMantissa",
-        "type":"uint256"
-      },
-      {
-        "name":"supplyIndex",
-        "type":"uint256"
-      },
-      {
-        "name":"totalBorrows",
-        "type":"uint256"
-      },
-      {
-        "name":"borrowRateMantissa",
-        "type":"uint256"
-      },
-      {
-        "name":"borrowIndex",
-        "type":"uint256"
-      }
-    ],
-    "payable":false,
-    "stateMutability":"view",
-    "type":"function"
+  "pool_list": {
+    "name": "pool_list",
+    "outputs": [{ "type": "address", "name": "" }],
+    "inputs": [{ "type": "uint256", "name": "arg0" }],
+    "stateMutability": "view",
+    "type": "function",
+    "gas": 2280
   },
-  "totalBorrows": {
-    "constant":true,
-    "inputs":[
-
-    ],
-    "name":"totalBorrows",
-    "outputs":[
-      {
-        "name":"",
-        "type":"uint256"
-      }
-    ],
-    "payable":false,
-    "stateMutability":"view",
-    "type":"function"
+  "pool_count": {
+    "name": "pool_count",
+    "outputs": [{ "type": "uint256", "name": "" }],
+    "inputs": [],
+    "stateMutability": "view",
+    "type": "function",
+    "gas": 2201
   },
-  "borrowRatePerBlock": {
-    "constant":true,
-    "inputs":[
-
+  "coins128": {
+    "name": "coins",
+    "outputs": [
+     {
+      "type": "address",
+      "name": "out"
+     }
     ],
-    "name":"borrowRatePerBlock",
-    "outputs":[
-      {
-        "name":"",
-        "type":"uint256"
-      }
+    "inputs": [
+     {
+      "type": "int128",
+      "name": "arg0"
+     }
     ],
-    "payable":false,
-    "stateMutability":"view",
-    "type":"function"
+    "constant": true,
+    "payable": false,
+    "type": "function",
+    "gas": 2190
   },
-  "supplyRatePerBlock": {
-    "constant":true,
-    "inputs":[
-
+  "coins256": {
+    "name": "coins",
+    "outputs": [
+     {
+      "type": "address",
+      "name": "out"
+     }
     ],
-    "name":"supplyRatePerBlock",
-    "outputs":[
-      {
-        "name":"",
-        "type":"uint256"
-      }
+    "inputs": [
+     {
+      "type": "uint256",
+      "name": "arg0"
+     }
     ],
-    "payable":false,
-    "stateMutability":"view",
-    "type":"function"
+    "constant": true,
+    "payable": false,
+    "type": "function",
+    "gas": 2190
+  },
+  "balances128": {
+    "name": "balances",
+    "outputs": [
+     {
+      "type": "uint256",
+      "name": "out"
+     }
+    ],
+    "inputs": [
+     {
+      "type": "int128",
+      "name": "arg0"
+     }
+    ],
+    "constant": true,
+    "payable": false,
+    "type": "function",
+    "gas": 2250
+  },
+  "balances256": {
+    "name": "balances",
+    "outputs": [
+     {
+      "type": "uint256",
+      "name": "out"
+     }
+    ],
+    "inputs": [
+     {
+      "type": "uint256",
+      "name": "arg0"
+     }
+    ],
+    "constant": true,
+    "payable": false,
+    "type": "function",
+    "gas": 2250
+  },
+  "get_registry": {
+    "name": "get_registry",
+    "outputs": [{ "type": "address", "name": "" }],
+    "inputs": [],
+    "stateMutability": "view",
+    "type": "function"
   }
 }

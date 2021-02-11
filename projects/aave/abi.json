@@ -150,5 +150,75 @@
     "payable": false,
     "stateMutability": "view",
     "type": "function"
+  },
+  "getAddressesProvidersList": {
+    "inputs": [],
+    "name": "getAddressesProvidersList",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getAddress": {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getAllATokens": {
+    "inputs": [],
+    "name": "getAllATokens",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct AaveProtocolDataProvider.TokenData[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getUnderlying": {
+    "inputs": [],
+    "name": "UNDERLYING_ASSET_ADDRESS",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
 }

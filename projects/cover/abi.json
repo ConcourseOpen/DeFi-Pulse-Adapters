@@ -1,0 +1,48 @@
+{
+  "getAllProtocolAddresses": {
+    "constant": true,
+    "inputs": [],
+    "name": "getAllProtocolAddresses",
+    "outputs": [{ "name": "protocols", "type": "address[]" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getProtocolDetails": {
+    "constant": true,
+    "inputs": [],
+    "name": "getProtocolDetails",
+    "outputs": [
+      { "name": "name", "type": "bytes32" },
+      { "name": "active", "type": "bool" },
+      { "name": "claimNonce", "type": "uint256" },
+      { "name": "claimRedeemDelay", "type": "uint256" },
+      { "name": "noclaimRedeemDelay", "type": "uint256" },
+      { "name": "collaterals", "type": "address[]" },
+      { "name": "expiries", "type": "uint48[]" },
+      { "name": "allCovers", "type": "address[]" },
+      { "name": "allActiveCovers", "type": "address[]" }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "collateral": {
+    "constant": true,
+    "inputs": [],
+    "name": "collateral",
+    "outputs": [{ "name": "collateral", "type": "address" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "calcPoolValueInToken": {
+    "constant": true,
+    "inputs": [],
+    "name": "calcPoolValueInToken",
+    "outputs": [{ "name": "poolValueInToken", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
