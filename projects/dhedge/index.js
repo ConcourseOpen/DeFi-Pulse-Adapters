@@ -41,7 +41,7 @@
       calls: _.map(fundAddresses, (address) => ({ target: address })),
       abi: abi.getFundComposition,
     })).output;
-   
+
     const formattedFund = {}
     _.forEach(fundData, (fund) => {
       const fundAddress = fund.input.target;
@@ -49,18 +49,18 @@
       if (fund.output) {
         const synths = fund.output[0]
         const amounts = fund.output[1]
-        
+
         const formattedSynthsList = synths.map(synth =>  {
           const synthName = utils.hexToUtf8(synth)
           const matchedSymbol = syntheticAssets.find(asset => asset.symbol === synthName)
           const { address } = matchedSymbol;
           return address
         });
-        
+
         const fundComposition = amounts.reduce((result, field, index) => {
-          const value = Number(field)          
+          const value = Number(field)
           result[formattedSynthsList[index]] = value;
-          return result; 
+          return result;
         }, {})
 
         formattedFund[fundAddress] = {
@@ -70,7 +70,7 @@
 
       return fundAddress;
     })
-    
+
     const sumKeys = (acc, [key, value]) => {
       if (acc[key]) return {...acc, [key]: acc[key] + value }
       return {...acc, [key]: value }
@@ -80,12 +80,12 @@
       const items = Object.entries(fundComposition)
       return items.reduce(sumKeys, acc)
     }, {})
-    
+
     const balances =  Object.keys(obj).reduce((acc, next) => {
       acc[next] = BigNumber(obj[next]).toFixed()
       return acc;
     }, {});
-        
+
     return balances;
   }
 

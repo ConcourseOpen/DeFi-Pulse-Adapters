@@ -56,6 +56,48 @@ const pTokens = {
     contract: "0xc80090AA05374d336875907372EE4ee636CBC562",
     created: 11010903,
   },
+  pSLPDAI: {
+    underlying: "SLP_ETH_DAI",
+    decimals: 18,
+    contract: "0x55282da27a3a02ffe599f6d11314d239dac89135",
+    created: 11471458,
+  },
+  pSLPUSDC: {
+    underlying: "SLP_ETH_USDC",
+    decimals: 18,
+    contract: "0x8c2d16b7f6d3f989eb4878ecf13d695a7d504e43",
+    created: 11474356,
+  },
+  pSLPUSDT: {
+    underlying: "SLP_ETH_USDT",
+    decimals: 18,
+    contract: "0xa7a37ae5cb163a3147de83f15e15d8e5f94d6bce",
+    created: 11474366,
+  },
+  pSLPWBTC: {
+    underlying: "SLP_ETH_WBTC",
+    decimals: 18,
+    contract: "0xde74b6c547bd574c3527316a2ee30cd8f6041525",
+    created: 11474414,
+  },
+  pSLPYFI: {
+    underlying: "SLP_ETH_YFI",
+    decimals: 18,
+    contract: "0x3261D9408604CC8607b687980D40135aFA26FfED",
+    created: 11478790,
+  },
+  pUNIBAC: {
+    underlying: "UNIV2_BAC_DAI",
+    decimals: 18,
+    contract: "0x2350fc7268F3f5a6cC31f26c38f706E41547505d",
+    created: 11601177,
+  },
+  pSLPMIC: {
+    underlying: "SLP_MIC_USDT",
+    decimals: 18,
+    contract: "0xC66583Dd4E25b3cfc8D881F6DbaD8288C7f5Fd30",
+    created: 11616982,
+  },
   pDAI: {
     underlying: "DAI",
     decimals: 18,
@@ -89,6 +131,49 @@ const uniPools = {
     token0: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
     token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   },
+  UNIV2_BAC_DAI: {
+    contract: "0xd4405F0704621DBe9d4dEA60E128E0C3b26bddbD",
+    created: 11355401,
+    token0: "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a",
+    token1: "0x6b175474e89094c44da98b954eedeac495271d0f",
+  },
+  // Sushiswap Pools
+  SLP_ETH_DAI: {
+    contract: "0xC3D03e4F041Fd4cD388c549Ee2A29a9E5075882f",
+    created: 10829331,
+    token0: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_ETH_USDC: {
+    contract: "0x397FF1542f962076d0BFE58eA045FfA2d347ACa0",
+    created: 10829331,
+    token0: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_ETH_USDT: {
+    contract: "0x06da0fd433c1a5d7a4faa01111c044910a184553",
+    created: 10822038,
+    token0: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    token1: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
+  SLP_ETH_WBTC: {
+    contract: "0xCEfF51756c56CeFFCA006cD410B03FFC46dd3a58",
+    created: 10840845,
+    token0: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_ETH_YFI: {
+    contract: "0x088ee5007C98a9677165D78dD2109AE4a3D04d0C",
+    created: 10829310,
+    token0: "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_MIC_USDT: {
+    contract: "0xC9cB53B48A2f3A9e75982685644c1870F1405CCb",
+    created: 11549969,
+    token0: "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51",
+    token1: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  },
 };
 
 async function tvl(timestamp, block) {
@@ -100,6 +185,13 @@ async function tvl(timestamp, block) {
     pUNIUSDC,
     pUNIUSDT,
     pUNIWBTC,
+    pSLPDAI,
+    pSLPUSDC,
+    pSLPUSDT,
+    pSLPWBTC,
+    pSLPYFI,
+    pUNIBAC,
+    pSLPMIC,
     pDAI,
   ] = await Promise.all([
     getUnderlying("psCRV-v2", block),
@@ -109,6 +201,13 @@ async function tvl(timestamp, block) {
     getUniswapUnderlying("pUNIUSDC-v2", block),
     getUniswapUnderlying("pUNIUSDT-v2", block),
     getUniswapUnderlying("pUNIWBTC", block),
+    getUniswapUnderlying("pSLPDAI", block),
+    getUniswapUnderlying("pSLPUSDC", block),
+    getUniswapUnderlying("pSLPUSDT", block),
+    getUniswapUnderlying("pSLPWBTC", block),
+    getUniswapUnderlying("pSLPYFI", block),
+    getUniswapUnderlying("pUNIBAC", block),
+    getUniswapUnderlying("pSLPMIC", block),
     getUnderlying("pDAI", block),
   ]);
 
@@ -118,23 +217,46 @@ async function tvl(timestamp, block) {
       .plus(pUNIUSDC[1])
       .plus(pUNIUSDT[0])
       .plus(pUNIWBTC[1])
+      .plus(pSLPDAI[1])
+      .plus(pSLPUSDC[1])
+      .plus(pSLPUSDT[0])
+      .plus(pSLPWBTC[1])
+      .plus(pSLPYFI[1])
       .toFixed(18),
 
     // DAI
     "0x6B175474E89094C44Da98b954EedeAC495271d0F": pDAI
       .plus(pUNIDAI[0])
+      .plus(pSLPDAI[0])
+      .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
       .toFixed(18),
 
     // USDC
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0].toFixed(6),
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
+      .plus(pSLPUSDC[0])
+      .toFixed(6),
 
     // USDT
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1].toFixed(6),
+    "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1]
+      .plus(pSLPUSDT[1])
+      .plus(pSLPMIC[1])
+      .toFixed(6),
 
     // WBTC
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0].toFixed(8),
+    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0]
+      .plus(pSLPWBTC[0])
+      .toFixed(8),
+
+    // YFI
+    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(18),
+
+    // BAC
+    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(18),
+
+    // MIC
+    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(18),
 
     // RenBTC
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
@@ -152,12 +274,11 @@ async function getUnderlying(token, block) {
         target: pTokens[token].contract,
         abi: abi["balance"],
       });
-  
+
       return BigNumber(balance.output);
     } catch (e) {
       return BigNumber(0);
     }
-
   }
   return BigNumber(0);
 }
@@ -184,13 +305,13 @@ async function getUniswapUnderlying(token, block) {
           abi: abi["balance"],
         }),
       ]);
-  
+
       const poolUnderlyingReservesToken0 = BigNumber(reserves.output[0]);
       const poolUnderlyingReservesToken1 = BigNumber(reserves.output[1]);
       const poolFraction = BigNumber(balance.output).div(
         BigNumber(totalSupply.output)
       );
-  
+
       if (!poolFraction.isNaN() && !poolFraction.isEqualTo(ERROR)) {
         return [
           poolFraction.times(poolUnderlyingReservesToken0),

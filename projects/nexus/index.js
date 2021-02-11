@@ -11,8 +11,9 @@
   ==================================================*/
 
   const pools = [
-    '0xfd61352232157815cf7b71045557192bf0ce1884',  // currency assets
-    '0x7cbe5682be6b648cc1100c76d4f6c96997f753d6'   // investment assets
+    '0xfd61352232157815cf7b71045557192bf0ce1884',  // old pool1
+    '0x7cbe5682be6b648cc1100c76d4f6c96997f753d6',  // old pool2
+    '0xcafea7934490EF8B9d2572EaeFeb9d48162ea5D8'   // current pool
   ];
 
   const tokensAddresses = [
