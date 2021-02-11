@@ -9,6 +9,7 @@
     "validate-token": "mocha tokens/testing/validate/*.js"
   },
   "dependencies": {
+    "@synthetixio/js": "^2.35.6",
     "argv": "0.0.2",
     "axios": "^0.19.0",
     "bignumber.js": "^9.0.0",
