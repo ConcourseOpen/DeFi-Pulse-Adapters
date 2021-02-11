@@ -38,6 +38,7 @@ async function getYprice(block, coin, amount) {
   TVL
   ==================================================*/
 async function tvl(timestamp, block) {
+    let blocks = [10867618, 11409366, 11662074]
     let Pools = {
         "0x4571753311E37dDb44faA8Fb78a6dF9a6E3c6C0B": { // yVault USD
             "0xACd43E627e64355f1861cEC6d3a6688B31a6F952": BN(0), //yDAI
@@ -64,18 +65,17 @@ async function tvl(timestamp, block) {
     let tokenBalances = {};
     for (let pool in Pools) {
         for (let coin in Pools[pool]) {
-            let bal = await sdk.api.abi.call({
-                block,
-                target: coin,
-                abi: 'erc20:balanceOf',
-                params: pool,
-            });
-            let dec = await sdk.api.abi.call({
-                block,
-                target: coin,
-                abi: 'erc20:decimals'
-            });
-            Pools[pool][coin] = BN(bal.output).div(10 ** dec.output);
+            try {
+                let bal = await sdk.api.abi.call({
+                    block,
+                    target: coin,
+                    abi: 'erc20:balanceOf',
+                    params: pool,
+                });
+                if (bal && bal.output) {
+                    Pools[pool][coin] = BN(bal.output);
+                }
+            } catch (e) {}
         }
     }
     var output = {}
@@ -84,12 +84,20 @@ async function tvl(timestamp, block) {
         if (index == 0 || index == 1) { // pool 0 & 1
             for (let coin in Pools[key]) {
                 // Get yVault's balances in underlying token
+                if (index == 1) {
+                    if (block <= blocks[0]) {
+                        continue;
+                    }
+                }
                 let p = await getYprice(block, coin, Pools[key][coin])
                 output[p.token] = p.price
             }
         }
         else if (index == 2) { //pool 2
             for (let coin in Pools[key]) {
+                if (block <= blocks[1]) {
+                    continue;
+                }
                 if (coin == "0x7Ff566E1d69DEfF32a7b244aE7276b9f90e9D0f6") {
                     let p = await getYprice(block, coin, Pools[key][coin])
                     output[p.token] = p.price
@@ -103,17 +111,20 @@ async function tvl(timestamp, block) {
                         abi: herc20["underlyingBalanceWithInvestmentForHolder"],
                         params: key,
                     });
-                    output["0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D"] = BN(underlyingBal.output) // asset: renbtc 
+                    output["0x49849C98ae39Fff122806C06791Fa73784FB3675"] = BN(underlyingBal.output) // asset: renbtc 
                 }
             }
         }
         else if (index == 3) { //pool 3
             //eth2snow pool has tvl in Eth, cumulatively. Staked eth price's fluctuates but currently there is no way to provide that information.
             //please improve this part later.
+            if (block <= blocks[2]) {
+                continue;
+            }
             output[etherAddress] = Object.values(Pools[key]).reduce((accumulator, currentValue) => (BN(accumulator.plus(currentValue))))
         }
     }
-    return output;
+    return (await sdk.api.util.toSymbols(output)).output;
 }
 /*==================================================
   Exports
@@ -123,7 +134,7 @@ module.exports = {
     name: 'Snowswap',
     website: 'https://snowswap.org/',
     token: 'SNOW',
-    category: "dexes",
-    start: 1611416644, // 01/23/2021 @ 3:44pm (UTC)
+    category: "DEXes",
+    start: 1599207447, // 01/23/2021 @ 3:44pm (UTC)
     tvl,
 };
