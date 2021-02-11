@@ -97,6 +97,6 @@
     name: 'dHEDGE',
     token: 'DHT',
     category: 'Assets',
-    start : 11106315, // (Oct-22-2020 01:37:27 PM +UTC)
+    start : 1603330647, // (Oct-22-2020 01:37:27 PM +UTC)
     tvl
   }
