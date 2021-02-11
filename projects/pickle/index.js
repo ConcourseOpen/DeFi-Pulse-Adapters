@@ -222,7 +222,7 @@ async function tvl(timestamp, block) {
       .plus(pSLPUSDT[0])
       .plus(pSLPWBTC[1])
       .plus(pSLPYFI[1])
-      .toFixed(18),
+      .toFixed(0),
 
     // DAI
     "0x6B175474E89094C44Da98b954EedeAC495271d0F": pDAI
@@ -231,38 +231,39 @@ async function tvl(timestamp, block) {
       .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
-      .toFixed(18),
+      .toFixed(0),
 
     // USDC
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
       .plus(pSLPUSDC[0])
-      .toFixed(6),
+      .toFixed(0),
 
     // USDT
     "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1]
       .plus(pSLPUSDT[1])
       .plus(pSLPMIC[1])
-      .toFixed(6),
+      .toFixed(0),
 
     // WBTC
     "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0]
       .plus(pSLPWBTC[0])
-      .toFixed(8),
+      .toFixed(0),
 
     // YFI
-    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(18),
+    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(0),
 
     // BAC
-    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(18),
+    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(0),
 
     // MIC
-    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(18),
+    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(0),
 
     // RenBTC
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
       .times(BigNumber("10").pow(-10))
-      .toFixed(8),
+      .toFixed(0),
   };
+  console.table(balances)
   return balances;
 }
 
