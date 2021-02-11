@@ -124,7 +124,7 @@ async function tvl(timestamp, block) {
             output[etherAddress] = Object.values(Pools[key]).reduce((accumulator, currentValue) => (BN(accumulator.plus(currentValue))))
         }
     }
-    return (await sdk.api.util.toSymbols(output)).output;
+    return output;
 }
 /*==================================================
   Exports
@@ -134,7 +134,7 @@ module.exports = {
     name: 'Snowswap',
     website: 'https://snowswap.org/',
     token: 'SNOW',
-    category: "DEXes",
+    category: "dexes",
     start: 1599207447, // 01/23/2021 @ 3:44pm (UTC)
     tvl,
 };
