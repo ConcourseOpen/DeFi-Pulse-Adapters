@@ -61,7 +61,7 @@
       }
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
