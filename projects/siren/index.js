@@ -31,10 +31,11 @@
 
     const [USDCResponse, WBTCResponse] = await Promise.all([USDCRequest, WBTCRequest])
 
-    return {
+
+    return (await sdk.api.util.toSymbols({
       [assets.USDC]: USDCResponse.output,
       [assets.WBTC]: WBTCResponse.output,
-    };
+    })).output;
   }
 
 /*==================================================
@@ -44,7 +45,7 @@
   module.exports = {
     name: 'Siren',
     token: 'SI',
-    category: 'derivatives',
+    category: 'Derivatives',
     start: 1605574800, // Nov-17-2020 01:00:00 AM +UTC
     tvl
   }
