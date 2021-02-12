@@ -32,6 +32,12 @@ const pTokens = {
     contract: "0x1BB74b5DdC1f4fC91D6f9E7906cf68bc93538e33",
     created: 11010886,
   },
+  pstETHCRV: {
+    underlying: "stETHCRV",
+    decimals: 18,
+    contract: "0x77c8a58d940a322aea02dbc8ee4a30350d4239ad",
+    created: 11739120,
+  },
   "pUNIETHDAI-v2": {
     underlying: "UNIV2_ETH_DAI",
     decimals: 18,
@@ -97,6 +103,18 @@ const pTokens = {
     decimals: 18,
     contract: "0xC66583Dd4E25b3cfc8D881F6DbaD8288C7f5Fd30",
     created: 11616982,
+  },
+  pSLPMIS: {
+    underlying: "SLP_MIS_USDT",
+    decimals: 18,
+    contract: "0x0faa189afe8ae97de1d2f01e471297678842146d",
+    created: 11732926,
+  },
+  pSLPYVECRV: {
+    underlying: "SLP_ETH_YVECRV",
+    decimals: 18,
+    contract: "0x5eff6d166d66bacbc1bf52e2c54dd391ae6b1f48",
+    created: 11804603,
   },
   pDAI: {
     underlying: "DAI",
@@ -174,6 +192,18 @@ const uniPools = {
     token0: "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51",
     token1: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   },
+  SLP_MIS_USDT: {
+    contract: "0x066f3a3b7c8fa077c71b9184d862ed0a4d5cf3e0",
+    created: 11549972,
+    token0: "0x4b4d2e899658fb59b1d518b68fe836b100ee8958",
+    token1: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  },
+  SLP_ETH_YVECRV: {
+    contract: "0x10b47177e92ef9d5c6059055d92ddf6290848991",
+    created: 11549972,
+    token0: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    token1: "0xc5bddf9843308380375a611c18b50fb9341f502a",
+  },
 };
 
 async function tvl(timestamp, block) {
@@ -181,6 +211,7 @@ async function tvl(timestamp, block) {
     psCRV,
     prenCRV,
     p3CRV,
+    pstETHCRV,
     pUNIDAI,
     pUNIUSDC,
     pUNIUSDT,
@@ -192,11 +223,14 @@ async function tvl(timestamp, block) {
     pSLPYFI,
     pUNIBAC,
     pSLPMIC,
+    pSLPMIS,
+    pSLPYVECRV,
     pDAI,
   ] = await Promise.all([
     getUnderlying("psCRV-v2", block),
     getUnderlying("prenCRV", block),
     getUnderlying("p3CRV", block),
+    getUnderlying("pstETHCRV", block),
     getUniswapUnderlying("pUNIETHDAI-v2", block),
     getUniswapUnderlying("pUNIUSDC-v2", block),
     getUniswapUnderlying("pUNIUSDT-v2", block),
@@ -208,6 +242,8 @@ async function tvl(timestamp, block) {
     getUniswapUnderlying("pSLPYFI", block),
     getUniswapUnderlying("pUNIBAC", block),
     getUniswapUnderlying("pSLPMIC", block),
+    getUniswapUnderlying("pSLPMIS", block),
+    getUniswapUnderlying("pSLPYVECRV", block),
     getUnderlying("pDAI", block),
   ]);
 
@@ -222,7 +258,9 @@ async function tvl(timestamp, block) {
       .plus(pSLPUSDT[0])
       .plus(pSLPWBTC[1])
       .plus(pSLPYFI[1])
-      .toFixed(18),
+      .plus(pSLPYVECRV[0])
+      .plus(pstETHCRV) // Estimate
+      .toFixed(0),
 
     // DAI
     "0x6B175474E89094C44Da98b954EedeAC495271d0F": pDAI
@@ -231,38 +269,46 @@ async function tvl(timestamp, block) {
       .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
-      .toFixed(18),
+      .toFixed(0),
 
     // USDC
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
       .plus(pSLPUSDC[0])
-      .toFixed(6),
+      .toFixed(0),
 
     // USDT
     "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1]
       .plus(pSLPUSDT[1])
       .plus(pSLPMIC[1])
-      .toFixed(6),
+      .plus(pSLPMIS[1])
+      .toFixed(0),
 
     // WBTC
     "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0]
       .plus(pSLPWBTC[0])
-      .toFixed(8),
+      .toFixed(0),
 
     // YFI
-    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(18),
+    "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(0),
 
     // BAC
-    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(18),
+    "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(0),
 
     // MIC
-    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(18),
+    "0x368b3a58b5f49392e5c9e4c998cb0bb966752e51": pSLPMIC[0].toFixed(0),
+
+    // MIS
+    "0x4b4D2e899658FB59b1D518b68fe836B100ee8958": pSLPMIS[0].toFixed(0),
+
+    // yveCRV
+    "0xc5bddf9843308380375a611c18b50fb9341f502a": pSLPYVECRV[1].toFixed(0),    
 
     // RenBTC
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
       .times(BigNumber("10").pow(-10))
-      .toFixed(8),
+      .toFixed(0),
   };
+  console.table(balances)
   return balances;
 }
 
