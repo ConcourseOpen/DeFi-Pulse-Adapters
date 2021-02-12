@@ -3,6 +3,7 @@
   ==================================================*/
 
   const TVLV1 = require('./v1');
+  const sdk = require('../../sdk');
 
   const BigNumber = require('bignumber.js');
 
@@ -26,7 +27,7 @@
         }, {})
     );
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -37,7 +38,7 @@
     name: 'dextf',
     website: "https://dextf.com",
     token: "DEXTF",
-    category: 'assets',
+    category: 'Assets',
     start: 1595853825,  // 27/07/2020 @ 12:43:45am (UTC)
     tvl
   }
