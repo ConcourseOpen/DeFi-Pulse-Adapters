@@ -51,7 +51,7 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'tBTC',
+  name: 'KEEP Network',
   token: 'KEEP',
   category: 'assets',
   start: 1600214400,   // 09/16/2020 @ 12:00am (UTC)
