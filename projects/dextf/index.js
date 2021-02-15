@@ -35,7 +35,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'Dextf',
+    name: 'DEXTF',
     website: "https://dextf.com",
     token: "DEXTF",
     category: 'Assets',
