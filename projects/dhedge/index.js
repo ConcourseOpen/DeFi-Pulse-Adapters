@@ -6,22 +6,32 @@
   const utils = require('web3-utils');
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
-  const { synthetix } = require('@synthetixio/js');
-
   const abi = require('./abi');
+
 
 /*==================================================
   TVL
   ==================================================*/
-  const snxjs = synthetix({ network: 'mainnet' });
-  const syntheticAssets = snxjs.tokens.map(({ symbol, address }) => {
-    return {
-      symbol,
-      address
-    }
-  })
 
   async function tvl(timestamp, block) {
+    const availableCurrencyKeys = (await sdk.api.abi.call({
+      target: "0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94",
+      abi: abi['availableCurrencyKeys']
+    })).output;
+
+    let syntheticAssets = (await sdk.api.abi.multiCall({
+      block,
+      abi: abi['getSynth'],
+      calls: _.map(availableCurrencyKeys, currencyKey => ({
+        target: "0x823bE81bbF96BEc0e25CA13170F5AaCb5B79ba83", params: currencyKey
+      }))
+    })).output;
+
+    syntheticAssets =   syntheticAssets.map((token) => ({
+      symbol: utils.hexToUtf8(token.input.params[0]),
+      address: token.output
+    }));
+
     let logs = (await sdk.api.util.getLogs({
       target: '0x03D20ef9bdc19736F5e8Baf92D02C8661a5941F7',
       topic: 'FundCreated(address,bool,string,string,address,uint256,uint256,uint256)',
@@ -53,7 +63,7 @@
         const formattedSynthsList = synths.map(synth =>  {
           const synthName = utils.hexToUtf8(synth)
           const matchedSymbol = syntheticAssets.find(asset => asset.symbol === synthName)
-          const { address } = matchedSymbol;
+          const { address } = matchedSymbol || {address: '0x'};
           return address
         });
 

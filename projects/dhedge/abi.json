@@ -21,5 +21,43 @@
    ],
    "stateMutability": "view",
    "type": "function"
- }
+ },
+  "availableCurrencyKeys": {
+    "constant":true,
+    "inputs":[
+
+    ],
+    "name":"availableCurrencyKeys",
+    "outputs":[
+      {
+        "internalType":"bytes32[]",
+        "name":"",
+        "type":"bytes32[]"
+      }
+    ],
+    "payable":false,
+    "stateMutability":"view",
+    "type":"function"
+  },
+  "getSynth": {
+    "constant":true,
+    "inputs":[
+      {
+        "internalType":"bytes32",
+        "name":"key",
+        "type":"bytes32"
+      }
+    ],
+    "name":"getSynth",
+    "outputs":[
+      {
+        "internalType":"address",
+        "name":"",
+        "type":"address"
+      }
+    ],
+    "payable":false,
+    "stateMutability":"view",
+    "type":"function"
+  }
 }
