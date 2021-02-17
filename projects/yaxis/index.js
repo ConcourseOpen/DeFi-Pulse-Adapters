@@ -49,7 +49,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: "yAxis",
-  token: "YAX",
+  token: "MVLT",
   category: "assets",
   start: 1604167200, // 10/31/2020 @ 06:00:00pm (UTC)
   tvl,
