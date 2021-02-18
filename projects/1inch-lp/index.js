@@ -19,24 +19,53 @@ const ETH = '0x0000000000000000000000000000000000000000';
   ==================================================*/
 
 async function tvl(timestamp, block) {
-  const [v1, v1_1] = await Promise.all([
-    tvlByVersion(V1_FACTORY, V1_START_BLOCK, block),
-    tvlByVersion(V1_1_FACTORY, V1_1_START_BLOCK, block),
-  ]);
+  if (block <= V1_START_BLOCK) {
+    return (
+      await sdk.api.util.toSymbols({
+        "0x0000000000000000000000000000000000000000": "0",
+      })
+    ).output;
+  } else if (block <= V1_1_START_BLOCK) {
+    const [v1] = await Promise.all([
+      tvlByVersion(V1_FACTORY, V1_START_BLOCK, block),
+    ]);
 
-  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v1_1)));
+    const tokenAddresses = new Set(Object.keys(v1));
 
-  return (
-    Array
-      .from(tokenAddresses)
-      .reduce((accumulator, tokenAddress) => {
-        const v1Balance = new BigNumber(v1[tokenAddress] || '0');
-        const v1_1Balance = new BigNumber(v1_1[tokenAddress] || '0');
-        accumulator[tokenAddress] = v1Balance.plus(v1_1Balance).toFixed();
+    let balances = Array.from(tokenAddresses).reduce(
+      (accumulator, tokenAddress) => {
+        const v1Balance = new BigNumber(v1[tokenAddress] || "0");
+        accumulator[tokenAddress] = v1Balance.toFixed();
 
-        return accumulator
-      }, {})
-  );
+        return accumulator;
+      },
+      {}
+    );
+    if (Object.keys(balances).length < 1) {
+      balances['0x0000000000000000000000000000000000000000'] = '0';
+    }
+
+    return (await sdk.api.util.toSymbols(balances)).output;
+  } else {
+    const [v1, v1_1] = await Promise.all([
+      tvlByVersion(V1_FACTORY, V1_START_BLOCK, block),
+      tvlByVersion(V1_1_FACTORY, V1_1_START_BLOCK, block),
+    ]);
+
+    const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v1_1)));
+
+    return (
+      await sdk.api.util.toSymbols(
+        Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
+          const v1Balance = new BigNumber(v1[tokenAddress] || "0");
+          const v1_1Balance = new BigNumber(v1_1[tokenAddress] || "0");
+          accumulator[tokenAddress] = v1Balance.plus(v1_1Balance).toFixed();
+
+          return accumulator;
+        }, {})
+      )
+    ).output;
+  }
 }
 
 async function tvlByVersion(factory, startBlock, block) {
@@ -147,7 +176,7 @@ function replaceToETHIfNeeded(token) {
 module.exports = {
   name: '1inch Liquidity Protocol',
   token: '1INCH',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1608831515, // Dec-24-2020 05:38:35 PM +UTC
   tvl
 };
