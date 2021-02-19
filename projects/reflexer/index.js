@@ -23,7 +23,7 @@ async function tvl(timestamp, block) {
     })
   ).output;
 
-  return { [weth]: balance };
+  return (await sdk.api.util.toSymbols({ [weth]: balance })).output;
 }
 
 /*==================================================
@@ -33,7 +33,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Reflexer",
   token: "RAI",
-  category: "lending",
+  category: "Lending",
   start: 1613520000,
   tvl,
 };
