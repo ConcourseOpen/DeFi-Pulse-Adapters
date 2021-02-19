@@ -74,7 +74,7 @@ async function tvlByVersion(factory, startBlock, block) {
       .api
       .util
       .tokenList()
-      .then((supportedTokens) => supportedTokens.map(({contract}) => contract))
+      .then((supportedTokens) => supportedTokens.map(({contract}) => contract.toLowerCase()))
   );
 
   const logs = (
@@ -91,8 +91,8 @@ async function tvlByVersion(factory, startBlock, block) {
   const pairs = (
     logs.reduce((acc, topics) => {
       const pair = '0x' + topics[1].substr(26);
-      const token0 = '0x' + topics[2].substr(26);
-      const token1 = '0x' + topics[3].substr(26);
+      const token0 = '0x' + topics[2].substr(26).toLowerCase();
+      const token1 = '0x' + topics[3].substr(26).toLowerCase();
 
       if (!isETH(token0) && !supportedTokens.includes(token0) && !supportedTokens.includes(token1)) {
         return acc;
