@@ -136,7 +136,7 @@ async function tvlByVersion(factory, startBlock, block) {
           }
 
           return calls;
-        }).flat(),
+        }).reduce((flat, elem) => flat.concat(elem), []),
         block,
       })
   ).output;
