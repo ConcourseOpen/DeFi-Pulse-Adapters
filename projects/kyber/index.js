@@ -15,11 +15,23 @@
     const balances = {};
 
     /* pull kyber market addresses */
-    const reserveAddresses = (await sdk.api.abi.call({
+    const reserve1Addresses = (await sdk.api.abi.call({
       target: abi['networkAddress'],
       abi: abi['getReserves'],
       block
     })).output;
+
+    const reserve2Addresses =
+      block > 9003563
+        ? (
+            await sdk.api.abi.call({
+              target: abi["networkAddress2"],
+              abi: abi["getReserves"],
+              block,
+            })
+          ).output
+        : [];
+    const reserveAddresses = _.uniq(reserve1Addresses.concat(reserve2Addresses));
 
     const kyberTokens = (await sdk.api.util.kyberTokens()).output;
 
@@ -55,6 +67,8 @@
       }
     });
 
+    balances['0x0000000000000000000000000000000000000000'] = balances['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'];
+    delete balances['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'];
     return (await sdk.api.util.toSymbols(balances)).output;
   }
 
