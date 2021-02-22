@@ -49,7 +49,7 @@
 
   async function tvl(timestamp, block) {
     const balances = await getFundBalances(block);
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
@@ -59,7 +59,7 @@
   module.exports = {
     name: 'PEAKDEFI',         // Peakdefi
     token: 'PEAK',            // PEAK token
-    category: 'assets',       // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',       // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1607405152,        // Dec-08-2020 05:25:52 PM +UTC
     tvl                       // Tvl adapter
   }
