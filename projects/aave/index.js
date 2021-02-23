@@ -20,7 +20,9 @@
   let uniswapReserves = []
 
   const aaveStakingContract = "0x4da27a545c0c5b758a6ba100e3a049001de870f5";
+  const aaveBalancerContractImp = "0xC697051d1C6296C24aE3bceF39acA743861D9A81";
   const aaveTokenAddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
+  const wethTokenAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 
   const addressesProviderRegistry = "0x52D306e36E3B6B02c153d0266ff0f85d18BCD413";
 
@@ -36,6 +38,29 @@
         abi: "erc20:balanceOf",
       })
     ).output;
+  }
+
+  async function _stakingBalancerTvl() {
+    const aaveBal = (
+      await sdk.api.abi.call({
+        target: aaveTokenAddress,
+        params: aaveBalancerContractImp,
+        abi: "erc20:balanceOf",
+      })
+    ).output;
+
+    const wethBal = (
+      await sdk.api.abi.call({
+        target: wethTokenAddress,
+        params: aaveBalancerContractImp,
+        abi: "erc20:balanceOf",
+      })
+    ).output;
+
+    return {
+      [aaveTokenAddress]: aaveBal,
+      [wethTokenAddress]: wethBal
+    }
   }
 
   async function _getV1Assets(lendingPoolCore) {
@@ -328,9 +353,16 @@
 
     // Staking TVL
     const stakedAaveAmount = await _stakingTvl(block);
-    balances[aaveTokenAddress] = balances[aaveTokenAddress] ?
-      BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed() :
-      stakedAaveAmount
+    balances[aaveTokenAddress] = balances[aaveTokenAddress]
+      ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
+      : BigNumber(stakedAaveAmount).toFixed()
+
+    const stakedBalancerAmounts = await _stakingBalancerTvl();
+    Object.keys(stakedBalancerAmounts).forEach(address => {
+      balances[address] = balances[address]
+        ? BigNumber(balances[address]).plus(stakedBalancerAmounts[address]).toFixed()
+        : BigNumber(stakedBalancerAmounts[address]).toFixed();
+    })
 
     // V2 TVLs
     const v2Data = await getV2Data();
