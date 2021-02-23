@@ -54,6 +54,23 @@
     'fSUSHI-MIC:USDT': {underlying: 'SUSHI-MIC:USDT', decimals: 18, contract: '0x6F14165c6D529eA3Bfe1814d0998449e9c8D157D', created: 11608456 },
     'fSUSHI-MIS:USDT': {underlying: 'SUSHI-MIS:USDT', decimals: 18, contract: '0x145f39B3c6e6a885AA6A8fadE4ca69d64bab69c8', created: 11608466 },
     'fCRV-OBTC':  {underlying: 'CRV-OBTC',  decimals: 18, contract: '0x966A70A4d3719A6De6a94236532A0167d5246c72', created: 11639716 },
+    'fONEINCH-WETH:DAI':  {underlying: 'ONEINCH-WETH:DAI',  decimals: 18, contract: '0x8e53031462e930827a8d482e7d80603b1f86e32d', created: 11647784 },
+    'fONEINCH-WETH:USDC':  {underlying: 'ONEINCH-WETH:USDC',  decimals: 18, contract: '0xd162395c21357b126c5afed6921bc8b13e48d690', created: 11647839 },
+    'fONEINCH-WETH:USDT':  {underlying: 'ONEINCH-WETH:USDT',  decimals: 18, contract: '0x4bf633a09bd593f6fb047db3b4c25ef5b9c5b99e', created: 11647866 },
+    'fONEINCH-WETH:WBTC':  {underlying: 'ONEINCH-WETH:WBTC',  decimals: 18, contract: '0x859222dd0b249d0ea960f5102dab79b294d6874a', created: 11647897 },
+    'fDAI:BSG':  {underlying: 'DAI:BSG',  decimals: 18, contract: '0x639d4f3F41daA5f4B94d63C2A5f3e18139ba9E54', created: 11660618 },
+    'fDAI:BSGS':  {underlying: 'DAI:BSGS',  decimals: 18, contract: '0x633C4861A4E9522353EDa0bb652878B079fb75Fd', created: 11660626 },
+    'fBAC':  {underlying: 'BAC',  decimals: 18, contract: '0x371E78676cd8547ef969f89D2ee8fA689C50F86B', created: 11655592 },
+    'fESD':  {underlying: 'ESD',  decimals: 18, contract: '0x45a9e027DdD8486faD6fca647Bb132AD03303EC2', created: 11655609 },
+    'fDSD':  {underlying: 'DSD',  decimals: 18, contract: '0x8Bf3c1c7B1961764Ecb19b4FC4491150ceB1ABB1', created: 11655624 },
+    'fCRV-EURS':  {underlying: 'CRV-EURS',  decimals: 18, contract: '0x6eb941BD065b8a5bd699C5405A928c1f561e2e5a', created: 11674631 },
+    'fCRV-UST':  {underlying: 'CRV-UST',  decimals: 18, contract: '0x84A1DfAdd698886A614fD70407936816183C0A02', created: 11680899 },
+    'fMAAPL:UST':  {underlying: 'MAAPL:UST',  decimals: 18, contract: '0x11804D69AcaC6Ae9466798325fA7DE023f63Ab53', created: 11681744 },
+    'fMAMZN:UST':  {underlying: 'MAMZN:UST',  decimals: 18, contract: '0x8334A61012A779169725FcC43ADcff1F581350B7', created: 11681033 },
+    'fMGOOGL:UST':  {underlying: 'MGOOGL:UST',  decimals: 18, contract: '0x07DBe6aA35EF70DaD124f4e2b748fFA6C9E1963a', created: 11681049 },
+    'fMTSLA:UST':  {underlying: 'MTSLA:UST',  decimals: 18, contract: '0xC800982d906671637E23E031e907d2e3487291Bc', created: 11681065 },
+    'fCRV-STETH':  {underlying: 'CRV-STETH',  decimals: 18, contract: '0xc27bfE32E0a934a12681C1b35acf0DBA0e7460Ba', created: 11686113 },
+    'fCRV-GUSD':  {underlying: 'CRV-GUSD',  decimals: 18, contract: '0xB8671E33fcFC7FEA2F7a3Ea4a117F065ec4b009E', created: 11745394 },
   };
 
   const uniPools = {
@@ -85,6 +102,26 @@
                     token0: '0x368B3a58B5f49392e5C9E4C998cb0bB966752E51', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
     'SUSHI-MIS:USDT': {contract: '0x066F3A3B7C8Fa077c71B9184d862ed0A4D5cF3e0', created: 0,
                     token0: '0x4b4D2e899658FB59b1D518b68fe836B100ee8958', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
+    'ONEINCH-WETH:DAI': {contract: '0x8e53031462e930827a8d482e7d80603b1f86e32d', created: 11647784,
+                    token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0x6B175474E89094C44Da98b954EedeAC495271d0F' },
+    'ONEINCH-WETH:USDC': {contract: '0xd162395c21357b126c5afed6921bc8b13e48d690', created: 11647839,
+                    token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' },
+    'ONEINCH-WETH:USDT': {contract: '0x4bf633a09bd593f6fb047db3b4c25ef5b9c5b99e', created: 11647866,
+                    token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
+    'ONEINCH-WETH:WBTC': {contract: '0x859222dd0b249d0ea960f5102dab79b294d6874a', created: 11647897,
+                    token0: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', token1: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599' },
+    'DAI:BSG': {contract: '0x639d4f3F41daA5f4B94d63C2A5f3e18139ba9E54', created: 11660618,
+                    token0: '0x6B175474E89094C44Da98b954EedeAC495271d0F', token1: '0xb34ab2f65c6e4f764ffe740ab83f982021faed6d' },
+    'DAI:BSGS': {contract: '0x633C4861A4E9522353EDa0bb652878B079fb75Fd', created: 11660626,
+                    token0: '0x6B175474E89094C44Da98b954EedeAC495271d0F', token1: '0xa9d232cc381715ae791417b624d7c4509d2c28db' },
+    'MAAPL:UST': {contract: '0x11804D69AcaC6Ae9466798325fA7DE023f63Ab53', created: 11681744,
+                    token0: '0xd36932143f6ebdedd872d5fb0651f4b72fd15a84', token1: '0xa47c8bf37f92abed4a126bda807a7b7498661acd' },
+    'MAMZN:UST': {contract: '0x8334A61012A779169725FcC43ADcff1F581350B7', created: 11681033,
+                    token0: '0x0cae9e4d663793c2a2a0b211c1cf4bbca2b9caa7', token1: '0xa47c8bf37f92abed4a126bda807a7b7498661acd' },
+    'MGOOGL:UST': {contract: '0x07DBe6aA35EF70DaD124f4e2b748fFA6C9E1963a', created: 11681049,
+                    token0: '0x59a921db27dd6d4d974745b7ffc5c33932653442', token1: '0xa47c8bf37f92abed4a126bda807a7b7498661acd' },
+    'MTSLA:UST': {contract: '0xC800982d906671637E23E031e907d2e3487291Bc', created: 11681065,
+                    token0: '0x21ca39943e91d704678f5d00b6616650f066fd63', token1: '0xa47c8bf37f92abed4a126bda807a7b7498661acd' },
   };
 
   async function tvl(timestamp, block) {
@@ -131,6 +168,23 @@
       getUniswapUnderlying('fSUSHI-MIC:USDT',block),
       getUniswapUnderlying('fSUSHI-MIS:USDT',block),  // 40
       getUnderlying('fCRV-OBTC',block),
+      getUnderlying('fONEINCH-WETH:DAI',block),
+      getUnderlying('fONEINCH-WETH:USDC',block),
+      getUnderlying('fONEINCH-WETH:USDT',block),
+      getUnderlying('fONEINCH-WETH:WBTC',block),   // 45
+      getUnderlying('fDAI:BSG',block),
+      getUnderlying('fDAI:BSGS',block),
+      getUnderlying('fBAC',block),
+      getUnderlying('fESD',block),
+      getUnderlying('fDSD',block),                    // 50
+      getUnderlying('fCRV-EURS',block),
+      getUnderlying('fCRV-UST',block),
+      getUnderlying('fMAAPL:UST',block),
+      getUnderlying('fMAMZN:UST',block),
+      getUnderlying('fMGOOGL:UST',block),      // 55
+      getUnderlying('fMTSLA:UST',block),
+      getUnderlying('fCRV-STETH',block),
+      getUnderlying('fCRV-GUSD',block),               // 58
     ];
 
     let results = await Promise.all(promises);
@@ -236,6 +290,57 @@
       '0x8064d9Ae6cDf087b1bcd5BDf3531bD5d8C537a68':                         // asset: OBTC
               BigNumber(results[41])                                        // fSUSHI-MIS:USDT
               .toFixed(0), // 18 decimals
+      '0x8e53031462e930827a8d482e7d80603b1f86e32d':                         // asset: ONEINCH-WETH:DAI
+              BigNumber(results[42])                                     // fONEINCH-WETH:DAI
+              .toFixed(0), // 18 decimals
+      '0xd162395c21357b126c5afed6921bc8b13e48d690':                         // asset: ONEINCH-WETH:USDC
+              BigNumber(results[43])                                     // fONEINCH-WETH:USDC
+              .toFixed(0), // 18 decimals
+      '0x4bf633a09bd593f6fb047db3b4c25ef5b9c5b99e':                         // asset: ONEINCH-WETH:USDT
+              BigNumber(results[44])                                     // fONEINCH-WETH:USDT
+              .toFixed(0), // 18 decimals
+      '0x859222dd0b249d0ea960f5102dab79b294d6874a':                         // asset: ONEINCH-WETH:WBTC
+              BigNumber(results[45])                                     // fONEINCH-WETH:WBTC
+              .toFixed(0), // 18 decimals
+      '0x639d4f3F41daA5f4B94d63C2A5f3e18139ba9E54':                         // asset: DAI:BSG
+              BigNumber(results[46])                                     // fDAI:BSG
+              .toFixed(0), // 18 decimals
+      '0x633C4861A4E9522353EDa0bb652878B079fb75Fd':                         // asset: DAI:BSGS
+              BigNumber(results[47])                                     // fDAI:BSGS
+              .toFixed(0), // 18 decimals
+      '0x371E78676cd8547ef969f89D2ee8fA689C50F86B':                         // asset: FARM-BAC
+              BigNumber(results[48])                                        // fBAC
+              .toFixed(0), // 18 decimals
+      '0x45a9e027DdD8486faD6fca647Bb132AD03303EC2':                         // asset: FARM-ESD
+              BigNumber(results[49])                                        // fESD
+              .toFixed(0), // 18 decimals
+      '0x8Bf3c1c7B1961764Ecb19b4FC4491150ceB1ABB1':                         // asset: FARM-DSD
+              BigNumber(results[50])                                        // fDSD
+              .toFixed(0), // 18 decimals
+      '0x6eb941BD065b8a5bd699C5405A928c1f561e2e5a':                         // asset: CRV-EURS
+              BigNumber(results[51])                                        // fCRV-EURS
+              .toFixed(0), // 18 decimals
+      '0x84A1DfAdd698886A614fD70407936816183C0A02':                         // asset: CRV-UST
+              BigNumber(results[52])                                        // fCRV-UST
+              .toFixed(0), // 18 decimals
+      '0x11804D69AcaC6Ae9466798325fA7DE023f63Ab53':                         // asset: MAAPL:UST
+              BigNumber(results[53])                                     // fMAAPL:UST
+              .toFixed(0), // 18 decimals
+      '0x8334A61012A779169725FcC43ADcff1F581350B7':                         // asset: MAMZN:UST
+              BigNumber(results[54])                                     // fMAMZN:UST
+              .toFixed(0), // 18 decimals
+      '0x07DBe6aA35EF70DaD124f4e2b748fFA6C9E1963a':                         // asset: MGOOGL:UST
+              BigNumber(results[55])                                     // fMGOOGL:UST
+              .toFixed(0), // 18 decimals
+      '0xC800982d906671637E23E031e907d2e3487291Bc':                         // asset: MTSLA:UST
+              BigNumber(results[56])                                     // fMTSLA:UST
+              .toFixed(0), // 18 decimals
+      '0xc27bfE32E0a934a12681C1b35acf0DBA0e7460Ba':                         // asset: CRV-STETH
+              BigNumber(results[57])                                        // fCRV-STETH
+              .toFixed(0), // 18 decimals
+      '0xB8671E33fcFC7FEA2F7a3Ea4a117F065ec4b009E':                         // asset: CRV-GUSD
+              BigNumber(results[58])                                        // fCRV-GUSD
+              .toFixed(0), // 18 decimals
 
       // TODO don't attribute CRV pools 1:1, factor virtualprice
       // TODO don't attribute all of CRV-HUSD to HUSD
@@ -245,9 +350,10 @@
       // TODO don't attribute all of CRV-OBTC to OBTC
       // TODO don't attribute all of CRV-USDN to to CRV-3POOL
     };
-    //let supported = await sdk.api.util.tokenList();
-    //console.table(supported); // print supported assets
-    console.table(balances); // for testing
+    // let supported = await sdk.api.util.tokenList();
+    // console.table(supported); // print supported assets
+    // console.table(balances); // for testing
+    // console.table(results)
     return balances;
   }
 

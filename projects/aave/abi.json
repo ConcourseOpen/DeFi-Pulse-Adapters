@@ -220,5 +220,18 @@
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  "getBPool": {
+    "inputs": [],
+    "name": "bPool",
+    "outputs": [
+      {
+        "internalType": "contract IBPool",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
 }
