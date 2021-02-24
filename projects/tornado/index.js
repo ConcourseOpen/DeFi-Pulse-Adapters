@@ -40,6 +40,6 @@ module.exports = {
   name: "Tornado Cash",
   token: "TORN",
   category: "payments",
-  start: 9116966,
+  start: 1576497600,
   tvl,
 };
