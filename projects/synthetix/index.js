@@ -25,6 +25,7 @@ const snxGraphEndpoint = 'https://api.thegraph.com/subgraphs/name/synthetixio-te
     let totalTopStakersSNX = new BigNumber(0);
 
     const holders = await SNXHolders(block);
+    console.log(holders.length)
 
     const issuanceRatio = (await sdk.api.abi.call({
       block,
@@ -78,7 +79,7 @@ const snxGraphEndpoint = 'https://api.thegraph.com/subgraphs/name/synthetixio-te
         },
         properties: ['collateral', 'id'],
       },
-      max: 10000, // top 10000 SNX holders with collateral. At the time of this commit, there are 51,309 SNX holders. (7/27/2020)
+      max: 6000, // top 10000 SNX holders with collateral. At the time of this commit, there are 51,309 SNX holders. (7/27/2020)
     });
   }
 
