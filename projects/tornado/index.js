@@ -33,13 +33,13 @@ async function tvl(timestamp, block) {
     new BigNumber("0")
   ).toFixed();
 
-  return { [ETH]: balances };
+  return (await sdk.api.util.toSymbols({ [ETH]: balances })).output
 }
 
 module.exports = {
   name: "Tornado Cash",
   token: "TORN",
-  category: "payments",
+  category: "Payments",
   start: 1576497600,
   tvl,
 };
