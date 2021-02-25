@@ -1,7 +1,7 @@
 module.exports = {
   name: 'Loopring',
   token: 'LRC',
-  category: 'DEXes',
+  category: 'dexes',
   start: 1574241665, // 11/20/2019 @ 09:21AM (UTC)
   /* required for indexing token balances */
   tokenHolderMap: [
@@ -23,6 +23,5 @@ module.exports = {
       ],
       holders: '0x944644Ea989Ec64c2Ab9eF341D383cEf586A5777'
     }
-  ],
-  projectId: '1a303516326e48be45a01771ba56fa2a0badd247f0312d5eb7fbe7ffbc90'
+  ]
 };
