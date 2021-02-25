@@ -8,6 +8,7 @@
   const utility = require('./util');
   const term = require( 'terminal-kit' ).terminal;
   const Bottleneck = require('bottleneck');
+  const $indexerHost = process.env.INDEXER_HOST || 'http://127.0.0.1:3006';
 
 /*==================================================
   Helper Methods
@@ -104,6 +105,23 @@
     }
   }
 
+/**
+ *
+ * @param {Number} block
+ * @param {Object} project
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _testAdapter(block, project) {
+  try {
+    return (
+      await axios.get(`${$indexerHost}/test-adapter?block=${block}&project=${project}`)
+    ).data;
+  } catch(error) {
+    throw error.response ? error.response.data : error;
+  }
+}
+
   async function erc20(endpoint, options) {
     return POST(`/erc20/${endpoint}`, options);
   }
@@ -160,7 +178,16 @@
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
       unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: (timestamp) => util('lookupBlock', { timestamp })
+      lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+      /**
+       *
+       * @param {Number} block
+       * @param {Object} project
+       * @returns {Promise<*>}
+       */
+      testAdapter: ((block, project) => {
+        return _testAdapter(block, project);
+      })
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),
