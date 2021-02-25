@@ -1,7 +1,8 @@
 const sdk = require('../../sdk');
+const { default: axios } = require('axios')
 const BigNumber = require("bignumber.js");
 
-async function tvl(timestamp, block) {
+async function tvl(_, block) {
     const etherAddress = '0x0000000000000000000000000000000000000000'
 
     const posEtherPredicate = '0x8484Ef722627bf18ca5Ae6BcF031c23E6e922B30'
@@ -11,64 +12,36 @@ async function tvl(timestamp, block) {
     const maticToken = '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0'
     const stakeManager = '0x5e3Ef299fDDf15eAa0432E6e66473ace8c13D908'
 
+    const PoSMappedTokenList = 'https://api.bridge.matic.network/api/tokens/pos/erc20'
+    const PlasmaMappedTokenList = 'https://api.bridge.matic.network/api/tokens/plasma/erc20'
+
     let balances = {
         [etherAddress]: (await sdk.api.eth.getBalance({ target: posEtherPredicate, block })).output
     }
 
-    const posTokens = [
-        {
-            target: maticToken,
-            params: stakeManager
-        },
-        {
-            target: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x913D8ADf7CE6986a8CbFee5A54725D9Eea4F0729',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x8ffe40a3d0f80c0ce6b203d5cdc1a6a86d9acaea',
-            params: posERC20Predicate
-        },
-        {
-            target: '0xEE06A81a695750E71a662B51066F2c74CF4478a0',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x6b175474e89094c44da98b954eedeac495271d0f',
-            params: posERC20Predicate
-        },
-        {
-            target: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-            params: posERC20Predicate
-        },
-        {
-            target: '0xC4C2614E694cF534D407Ee49F8E44D125E4681c4',
-            params: posERC20Predicate
-        },
-        {
-            target: '0xbca3c97837a39099ec3082df97e28ce91be14472',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-            params: posERC20Predicate
-        },
-        {
-            target: '0x2BF91c18Cd4AE9C2f2858ef9FE518180F7B5096D',
-            params: posERC20Predicate
-        },
-        {
-            target: '0xb6ed7644c69416d67b522e20bc294a9a9b405b31',
-            params: posERC20Predicate
+    // -- Attempt to calculate TVL from mapped POS tokens
+    const posTokens = [{ target: maticToken, params: stakeManager }]
+
+    try {
+
+        // Attempt to read list of all mapped ERC20 token addresses
+        // via POS bridge
+        const resp = await axios.get(PoSMappedTokenList)
+
+        if (resp.status == 200 && resp.data.status == 1) {
+
+            posTokens.push(...resp.data.tokens.map(v => {
+
+                return {
+                    target: v.rootToken,
+                    params: posERC20Predicate
+                }
+
+            }))
+
         }
-    ]
+
+    } catch (e) { }
 
     const lockedPoSBalances = await sdk.api.abi.multiCall({
         calls: posTokens,
@@ -77,21 +50,31 @@ async function tvl(timestamp, block) {
     })
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPoSBalances)
+    // -- Done with POS tokens
 
-    const plasmaTokens = [
-        {
-            target: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
-            params: plasmaDepositManager
-        },
-        {
-            target: '0x6b175474e89094c44da98b954eedeac495271d0f',
-            params: plasmaDepositManager
-        },
-        {
-            target: '0xa45b966996374E9e65ab991C6FE4Bfce3a56DDe8',
-            params: plasmaDepositManager
+    // -- Attempt to calculate TVL from mapped Plasma tokens
+    const plasmaTokens = []
+
+    try {
+
+        // Attempt to read list of all mapped ERC20 token addresses
+        // via Plasma bridge
+        const resp = await axios.get(PlasmaMappedTokenList)
+
+        if (resp.status == 200 && resp.data.status == 1) {
+
+            plasmaTokens.push(...resp.data.tokens.map(v => {
+
+                return {
+                    target: v.rootToken,
+                    params: plasmaDepositManager
+                }
+
+            }))
+
         }
-    ]
+
+    } catch (e) { }
 
     const lockedPlasmaBalances = await sdk.api.abi.multiCall({
         calls: plasmaTokens,
@@ -99,12 +82,16 @@ async function tvl(timestamp, block) {
         block
     })
 
-    if (lockedPlasmaBalances.output[2].success) {
-        balances[etherAddress] =new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[2].output)
-        lockedPlasmaBalances.output[2].output = '0';
+    let wrappedETHIndex = lockedPlasmaBalances.output.findIndex(v => v.success && v.input.target == '0xa45b966996374E9e65ab991C6FE4Bfce3a56DDe8')
+    if (wrappedETHIndex > -1) {
+
+        balances[etherAddress] = new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[wrappedETHIndex].output)
+        lockedPlasmaBalances.output[wrappedETHIndex].output = '0';
+
     }
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
+    // -- Done with Plasma tokens
 
     return (await sdk.api.util.toSymbols(balances)).output;
 }
