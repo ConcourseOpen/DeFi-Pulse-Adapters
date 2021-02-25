@@ -36,6 +36,7 @@
         target: aaveTokenAddress,
         params: aaveStakingContract,
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
   }
@@ -90,7 +91,7 @@
     ).output;
 
     let assets = []
-    
+
     reserves.map((reserve, i) => {
       if (reserve === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return;
 
@@ -101,13 +102,13 @@
         default:
           symbol = symbolsOfReserve[i]
       }
-  
+
       const decimals = decimalsOfReserve[i]
       if (decimals.success) {
         assets.push({ address: reserve, symbol: symbol.output, decimals: decimals.output })
       }
     })
-  
+
     return assets
   }
 
@@ -231,11 +232,12 @@
     }
   }
 
-  async function getV2Data() {
+  async function getV2Data(block) {
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
         abi: abi["getAddressesProvidersList"],
+        block
       })
     ).output;
 
@@ -246,6 +248,7 @@
           params: "0x1",
         })),
         abi: abi["getAddress"],
+        block
       })
     ).output;
 
@@ -255,6 +258,7 @@
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
+        block
       })
     ).output;
 
@@ -268,7 +272,8 @@
         calls: _.map(aTokenAddresses, (aToken) => ({
           target: aToken
         })),
-        abi: abi["getUnderlying"]
+        abi: abi["getUnderlying"],
+        block
       })
     ).output
 
@@ -278,6 +283,7 @@
           target: underlying.output,
         })),
         abi: "erc20:decimals",
+        block
       })
     ).output;
 
@@ -287,6 +293,7 @@
           target: underlying.output,
         })),
         abi: "erc20:symbol",
+        block
       })
     ).output;
 
@@ -301,6 +308,7 @@
           params: aToken,
         })),
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
 
@@ -339,7 +347,7 @@
       uniswapReserves,
       block
     );
-    
+
     // ...add v1 uniswap market TVL
     Object.keys(uniswapMarketTvlBalances).forEach(address => {
       if (balances[address]) {
@@ -352,12 +360,14 @@
     });
 
     // Staking TVL
-    const stakedAaveAmount = await _stakingTvl(block);
-    balances[aaveTokenAddress] = balances[aaveTokenAddress]
-      ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
-      : BigNumber(stakedAaveAmount).toFixed()
+    if (block >= 10926829 ) {
+      const stakedAaveAmount = await _stakingTvl(block);
+      balances[aaveTokenAddress] = balances[aaveTokenAddress]
+        ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
+        : BigNumber(stakedAaveAmount).toFixed()
+    }
 
-    const stakedBalancerAmounts = await _stakingBalancerTvl();
+    const stakedBalancerAmounts = await _stakingBalancerTvl(block);
     Object.keys(stakedBalancerAmounts).forEach(address => {
       balances[address] = balances[address]
         ? BigNumber(balances[address]).plus(stakedBalancerAmounts[address]).toFixed()
@@ -365,16 +375,18 @@
     })
 
     // V2 TVLs
-    const v2Data = await getV2Data();
-    v2Data.map(data => {
-      if (balances[data.underlying]) {
-        balances[data.underlying] = BigNumber(balances[data.underlying])
-          .plus(data.balance)
-          .toFixed();
-      } else {
-        balances[data.underlying] = data.balance;
-      }
-    })
+    if (block >= 11360925) {
+      const v2Data = await getV2Data(block);
+      v2Data.map(data => {
+        if (balances[data.underlying]) {
+          balances[data.underlying] = BigNumber(balances[data.underlying])
+            .plus(data.balance)
+            .toFixed();
+        } else {
+          balances[data.underlying] = data.balance;
+        }
+      })
+    }
 
     return balances;
   }
@@ -385,7 +397,7 @@
 
   async function rates(timestamp, block) {
     await getV1Reserves()
-  
+
     // DeFi Pulse only supports single market atm, so no rates from Uniswap market (e.g. Dai on Uniswap market)
     const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
