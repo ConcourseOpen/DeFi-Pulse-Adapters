@@ -233,104 +233,106 @@
   }
 
   async function getV2Data(block) {
-    const addressesProviders = (
-      await sdk.api.abi.call({
-        target: addressesProviderRegistry,
-        abi: abi["getAddressesProvidersList"],
-        block
+    try {
+      const addressesProviders = (
+        await sdk.api.abi.call({
+          target: addressesProviderRegistry,
+          abi: abi["getAddressesProvidersList"],
+          block
+        })
+      ).output;
+
+      const protocolDataHelpers = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(addressesProviders, (provider) => ({
+            target: provider,
+            params: "0x1",
+          })),
+          abi: abi["getAddress"],
+          block
+        })
+      ).output;
+
+      const aTokenMarketData = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(protocolDataHelpers, (dataHelper) => ({
+            target: dataHelper.output,
+          })),
+          abi: abi["getAllATokens"],
+          block
+        })
+      ).output;
+
+      let aTokenAddresses = []
+      aTokenMarketData.map(aTokensData => {
+        aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
       })
-    ).output;
 
-    const protocolDataHelpers = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(addressesProviders, (provider) => ({
-          target: provider,
-          params: "0x1",
-        })),
-        abi: abi["getAddress"],
-        block
+      const underlyingAddresses = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(aTokenAddresses, (aToken) => ({
+            target: aToken
+          })),
+          abi: abi["getUnderlying"],
+          block
+        })
+      ).output
+
+      const decimalsOfUnderlying = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(underlyingAddresses, (underlying) => ({
+            target: underlying.output,
+          })),
+          abi: "erc20:decimals",
+          block
+        })
+      ).output;
+
+      const symbolsOfUnderlying = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(underlyingAddresses, (underlying) => ({
+            target: underlying.output,
+          })),
+          abi: "erc20:symbol",
+          block
+        })
+      ).output;
+
+      const underlyingAddressesDict = Object.keys(underlyingAddresses).map(
+        (key) => underlyingAddresses[key].output
+      );
+
+      const balanceOfUnderlying = (
+        await sdk.api.abi.multiCall({
+          calls: _.map(aTokenAddresses, (aToken, index) => ({
+            target: underlyingAddressesDict[index],
+            params: aToken,
+          })),
+          abi: "erc20:balanceOf",
+          block
+        })
+      ).output;
+
+      const v2Data = balanceOfUnderlying.map((underlying, index) => {
+        const address = underlying.input.target
+        let symbol;
+        if (address == '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2') {
+          symbol = 'MKR'
+        } else {
+          symbol = symbolsOfUnderlying[index].output
+        }
+
+        return {
+          aToken: aTokenAddresses[index],
+          underlying: address,
+          symbol,
+          decimals: decimalsOfUnderlying[index].output,
+          balance: underlying.output
+        }
       })
-    ).output;
 
-    const aTokenMarketData = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(protocolDataHelpers, (dataHelper) => ({
-          target: dataHelper.output,
-        })),
-        abi: abi["getAllATokens"],
-        block
-      })
-    ).output;
-
-    let aTokenAddresses = []
-    aTokenMarketData.map(aTokensData => {
-      aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
-    })
-
-    const underlyingAddresses = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(aTokenAddresses, (aToken) => ({
-          target: aToken
-        })),
-        abi: abi["getUnderlying"],
-        block
-      })
-    ).output
-
-    const decimalsOfUnderlying = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(underlyingAddresses, (underlying) => ({
-          target: underlying.output,
-        })),
-        abi: "erc20:decimals",
-        block
-      })
-    ).output;
-
-    const symbolsOfUnderlying = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(underlyingAddresses, (underlying) => ({
-          target: underlying.output,
-        })),
-        abi: "erc20:symbol",
-        block
-      })
-    ).output;
-
-    const underlyingAddressesDict = Object.keys(underlyingAddresses).map(
-      (key) => underlyingAddresses[key].output
-    );
-
-    const balanceOfUnderlying = (
-      await sdk.api.abi.multiCall({
-        calls: _.map(aTokenAddresses, (aToken, index) => ({
-          target: underlyingAddressesDict[index],
-          params: aToken,
-        })),
-        abi: "erc20:balanceOf",
-        block
-      })
-    ).output;
-
-    const v2Data = balanceOfUnderlying.map((underlying, index) => {
-      const address = underlying.input.target
-      let symbol;
-      if (address == '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2') {
-        symbol = 'MKR'
-      } else {
-        symbol = symbolsOfUnderlying[index].output
-      }
-
-      return {
-        aToken: aTokenAddresses[index],
-        underlying: address,
-        symbol,
-        decimals: decimalsOfUnderlying[index].output,
-        balance: underlying.output
-      }
-    })
-
-    return v2Data
+      return v2Data
+    }catch (e) {console.log(e.message)}
   }
 
 /*==================================================
@@ -377,15 +379,17 @@
     // V2 TVLs
     if (block >= 11360925) {
       const v2Data = await getV2Data(block);
-      v2Data.map(data => {
-        if (balances[data.underlying]) {
-          balances[data.underlying] = BigNumber(balances[data.underlying])
-            .plus(data.balance)
-            .toFixed();
-        } else {
-          balances[data.underlying] = data.balance;
-        }
-      })
+      if(v2Data) {
+        v2Data.map(data => {
+          if (balances[data.underlying]) {
+            balances[data.underlying] = BigNumber(balances[data.underlying])
+              .plus(data.balance)
+              .toFixed();
+          } else {
+            balances[data.underlying] = data.balance;
+          }
+        })
+      }
     }
 
     return balances;
