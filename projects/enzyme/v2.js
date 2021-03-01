@@ -218,12 +218,14 @@ module.exports = async function tvl(timestamp, block) {
             accumulator[pair.token0Address] || '0'
           );
 
-          const token0Amount = pair.liquidity.times(reserve0).div(pair.totalSupply);
+          if (pair.liquidity) {
+            const token0Amount = pair.liquidity.times(reserve0).div(pair.totalSupply);
 
-          accumulator[pair.token0Address] = existingBalance
-            .plus(token0Amount)
-            .integerValue()
-            .toFixed()
+            accumulator[pair.token0Address] = existingBalance
+              .plus(token0Amount)
+              .integerValue()
+              .toFixed()
+          }
         }
       }
 
@@ -236,12 +238,14 @@ module.exports = async function tvl(timestamp, block) {
             accumulator[pair.token1Address] || '0'
           );
 
-          const token1Amount = pair.liquidity.times(reserve1).div(pair.totalSupply);
+          if (pair.liquidity) {
+            const token1Amount = pair.liquidity.times(reserve1).div(pair.totalSupply);
 
-          accumulator[pair.token1Address] = existingBalance
-            .plus(token1Amount)
-            .integerValue()
-            .toFixed()
+            accumulator[pair.token1Address] = existingBalance
+              .plus(token1Amount)
+              .integerValue()
+              .toFixed()
+          }
         }
       }
     }
