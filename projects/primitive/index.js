@@ -12,7 +12,6 @@ async function tvl(timestamp, block) {
   const [v1] = await Promise.all([v1TVL(timestamp, block)])
 
   const tokenAddresses = Object.keys(v1)
-  console.log(tokenAddresses)
   const balances = Array.from(tokenAddresses).reduce(
     (accumulator, tokenAddress) => {
       const v1Balance = new BigNumber(v1[tokenAddress] || '0')
