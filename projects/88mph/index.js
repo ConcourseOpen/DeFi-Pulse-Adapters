@@ -24,7 +24,9 @@ const dInterestAddresses = [
   '0x6712BAab01FA2dc7bE6635746Ec2Da6F8Bd73e71', // Aave sUSD
   '0xDC86AC6140026267E0873B27c8629eFE748E7146', // Aave DAI
   '0xD4837145c7e13D580904e8431cfD481f9794fC41', // Harvest CRV:oBTC
-  '0x904F81EFF3c35877865810CCA9a63f2D9cB7D4DD' // yearn yaLINK
+  '0x904F81EFF3c35877865810CCA9a63f2D9cB7D4DD', // yearn yaLINK
+  '0x303CB7Ede0c3AD99CE017CDC3aBAcD65164Ff486', // Harvest CRV:STETH
+  '0x22E6b9A65163CE1225D1F65EF7942a979d093039' // Harvest CRV:RENWBTC
 ]
 const wrappedTokenToSubsitute = {
   '0x2fE94ea3d5d4a175184081439753DE15AeF9d614': { // CRV:oBTC
@@ -37,6 +39,14 @@ const wrappedTokenToSubsitute = {
   },
   '0x5B5CFE992AdAC0C9D48E05854B2d91C73a003858': { // CRV:HUSD
     address: '0xdf574c24545e5ffecb9a659c229253d4111d87e1', // HUSD
+    decimals: 8
+  },
+  '0x06325440D014e39736583c165C2963BA99fAf14E': { // CRV:STETH
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    decimals: 18
+  },
+  '0x49849C98ae39Fff122806C06791Fa73784FB3675': { // CRV:RENWBTC
+    address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
     decimals: 8
   }
 }
@@ -178,7 +188,7 @@ module.exports = {
   category: 'lending',
   start: 1606109629, // Monday, November 23, 2020 5:33:49 AM GMT
   tvl,
-  rates,
+  // rates,
   term: '7 days-1 year',
   variability: 'None',
   contributesTo: ['Aave', 'Compound', 'yearn.finance', 'Harvest Finance']
