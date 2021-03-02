@@ -315,6 +315,7 @@
         abi: "erc20:decimals",
         block
       })
+    ).output
 
     symbolsOfReserves.map((r) => {
       const address = r.input.target;
@@ -517,7 +518,7 @@
         supply: { ...ratesV1.supply, ...ratesV2.supply }, 
       };
     } else {
-      return ratesV2
+      return ratesV1
     }
   }
 
