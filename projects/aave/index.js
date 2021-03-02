@@ -39,16 +39,18 @@
         target: aaveTokenAddress,
         params: aaveStakingContract,
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
   }
 
-  async function _stakingBalancerTvl() {
+  async function _stakingBalancerTvl(block) {
     const aaveBal = (
       await sdk.api.abi.call({
         target: aaveTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
 
@@ -57,6 +59,7 @@
         target: wethTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
 
@@ -66,11 +69,12 @@
     }
   }
 
-  async function _getV1Assets(lendingPoolCore) {
+  async function _getV1Assets(lendingPoolCore, block) {
     const reserves = (
       await sdk.api.abi.call({
         target: lendingPoolCore,
         abi: abi["getReserves"],
+        block
       })
     ).output;
 
@@ -223,24 +227,25 @@
     return ratesData;
   }
 
-  async function getV1Reserves() {
+  async function getV1Reserves(block) {
     if (aaveReserves.length === 0) {
-      aaveReserves = await _getV1Assets(aaveLendingPoolCore);
+      aaveReserves = await _getV1Assets(aaveLendingPoolCore, block);
     }
 
     if (uniswapReserves.length === 0) {
       // Does not take into account Uniswap LP assets (not yet supported on DeFiPulse)
-      uniswapReserves = await _getV1Assets(uniswapLendingPoolCore);
+      uniswapReserves = await _getV1Assets(uniswapLendingPoolCore, block);
     }
   }
 
-  async function getV2Reserves() {
+  async function getV2Reserves(block) {
     if (v2Atokens.length !== 0 && v2ReserveTokens.length !== 0) return
   
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
         abi: abi["getAddressesProvidersList"],
+        block
       })
     ).output;
 
@@ -251,6 +256,7 @@
           params: "0x1",
         })),
         abi: abi["getAddress"],
+        block
       })
     ).output;
 
@@ -260,6 +266,7 @@
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
+        block
       })
     ).output;
 
@@ -277,6 +284,7 @@
           target: aToken,
         })),
         abi: abi["getUnderlying"],
+        block
       })
     ).output;
 
@@ -295,6 +303,7 @@
           target: underlying,
         })),
         abi: "erc20:symbol",
+        block
       })
     ).output;
 
@@ -304,6 +313,7 @@
           target: underlying,
         })),
         abi: "erc20:decimals",
+        block
       })
     ).output;
 
@@ -330,7 +340,7 @@
     });
   }
 
-  async function getV2Tvl() {
+  async function getV2Tvl(block) {
     const underlyingAddressesDict = Object.keys(v2ReserveTokens).map(
       (key) => v2ReserveTokens[key]
     );
@@ -342,6 +352,7 @@
           params: aToken,
         })),
         abi: "erc20:balanceOf",
+        block
       })
     ).output;
 
@@ -359,11 +370,12 @@
     return v2Data
   }
 
-  async function getV2Rates() {
+  async function getV2Rates(block) {
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
         abi: abi["getAddressesProvidersList"],
+        block
       })
     ).output;
 
@@ -374,6 +386,7 @@
           params: "0x1",
         })),
         abi: abi["getAddress"],
+        block
       })
     ).output;
 
@@ -384,6 +397,7 @@
           params: reserve,
         })),
         abi: abi["getReserveDataV2"],
+        block
       })
     ).output
 
@@ -425,7 +439,7 @@
 
   async function tvl(timestamp, block) {
     // V1 TVLs
-    await getV1Reserves()
+    await getV1Reserves(block)
     let balances = await _multiMarketV1Tvl(aaveLendingPoolCore, aaveReserves, block);
 
     const uniswapMarketTvlBalances = await _multiMarketV1Tvl(
@@ -433,7 +447,7 @@
       uniswapReserves,
       block
     );
-    
+
     // ...add v1 uniswap market TVL
     Object.keys(uniswapMarketTvlBalances).forEach(address => {
       if (balances[address]) {
@@ -446,12 +460,14 @@
     });
 
     // Staking TVL
-    const stakedAaveAmount = await _stakingTvl(block);
-    balances[aaveTokenAddress] = balances[aaveTokenAddress]
-      ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
-      : BigNumber(stakedAaveAmount).toFixed()
+    if (block >= 10926829) {
+      const stakedAaveAmount = await _stakingTvl(block);
+      balances[aaveTokenAddress] = balances[aaveTokenAddress]
+        ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
+        : BigNumber(stakedAaveAmount).toFixed()
+    }
 
-    const stakedBalancerAmounts = await _stakingBalancerTvl();
+    const stakedBalancerAmounts = await _stakingBalancerTvl(block);
     Object.keys(stakedBalancerAmounts).forEach(address => {
       balances[address] = balances[address]
         ? BigNumber(balances[address]).plus(stakedBalancerAmounts[address]).toFixed()
@@ -459,17 +475,19 @@
     })
 
     // V2 TVLs
-    await getV2Reserves()
-    const v2Tvl = await getV2Tvl();
-    v2Tvl.map(data => {
-      if (balances[data.underlying]) {
-        balances[data.underlying] = BigNumber(balances[data.underlying])
-          .plus(data.balance)
-          .toFixed();
-      } else {
-        balances[data.underlying] = data.balance;
-      }
-    })
+    if (block >= 11360925) {
+      await getV2Reserves(block)
+      const v2Tvl = await getV2Tvl(block);
+      v2Tvl.map(data => {
+        if (balances[data.underlying]) {
+          balances[data.underlying] = BigNumber(balances[data.underlying])
+            .plus(data.balance)
+            .toFixed();
+        } else {
+          balances[data.underlying] = data.balance;
+        }
+      })
+    }
 
     return balances;
   }
@@ -479,8 +497,8 @@
   ==================================================*/
 
   async function rates(timestamp, block) {
-    await getV1Reserves()
-  
+    await getV1Reserves(block)
+
     const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
       address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
@@ -490,15 +508,19 @@
 
     const ratesV1 = await _multiMarketV1Rates(aaveLendingPool, aaveReserves, block)
 
-    await getV2Reserves()
-    const ratesV2 = await getV2Rates()
+    await getV2Reserves(block)
+    const ratesV2 = await getV2Rates(block)
 
-    return { 
-      lend: { ...ratesV1.lend, ...ratesV2.lend }, 
-      borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
-      borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
-      supply: { ...ratesV1.supply, ...ratesV2.supply }, 
-    };
+    if (Object.keys(ratesV2.lend).length > 0) {
+      return { 
+        lend: { ...ratesV1.lend, ...ratesV2.lend }, 
+        borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
+        borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
+        supply: { ...ratesV1.supply, ...ratesV2.supply }, 
+      };
+    } else {
+      return ratesV2
+    }
   }
 
 /*==================================================
