@@ -25,7 +25,7 @@
       it('has a valid name', () => {
         chai.assert.isString(project.name);
       });
-      it('categoy matches one of the defined options', () => {
+      it('category matches one of the defined options', () => {
         chai.expect(project.category).to.be.oneOf(categories);
       });
       it('has a valid start time', () => {

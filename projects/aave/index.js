@@ -97,7 +97,7 @@
     ).output;
 
     let assets = []
-    
+
     reserves.map((reserve, i) => {
       if (reserve === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return;
 
@@ -108,13 +108,13 @@
         default:
           symbol = symbolsOfReserve[i]
       }
-  
+
       const decimals = decimalsOfReserve[i]
       if (decimals.success) {
         assets.push({ address: reserve, symbol: symbol.output, decimals: decimals.output })
       }
     })
-  
+
     return assets
   }
 
@@ -315,7 +315,6 @@
         abi: "erc20:decimals",
         block
       })
-    ).output;
 
     symbolsOfReserves.map((r) => {
       const address = r.input.target;
@@ -498,7 +497,6 @@
 
   async function rates(timestamp, block) {
     await getV1Reserves(block)
-
     const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
       address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",

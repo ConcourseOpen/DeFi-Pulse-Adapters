@@ -188,7 +188,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Melon",
   token: "MLN",
-  category: "assets",
+  category: "Assets",
   start: 1551398400, // 03/01/2019 @ 12:00am (UTC)
   tvl
 };
