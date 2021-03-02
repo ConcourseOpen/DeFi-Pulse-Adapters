@@ -519,7 +519,7 @@
         supply: { ...ratesV1.supply, ...ratesV2.supply }, 
       };
     } else {
-      return ratesV2
+      return ratesV1
     }
   }
 
