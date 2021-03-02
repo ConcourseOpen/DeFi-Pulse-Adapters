@@ -26,21 +26,19 @@ function collapseDecimals(value) {
   ==================================================*/
 
 async function tvl(timestamp, block) {
-  let balance = collapseDecimals(
-    (
-      await sdk.api.abi.call({
-        target: metaVault,
-        abi: abi["balance"],
-        block,
-      })
-    ).output
-  );
+  let balance = (
+    await sdk.api.abi.call({
+      target: metaVault,
+      abi: abi["balance"],
+      block,
+    })
+  ).output;
 
   let balances = {
     [threeCrv]: balance, // 3Crv
   };
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -50,7 +48,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "yAxis",
   token: "MVLT",
-  category: "assets",
+  category: "Assets",
   start: 1604167200, // 10/31/2020 @ 06:00:00pm (UTC)
   tvl,
 };
