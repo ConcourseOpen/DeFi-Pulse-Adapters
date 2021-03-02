@@ -41,7 +41,7 @@ async function getV1(mAsset, block) {
     lockedTokens[b[0]] = b[5]
   });
 
-  return (await sdk.api.util.toSymbols(lockedTokens)).output;
+  return lockedTokens
 }
 
 async function getV2(mAsset, block) {
@@ -69,7 +69,7 @@ async function tvl(timestamp, block) {
 
   const reduced = tokens.reduce((p, c) => ({ ...p, ...c }), {})
 
-  return reduced;
+  return (await sdk.api.util.toSymbols(reduced)).output;
 }
 
 /*==================================================
