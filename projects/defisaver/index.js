@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const sdk = require('../../sdk');
+const utils = require('../../sdk/util');
 
 const { getContractAddress, getContractMethod, getContractBlock  } = require('./utils');
 
@@ -27,16 +28,32 @@ async function tvl(timestamp, block) {
     abi: getContractMethod('getSubscribers', 'AaveSubscriptions'),
   })).output;
 
-  const subscribers = new Set();
+  const makerSubscribers = new Set();
+  const compoundSubscribers = new Set();
+  const aaveSubscribers = new Set();
 
-  for (const sub of makerSubs) { subscribers.add(sub[4]); }
-  for (const sub of compoundSubs) { subscribers.add(sub[0]); }
-  for (const sub of aaveSubs) { subscribers.add(sub[0]); }
+  for (const sub of makerSubs) { makerSubscribers.add(sub[4]); }
+  for (const sub of compoundSubs) { compoundSubscribers.add(sub[0]); }
+  for (const sub of aaveSubs) { aaveSubscribers.add(sub[0]); }
 
-  return (await sdk.api.cdp.getAssetsLocked({
+  let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
     block,
-    targets: [...subscribers]
+    targets: [...makerSubscribers]
   })).output;
+
+  let compoundBalances = (await sdk.api.cdp.compound.getAssetsLocked({
+    block,
+    targets: [...compoundSubscribers]
+  })).output;
+
+  let aaveBalances = (await sdk.api.cdp.aave.getAssetsLocked({
+    block,
+    targets: [...aaveSubscribers]
+  })).output;
+
+  let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
+
+  return balances;
 }
 
 module.exports = {
