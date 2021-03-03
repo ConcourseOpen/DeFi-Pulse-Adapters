@@ -53,7 +53,7 @@ async function tvl(timestamp, block) {
 
   let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
