@@ -65,7 +65,7 @@ async function tvl(timestamp, block) {
 
   let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
     block,
-    targets: [cdpInfo]
+    targets: cdpInfo,
   })).output;
 
   let compoundBalances = (await sdk.api.cdp.compound.getAssetsLocked({
