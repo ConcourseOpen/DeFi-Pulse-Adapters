@@ -80,7 +80,7 @@
 
   module.exports = {
     name: 'xDai',
-    token: null,
+    token: 'STAKE',
     category: 'Payments',
     start: 1539028166,
     tvl
