@@ -93,7 +93,7 @@ async function tvl(_, block) {
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
     // -- Done with Plasma tokens
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
 }
 
 module.exports = {
