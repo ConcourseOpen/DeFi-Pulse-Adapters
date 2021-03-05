@@ -97,8 +97,8 @@ async function tvl(_, block) {
 }
 
 module.exports = {
-    name: 'Matic Network',
-    website: 'https://matic.network',
+    name: 'Polygon',
+    website: 'https://polygon.technology/',
     token: 'MATIC',
     category: 'payments',
     start: 1590824836, // Sat May 30 13:17:16 2020
