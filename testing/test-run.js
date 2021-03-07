@@ -12,6 +12,7 @@
 
   const Run = require('../sdk/run');
   const CSV = require('./csv');
+const checkUnlistedTokens = require("./checkUnListedTokens");
 
 /*==================================================
   Settings
@@ -62,8 +63,9 @@
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
           this.test.value = projectRun;
           cachedOutput.push(projectRun); // Add output to cache
-          console.log("projectRun: %o", projectRun)
+          //console.log("projectRun: %o", projectRun)
           chai.expect(projectRun.output).to.be.an('array');
+          await checkUnlistedTokens(projectRun.output, project.slug)
 
           _.each(projectRun.output, ({ symbol, address, balance }) => {
             balance = BigNumber(balance).toNumber();
@@ -71,7 +73,7 @@
             chai.expect(balance).to.be.finite;
             chai.expect(balance).to.be.at.least(0);
             chai.expect(symbol).to.be.a('string');
-            chai.expect(symbol.length).to.be.at.most(symbolLengthLimit);
+            //chai.expect(symbol.length).to.be.at.most(symbolLengthLimit);
           });
 
           chai.expect(projectRun.ethCallCount).to.be.at.most(ethCallCountLimit);
