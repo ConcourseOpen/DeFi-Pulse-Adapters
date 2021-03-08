@@ -97,3 +97,47 @@ module.exports = {
 ```
 
 In case you need more flexibility pass in a function instead to return tokens or holders addresses.
+
+#### ```Balancer``` adapter `tokenHolderMap` configuration
+```js
+module.exports = {
+  ...
+  ...
+  /* required for indexing token balances */
+    tokenHolderMap: [
+      {
+        holders: {
+          pullFromLogs: true,
+          logConfig: {
+            target: '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd',
+            topic: 'LOG_NEW_POOL(address,address)',
+            keys: ['topics'],
+            fromBlock: 9562480
+          },
+          transform: null,
+        },
+        tokens: {
+          pullFromPools: true,
+          abi: {
+            constant: true,
+            inputs: [],
+            name: 'getCurrentTokens',
+            outputs: [
+              {
+                internalType: 'address[]',
+                name: 'tokens',
+                type: 'address[]'
+              }
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function'
+          }
+        }
+      }
+    ]
+}
+```
+
+In case your protocol follows factory pattern or is based on AMM model pass in log configs to pull holder addresses from smart contract events.
+By default we use ```(poolLog) => `0x${poolLog[2].slice(26)}`; ``` this code snippet as log ```transform``` function. Pass a different custom function if you need.
