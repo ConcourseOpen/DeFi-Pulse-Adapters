@@ -18,7 +18,7 @@ v2
 
 Feel free to add additional files and folders within your project adapter directly as needed to help organize your code, but most json configurable adapters should be very simple. Please keep all code within your token adapter directory - PR's with modifications or additions outside the scope of your own project usually won't be allowed, and in cases where they are needed will need to be discussed with the DeFi Pulse team in advance.
 
-## Project Basic Information
+## Project Metadata
 ```js
 module.exports = {
   name: 'Loopring',         // token project name
@@ -28,3 +28,11 @@ module.exports = {
   ...
 }
 ```
+
+## The ```tokenHolderMap``` configurations
+
+The main tokenHolderMap part of the adapter is where you add custom configurations for your adapter. On DeFi Pulse, This tokenHolderMap configuration will be used every hour, with a unix timestamp and block number to automatically fetch token balances locked in your protocol. Please note that project adapters need to be able to run successfully for any point back to a project starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+
+Each item in the tokenHolderMap consists of 2 main parts:
+#### ```tokens``` property
+The tokens property of tokenHolderMap can be a single token, a list of tokens, an executable function that will return a single or a list of tokens, or a json configuration that can be used to pull token information from pool smart contracts.
