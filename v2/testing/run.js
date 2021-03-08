@@ -32,16 +32,16 @@ const _run = async (projectAdapter, timeUnit = 'day', timeOffset = 0) => {
       if (sdk.api.util.isCallable(thm.tokens)) {
         thm.tokens = await thm.tokens();
       }
-      if (_isCallable(thm.holders)) {
+      if (sdk.api.util.isCallable(thm.holders)) {
         thm.holders = await thm.holders();
       }
     }));
 
     let point = await sdk.api.util.lookupBlock(timestamp);
-    let output = await sdk.api.util.testAdapter(point.block, timestamp, projectAdapter);
+    let tvl = await sdk.api.util.testAdapter(point.block, timestamp, projectAdapter);
     return {
       ...point,
-      output
+      tvl
     };
   } catch (error) {
     console.error(error);
@@ -67,21 +67,30 @@ module.exports = async (projectAdapter, timeUnit, timeOffset = 0) => {
     this.timeout(balanceCallTimeLimit);
     const projectRun = await _run(projectAdapter, timeUnit, timeOffset);
     testResult = projectRun;
-    chai.expect(Object.keys(projectRun.output).length).to.be.at.least(maxTokens);
-    chai.expect(projectRun.output).to.be.an('object');
+    const tvl = projectRun.tvl;
+    chai.expect(Object.keys(tvl).length).to.be.at.least(maxTokens);
+    chai.expect(tvl).to.be.an('array');
 
-    _.each(Object.keys(projectRun.output), (contract) => {
-      let balance = BigNumber(projectRun.output[contract]).toNumber();
+    _.each(tvl, (token) => {
+      const balance = BigNumber(token.balance).toNumber();
+      const price = BigNumber(token.price).toNumber();
+
       chai.expect(balance).to.be.a('number');
       chai.expect(balance).to.be.finite;
       chai.expect(balance).to.be.at.least(0);
-      chai.expect(contract).to.be.a('string');
+
+      chai.expect(price).to.be.a('number');
+      chai.expect(price).to.be.finite;
+      chai.expect(price).to.be.at.least(0);
+
+      chai.expect(token.contract).to.be.a('string');
+      chai.expect(token.symbol).to.be.a('string');
     });
   });
 
   afterEach('save project adapter output', () => {
     const time = moment.unix(testResult.timestamp).utcOffset(0).format();
-    const path = `projects/output/${projectAdapter.name}/tvl`;
+    const path = `v2/output/${projectAdapter.name}/tvl`;
     const name = `${time}.json`;
 
     shell.mkdir('-p', path);

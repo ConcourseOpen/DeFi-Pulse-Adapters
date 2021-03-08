@@ -149,12 +149,14 @@ By default we use ```(poolLog) => `0x${poolLog[2].slice(26)}`; ``` this code sni
 While writing your project adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
 ```
-npm run validate-metadata -- --project=loopring 
+npm run validate-metadata -- --project=<projectName>
+npm run test-tvl -- --project=<projectName>
 ```
 
-run `validate-metadata` command to check if you have project `Metadata` setup correctly.
+Run `validate-metadata` command to check if you have project `Metadata` setup correctly.
 
-output:
+sample command: `npm run validate-metadata -- --project=loopring`
+sample output:
 ```
 Checking Loopring project adapter metadata
     ✓ has a valid name
@@ -168,3 +170,93 @@ Checking Loopring project adapter metadata
 
   6 passing (11ms)
 ```
+
+After test command `validate-metadata` passes successfully run `test-tvl`. This command runs the adapter through a series of points spread over it's lifespan.
+
+sample command: `npm run test-tvl -- --project=loopring`
+sample output:
+```
+Loopring project adapter running & output format
+    runs for a variety of points at different times
+      ✓ returns valid tvl data at hour 0 (4532ms)
+      ✓ returns valid tvl data at hour -12 (2647ms)
+      ✓ returns valid tvl data at hour -36 (2226ms)
+      ✓ returns valid tvl data at hour -72 (2335ms)
+      ✓ returns valid tvl data at 2021-02-26T00:00:00Z (2350ms)
+      ✓ returns valid tvl data at 2021-01-10T00:00:00Z (3563ms)
+      ✓ returns valid tvl data at 2020-11-25T00:00:00Z (2582ms)
+      ✓ returns valid tvl data at 2020-10-09T00:00:00Z (2243ms)
+      ✓ returns valid tvl data at 2020-08-24T00:00:00Z (3284ms)
+      ✓ returns valid tvl data at 2020-07-09T00:00:00Z (2628ms)
+      ✓ returns valid tvl data at 2020-05-23T00:00:00Z (2918ms)
+      ✓ returns valid tvl data at 2020-04-07T00:00:00Z (2514ms)
+      ✓ returns valid tvl data at 2020-02-20T00:00:00Z (2396ms)
+      ✓ returns valid tvl data at 2020-01-05T00:00:00Z (2631ms)
+      ✓ returns valid tvl data at 2019-11-21T00:00:00Z (2265ms)
+
+
+  15 passing (41s)
+```
+
+Output of tests are stored in json files under `v2/output/**project_name**/tvl` and are named based on the time they were run to fetch data for.
+
+In the above example, the output is saved to `v2/output/Loopring/tvl/2021-03-08T13:00:00Z.json` since the project is `Loopring`, and the data the test script retrieved is tvl. It's output is shown below:
+```
+{
+  "timestamp": 1615208400,
+  "block": 11998012,
+  "tvl": [
+    {
+      "contract": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+      "symbol": "LRC",
+      "balance": 153583047.41121337,
+      "price": 0.558486958432916
+    },
+    {
+      "contract": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "symbol": "USDT",
+      "balance": 6885571.564996,
+      "price": 1.0033342002521268
+    },
+    {
+      "contract": "0x6b175474e89094c44da98b954eedeac495271d0f",
+      "symbol": "DAI",
+      "balance": 1798873.4626126941,
+      "price": 1.0036468119444584
+    },
+    {
+      "contract": "0x514910771af9ca656af840dff83e8264ecf986ca",
+      "symbol": "LINK",
+      "balance": 8898.471084705028,
+      "price": 29.133499595872404
+    },
+    {
+      "contract": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "symbol": "USDC",
+      "balance": 2385051.730462,
+      "price": 1.0014661516590568
+    },
+    {
+      "contract": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      "symbol": "WBTC",
+      "balance": 139.03476935,
+      "price": 50165.125085588836
+    },
+    {
+      "contract": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+      "symbol": "MKR",
+      "balance": 68.35973257054415,
+      "price": 2100.3439239324593
+    },
+    {
+      "contract": "0x0000000000000000000000000000000000000000",
+      "symbol": "ETH",
+      "balance": 48299.2822487816,
+      "price": 1713.3933935097111
+    }
+  ]
+}
+```
+
+
+This test suite will only log verbose results and adapter output in the event of a problem.
