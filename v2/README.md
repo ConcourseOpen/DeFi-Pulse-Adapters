@@ -18,3 +18,13 @@ v2
 
 Feel free to add additional files and folders within your project adapter directly as needed to help organize your code, but most json configurable adapters should be very simple. Please keep all code within your token adapter directory - PR's with modifications or additions outside the scope of your own project usually won't be allowed, and in cases where they are needed will need to be discussed with the DeFi Pulse team in advance.
 
+## Project Basic Information
+```js
+module.exports = {
+  name: 'Loopring',         // token project name
+  symbol: 'LRC',            // protocol token symbol (if exists any)
+  category: 'DEXes',        // allowed values can be 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
+  ...
+}
+```
