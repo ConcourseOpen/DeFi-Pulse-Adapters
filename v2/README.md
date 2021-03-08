@@ -260,3 +260,5 @@ In the above example, the output is saved to `v2/output/Loopring/tvl/2021-03-08T
 
 
 This test suite will only log verbose results and adapter output in the event of a problem.
+
+Once both tests pass successfully your project should appear on [Defipulse Staging](https://test.defipulse.com/) leaderboard. Once you see your project on the leaderboard click on the project to review project tvl chart.
