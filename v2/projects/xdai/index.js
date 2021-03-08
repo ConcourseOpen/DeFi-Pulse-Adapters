@@ -1,6 +1,7 @@
 const sdk = require('../../../sdk/index');
 
 module.exports = {
+  /* basic project info */
   name: 'xDai',
   token: null,
   category: 'Payments',
