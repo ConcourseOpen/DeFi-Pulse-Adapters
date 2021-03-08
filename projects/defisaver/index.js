@@ -3,7 +3,7 @@ require('dotenv').config();
 const sdk = require('../../sdk');
 const utils = require('../../sdk/util');
 
-const { getContractAddress, getContractMethod, getContractBlock  } = require('./utils');
+const { bytesToString, getContractAddress, getContractMethod, getContractBlock } = require('./utils');
 
 async function tvl(timestamp, block) {
   let makerSubs = [];
@@ -15,6 +15,35 @@ async function tvl(timestamp, block) {
     target: getContractAddress('McdSubscriptions'),
     abi: getContractMethod('getSubscribers', 'McdSubscriptions'),
   })).output;
+
+  let calls = [];
+  let cdpsDetailed = [];
+  let cdpInfo = [];
+
+  for (const cdp of makerSubs) {
+    calls = [
+      ...calls,
+      { target: getContractAddress('MCDSaverProxy'), params: [cdp[5]] },
+    ];
+  }
+
+  if (block >= getContractBlock('McdSubscriptions')) {
+    cdpsDetailed = (await sdk.api.abi.multiCall({
+      block,
+      calls,
+      abi: getContractMethod('getCdpDetailedInfo', 'MCDSaverProxy'),
+    })).output;
+
+    makerSubs.forEach((cdp, i) => {
+      cdpInfo = [
+        ...cdpInfo,
+        {
+          id: cdp[5],
+          ilk: bytesToString(cdpsDetailed.find(({ input }) => input.params[0] === cdp[5]).output[3]),
+        },
+      ];
+    });
+  }
 
   if (block >= getContractBlock('CompoundSubscriptions')) compoundSubs = (await sdk.api.abi.call({
     block,
@@ -28,17 +57,15 @@ async function tvl(timestamp, block) {
     abi: getContractMethod('getSubscribers', 'AaveSubscriptions'),
   })).output;
 
-  const makerSubscribers = new Set();
   const compoundSubscribers = new Set();
   const aaveSubscribers = new Set();
 
-  for (const sub of makerSubs) { makerSubscribers.add(sub[4]); }
   for (const sub of compoundSubs) { compoundSubscribers.add(sub[0]); }
   for (const sub of aaveSubs) { aaveSubscribers.add(sub[0]); }
 
   let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
     block,
-    targets: [...makerSubscribers]
+    targets: cdpInfo,
   })).output;
 
   let compoundBalances = (await sdk.api.cdp.compound.getAssetsLocked({
