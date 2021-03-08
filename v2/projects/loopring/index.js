@@ -1,4 +1,5 @@
 module.exports = {
+  /* Project Metadata */
   name: 'Loopring',
   token: 'LRC',
   category: 'DEXes',

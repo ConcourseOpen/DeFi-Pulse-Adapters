@@ -13,7 +13,7 @@ const categories = [
 ];
 
 _.each(args.projects, (projectAdapter) => {
-  describe(`${projectAdapter.name} project adapter export format`, () => {
+  describe(`Checking ${projectAdapter.name} project adapter metadata`, () => {
     it('has a valid name', () => {
       chai.assert.isString(projectAdapter.name);
     });

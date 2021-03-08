@@ -21,6 +21,7 @@ Feel free to add additional files and folders within your project adapter direct
 ## Project Metadata
 ```js
 module.exports = {
+  /* Metadata */
   name: 'Loopring',         // token project name
   symbol: 'LRC',            // protocol token symbol (if exists any)
   category: 'DEXes',        // allowed values can be 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
@@ -96,7 +97,7 @@ module.exports = {
 }
 ```
 
-In case you need more flexibility pass in a function instead to return tokens or holders addresses.
+In case you need more flexibility add a function instead that will return tokens or holders addresses.
 
 #### ```Balancer``` adapter `tokenHolderMap` configuration
 ```js
@@ -139,5 +140,31 @@ module.exports = {
 }
 ```
 
-In case your protocol follows factory pattern or is based on AMM model pass in log configs to pull holder addresses from smart contract events.
+In case your protocol follows factory pattern or is based on AMM model add log configs to pull holder addresses from smart contract events.
 By default we use ```(poolLog) => `0x${poolLog[2].slice(26)}`; ``` this code snippet as log ```transform``` function. Pass a different custom function if you need.
+
+
+## Testing
+
+While writing your project adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
+
+```
+npm run validate-metadata -- --project=loopring 
+```
+
+run `validate-metadata` command to check if you have project `Metadata` setup correctly.
+
+output:
+```
+Checking Loopring project adapter metadata
+    ✓ has a valid name
+    ✓ has a valid start time
+    ✓ category matches one of the defined categories
+    has valid tokenHolderMap configurations
+      ✓ tokenHolderMap is an array
+      ✓ tokenHolderMap has valid token configurations
+      ✓ tokenHolderMap has valid holder/vault/pool configurations
+
+
+  6 passing (11ms)
+```

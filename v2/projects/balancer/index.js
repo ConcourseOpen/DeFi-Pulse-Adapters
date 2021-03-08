@@ -1,4 +1,5 @@
 module.exports = {
+  /* Project Metadata */
   name: 'Balancer',
   token: null,
   category: 'DEXes',
@@ -13,7 +14,8 @@ module.exports = {
           topic: 'LOG_NEW_POOL(address,address)',
           keys: ['topics'],
           fromBlock: 9562480
-        }
+        },
+        transform: null,
       },
       tokens: {
         pullFromPools: true,

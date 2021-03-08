@@ -6,7 +6,7 @@
     "test": "mocha testing/test/*.js",
     "validate": "mocha testing/validate/*.js",
     "test-tvl": "mocha v2/testing/test/*.js",
-    "validate-tvl": "mocha v2/testing/validate/*.js",
+    "validate-metadata": "mocha v2/testing/validate/*.js",
     "test-token": "mocha tokens/testing/test/*.js",
     "validate-token": "mocha tokens/testing/validate/*.js"
   },
