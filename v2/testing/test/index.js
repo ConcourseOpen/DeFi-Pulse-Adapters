@@ -4,7 +4,7 @@ const args = require('../args');
 const run = require('../run');
 const spotTestCount = 10;
 
-_.each(args.projects, (projectAdapter) => {
+_.each(args.projects, function(projectAdapter) {
   describe(`${projectAdapter.name} project adapter running & output format`, function () {
     describe('runs for a variety of points at different times', function() {
       this.bail(true);
@@ -20,15 +20,13 @@ _.each(args.projects, (projectAdapter) => {
 
       spotTests = _.uniq(spotTests);
 
-
       run(projectAdapter, 'hour', 0);
-      run(projectAdapter, 'hour', -6);
       run(projectAdapter, 'hour', -12);
       run(projectAdapter, 'hour', -36);
       run(projectAdapter, 'hour', -72);
 
-      _.each(spotTests, (timestamp) => {
-        run(projectAdapter, timestamp);
+      _.each(spotTests, (timestamp, idx) => {
+        run(projectAdapter, timestamp, 0,);
       });
       run(projectAdapter, startDay < projectAdapter.start ? startDay + 86400 : startDay);
     });

@@ -6,8 +6,8 @@
   const axios = require('axios');
   const _ = require('underscore');
   const utility = require('./util');
-  const term = require( 'terminal-kit' ).terminal;
   const Bottleneck = require('bottleneck');
+  const term = require( 'terminal-kit' ).terminal;
   const $indexerHost = process.env.INDEXER_HOST || 'http://127.0.0.1:3006';
 
 /*==================================================
@@ -108,14 +108,23 @@
 /**
  *
  * @param {Number} block
+ * @param {Number} timestamp
  * @param {Object} project
  * @returns {Promise<*>}
  * @private
  */
-async function _testAdapter(block, project) {
+async function _testAdapter(block, timestamp, project) {
   try {
     return (
-      await axios.get(`${$indexerHost}/test-adapter?block=${block}&project=${project}`)
+      await axios({
+        method: 'POST',
+        url: `${$indexerHost}/test-adapter`,
+        data: {
+          block,
+          project,
+          timestamp,
+        }
+      })
     ).data;
   } catch(error) {
     throw error.response ? error.response.data : error;
@@ -182,12 +191,25 @@ async function _testAdapter(block, project) {
       /**
        *
        * @param {Number} block
+       * @param {Number} timestamp
        * @param {Object} project
        * @returns {Promise<*>}
        */
-      testAdapter: ((block, project) => {
-        return _testAdapter(block, project);
-      })
+      testAdapter: ((block, timestamp, project) => {
+        return _testAdapter(block, timestamp, project);
+      }),
+      /**
+       *
+       * @param {function} func
+       * @returns {boolean}
+       */
+      isCallable: (func) => typeof func === 'function',
+      /**
+       *
+       * @param {String} str
+       * @returns {boolean}
+       */
+      isString: (str) => typeof str === 'string',
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),

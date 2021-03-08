@@ -6,7 +6,7 @@
     "test": "mocha testing/test/*.js",
     "validate": "mocha testing/validate/*.js",
     "test-tvl": "mocha v2/testing/test/*.js",
-    "validate-project": "mocha v2/testing/validate/*.js",
+    "validate-tvl": "mocha v2/testing/validate/*.js",
     "test-token": "mocha tokens/testing/test/*.js",
     "validate-token": "mocha tokens/testing/validate/*.js"
   },
@@ -21,6 +21,7 @@
     "csv-writer": "1.6.0",
     "dotenv": "^8.2.0",
     "ethers": "5.0.8",
+    "form-data": "^4.0.0",
     "graph-results-pager": "^1.0.2",
     "graphql": "^15.4.0",
     "graphql-request": "^3.4.0",

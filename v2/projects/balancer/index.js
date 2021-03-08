@@ -34,6 +34,5 @@ module.exports = {
         }
       }
     }
-  ],
-  projectId: '5ed53aa84d2bc062a34b872380bec7a5f142dfc32311e0de50eff24122c6'
+  ]
 };

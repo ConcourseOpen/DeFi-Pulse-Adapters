@@ -23,5 +23,4 @@ module.exports = {
       holders: '0x88ad09518695c6c3712AC10a214bE5109a655671'
     }
   ],
-  projectId: 'c964fbcc67927cf3a3fea51b00474a0bb34f785b69e8c48e266f60bc481f'
 };
