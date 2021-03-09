@@ -66,6 +66,7 @@ async function tvl(timestamp, block) {
   let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
     block,
     targets: cdpInfo,
+    ids: true
   })).output;
 
   let compoundBalances = (await sdk.api.cdp.compound.getAssetsLocked({
@@ -79,6 +80,11 @@ async function tvl(timestamp, block) {
   })).output;
 
   let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
+  if (Object.keys(balances).length === 0) {
+    balances = {
+      "0x0000000000000000000000000000000000000000": "0"
+    }
+  }
 
   return balances;
 }
