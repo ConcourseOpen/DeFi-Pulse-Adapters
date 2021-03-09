@@ -110,19 +110,21 @@
  * @param {Number} block
  * @param {Number} timestamp
  * @param {Object} project
+ * @param {Object} tokenBalanceMap
  * @returns {Promise<*>}
  * @private
  */
-async function _testAdapter(block, timestamp, project) {
+async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
   try {
     return (
       await axios({
         method: 'POST',
-        url: `${$indexerHost}/test-adapter`,
+        url: `${$indexerHost}/test-tvl`,
         data: {
           block,
           project,
           timestamp,
+          tokenBalanceMap,
         }
       })
     ).data;
@@ -193,10 +195,11 @@ async function _testAdapter(block, timestamp, project) {
        * @param {Number} block
        * @param {Number} timestamp
        * @param {Object} project
+       * @param {Object} tokenBalanceMap
        * @returns {Promise<*>}
        */
-      testAdapter: ((block, timestamp, project) => {
-        return _testAdapter(block, timestamp, project);
+      testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
+        return _testAdapter(block, timestamp, project, tokenBalanceMap);
       }),
       /**
        *

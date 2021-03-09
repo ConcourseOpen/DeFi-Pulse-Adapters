@@ -22,13 +22,31 @@ const args = argv.option([
   }
 ]).run();
 
-const directories = args.options.project ? [`v2/projects/${args.options.project}`] : getDirectories('v2/projects');
+const projects = args.options.project ? [args.options.project] : getDirectories('v2/projects').map((dir) => dir.split('/')[dir.split('/').length - 1]);
 
 module.exports = {
-  projects: _.map(directories, (directory) => ({
-    path: directory,
-    project: directory.replace('v2/projects/', ''),
-    ...require('../../' + directory)
-  })),
+  projects: _.map(projects, (project) => {
+    let path = `v2/projects/${project}`;
+    let dataObj = {};
+
+    try {
+      dataObj = {
+        ...require(`../../${path}`)
+      }
+    } catch (error) {
+      if (error.code === 'MODULE_NOT_FOUND') {
+        path = `projects/${project}`;
+        dataObj = {
+          ...require(`../../${path}`)
+        }
+      }
+    }
+
+    return {
+      path,
+      project,
+      ...dataObj
+    };
+  }),
   timestamp: args.options.timestamp ? Number(args.options.timestamp) : undefined,
 };

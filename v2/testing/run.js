@@ -22,23 +22,29 @@ let testResult = null;
 const _run = async (projectAdapter, timeUnit = 'day', timeOffset = 0) => {
   try {
     let timestamp;
+    let tokenBalanceMap;
+
     if (typeof timeUnit === 'number') {
       timestamp = timeUnit;
     } else {
       timestamp = moment().utcOffset(0).startOf(timeUnit).add(timeOffset, timeUnit).unix();
     }
-
-    await Promise.all(projectAdapter.tokenHolderMap.map(async (thm) => {
-      if (sdk.api.util.isCallable(thm.tokens)) {
-        thm.tokens = await thm.tokens();
-      }
-      if (sdk.api.util.isCallable(thm.holders)) {
-        thm.holders = await thm.holders();
-      }
-    }));
-
     let point = await sdk.api.util.lookupBlock(timestamp);
-    let tvl = await sdk.api.util.testAdapter(point.block, timestamp, projectAdapter);
+
+    if (projectAdapter.tvl && sdk.api.util.isCallable(projectAdapter.tvl)) {
+      tokenBalanceMap = await projectAdapter.tvl(timestamp, point.block);
+    } else {
+      await Promise.all(projectAdapter.tokenHolderMap.map(async (thm) => {
+        if (sdk.api.util.isCallable(thm.tokens)) {
+          thm.tokens = await thm.tokens();
+        }
+        if (sdk.api.util.isCallable(thm.holders)) {
+          thm.holders = await thm.holders();
+        }
+      }));
+    }
+
+    let tvl = await sdk.api.util.testAdapter(point.block, timestamp, projectAdapter, tokenBalanceMap);
     return {
       ...point,
       tvl
