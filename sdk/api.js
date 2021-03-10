@@ -157,6 +157,10 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
     return POST(`/cdp/compound/${endpoint}`, options);
   }
 
+  async function aave(endpoint, options) {
+    return POST(`/cdp/aave/${endpoint}`, options);
+  }
+
   async function cdp(endpoint, options) {
     return POST(`/cdp/${endpoint}`, options);
   }
@@ -179,6 +183,9 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
       compound: {
         tokens: (options) => compound('tokens', { ...options }),
         getAssetsLocked: (options) => compound('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
+      },
+      aave: {
+        getAssetsLocked: (options) => aave('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
       }
     },
     util: {
