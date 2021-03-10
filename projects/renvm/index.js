@@ -32,17 +32,17 @@
     // This follows the technique used in the Ren control panel
     // We have to iterate over the darknode list to figure out
     // how many bonded nodes there are
-    const filter = address => address !== NULL && address !== lastDarknode;
-    do {
-      const darknodes = (await sdk.api.abi.call({
-        block,
-        target: darknodeRegistryContract,
-        abi: abi["getDarknodes"],
-        params: [lastDarknode, batchSize]
-      }) || { output: []}).output;
-      allDarknodes.push(...darknodes.filter(filter));
-      [lastDarknode] = darknodes.slice(-1);
-    } while (lastDarknode !== NULL);
+    // const filter = address => address !== NULL && address !== lastDarknode;
+    // do {
+    //   const darknodes = (await sdk.api.abi.call({
+    //     block,
+    //     target: darknodeRegistryContract,
+    //     abi: abi["getDarknodes"],
+    //     params: [lastDarknode, batchSize]
+    //   }) || { output: []}).output;
+    //   allDarknodes.push(...darknodes.filter(filter));
+    //   [lastDarknode] = darknodes.slice(-1);
+    // } while (lastDarknode !== NULL);
 
     const btcTotalSupply = (
       await sdk.api.erc20.totalSupply({
@@ -68,10 +68,10 @@
     // Each darknode must have bonded a fixed amount of Ren.
     // The bond amount could be fetched from the contract
     // but lets save contract calls
-    const bondedRen =  allDarknodes.length *  renBond * renBasis;
+    // const bondedRen =  allDarknodes.length *  renBond * renBasis;
 
     const balances = {
-      [renContract]: bondedRen,
+      // [renContract]: bondedRen,
       [renBTCContract]: btcTotalSupply,
       [renBCHContract]: bchTotalSupply,
       [renZECContract]: zecTotalSupply
