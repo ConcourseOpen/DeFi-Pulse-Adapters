@@ -36,10 +36,12 @@ async function tvl(_timestamp, block) {
         block,
     });
 
-    return underlyingTokenBalances.output.reduce((acc, result, index)=>{
+    const balance =  underlyingTokenBalances.output.reduce((acc, result, index)=>{
         acc[vaults[index].token]=result.output;
         return acc
     })
+
+  return (await sdk.api.util.toSymbols(balance)).output
 }
 
 /*==================================================
@@ -49,7 +51,7 @@ async function tvl(_timestamp, block) {
 module.exports = {
     name: 'Flamincome',
     token: 'FLAG',
-    category: 'assets',
+    category: 'Assets',
     start: 1600473600,   // Sep-19-2020 00:00 AM
     tvl
 }
