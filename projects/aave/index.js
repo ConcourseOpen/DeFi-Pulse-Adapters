@@ -265,7 +265,8 @@
 
       let aTokenAddresses = []
       aTokenMarketData.map(aTokensData => {
-        aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
+        if(aTokensData.output)
+          aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
       })
 
       const underlyingAddresses = (
