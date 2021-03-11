@@ -4,7 +4,7 @@ module.exports = {
   token: "TORN",
   category: "Payments",
   start: 1576497600,
-  /* required for indexing token balances */
+  /* required for fetching token balances */
   tokenHolderMap: [
     {
       tokens: null,

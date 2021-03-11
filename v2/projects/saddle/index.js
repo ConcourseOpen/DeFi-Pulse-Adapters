@@ -5,7 +5,7 @@ module.exports = {
   token: null,              // null, or token symbol if project has a custom token
   category: 'DEXes',        // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1611057090,        // January 19, 2021 11:51:30 AM
-  /* required for indexing token balances */
+  /* required for fetching token balances */
   tokenHolderMap: [
     {
       tokens: [

@@ -4,7 +4,7 @@ module.exports = {
   token: null,
   category: 'DEXes',
   start: 1582761600, // 02/27/2020 @ 12:00am (UTC)
-  /* required for indexing token balances */
+  /* required for fetching token balances */
   tokenHolderMap: [
     {
       holders: {

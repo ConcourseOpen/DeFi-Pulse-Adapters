@@ -6,7 +6,7 @@ module.exports = {
   token: "IDEX", // null, or token symbol if project has a custom token
   category: "DEXes", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1603166400, // unix timestamp (utc 0) specifying when the project began, 10-20-2020 UTC 0:00:00
-  /* required for indexing token balances */
+  /* required for fetching token balances */
   tokenHolderMap: [
     {
       tokens: async () => {

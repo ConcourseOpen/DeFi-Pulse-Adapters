@@ -4,7 +4,7 @@ module.exports = {
   token: 'LRC',
   category: 'DEXes',
   start: 1574241665, // 11/20/2019 @ 09:21AM (UTC)
-  /* required for indexing token balances */
+  /* required for fetching token balances */
   tokenHolderMap: [
     {
       tokens: [
