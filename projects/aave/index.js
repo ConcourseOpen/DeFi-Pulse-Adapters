@@ -265,7 +265,7 @@
 
       let aTokenAddresses = []
       aTokenMarketData.map(aTokensData => {
-        if(aTokensData.output)
+        if(aTokensData.output && aTokensData.output.length)
           aTokenAddresses = [...aTokenAddresses, ...aTokensData.output.map(aToken => aToken[1])]
       })
 
