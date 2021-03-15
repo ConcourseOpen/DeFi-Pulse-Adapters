@@ -100,10 +100,9 @@
 
         balances[token] = sumTotal
       } catch (err) {
-        console.log({ err })
+        console.error(err)
       }
     }))
-    //  console.log({balances})
     return balances
   }
 
@@ -135,7 +134,6 @@
     ethBalances.forEach(balance => totalBalance = totalBalance.plus(new BigNumber(balance)));
     const balances = { '0x0000000000000000000000000000000000000000': totalBalance.toString(10) };
 
-    // console.log({balances})
     return balances
   }
 
@@ -148,7 +146,6 @@
       allLendingPlatformBalances[asset] = new BigNumber(cTvl[asset] || "0").plus(new BigNumber(mTvl[asset] || "0")).toString(10)
     })
 
-    console.log({ allLendingPlatformBalances })
     return allLendingPlatformBalances;
   }
 
