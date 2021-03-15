@@ -94,7 +94,7 @@ module.exports = {
   name: 'DeFi Saver',
   token: null,
   website: 'https://defisaver.com/',
-  category: 'lending',
+  category: 'Lending',
   start: 1586430640, // 09/04/2020 @ 11:10 (UTC)
   contributesTo: ['Maker', 'Compound', 'Aave'],
 };
