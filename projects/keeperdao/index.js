@@ -4,7 +4,10 @@
 
 const _ = require('underscore');
 const sdk = require('../../sdk');
+const BigNumber = require('bignumber.js');
 const liquidityAbi = require('./abi/liquidity.json');
+
+const ETH = '0x0000000000000000000000000000000000000000';
 
 /*==================================================
   Settings
@@ -50,16 +53,23 @@ let markets = {
   TVL
   ==================================================*/
 
-// ask comptroller for all markets array
+async function getToken(block, index) {
+  try {
+    return (await sdk.api.abi.call({
+      block,
+      target: liquidityPool,
+      params: [index],
+      abi: liquidityAbi['registeredTokens'],
+    })).output
+  } catch {
+    return null
+  }
+}
+
 async function getAllTokens(block) {
   let tokens = []
   for (let i = 0 ; ; i ++) {
-    const token = await sdk.api.abi.call({
-      block,
-      target: liquidityPool,
-      params: [i],
-      abi: liquidityAbi['registeredTokens'],
-    });
+    const token = await getToken(block, i)
 
     if (!token) {
       break;
@@ -72,14 +82,12 @@ async function getAllTokens(block) {
 }
 
 async function getKToken(block, token) {
-  const kToken = await sdk.api.abi.call({
+  return (await sdk.api.abi.call({
     block,
     target: liquidityPool,
     params: [token],
     abi: liquidityAbi['kToken'],
-  });
-
-  return kToken;
+  })).output;
 }
 
 // returns {[underlying]: {kToken, decimals, symbol}}
@@ -90,16 +98,14 @@ async function getMarkets(block) {
   } else {
     let allTokens = await getAllTokens(block);
     // if not in cache, get from the blockchain
-    await (
-      Promise.all(allTokens.map(async (token) => {
-        let kToken = await getKToken(block, token);
+    for (token of allTokens) {
+      let kToken = await getKToken(block, token);
 
-        if (!markets[token]) {
-          let info = await sdk.api.erc20.info(token);
-          markets[token] = { kToken, decimals: info.output.decimals, symbol: info.output.symbol };
-        }
-      }))
-    );
+      if (!markets[token]) {
+        let info = await sdk.api.erc20.info(token);
+        markets[token] = { kToken, decimals: info.output.decimals, symbol: info.output.symbol };
+      }
+    }
 
     return markets;
   }
@@ -120,6 +126,9 @@ async function tvl(timestamp, block) {
   });
 
   sdk.util.sumMultiBalanceOf(balances, v1Locked);
+
+  let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
+  balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
 
   return balances;
 }
