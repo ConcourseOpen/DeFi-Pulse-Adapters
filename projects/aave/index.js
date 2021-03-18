@@ -59,8 +59,8 @@
     ).output;
 
     return {
-      [aaveTokenAddress]: aaveBal,
-      [wethTokenAddress]: wethBal
+      [aaveTokenAddress]: (new BigNumber(aaveBal)).multipliedBy(0.3),
+      [wethTokenAddress]: (new BigNumber(wethBal)).multipliedBy(0.3)
     }
   }
 
