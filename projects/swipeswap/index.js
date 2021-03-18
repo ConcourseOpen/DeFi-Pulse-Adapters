@@ -42,6 +42,6 @@ module.exports = {
   name: 'SwipeSwap',
   token: 'SWIPE',
   category: 'dexes',
-  start: 1599214239, // 09/04/2020 @ 10:10:39am (UTC)
+  start: 1615341679, // Mar-10-2021 12:01:19 AM +UTC
   tvl,
 };
