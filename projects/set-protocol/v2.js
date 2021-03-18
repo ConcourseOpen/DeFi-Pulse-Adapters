@@ -96,6 +96,8 @@ module.exports = async function tvl(timestamp, block) {
   })).output;
 
   _.each(reserves, function(reserve, i) {
+    if (!reserve.success) return;
+
     const pairAddress = reserve.input.target;
     const tokenPair = pairAddresses[pairAddress];
     const setSupplyRatio = new BigNumber(uniswapPositions[pairAddress]).div(new BigNumber(reserveSupplies[i].output)).div(SUPPLY_SCALE);
