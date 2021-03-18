@@ -30,8 +30,11 @@
     );
 
     let symbolBalances = await sdk.api.util.toSymbols(balances);
+    let output = symbolBalances.output.filter((bal) => {
+      return bal.balance > 0;
+    })
 
-    return symbolBalances.output;
+    return output
   }
 
 /*==================================================
