@@ -28,7 +28,11 @@
     let poolCalls = [];
 
     let pools = _.map(poolLogs.output, (poolLog) => {
-      return `0x${poolLog[2].slice(26)}`
+      if (poolLog.topics) {
+        return `0x${poolLog.topics[2].slice(26)}`
+      } else {
+        return `0x${poolLog[2].slice(26)}`
+      }
     });
 
     const poolTokenData = (await sdk.api.abi.multiCall({
