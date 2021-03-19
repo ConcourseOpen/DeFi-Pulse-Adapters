@@ -20,7 +20,7 @@ async function tvl(_, block) {
     }
 
     // -- Attempt to calculate TVL from mapped POS tokens
-    const posTokens = [{ target: maticToken, params: stakeManager }]
+    const posTokens = []
 
     try {
 
