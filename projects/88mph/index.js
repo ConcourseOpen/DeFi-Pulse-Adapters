@@ -55,7 +55,7 @@ const wrappedTokenToSubsitute = {
   TVL
 */
 
-async function tvl (timestamp, block) {
+async function tvl(timestamp, block) {
   const balances = {}
   const poolToUnderlyingToken = {}
 
@@ -108,7 +108,7 @@ async function tvl (timestamp, block) {
   return balances
 }
 
-async function rates (timestamp, block) {
+async function rates(timestamp, block) {
   const rates = {
     lend: {},
     borrow: {},
@@ -128,7 +128,12 @@ async function rates (timestamp, block) {
 
   _.each(poolUnderlyingAddressResults.output, (token) => {
     if (token.success) {
-      const underlyingTokenAddress = token.output
+      let underlyingTokenAddress = token.output
+      if (wrappedTokenToSubsitute[underlyingTokenAddress]) {
+        const substituteInfo = wrappedTokenToSubsitute[underlyingTokenAddress]
+        underlyingTokenAddress = substituteInfo.address
+      }
+
       const poolAddress = token.input.target
       poolToUnderlyingToken[poolAddress] = underlyingTokenAddress
       if (!underlyingTokenToSymbol[underlyingTokenAddress]) {
@@ -171,7 +176,11 @@ async function rates (timestamp, block) {
       const underlyingTokenAddress = poolToUnderlyingToken[poolAddress]
       const underlyingTokenSymbol = underlyingTokenToSymbol[underlyingTokenAddress]
 
-      rates.lend[underlyingTokenSymbol] = interestRate.times(100).toString()
+      if (rates.lend[underlyingTokenSymbol]) {
+        rates.lend[underlyingTokenSymbol] = BigNumber.max(interestRate.times(100), rates.lend[underlyingTokenSymbol]).toString()
+      } else {
+        rates.lend[underlyingTokenSymbol] = interestRate.times(100).toString()
+      }
     }
   })
 
@@ -188,7 +197,7 @@ module.exports = {
   category: 'lending',
   start: 1606109629, // Monday, November 23, 2020 5:33:49 AM GMT
   tvl,
-  // rates,
+  rates,
   term: '7 days-1 year',
   variability: 'None',
   contributesTo: ['Aave', 'Compound', 'yearn.finance', 'Harvest Finance']
