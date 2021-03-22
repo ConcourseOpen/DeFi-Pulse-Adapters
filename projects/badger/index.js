@@ -32,6 +32,8 @@ const platforms = {
   sushi: [sushiBadgerWbtc, sushiWbtcEth, sushiDiggWbtc],
 }
 
+const curveAddresses = '0x0000000022D53366457F9d5E68Ec105046FC4383';
+
 // Setts are the badger vaults that users invest in
 const setts = {
   '0x6dEf55d2e18486B9dDfaA075bc4e4EE0B28c1545': renCrv, // native.renCrv sett
@@ -67,13 +69,13 @@ let balances = {}
 /*==================================================
   PLATFORM SPECIFIC
   ==================================================*/
-async function _getPairValue(url, address, holdings) {
+async function _getPairValue(url, address, holdings, block) {
   let response = await axios.post(
     'https://api.thegraph.com/subgraphs/name/' + url,
     JSON.stringify({
       query: `
         {
-          pair(id:"${address.toLowerCase()}") {
+          pair(id:"${address.toLowerCase()}", block: { number: ${block} }) {
             reserve0
             reserve1
             token0 {
@@ -85,7 +87,7 @@ async function _getPairValue(url, address, holdings) {
             totalSupply
           }
         }`,
-    }),
+    })
   )
   let data = response.data
 
@@ -103,15 +105,50 @@ async function _getPairValue(url, address, holdings) {
   return returnValue
 }
 
-async function _getCurveVirtualPrice(token, holdings) {
-  let url = 'https://www.curve.fi/raw-stats/rens-1m.json'
-  if (token === tbtcCrv) {
-    url = 'https://www.curve.fi/raw-stats/tbtc-1m.json'
-  }
-  let response = await axios.get(url)
-  let data = response.data
+async function _getCurveVirtualPrice(token, holdings, block) {
+  let curveRegistry = (await sdk.api.abi.call({
+    target: curveAddresses,
+    abi: {
+      "constant": true,
+      "inputs": [],
+      "name": "get_registry",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    block
+  })).output;
+
+  let virtualPrice = (await sdk.api.abi.call({
+    target: curveRegistry,
+    params: token,
+    abi: {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "lpTokenn",
+          "type": "address"
+        },
+      ],
+      "name": "get_virtual_price_from_lp_token",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "interestAmount",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    block
+  })).output;
+
   return BigNumber(holdings).multipliedBy(
-    BigNumber(data[0].virtual_price).div(10 ** 18),
+    BigNumber(virtualPrice).div(10 ** 18),
   )
 }
 
@@ -206,7 +243,7 @@ async function tvl(timestamp, block) {
   // For each platform, iterate through the contracts and find their underlying
   await Promise.all(
     platforms['curve'].map(async (token) => {
-      await _handleCurve(token, underlyingAmounts[token])
+      await _handleCurve(token, underlyingAmounts[token], block)
     }),
   )
 
@@ -216,6 +253,7 @@ async function tvl(timestamp, block) {
         SUSHI_SUBGRAPH,
         token,
         !!underlyingAmounts[token] ? underlyingAmounts[token] : 0,
+        block
       )
       underlyingTokenBalance.forEach((pair) => {
         if (balances[Object.keys(pair)[0]] > 0) {
@@ -235,6 +273,7 @@ async function tvl(timestamp, block) {
         UNI_SUBGRAPH,
         token,
         !!underlyingAmounts[token] ? underlyingAmounts[token] : 0,
+        block
       )
       underlyingTokenBalance.forEach((pair) => {
         if (balances[Object.keys(pair)[0]] > 0) {
