@@ -156,7 +156,7 @@ module.exports = {
   website: 'https://keeperdao.com',
   token: 'ROOK',
   category: 'lending',
-  start: 1538006400, // 09/27/2018 @ 12:00am (UTC)
+  start: 1611991703, // 01/30/2021 @ 07:28:23 AM +UTC
   tvl,
   rates,
   term: '1 block',
