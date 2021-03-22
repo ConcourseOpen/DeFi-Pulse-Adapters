@@ -28,10 +28,12 @@ async function tvl(timestamp, block) {
 
             posTokens.push(...resp.data.tokens.map(v => {
 
+              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
                 return {
-                    target: v.rootToken,
-                    params: posERC20Predicate
+                  target: v.rootToken,
+                  params: posERC20Predicate
                 }
+              }
 
             }))
 
@@ -45,6 +47,28 @@ async function tvl(timestamp, block) {
     })
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPoSBalances)
+    // -- Done with POS tokens
+
+    // -- Attempt to calculate TVL from mapped Plasma tokens
+    const plasmaTokens = []
+
+    try {
+
+        // Attempt to read list of all mapped ERC20 token addresses
+        // via Plasma bridge
+        const resp = await axios.get(PlasmaMappedTokenList)
+
+        if (resp.status == 200 && resp.data.status == 1) {
+
+            plasmaTokens.push(...resp.data.tokens.map(v => {
+
+              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
+                return {
+                  target: v.rootToken,
+                  params: plasmaDepositManager
+                }
+              }
+            }))
 
     const plasmaTokens = [
         {
