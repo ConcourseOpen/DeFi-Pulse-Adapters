@@ -76,7 +76,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output
 }
 
 /*==================================================
@@ -87,7 +87,7 @@ module.exports = {
   name: 'WePiggy',
   website: 'https://wepiggy.com',
   token: 'WPC',
-  category: 'lending',
+  category: 'Lending',
   start: 1610953200, // 01/18/2021 @ 03:00pm (UTC)
   tvl,
 };
