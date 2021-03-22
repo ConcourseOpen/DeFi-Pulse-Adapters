@@ -32,10 +32,12 @@ async function tvl(_, block) {
 
             posTokens.push(...resp.data.tokens.map(v => {
 
+              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
                 return {
-                    target: v.rootToken,
-                    params: posERC20Predicate
+                  target: v.rootToken,
+                  params: posERC20Predicate
                 }
+              }
 
             }))
 
@@ -65,11 +67,12 @@ async function tvl(_, block) {
 
             plasmaTokens.push(...resp.data.tokens.map(v => {
 
+              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
                 return {
-                    target: v.rootToken,
-                    params: plasmaDepositManager
+                  target: v.rootToken,
+                  params: plasmaDepositManager
                 }
-
+              }
             }))
 
         }
