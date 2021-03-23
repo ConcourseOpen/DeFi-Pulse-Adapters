@@ -63,14 +63,10 @@
       })
     ).output;
 
-    // Since only 30% of Balancer staking is creating 'new' economic activity, only count the 30%
-    const aaveAtStake = new BigNumber(aaveBal).multipliedBy(0.3).toFixed(0);
-    const balAtStake = new BigNumber(wethBal).multipliedBy(0.3).toFixed(0);
-
     return {
-      [aaveTokenAddress]: aaveAtStake,
-      [wethTokenAddress]: balAtStake,
-    };
+      [aaveTokenAddress]: aaveBal,
+      [wethTokenAddress]: wethBal
+    }
   }
 
   async function _getV1Assets(lendingPoolCore, block) {
@@ -264,17 +260,13 @@
       })
     ).output;
 
-    const validProtocolDataHelpers = protocolDataHelpers.filter(
-      (helper) => helper.output !== "0x0000000000000000000000000000000000000000"
-    );
-
     const aTokenMarketData = (
       await sdk.api.abi.multiCall({
-        calls: _.map(validProtocolDataHelpers, (dataHelper) => ({
+        calls: _.map(protocolDataHelpers, (dataHelper) => ({
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
-        block,
+        block
       })
     ).output;
 
