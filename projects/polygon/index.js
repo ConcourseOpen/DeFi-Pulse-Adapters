@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const sdk = require('../../sdk');
 const { default: axios } = require('axios')
 const BigNumber = require("bignumber.js");
@@ -28,16 +29,18 @@ async function tvl(_, block) {
         // via POS bridge
         const resp = await axios.get(PoSMappedTokenList)
 
-        if (resp.status == 200 && resp.data.status == 1) {
+        if (resp.status === 200 && resp.data.status === 1) {
+          resp.data.tokens =
+            resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
 
             posTokens.push(...resp.data.tokens.map(v => {
 
-              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
+
                 return {
                   target: v.rootToken,
                   params: posERC20Predicate
                 }
-              }
+
 
             }))
 
@@ -63,18 +66,16 @@ async function tvl(_, block) {
         // via Plasma bridge
         const resp = await axios.get(PlasmaMappedTokenList)
 
-        if (resp.status == 200 && resp.data.status == 1) {
+        if (resp.status === 200 && resp.data.status === 1) {
+         resp.data.tokens =
+           resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
 
-            plasmaTokens.push(...resp.data.tokens.map(v => {
-
-              if(v.rootToken.toLowerCase() !== maticToken.toLowerCase()) {
+          plasmaTokens.push(...resp.data.tokens.map(v => {
                 return {
                   target: v.rootToken,
                   params: plasmaDepositManager
                 }
-              }
             }))
-
         }
 
     } catch (e) { }
