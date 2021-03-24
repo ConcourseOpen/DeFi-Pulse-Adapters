@@ -52,7 +52,8 @@
           }),
           abi: abi.arraySynths
       })
-      const synthAddresses = _.map(synths.output, (item) => item.output)
+      let synthAddresses = _.map(synths.output, (item) => item.output)
+      synthAddresses = _.uniq(synthAddresses);
   
       const emps = (await sdk.api.abi.multiCall({
           calls: _.map(synthAddresses, (address) => {
