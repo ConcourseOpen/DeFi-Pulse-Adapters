@@ -4,6 +4,7 @@
 
 const _ = require('underscore');
 const sdk = require('../../sdk');
+const utils = require('../../sdk/util');
 
 /*==================================================
   Settings
@@ -39,10 +40,27 @@ async function tvl(timestamp, block) {
 
   let allWallets = smartWallets.concat(dsaWallets);
 
-  const balances = (await sdk.api.cdp.getAssetsLocked({
+  let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
+    block,
+    targets: allWallets,
+  })).output;
+
+  let compoundBalances = (await sdk.api.cdp.compound.getAssetsLocked({
     block,
     targets: allWallets
   })).output;
+
+  let aaveBalances = (await sdk.api.cdp.aave.getAssetsLocked({
+    block,
+    targets: allWallets
+  })).output;
+
+  let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
+  if (Object.keys(balances).length === 0) {
+    balances = {
+      "0x0000000000000000000000000000000000000000": "0"
+    }
+  }
 
   return (await sdk.api.util.toSymbols(balances)).output;
 }
