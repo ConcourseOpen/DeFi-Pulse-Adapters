@@ -62,7 +62,10 @@ module.exports = async function tvl(timestamp, block) {
 
   let uniswapPositions = {};
   _.each(positionsForSets, function(positionForSet, i) {
-    const setSupply = BigNumber(supplies[i].output);
+    let supply = supplies.find((sup) => {
+      return sup.input.target == positionForSet.input.target;
+    })
+    const setSupply = BigNumber(supply.output);
     _.each(positionForSet.output, (position) => {
       const componentAddress = position[0];
       const positionUnits = BigNumber(position[2]);
