@@ -258,6 +258,7 @@
         abi: abi["getAddress"],
         block
       })
+    ).output;
 
     const aTokenMarketData = (
       await sdk.api.abi.multiCall({
@@ -316,7 +317,7 @@
         abi: "erc20:decimals",
         block
       })
-    ).output;
+    ).output
 
     symbolsOfReserves.map((r) => {
       const address = r.input.target;
@@ -368,8 +369,7 @@
       };
     })
 
-      return v2Data
-    }catch (e) {console.log(e.message)}
+    return v2Data
   }
 
   async function getV2Rates(block) {
@@ -500,7 +500,6 @@
 
   async function rates(timestamp, block) {
     await getV1Reserves(block)
-
     const aaveReservesWithEth = aaveReserves
     aaveReservesWithEth.push({
       address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
