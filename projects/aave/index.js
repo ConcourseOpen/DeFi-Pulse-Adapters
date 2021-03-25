@@ -253,7 +253,7 @@
       await sdk.api.abi.multiCall({
         calls: _.map(addressesProviders, (provider) => ({
           target: provider,
-          params: "0x1",
+          params: "0x0100000000000000000000000000000000000000000000000000000000000000",
         })),
         abi: abi["getAddress"],
         block
@@ -272,10 +272,12 @@
 
     let aTokenAddresses = [];
     aTokenMarketData.map((aTokensData) => {
-      aTokenAddresses = [
-        ...aTokenAddresses,
-        ...aTokensData.output.map((aToken) => aToken[1]),
-      ];
+      if (aTokensData.output) {
+        aTokenAddresses = [
+          ...aTokenAddresses,
+          ...aTokensData.output.map((aToken) => aToken[1]),
+        ];
+      }
     });
 
     const underlyingAddressesData = (
@@ -383,7 +385,7 @@
       await sdk.api.abi.multiCall({
         calls: _.map(addressesProviders, (provider) => ({
           target: provider,
-          params: "0x1",
+          params: "0x0100000000000000000000000000000000000000000000000000000000000000",
         })),
         abi: abi["getAddress"],
         block
