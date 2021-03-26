@@ -23,7 +23,8 @@ async function tvl(timestamp, block) {
     })
   ).output;
 
-  return { [DUSD]: DUSDTotalSupply, [DFD]: DFDTotalSupply };
+  const balances = { [DUSD]: DUSDTotalSupply, [DFD]: DFDTotalSupply };
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -33,7 +34,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "DefiDollar",
   token: null, // null, or token symbol if project has a custom token
-  category: "assets",
+  category: "Assets",
   start: 1598415139, // Aug-26-2020 04:12:19 AM +UTC
   tvl,
 };
