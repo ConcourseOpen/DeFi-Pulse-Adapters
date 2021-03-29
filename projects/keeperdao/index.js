@@ -130,7 +130,7 @@ async function tvl(timestamp, block) {
   let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
   balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output
 }
 
 /*==================================================
@@ -155,7 +155,7 @@ module.exports = {
   name: 'KeeperDAO',
   website: 'https://keeperdao.com',
   token: 'ROOK',
-  category: 'lending',
+  category: 'Lending',
   start: 1611991703, // 01/30/2021 @ 07:28:23 AM +UTC
   tvl,
   rates,
