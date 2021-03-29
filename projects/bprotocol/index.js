@@ -24,7 +24,7 @@
   ==================================================*/
 
   async function compoundTvl(timestamp, block) {
-    if (block < cFirstBlock) return { '0x0000000000000000000000000000000000000000': '0' };
+    if (block < cFirstBlock) return (await sdk.api.util.toSymbols({'0x0000000000000000000000000000000000000000' : '0'})).output;
 
     // number of accounts
     const { output: avatarLength } = await sdk.api.abi.call(
@@ -146,7 +146,7 @@
       allLendingPlatformBalances[asset] = new BigNumber(cTvl[asset] || "0").plus(new BigNumber(mTvl[asset] || "0")).toString(10)
     })
 
-    return allLendingPlatformBalances;
+    return (await sdk.api.util.toSymbols(allLendingPlatformBalances)).output;
   }
 
 /*==================================================
@@ -156,7 +156,7 @@
   module.exports = {
     name: 'B.Protocol',
     token: null,
-    category: 'lending',
+    category: 'Lending',
     contributesTo: ['Maker', 'Compound'],
     start: 1605380632,  // 11/14/2020 @ 7:03pm (UTC)
     tvl,
