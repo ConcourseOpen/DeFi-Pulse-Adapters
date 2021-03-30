@@ -44,6 +44,31 @@
     ).output;
   }
 
+  async function _stakingBalancerTvl(block) {
+    const aaveBal = (
+      await sdk.api.abi.call({
+        target: aaveTokenAddress,
+        params: aaveBalancerContractImp,
+        abi: "erc20:balanceOf",
+        block,
+      })
+    ).output;
+
+    const wethBal = (
+      await sdk.api.abi.call({
+        target: wethTokenAddress,
+        params: aaveBalancerContractImp,
+        abi: "erc20:balanceOf",
+        block,
+      })
+    ).output;
+
+    return {
+      [aaveTokenAddress]: aaveBal,
+      [wethTokenAddress]: wethBal,
+    };
+  }
+
   async function _getV1Assets(lendingPoolCore, block) {
     const reserves = (
       await sdk.api.abi.call({
@@ -439,12 +464,21 @@
       }
     });
 
-    // Staking TVL
+    // Staking TVLs
     if (block >= 10926829) {
       const stakedAaveAmount = await _stakingTvl(block);
       balances[aaveTokenAddress] = balances[aaveTokenAddress]
         ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
         : BigNumber(stakedAaveAmount).toFixed()
+
+      const stakedBalancerAmounts = await _stakingBalancerTvl(block);
+      Object.keys(stakedBalancerAmounts).forEach((address) => {
+        balances[address] = balances[address]
+          ? BigNumber(balances[address])
+              .plus(stakedBalancerAmounts[address])
+              .toFixed()
+          : BigNumber(stakedBalancerAmounts[address]).toFixed();
+      });
     }
 
     // V2 TVLs
