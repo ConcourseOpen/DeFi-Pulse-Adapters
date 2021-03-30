@@ -98,7 +98,8 @@
           return (new BigNumber(acc).plus(new BigNumber(val))).toString(10)
         }, "0")
 
-        balances[token] = sumTotal
+	if (! token in balances) balances = new BigNumber("0")
+        balances[token] = ( new BigNumber(balances[token]).plus(new BigNumber(sumTotal)) ).toString(10)
       } catch (err) {
         console.error(err)
       }
