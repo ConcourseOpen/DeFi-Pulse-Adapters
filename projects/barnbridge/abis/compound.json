@@ -20,21 +20,5 @@
         "type": "uint256"
       }
     ]
-  },
-  "price": {
-    "name": "price",
-    "type": "function",
-    "inputs": [
-      {
-        "name": "symbol",
-        "type": "string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "amount",
-        "type": "uint256"
-      }
-    ]
   }
 }

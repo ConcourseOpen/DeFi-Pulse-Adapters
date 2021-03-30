@@ -9,9 +9,13 @@ const compoundProviderABI = require('./abis/compound.json');
 /*==================================================
   Settings
 ==================================================*/
+const USDC_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+
 const listedTokens = [
   // compound
   {
+    address: USDC_ADDRESS,
+    decimals: 6,
     async getBalanceCall(block) {
       const {output} = await sdk.api.abi.call({
         abi: compoundProviderABI['balance'],
@@ -30,16 +34,6 @@ const listedTokens = [
 
       return new BigNumber(output).dividedBy(1e16);
     },
-    async getUnderlyingPriceCall(block) {
-      const {output} = await sdk.api.abi.call({
-        abi: compoundProviderABI['price'],
-        target: '0x922018674c12a7f0d394ebeef9b58f186cde13c1',
-        params: ['USDC'],
-        block,
-      });
-
-      return new BigNumber(output).dividedBy(1e6);
-    }
   }
 ];
 
@@ -47,23 +41,29 @@ const listedTokens = [
   Main
 ==================================================*/
 async function tvl(timestamp, block) {
-  const balances = await Promise.all(_.map(listedTokens, async token => {
-    const balance = await token.getBalanceCall(block);
-    const exchangeRate = await token.getExchangeRateCall(block);
-    const underlyingPrice = await token.getUnderlyingPriceCall(block);
+  const balances = {};
 
-    return new BigNumber(balance)
-      .multipliedBy(exchangeRate)
-      .multipliedBy(underlyingPrice);
+  await Promise.all(_.map(listedTokens, async token => {
+    if (!balances[token.address]) {
+      balances[token.address] = new BigNumber(0);
+    }
+
+    try {
+      const balance = await token.getBalanceCall(block);
+      const exchangeRate = await token.getExchangeRateCall(block);
+      const totalValue = balance.multipliedBy(exchangeRate).multipliedBy(10 ** token.decimals);
+
+      balances[token.address] = balances[token.address].plus(totalValue);
+    } catch {}
   }));
 
-  const totalBalance = balances.reduce((ac, value) => {
-    return ac.plus(value);
-  }, new BigNumber(0));
+  Object.keys(balances)
+    .forEach(address => {
+      balances[address] = balances[address].integerValue(BigNumber.ROUND_UP);
+    });
 
-  return {
-    '0x0000000000000000000000000000000000000000': totalBalance.toFixed(2),
-  };
+  console.log(balances);
+  return balances;
 }
 
 /* Metadata */
@@ -71,7 +71,7 @@ module.exports = {
   name: 'BarnBridge',
   website: 'https://app.barnbridge.com',
   symbol: 'BOND',
-  type: 'derivatives',
+  category: 'derivatives',
   start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC
   tvl,
 };
