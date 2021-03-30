@@ -53,7 +53,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Mushrooms Finance', // project name
   token: "MM",              // null, or token symbol if project has a custom token
-  category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1604160000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl                       // tvl adapter
 }
