@@ -17,7 +17,8 @@ async function tvl(timestamp, block) {
     })
   ).output;
 
-  return { [DUSD]: DUSDTotalSupply };
+  const balances = { [DUSD]: DUSDTotalSupply };
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
