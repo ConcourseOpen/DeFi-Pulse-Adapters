@@ -54,7 +54,8 @@ async function tvl(timestamp, block) {
       const totalValue = balance.multipliedBy(exchangeRate).multipliedBy(10 ** token.decimals);
 
       balances[token.address] = balances[token.address].plus(totalValue);
-    } catch {}
+    } catch {
+    }
   }));
 
   Object.keys(balances)
@@ -62,7 +63,6 @@ async function tvl(timestamp, block) {
       balances[address] = balances[address].integerValue(BigNumber.ROUND_UP);
     });
 
-  console.log(balances);
   return balances;
 }
 
