@@ -54,7 +54,7 @@ async function tvl(timestamp, block) {
       const totalValue = balance.multipliedBy(exchangeRate).multipliedBy(10 ** token.decimals);
 
       balances[token.address] = balances[token.address].plus(totalValue);
-    } catch {
+    } catch (e) {
     }
   }));
 
