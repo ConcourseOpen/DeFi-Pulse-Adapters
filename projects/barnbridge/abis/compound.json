@@ -1,0 +1,24 @@
+{
+  "balance": {
+    "name": "cTokenBalance",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "amount",
+        "type": "uint256"
+      }
+    ]
+  },
+  "exchangeRate": {
+    "name": "exchangeRateStored",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "rate",
+        "type": "uint256"
+      }
+    ]
+  }
+}
