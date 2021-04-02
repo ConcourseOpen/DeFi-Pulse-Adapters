@@ -538,7 +538,7 @@
     website: "https://aave.com",
     token: "AAVE",
     category: "Lending",
-    start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
+    start: 1578555200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
     rates,
     term: "1 block",
