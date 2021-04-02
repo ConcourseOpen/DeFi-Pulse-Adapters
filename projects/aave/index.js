@@ -50,7 +50,7 @@
         target: aaveTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
-        block
+        block,
       })
     ).output;
 
@@ -59,14 +59,14 @@
         target: wethTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
-        block
+        block,
       })
     ).output;
 
     return {
-      [aaveTokenAddress]: (new BigNumber(aaveBal)).multipliedBy(0.3),
-      [wethTokenAddress]: (new BigNumber(wethBal)).multipliedBy(0.3)
-    }
+      [aaveTokenAddress]: aaveBal,
+      [wethTokenAddress]: wethBal,
+    };
   }
 
   async function _getV1Assets(lendingPoolCore, block) {
@@ -240,7 +240,6 @@
 
   async function getV2Reserves(block) {
     if (v2Atokens.length !== 0 && v2ReserveTokens.length !== 0) return
-  
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
@@ -260,13 +259,18 @@
       })
     ).output;
 
+    const validProtocolDataHelpers = protocolDataHelpers.filter(
+      (helper) =>
+        helper.output !== "0x0000000000000000000000000000000000000000"
+    );
+
     const aTokenMarketData = (
       await sdk.api.abi.multiCall({
-        calls: _.map(protocolDataHelpers, (dataHelper) => ({
+        calls: _.map(validProtocolDataHelpers, (dataHelper) => ({
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
-        block
+        block,
       })
     ).output;
 
@@ -404,7 +408,6 @@
     ).output
 
     let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
-    
     reserveData.map(result => {
       if (!result || !result.success) return;
       const address = result.input.params[0]
@@ -461,20 +464,22 @@
       }
     });
 
-    // Staking TVL
+    // Staking TVLs
     if (block >= 10926829) {
       const stakedAaveAmount = await _stakingTvl(block);
       balances[aaveTokenAddress] = balances[aaveTokenAddress]
         ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
         : BigNumber(stakedAaveAmount).toFixed()
-    }
 
-    const stakedBalancerAmounts = await _stakingBalancerTvl(block);
-    Object.keys(stakedBalancerAmounts).forEach(address => {
-      balances[address] = balances[address]
-        ? BigNumber(balances[address]).plus(stakedBalancerAmounts[address]).toFixed()
-        : BigNumber(stakedBalancerAmounts[address]).toFixed();
-    })
+      const stakedBalancerAmounts = await _stakingBalancerTvl(block);
+      Object.keys(stakedBalancerAmounts).forEach((address) => {
+        balances[address] = balances[address]
+          ? BigNumber(balances[address])
+              .plus(stakedBalancerAmounts[address])
+              .toFixed()
+          : BigNumber(stakedBalancerAmounts[address]).toFixed();
+      });
+    }
 
     // V2 TVLs
     if (block >= 11360925) {
@@ -513,11 +518,11 @@
     const ratesV2 = await getV2Rates(block)
 
     if (Object.keys(ratesV2.lend).length > 0) {
-      return { 
-        lend: { ...ratesV1.lend, ...ratesV2.lend }, 
-        borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
+      return {
+        lend: { ...ratesV1.lend, ...ratesV2.lend },
+        borrow: { ...ratesV1.borrow, ...ratesV2.borrow },
         borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
-        supply: { ...ratesV1.supply, ...ratesV2.supply }, 
+        supply: { ...ratesV1.supply, ...ratesV2.supply },
       };
     } else {
       return ratesV1

@@ -62,7 +62,9 @@
           let projectRun = await Run(runFunction, project, timeUnit, timeOffset);
           this.test.value = projectRun;
           cachedOutput.push(projectRun); // Add output to cache
-          chai.expect(projectRun.output).to.be.an('object');
+          //console.log("projectRun: %o", projectRun)
+          chai.expect(projectRun.output).to.be.an('array');
+          //await checkUnlistedTokens(projectRun.output, project.slug)
 
           _.each(projectRun.output, (value, symbol) => {
             let balance = BigNumber(value).toNumber();
