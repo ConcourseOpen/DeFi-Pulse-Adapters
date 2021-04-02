@@ -65,7 +65,7 @@ const checkUnlistedTokens = require("./checkUnListedTokens");
           cachedOutput.push(projectRun); // Add output to cache
           //console.log("projectRun: %o", projectRun)
           chai.expect(projectRun.output).to.be.an('array');
-          //await checkUnlistedTokens(projectRun.output, project.slug)
+          await checkUnlistedTokens(projectRun.output, project.slug)
 
           _.each(projectRun.output, ({ symbol, address, balance }) => {
             balance = BigNumber(balance).toNumber();
