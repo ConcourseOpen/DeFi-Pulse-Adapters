@@ -70,7 +70,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'BarnBridge',
   website: 'https://app.barnbridge.com',
-  symbol: 'BOND',
+  token: 'BOND',
   category: 'Derivatives',
   start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC
   tvl,
