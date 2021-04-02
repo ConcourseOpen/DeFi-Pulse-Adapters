@@ -50,7 +50,7 @@
         target: aaveTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
-        block
+        block,
       })
     ).output;
 
@@ -59,14 +59,14 @@
         target: wethTokenAddress,
         params: aaveBalancerContractImp,
         abi: "erc20:balanceOf",
-        block
+        block,
       })
     ).output;
 
     return {
       [aaveTokenAddress]: aaveBal,
-      [wethTokenAddress]: wethBal
-    }
+      [wethTokenAddress]: wethBal,
+    };
   }
 
   async function _getV1Assets(lendingPoolCore, block) {
@@ -260,13 +260,18 @@
       })
     ).output;
 
+    const validProtocolDataHelpers = protocolDataHelpers.filter(
+      (helper) =>
+        helper.output !== "0x0000000000000000000000000000000000000000"
+    );
+    
     const aTokenMarketData = (
       await sdk.api.abi.multiCall({
-        calls: _.map(protocolDataHelpers, (dataHelper) => ({
+        calls: _.map(validProtocolDataHelpers, (dataHelper) => ({
           target: dataHelper.output,
         })),
         abi: abi["getAllATokens"],
-        block
+        block,
       })
     ).output;
 
@@ -461,20 +466,22 @@
       }
     });
 
-    // Staking TVL
+    // Staking TVLs
     if (block >= 10926829) {
       const stakedAaveAmount = await _stakingTvl(block);
       balances[aaveTokenAddress] = balances[aaveTokenAddress]
         ? BigNumber(balances[aaveTokenAddress]).plus(stakedAaveAmount).toFixed()
         : BigNumber(stakedAaveAmount).toFixed()
-    }
 
-    const stakedBalancerAmounts = await _stakingBalancerTvl(block);
-    Object.keys(stakedBalancerAmounts).forEach(address => {
-      balances[address] = balances[address]
-        ? BigNumber(balances[address]).plus(stakedBalancerAmounts[address]).toFixed()
-        : BigNumber(stakedBalancerAmounts[address]).toFixed();
-    })
+      const stakedBalancerAmounts = await _stakingBalancerTvl(block);
+      Object.keys(stakedBalancerAmounts).forEach((address) => {
+        balances[address] = balances[address]
+          ? BigNumber(balances[address])
+              .plus(stakedBalancerAmounts[address])
+              .toFixed()
+          : BigNumber(stakedBalancerAmounts[address]).toFixed();
+      });
+    }
 
     // V2 TVLs
     if (block >= 11360925) {
