@@ -240,7 +240,7 @@
 
   async function getV2Reserves(block) {
     if (v2Atokens.length !== 0 && v2ReserveTokens.length !== 0) return
-  
+
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
@@ -264,7 +264,7 @@
       (helper) =>
         helper.output !== "0x0000000000000000000000000000000000000000"
     );
-    
+
     const aTokenMarketData = (
       await sdk.api.abi.multiCall({
         calls: _.map(validProtocolDataHelpers, (dataHelper) => ({
@@ -409,7 +409,7 @@
     ).output
 
     let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
-    
+
     reserveData.map(result => {
       if (!result || !result.success) return;
       const address = result.input.params[0]
@@ -520,11 +520,11 @@
     const ratesV2 = await getV2Rates(block)
 
     if (Object.keys(ratesV2.lend).length > 0) {
-      return { 
-        lend: { ...ratesV1.lend, ...ratesV2.lend }, 
-        borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
+      return {
+        lend: { ...ratesV1.lend, ...ratesV2.lend },
+        borrow: { ...ratesV1.borrow, ...ratesV2.borrow },
         borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
-        supply: { ...ratesV1.supply, ...ratesV2.supply }, 
+        supply: { ...ratesV1.supply, ...ratesV2.supply },
       };
     } else {
       return ratesV1
@@ -542,7 +542,7 @@
     category: "lending",
     start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
-    rates,
+    //rates,
     term: "1 block",
     variability: "medium",
   };
