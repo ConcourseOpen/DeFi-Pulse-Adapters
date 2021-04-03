@@ -46,7 +46,12 @@ const BigNumber = require('bignumber.js');
     '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': {
       symbol: 'WBTC',
       decimals: 8,
-      cToken: '0xC11b1268C1A384e55C48c2391d8d480264A3A7F4',
+      cToken: '0xC11b1268C1A384e55C48c2391d8d480264A3A7F4',//cWBTC - legacy
+    },
+    '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599': {
+      symbol: 'WBTC',
+      decimals: 8,
+      cToken: '0xccf4429db6322d5c611ee964527d42e5d685dd6a'//cWBTC
     },
     '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
       symbol: 'ZRX',
@@ -143,7 +148,6 @@ async function tvl(timestamp, block) {
         .toFixed();
     }
   });
-
   return balances;
 }
 
