@@ -1,5 +1,5 @@
 const sdk = require('../../sdk');
-const abi = require('./abi');
+const abi = require('./abi.json');
 
 
 const POOL = '0xa1e72267084192db7387c8cc1328fade470e4149';
@@ -10,21 +10,26 @@ const TUSD = '0x0000000000085d4780B73119b644AE5ecd22b376';
 
 async function tvl(timestamp, block) {
     let balances = {};
+    let poolTVL;
+    let truTVL;
+    try {
+       poolTVL = await sdk.api.abi.call({
+        target: POOL,
+        abi: abi['poolValue'],
+        block: block
+      });
+    }catch (e){poolTVL = {output: '0'}}
+    try{
+      truTVL = await sdk.api.abi.call({
+        target: stkTRU,
+        abi: abi['stakeSupply'],
+        block: block
+      });
+    }catch (e) {truTVL = {output: '0'}}
 
-    const poolTVL = await sdk.api.abi.call({
-      target: POOL,
-      abi: abi['poolValue'],
-      block: block 
-    });
-    const truTVL = await sdk.api.abi.call({
-      target: stkTRU,
-      abi: abi['stakeSupply'],
-      block: block 
-    });
-    
     balances[TUSD] = poolTVL.output;
     balances[TRU] = truTVL.output;
-    
+
     return balances;
 }
 
@@ -33,7 +38,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'TrueFi',               // project name
   website: 'https://app.truefi.com',
-  token: 'TRU',              
+  token: 'TRU',
   category: 'lending',          // Lending
   start: 1605830400,            // 11/20/2020 @ 12:00am (UTC)
   tvl                           // tvl adapter
