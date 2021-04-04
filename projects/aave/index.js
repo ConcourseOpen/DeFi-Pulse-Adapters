@@ -542,7 +542,7 @@
     category: "lending",
     start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
-    //rates,
+    rates,
     term: "1 block",
     variability: "medium",
   };
