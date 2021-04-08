@@ -53,13 +53,13 @@ async function tvl(timestamp, block) {
     }
   });
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'Bella Flex Saving',
   token: 'BEL',
-  category: 'assets',
+  category: 'Assets',
   start: 1616371200,    // 03/22/2020 @ 12:00am (UTC)
   tvl,
 };
