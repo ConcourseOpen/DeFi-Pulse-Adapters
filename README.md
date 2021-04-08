@@ -1,22 +1,10 @@
-# DeFi Pulse Project Templates
+# TVL Project Templates
 
-Welcome to the DeFiPulse Project Template Repository! This purpose of this repo is to allow 3rd party developers to build, validate and update their own project adapter for DeFi Pulse in order to allow a higher volume of projects to be added and maintained over time.
+## Documentation Links
 
-# How to Get Listed on DeFi Pulse
+[SDK Reference](https://github.com/certikfoundation/TVL-Adapters/blob/master/docs/sdk.md)
 
-- FIRST, You must successfully apply and be listed on The DeFi List: 
-  Please follow the instructions in this blog post to be listed on The DeFi List: https://defipulse.com/blog/how-to-join-the-defi-pulse-leaderboard.
-- Once your project has been added to the DeFi List, please follow Step 4 in the blog post link above.
-- Code an adapter as described below.
-- Work with us during testing.
-- Make sure your adapter stays up to date as your dApp gets upgraded over time. Outdated adapters may be delisted.
-
-# Documentation Links
-
-[SDK Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md) <br/>
-[Token Adapter Reference](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/tokens/README.md)
-
-# Getting Started with the Adapter
+## Getting Started with the Adapter
 
 Once you have the repo cloned locally, install dependencies by running:
 
@@ -27,7 +15,7 @@ npm install
 Next you'll need to create a `.env` file. An example file `.env.example` is provided for you to use as a starting point.
 
 ```
-DEFIPULSE_KEY='SDK_KEY_HERE'
+SDK_KEY='SDK_KEY_HERE'
 ```
 
 You'll obtain your SDK key in the course of the listing process described above. Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible. 
@@ -40,10 +28,11 @@ npm run test -- --project=_template
 
 The test should complete successfully.
 
-# GitHub Collaboration
+## GitHub Collaboration
+
 Please fork this repository before you start building your adapter and then work on a topic branch within the forked repo. Like this, you will be able to easily create pull requests against the upstream repo and if needed, you can grant us the right to make commits on your topic branch to update your pull request. Further details: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork
 
-# Writing a Project Adapter
+## Writing a Project Adapter
 
 Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings.
 
@@ -53,11 +42,11 @@ projects
     └───index.js
 ```
 
-Feel free to add additional files and folders within your project adapter directly as needed to help organize your code, but most projects shouldn't be too large. Please keep all code within your project adapter directory - PR's with modifications or additions outside the scope of your own project usually won't be allowed, and in cases where they are needed will need to be discussed with the DeFi Pulse team in advance.
+Feel free to add additional files and folders within your project adapter directly as needed to help organize your code, but most projects shouldn't be too large. Please keep all code within your project adapter directory - PR's with modifications or additions outside the scope of your own project usually won't be allowed.
 
-## The TVL Function
+### The TVL Function
 
-The main tvl function of a project adapter is where token balances are fetched. On DeFi Pulse, these functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+The main tvl function of a project adapter is where token balances are fetched. These functions are run every hour, with a unix timestamp and block number passed to the function. Please note that project adapters need to be able to run successfully for any point back to a projects starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
 ```js
 async function tvl(timestamp, block) {
@@ -72,7 +61,7 @@ async function tvl(timestamp, block) {
 
 In the case of the `_template' adapter, we're just using some hard coded values as token balances to illustrate a minimal implementation.
 
-For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. Due to the methods most commonly available in core contracts for most projects already on Defi Pulse (and a lack of broad standardization), we've found the most effective solution is for project adapters to work internally with token addresses; symbol conversions are done automatically after the adapter runs;
+For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. Due to the methods most commonly available in core contracts for most projects (and a lack of broad standardization), we've found the most effective solution is for project adapters to work internally with token addresses; symbol conversions are done automatically after the adapter runs;
 
 The important thing is that the adapter is expected to output an object with token addresses and raw non-decimal converted balances. For the `_template` adapter, the output looks like this:
 
@@ -83,7 +72,7 @@ The important thing is that the adapter is expected to output an object with tok
 }
 ```
 
-## The SDK
+### The SDK
 
 Your adapter will of course need to actually fetch real values unlike the `_template` example, so let's look at the `bancor` adapter for a real world example.
 
@@ -131,13 +120,11 @@ let balanceOfResults = await sdk.api.abi.multiCall({
 
 These illustrate the most common SDK interactions for most adapters - running one view/function on a single token/address, and running batches of a given view/function on multiple tokens/address with different parameters.
 
-[Full documentation of available functions in the SDK](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/docs/sdk.md)
+[Full documentation of available functions in the SDK](https://github.com/certikfoundation/TVL-Adapters/blob/master/docs/sdk.md)
 
-If the SDK doesn't provide required methods to implement your project adapter, please contact a member of the DeFi Pulse team so we can add necessary support where applicable, and/or collaborate to find a suitable alternative solution.
+In some cases not all necessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation.
 
-In some cases not all necessary data can be obtained on-chain and/or through the SDK, the `bancor` adapter for example hits a proprietary API to retrieve a list of tokens and addresses that need to be tracked since this information isn't available on-chain. We understand that this is sometimes necessary, and there are some unavoidable cases where off-chain data sources need to be used but wherever possible on-chain/transparent data sources should be prioritized over alternatives. Any unavoidable use of off-chain data sources should be discussed prior to implementation with the DeFi Pulse team.
-
-## Metadata
+### Metadata
 
 Each project adapter needs to export the main run function, in addition to some important metadata - This is data is outlined in the `_template` adapter with accompanying descriptions:
 
@@ -145,7 +132,7 @@ Each project adapter needs to export the main run function, in addition to some 
 module.exports = {
   name: 'Template Project', // project name
   token: null,              // null, or token symbol if project has a custom token
-  category: 'assets',       // allowed values as shown on DefiPulse: 'derivatives', 'dexes', 'lending', 'payments', 'assets'
+  category: 'assets',       // allowed values: 'derivatives', 'dexes', 'lending', 'payments', 'assets'
   start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl                       // tvl adapter
 }
@@ -163,15 +150,13 @@ module.exports = {
 }
 ```
 
-You can see the effect of these settings on [DeFi Pulse](https://defipulse.com/).
-
 The project's name and protocol token are simple values shown in the UI and API data. Category influences how the project is classified and what section it's tvl contributes to for aggregate results on the main page. Finally the start time defines the limit for how far back data needs to be fetched to retrieve the projects full historical data.
 
-## Testing
+### Testing
 
 While writing your adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
-## Historical CSV view
+### Historical CSV view
 After running the test suite, a historical CSV is generated containing all tracked tokens and their balances beginning the projects "start" date. You can use this folder to gain better insight into the output of your adapters and verify accuracy.
 
 | timestamp        | date           | block  | ETH  |
