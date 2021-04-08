@@ -102,7 +102,7 @@ const CSV = {
   ),
   // Get a historical price given a price and timestamp
   getPrice: ({ symbol, timestamp }) => {
-    let url = `${process.env.DEFIPULSE_API_URL}/${process.env.DEFIPULSE_KEY}/price/ticker`;
+    let url = `${process.env.TVL_API_URL}/${process.env.TVL_KEY}/price/ticker`;
     const req = {
       method: 'POST',
       url,

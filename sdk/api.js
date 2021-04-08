@@ -89,7 +89,7 @@
           output
         }
       } else {
-        let url = `${process.env.DEFIPULSE_API_URL}/${process.env.DEFIPULSE_KEY}${endpoint}`;
+        let url = `${process.env.TVL_API_URL}/${process.env.TVL_KEY}${endpoint}`;
 
         if(process.env.INFURA_KEY) {
           url = `${url}?infura-key=${process.env.INFURA_KEY}`;
