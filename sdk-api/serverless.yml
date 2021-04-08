@@ -1,0 +1,111 @@
+org: tvl
+app: tvl
+service: tvl-sdk-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  apiGateway:
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: your-domain.com
+    certificateName: "*.your-domain.com"
+    createRoute53Record: true
+    stage: prod
+    endpointType: edge
+    apiType: rest
+    autoDomain: false
+
+functions:
+  call:
+    handler: dist/handler.callHandler
+    events:
+      - http:
+          path: /abi/call
+          method: post
+  multiCall:
+    handler: dist/handler.multiCallHandler
+    events:
+      - http:
+          path: /abi/multiCall
+          method: post
+
+  totalSupply:
+    handler: dist/handler.totalSupplyHandler
+    events:
+      - http:
+          path: /erc20/totalSupply
+          method: post
+  decimals:
+    handler: dist/handler.decimalsHandler
+    events:
+      - http:
+          path: /erc20/decimals
+          method: post
+  symbol:
+    handler: dist/handler.symbolHandler
+    events:
+      - http:
+          path: /erc20/symbol
+          method: post
+  balanceOf:
+    handler: dist/handler.balanceOfHandler
+    events:
+      - http:
+          path: /erc20/balanceOf
+          method: post
+  info:
+    handler: dist/handler.infoHandler
+    events:
+      - http:
+          path: /erc20/info
+          method: post
+
+  getBalance:
+    handler: dist/handler.getBalanceHandler
+    events:
+      - http:
+          path: /eth/getBalance
+          method: post
+  getBalances:
+    handler: dist/handler.getBalancesHandler
+    events:
+      - http:
+          path: /eth/getBalances
+          method: post
+
+  toSymbols:
+    handler: dist/handler.toSymbolsHandler
+    events:
+      - http:
+          path: /util/toSymbols
+          method: post
+  getLogs:
+    handler: dist/handler.getLogsHandler
+    events:
+      - http:
+          path: /util/getLogs
+          method: post
+  kyberTokens:
+    handler: dist/handler.kyberTokensHandler
+    events:
+      - http:
+          path: /util/kyberTokens
+          method: post
+  tokenList:
+    handler: dist/handler.tokenListHandler
+    events:
+      - http:
+          path: /util/tokenList
+          method: post
+  lookupBlock:
+    handler: dist/handler.lookupBlockHandler
+    events:
+      - http:
+          path: /util/lookupBlock
+          method: post

@@ -1,0 +1,445 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remote util api kyberTokens 1`] = `
+Object {
+  "ethCallCount": 0,
+  "output": Object {
+    "0x0000000000085d4780b73119b644ae5ecd22b376": Object {
+      "decimals": 18,
+      "symbol": "TUSD",
+    },
+    "0x094c875704c14783049ddf8136e298b3a099c446": Object {
+      "decimals": 18,
+      "symbol": "PT",
+    },
+    "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e": Object {
+      "decimals": 18,
+      "symbol": "YFI",
+    },
+    "0x0ccd5dd52dee42b171a623478e5261c1eaae092a": Object {
+      "decimals": 18,
+      "symbol": "DFM",
+    },
+    "0x0d8775f648430679a709e98d2b0cb6250d2887ef": Object {
+      "decimals": 18,
+      "symbol": "BAT",
+    },
+    "0x0e8d6b471e332f140e7d9dbb99e5e3822f728da6": Object {
+      "decimals": 18,
+      "symbol": "ABYSS",
+    },
+    "0x0f5d2fb29fb7d3cfee444a200298f468908cc942": Object {
+      "decimals": 18,
+      "symbol": "MANA",
+    },
+    "0x103c3a209da59d3e7c4a89307e66521e081cfdf0": Object {
+      "decimals": 18,
+      "symbol": "GVT",
+    },
+    "0x111111111117dc0aa78b770fa6a738034120c302": Object {
+      "decimals": 18,
+      "symbol": "1INCH",
+    },
+    "0x196f4727526ea7fb1e17b2071b3d8eaa38486988": Object {
+      "decimals": 18,
+      "symbol": "RSV",
+    },
+    "0x1985365e9f78359a9b6ad760e32412f4a445e862": Object {
+      "decimals": 18,
+      "symbol": "REP",
+    },
+    "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c": Object {
+      "decimals": 18,
+      "symbol": "BNT",
+    },
+    "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984": Object {
+      "decimals": 18,
+      "symbol": "UNI",
+    },
+    "0x221657776846890989a759ba2973e427dff5c9bb": Object {
+      "decimals": 18,
+      "symbol": "REPV2",
+    },
+    "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": Object {
+      "decimals": 8,
+      "symbol": "WBTC",
+    },
+    "0x22b3faaa8df978f6bafe18aade18dc2e3dfa0e0c": Object {
+      "decimals": 18,
+      "symbol": "BAM",
+    },
+    "0x27702a26126e0b3702af63ee09ac4d1a084ef628": Object {
+      "decimals": 18,
+      "symbol": "ALEPH",
+    },
+    "0x278a83b64c3e3e1139f8e8a52d96360ca3c69a3d": Object {
+      "decimals": 18,
+      "symbol": "NEXXO",
+    },
+    "0x297e4e5e59ad72b1b0a2fd446929e76117be0e0a": Object {
+      "decimals": 18,
+      "symbol": "VALOR",
+    },
+    "0x2ba592f78db6436527729929aaf6c908497cb200": Object {
+      "decimals": 18,
+      "symbol": "CREAM",
+    },
+    "0x2c4e8f2d746113d0696ce89b35f0d8bf88e0aeca": Object {
+      "decimals": 18,
+      "symbol": "OST",
+    },
+    "0x2c537e5624e4af88a7ae4060c022609376c8d0eb": Object {
+      "decimals": 6,
+      "symbol": "TRYB",
+    },
+    "0x301c755ba0fca00b1923768fffb3df7f4e63af31": Object {
+      "decimals": 18,
+      "symbol": "GDC",
+    },
+    "0x3845badade8e6dff049820680d1f14bd3903a5d0": Object {
+      "decimals": 18,
+      "symbol": "SAND",
+    },
+    "0x408e41876cccdc0f92210600ef50372656052a38": Object {
+      "decimals": 18,
+      "symbol": "REN",
+    },
+    "0x41e5560054824ea6b0732e656e3ad64e20e94e45": Object {
+      "decimals": 8,
+      "symbol": "CVC",
+    },
+    "0x45f24baeef268bb6d63aee5129015d69702bcdfa": Object {
+      "decimals": 18,
+      "symbol": "YFV",
+    },
+    "0x4a220e6096b25eadb88358cb44068a3248254675": Object {
+      "decimals": 18,
+      "symbol": "QNT",
+    },
+    "0x4a57e687b9126435a9b19e4a802113e266adebde": Object {
+      "decimals": 18,
+      "symbol": "FXC",
+    },
+    "0x4cc19356f2d37338b9802aa8e8fc58b0373296e7": Object {
+      "decimals": 18,
+      "symbol": "KEY",
+    },
+    "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf": Object {
+      "decimals": 9,
+      "symbol": "DGX",
+    },
+    "0x4fabb145d64652a948d72533023f6e7a623c7c53": Object {
+      "decimals": 18,
+      "symbol": "BUSD",
+    },
+    "0x514910771af9ca656af840dff83e8264ecf986ca": Object {
+      "decimals": 18,
+      "symbol": "LINK",
+    },
+    "0x5228a22e72ccc52d415ecfd199f99d0665e7733b": Object {
+      "decimals": 18,
+      "symbol": "PBTC",
+    },
+    "0x543ff227f64aa17ea132bf9886cab5db55dcaddf": Object {
+      "decimals": 18,
+      "symbol": "GEN",
+    },
+    "0x56d811088235f11c8920698a204a5010a788f4b3": Object {
+      "decimals": 18,
+      "symbol": "BZRX",
+    },
+    "0x5732046a883704404f284ce41ffadd5b007fd668": Object {
+      "decimals": 18,
+      "symbol": "BLZ",
+    },
+    "0x57ab1ec28d129707052df4df418d58a2d46d5f51": Object {
+      "decimals": 18,
+      "symbol": "SUSD",
+    },
+    "0x595832f8fc6bf59c85c527fec3740a1b7a361269": Object {
+      "decimals": 6,
+      "symbol": "POWR",
+    },
+    "0x5979f50f1d4c08f9a53863c2f39a7b0492c38d0f": Object {
+      "decimals": 18,
+      "symbol": "PLTC",
+    },
+    "0x5d60d8d7ef6d37e16ebabc324de3be57f135e0bc": Object {
+      "decimals": 18,
+      "symbol": "MYB",
+    },
+    "0x607f4c5bb672230e8672085532f7e901544a7375": Object {
+      "decimals": 9,
+      "symbol": "RLC",
+    },
+    "0x667102bd3413bfeaa3dffb48fa8288819e480a88": Object {
+      "decimals": 8,
+      "symbol": "TKX",
+    },
+    "0x6710c63432a2de02954fc0f851db07146a6c0312": Object {
+      "decimals": 18,
+      "symbol": "MFG",
+    },
+    "0x6810e776880c02933d47db1b9fc05908e5386b96": Object {
+      "decimals": 18,
+      "symbol": "GNO",
+    },
+    "0x6a9b3e36436b7abde8c4e2e2a98ea40455e615cf": Object {
+      "decimals": 18,
+      "symbol": "EKG",
+    },
+    "0x6b175474e89094c44da98b954eedeac495271d0f": Object {
+      "decimals": 18,
+      "symbol": "DAI",
+    },
+    "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2": Object {
+      "decimals": 18,
+      "symbol": "SUSHI",
+    },
+    "0x744d70fdbe2ba4cf95131626614a1763df805b9e": Object {
+      "decimals": 18,
+      "symbol": "SNT",
+    },
+    "0x7c5a0ce9267ed19b22f8cae653f198e3e8daf098": Object {
+      "decimals": 18,
+      "symbol": "SAN",
+    },
+    "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0": Object {
+      "decimals": 18,
+      "symbol": "MATIC",
+    },
+    "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9": Object {
+      "decimals": 18,
+      "symbol": "AAVE",
+    },
+    "0x80fb784b7ed66730e8b1dbd9820afd29931aab03": Object {
+      "decimals": 18,
+      "symbol": "LEND",
+    },
+    "0x8207c1ffc5b6804f6024322ccf34f29c3541ae26": Object {
+      "decimals": 18,
+      "symbol": "OGN",
+    },
+    "0x8400d94a5cb0fa0d041a3788e395285d61c9ee5e": Object {
+      "decimals": 8,
+      "symbol": "UBT",
+    },
+    "0x8762db106b2c2a0bccb3a80d1ed41273552616e8": Object {
+      "decimals": 18,
+      "symbol": "RSR",
+    },
+    "0x89ab32156e46f46d02ade3fecbe5fc4243b9aaed": Object {
+      "decimals": 18,
+      "symbol": "PNT",
+    },
+    "0x8e870d67f660d95d5be530380d0ec0bd388289e1": Object {
+      "decimals": 18,
+      "symbol": "PAX",
+    },
+    "0x8f8221afbb33998d8584a2b05749ba73c37a938a": Object {
+      "decimals": 18,
+      "symbol": "REQ",
+    },
+    "0x93ed3fbe21207ec2e8f2d3c3de6e058cb73bc04d": Object {
+      "decimals": 18,
+      "symbol": "PNK",
+    },
+    "0x960b236a07cf122663c4303350609a66a7b288c0": Object {
+      "decimals": 18,
+      "symbol": "ANT",
+    },
+    "0x967da4048cd07ab37855c090aaf366e4ce1b9f48": Object {
+      "decimals": 18,
+      "symbol": "OCEAN",
+    },
+    "0x970b9bb2c0444f5e81e9d0efb84c8ccdcdcaf84d": Object {
+      "decimals": 18,
+      "symbol": "FUSE",
+    },
+    "0x9992ec3cf6a55b00978cddf2b27bc6882d88d1ec": Object {
+      "decimals": 18,
+      "symbol": "POLY",
+    },
+    "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2": Object {
+      "decimals": 18,
+      "symbol": "MKR",
+    },
+    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": Object {
+      "decimals": 6,
+      "symbol": "USDC",
+    },
+    "0xa15c7ebe1f07caf6bff097d8a589fb8ac49ae5b3": Object {
+      "decimals": 18,
+      "symbol": "NPXS",
+    },
+    "0xa3d58c4e56fedcae3a7c43a725aee9a71f0ece4e": Object {
+      "decimals": 18,
+      "symbol": "MET",
+    },
+    "0xa4bdb11dc0a2bec88d24a3aa1e6bb17201112ebe": Object {
+      "decimals": 6,
+      "symbol": "USDS",
+    },
+    "0xa4e8c3ec456107ea67d3075bf9e3df3a75823db0": Object {
+      "decimals": 18,
+      "symbol": "LOOM",
+    },
+    "0xa7fc5d2453e3f68af0cc1b78bcfee94a1b293650": Object {
+      "decimals": 10,
+      "symbol": "SPIKE",
+    },
+    "0xaaaf91d9b90df800df4f55c205fd6989c977e73a": Object {
+      "decimals": 8,
+      "symbol": "TKN",
+    },
+    "0xb63b606ac810a52cca15e44bb630fd42d8d1d83d": Object {
+      "decimals": 8,
+      "symbol": "MCO",
+    },
+    "0xb683d83a532e2cb7dfa5275eed3698436371cc9f": Object {
+      "decimals": 18,
+      "symbol": "BTU",
+    },
+    "0xb8baa0e4287890a5f79863ab62b7f175cecbd433": Object {
+      "decimals": 18,
+      "symbol": "SWRV",
+    },
+    "0xb97048628db6b661d4c2aa833e95dbe1a905b280": Object {
+      "decimals": 18,
+      "symbol": "PAY",
+    },
+    "0xba11d00c5f74255f56a5e366f4f77f5a186d7f55": Object {
+      "decimals": 18,
+      "symbol": "BAND",
+    },
+    "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd": Object {
+      "decimals": 18,
+      "symbol": "LRC",
+    },
+    "0xbe30f684d62c9f7883a75a29c162c332c0d98f23": Object {
+      "decimals": 18,
+      "symbol": "GHT",
+    },
+    "0xbe393aa534f82c0ffac31bf06a23e283acb3352b": Object {
+      "decimals": 18,
+      "symbol": "NTB",
+    },
+    "0xbe9375c6a420d2eeb258962efb95551a5b722803": Object {
+      "decimals": 18,
+      "symbol": "STMX",
+    },
+    "0xbf2179859fc6d5bee9bf9158632dc51678a4100e": Object {
+      "decimals": 18,
+      "symbol": "ELF",
+    },
+    "0xc00e94cb662c3520282e6f5717214004a7f26888": Object {
+      "decimals": 18,
+      "symbol": "COMP",
+    },
+    "0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f": Object {
+      "decimals": 18,
+      "symbol": "SNX",
+    },
+    "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": Object {
+      "decimals": 18,
+      "symbol": "WETH",
+    },
+    "0xc28e931814725bbeb9e670676fabbcb694fe7df2": Object {
+      "decimals": 18,
+      "symbol": "EQUAD",
+    },
+    "0xc86d054809623432210c107af2e3f619dcfbf652": Object {
+      "decimals": 18,
+      "symbol": "UPP",
+    },
+    "0xd26114cd6ee289accf82350c8d8487fedb8a0c07": Object {
+      "decimals": 18,
+      "symbol": "OMG",
+    },
+    "0xd46ba6d942050d489dbd938a2c909a5d5039a161": Object {
+      "decimals": 9,
+      "symbol": "AMPL",
+    },
+    "0xd4c435f5b09f855c3317c8524cb1f586e42795fa": Object {
+      "decimals": 18,
+      "symbol": "CND",
+    },
+    "0xd533a949740bb3306d119cc777fa900ba034cd52": Object {
+      "decimals": 18,
+      "symbol": "CRV",
+    },
+    "0xd9ec3ff1f8be459bb9369b4e79e9ebcf7141c093": Object {
+      "decimals": 18,
+      "symbol": "KAI",
+    },
+    "0xdac17f958d2ee523a2206206994597c13d831ec7": Object {
+      "decimals": 6,
+      "symbol": "USDT",
+    },
+    "0xdb25f211ab05b1c97d595516f45794528a807ad8": Object {
+      "decimals": 2,
+      "symbol": "EURS",
+    },
+    "0xdd974d5c2e2928dea5f71b9825b8b646686bd200": Object {
+      "decimals": 18,
+      "symbol": "KNC",
+    },
+    "0xdf574c24545e5ffecb9a659c229253d4111d87e1": Object {
+      "decimals": 8,
+      "symbol": "HUSD",
+    },
+    "0xe3818504c1b32bf1557b16c238b2e01fd3149c17": Object {
+      "decimals": 18,
+      "symbol": "PLR",
+    },
+    "0xe41d2489571d322189246dafa5ebde1f4699f498": Object {
+      "decimals": 18,
+      "symbol": "ZRX",
+    },
+    "0xe48972fcd82a274411c01834e2f031d4377fa2c0": Object {
+      "decimals": 18,
+      "symbol": "2KEY",
+    },
+    "0xe5a3229ccb22b6484594973a03a3851dcd948756": Object {
+      "decimals": 18,
+      "symbol": "RAE",
+    },
+    "0xea26c4ac16d4a5a106820bc8aee85fd0b7b2b664": Object {
+      "decimals": 18,
+      "symbol": "QKC",
+    },
+    "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d": Object {
+      "decimals": 8,
+      "symbol": "RENBTC",
+    },
+    "0xebd9d99a3982d547c5bb4db7e3b1f9f14b67eb83": Object {
+      "decimals": 18,
+      "symbol": "ID",
+    },
+    "0xec67005c4e498ec7f55e092bd1d35cbc47c91892": Object {
+      "decimals": 18,
+      "symbol": "MLN",
+    },
+    "0xf433089366899d83a9f26a773d59ec7ecf30355e": Object {
+      "decimals": 8,
+      "symbol": "MTL",
+    },
+    "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c": Object {
+      "decimals": 18,
+      "symbol": "ENJ",
+    },
+    "0xf8e386eda857484f5a12e4b5daa9984e06e73705": Object {
+      "decimals": 18,
+      "symbol": "IND",
+    },
+    "0xfa1a856cfa3409cfa145fa4e20eb270df3eb21ab": Object {
+      "decimals": 18,
+      "symbol": "IOST",
+    },
+    "0xfef4185594457050cc9c23980d301908fe057bb1": Object {
+      "decimals": 18,
+      "symbol": "VIDT",
+    },
+  },
+}
+`;

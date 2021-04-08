@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`abi multicall with cached abi 1`] = `
+Array [
+  Object {
+    "input": Object {
+      "params": Array [
+        "0x802275979B020F0ec871c5eC1db6e412b72fF20b",
+      ],
+      "target": "0x0000000000085d4780B73119b644AE5ecd22b376",
+    },
+    "output": "9075930471597257944363",
+    "success": true,
+  },
+  Object {
+    "input": Object {
+      "params": Array [
+        "0xaf38668f4719ecf9452dc0300be3f6c83cbf3721",
+      ],
+      "target": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+    },
+    "output": "14182595309792052635843",
+    "success": true,
+  },
+]
+`;
