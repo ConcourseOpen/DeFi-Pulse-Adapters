@@ -2,30 +2,30 @@
   Modules
 ==================================================*/
 
-const { api: { abi, util } } = require('../../sdk');
+const {
+  api: { abi, util },
+} = require("../../sdk");
 
 /*==================================================
   Settings
 ==================================================*/
 
 const START_BLOCK = 8623608;
-const PROTOCOL_ADDRESS = '0xc59b0e4de5f1248c1140964e0ff287b192407e0c';
+const PROTOCOL_ADDRESS = "0xc59b0e4de5f1248c1140964e0ff287b192407e0c";
 const TOKENS_TO_IGNORE = new Set();
 
 /*==================================================
   Helper Functions
 ==================================================*/
 
-const getTokenAddressFromLogData = data => '0x' + data.substring(26, 66);
+const getTokenAddressFromLogData = (data) => "0x" + data.substring(26, 66);
 
-const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
-  ({
-    target: tokenAddress,
-    params: PROTOCOL_ADDRESS,
-    abi: 'erc20:balanceOf',
-    block: atThisBlock,
-  });
-
+const getCallDataOfErc20Token = (tokenAddress, atThisBlock) => ({
+  target: tokenAddress,
+  params: PROTOCOL_ADDRESS,
+  abi: "erc20:balanceOf",
+  block: atThisBlock,
+});
 
 /*==================================================
   Main
@@ -50,15 +50,15 @@ async function tvl(_, block) {
     // add it to de-dupe
     TOKENS_TO_IGNORE.add(tokenAddress);
     const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block);
-    return acc.concat(tokenWithCallData)
+    return acc.concat(tokenWithCallData);
   }, []);
-  
+
   // [0] Batch call all ERC20 balances from the Gnosis Conditional Token contract
   // [1] Resolve initial ethBalance promise
   const balances = await abi.multiCall({
     block,
-    abi: 'erc20:balanceOf',
-    calls: tokenList
+    abi: "erc20:balanceOf",
+    calls: tokenList,
   });
 
   return balances;
@@ -70,4 +70,4 @@ async function tvl(_, block) {
 
 module.exports = {
   tvl,
-}
+};

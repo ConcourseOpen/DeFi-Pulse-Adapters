@@ -86,9 +86,7 @@
     "type": "function"
   },
   "getETHPx": {
-    "inputs": [
-      { "internalType": "address", "name": "token", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "address", "name": "token", "type": "address" }],
     "name": "getETHPx",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",

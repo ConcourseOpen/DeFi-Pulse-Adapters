@@ -34,10 +34,8 @@ async function tvl(_, block) {
       })),
     })
   ).output.map((orderCall) => orderCall.output);
-  //filtering out duplicate tokens 
-  const uniqueLockedTokenAddresses = [
-    ...new Set(activeOrders.map((order) => order.tokenIn)),
-  ]
+  //filtering out duplicate tokens
+  const uniqueLockedTokenAddresses = [...new Set(activeOrders.map((order) => order.tokenIn))];
   //getting Unitrade orderbook balance of specified tokens
   let balances = (
     await sdk.api.abi.multiCall({
@@ -46,7 +44,7 @@ async function tvl(_, block) {
         target: address,
         params: UNITRADE_ORDERBOOK,
       })),
-      block
+      block,
     })
   ).output;
 
@@ -54,9 +52,9 @@ async function tvl(_, block) {
   balances = balances.reduce((acc, item) => {
     return Object.assign(acc, { [item.input.target]: [item.output] });
   }, {});
-  
-  let ethBalance = (await sdk.api.eth.getBalance({target: UNITRADE_ORDERBOOK, block})).output;
-  balances['0x0000000000000000000000000000000000000000'] = ethBalance;
+
+  let ethBalance = (await sdk.api.eth.getBalance({ target: UNITRADE_ORDERBOOK, block })).output;
+  balances["0x0000000000000000000000000000000000000000"] = ethBalance;
 
   return balances;
 }

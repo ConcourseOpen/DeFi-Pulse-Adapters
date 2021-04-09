@@ -18,7 +18,7 @@ Next you'll need to create a `.env` file. An example file `.env.example` is prov
 SDK_KEY='SDK_KEY_HERE'
 ```
 
-You'll obtain your SDK key in the course of the listing process described above. Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible. 
+You'll obtain your SDK key in the course of the listing process described above. Each project using the SDK requires an individual SDK key so that we can keep tabs on the web3 call volume each adapter creates in our back-end. We do not limit the number of web3 calls an adapter can make, but ask projects to optimize their call volume whenever possible.
 
 To verify that you have access and everything is working, try running:
 
@@ -51,15 +51,15 @@ The main tvl function of a project adapter is where token balances are fetched. 
 ```js
 async function tvl(timestamp, block) {
   let balances = {
-    '0x0000000000000000000000000000000000000000': 1000000000000000000, // ETH
-    '0x6B175474E89094C44Da98b954EedeAC495271d0F': 2000000000000000000  // DAI
+    "0x0000000000000000000000000000000000000000": 1000000000000000000, // ETH
+    "0x6B175474E89094C44Da98b954EedeAC495271d0F": 2000000000000000000, // DAI
   };
 
   return balances;
 }
 ```
 
-In the case of the `_template' adapter, we're just using some hard coded values as token balances to illustrate a minimal implementation.
+In the case of the `\_template' adapter, we're just using some hard coded values as token balances to illustrate a minimal implementation.
 
 For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. Due to the methods most commonly available in core contracts for most projects (and a lack of broad standardization), we've found the most effective solution is for project adapters to work internally with token addresses; symbol conversions are done automatically after the adapter runs;
 
@@ -78,10 +78,10 @@ Your adapter will of course need to actually fetch real values unlike the `_temp
 
 ```js
 async function run(timestamp, block) {
-  let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
+  let getBalance = await sdk.api.eth.getBalance({ target: "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315", block });
 
   let balances = {
-    '0x0000000000000000000000000000000000000000': getBalance.output
+    "0x0000000000000000000000000000000000000000": getBalance.output,
   };
 
   let calls = await GenerateCallList(timestamp);
@@ -89,7 +89,7 @@ async function run(timestamp, block) {
   let balanceOfResults = await sdk.api.abi.multiCall({
     block,
     calls,
-    abi: 'erc20:balanceOf'
+    abi: "erc20:balanceOf",
   });
 
   await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
@@ -101,20 +101,20 @@ async function run(timestamp, block) {
 To retrieve it's locked balances, the `bancor` adapter needs to check a main address for it's ETH balance, as well as check a list of token adapters for specific token balances. An SDK provides standardized methods for querying contracts for values and other common interactions, and wherever possible is the preferred method of retrieving data.
 
 ```js
-const  sdk = require('../../sdk');
+const sdk = require("../../sdk");
 ```
 
 2 methods are utilized for the `bancor` adapter:
 
 ```js
-let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
+let getBalance = await sdk.api.eth.getBalance({ target: "0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315", block });
 ```
 
 ```js
 let balanceOfResults = await sdk.api.abi.multiCall({
   block,
   calls,
-  abi: 'erc20:balanceOf'
+  abi: "erc20:balanceOf",
 });
 ```
 
@@ -130,24 +130,24 @@ Each project adapter needs to export the main run function, in addition to some 
 
 ```js
 module.exports = {
-  name: 'Template Project', // project name
-  token: null,              // null, or token symbol if project has a custom token
-  category: 'assets',       // allowed values: 'derivatives', 'dexes', 'lending', 'payments', 'assets'
-  start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-  tvl                       // tvl adapter
-}
+  name: "Template Project", // project name
+  token: null, // null, or token symbol if project has a custom token
+  category: "assets", // allowed values: 'derivatives', 'dexes', 'lending', 'payments', 'assets'
+  start: 1514764800, // unix timestamp (utc 0) specifying when the project began, or where live data begins
+  tvl, // tvl adapter
+};
 ```
 
 Here's a look at the `bancor` adapter for a practical example of this:
 
 ```js
 module.exports = {
-  name: 'Bancor',
-  token: 'BNT',
-  category: 'dexes',
-  start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-  tvl
-}
+  name: "Bancor",
+  token: "BNT",
+  category: "dexes",
+  start: 1501632000, // 08/02/2017 @ 12:00am (UTC)
+  tvl,
+};
 ```
 
 The project's name and protocol token are simple values shown in the UI and API data. Category influences how the project is classified and what section it's tvl contributes to for aggregate results on the main page. Finally the start time defines the limit for how far back data needs to be fetched to retrieve the projects full historical data.
@@ -157,15 +157,17 @@ The project's name and protocol token are simple values shown in the UI and API 
 While writing your adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
 ### Historical CSV view
+
 After running the test suite, a historical CSV is generated containing all tracked tokens and their balances beginning the projects "start" date. You can use this folder to gain better insight into the output of your adapters and verify accuracy.
 
-| timestamp        | date           | block  | ETH  |
-| ------------- |:-------------:| -----:|-----:|
-| 1538006400      | Wed Sep 26 2018 20:00:00 | 6405884 | 22.64 |
-| 1549324800 | Mon Feb 04 2019 19:00:00     | 7175712 |  25452.34 |
-| 1554940800      | Wed Apr 10 2019 20:00:00   | 7543456   |   53152.81 |
+| timestamp  |           date           |   block |      ETH |
+| ---------- | :----------------------: | ------: | -------: |
+| 1538006400 | Wed Sep 26 2018 20:00:00 | 6405884 |    22.64 |
+| 1549324800 | Mon Feb 04 2019 19:00:00 | 7175712 | 25452.34 |
+| 1554940800 | Wed Apr 10 2019 20:00:00 | 7543456 | 53152.81 |
 
 Check the
+
 ```
 /CSV folder
 ```

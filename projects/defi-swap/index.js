@@ -10,15 +10,12 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v2));
 
-  const balances = Array.from(tokenAddresses).reduce(
-    (accumulator, tokenAddress) => {
-      const v2Balance = new BigNumber(v2[tokenAddress] || "0");
-      accumulator[tokenAddress] = v2Balance.toFixed();
+  const balances = Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
+    const v2Balance = new BigNumber(v2[tokenAddress] || "0");
+    accumulator[tokenAddress] = v2Balance.toFixed();
 
-      return accumulator;
-    },
-    {}
-  );
+    return accumulator;
+  }, {});
 
   return balances;
 }

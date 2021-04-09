@@ -3,8 +3,10 @@
     "constant": true,
     "inputs": [],
     "name": "getBassets",
-    "outputs": [{
-        "components": [{
+    "outputs": [
+      {
+        "components": [
+          {
             "internalType": "address",
             "name": "addr",
             "type": "address"

@@ -3,7 +3,7 @@
 The SDK module contains all endpoints and functions needed to write a project adapter, including methods for querying the blockchain, and formatting data output. Additional methods and helpers will be added over time to help simplify more complex contract integration, and assist with commonly used patterns that may turn up as more projects are added.
 
 ```js
-const  sdk = require('../../sdk');
+const sdk = require("../../sdk");
 ```
 
 # Standards
@@ -16,25 +16,25 @@ Addresses:
 
 ```js
 let addressBalances = {
-  '0x0000000000000000000000000000000000000000': '1000000000000000000', // ETH
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F': '2000000000000000000'  // DAI
-}
+  "0x0000000000000000000000000000000000000000": "1000000000000000000", // ETH
+  "0x6B175474E89094C44Da98b954EedeAC495271d0F": "2000000000000000000", // DAI
+};
 ```
 
 Symbols:
 
 ```js
 let symbolBalances = {
-  ETH: '1',
-  DAI: '2'
-}
+  ETH: "1",
+  DAI: "2",
+};
 ```
 
 **NOTE:** as shown above, the all 0 address is used to indicate ETH
 
 ## Ethereum Node Calls
 
-For the purpose of debugging and to assist with optimization, any api calls that require querying an Ethereum Node (ie, Infura) will return an *'ethCallCount'* specifying the number of network calls that were needed to generate the returned result. In some cases no calls may actually be needed due to caching/optimization.
+For the purpose of debugging and to assist with optimization, any api calls that require querying an Ethereum Node (ie, Infura) will return an _'ethCallCount'_ specifying the number of network calls that were needed to generate the returned result. In some cases no calls may actually be needed due to caching/optimization.
 
 Example:
 
@@ -47,22 +47,24 @@ Example:
 
 # Methods
 
-## Utility - *sdk.api.util.___*
-  
-### toSymbols(*object*)
+## Utility - _sdk.api.util.\_\_\__
+
+### toSymbols(_object_)
 
 Convert a key/value list of token addresses/balances to decimal converted key/value list of symbols/balances.
 
 ###### Arguments
-| Type                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| *object*                       | *(address)*: *number/string*                                 |
+
+| Type     | Description                  |
+| -------- | ---------------------------- |
+| _object_ | _(address)_: _number/string_ |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *object*                       | *(symbol)*: *number/string*                                  |
+
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| ethCallCount | _number_ | Number of Ethereum network calls used |
+| output       | _object_ | _(symbol)_: _number/string_           |
 
 For consistency, we treat balances associated with token addresses as raw/wei values (before decimal conversion) and balances associated with token symbols as decimal converted values. **toSymbols** accepts key/value pairs of token addresses and balances, and will return the resulting key/value pairs of symbols and decimal converted balances.
 
@@ -72,8 +74,8 @@ the SDK server maintains an extensive list of symbol and decimal values for popu
 
 ```js
 let result = await sdk.api.util.toSymbols({
-  '0x0000000000000000000000000000000000000000': '1000000000000000000', // ETH
-  '0x6B175474E89094C44Da98b954EedeAC495271d0F': '2000000000000000000'  // DAI
+  "0x0000000000000000000000000000000000000000": "1000000000000000000", // ETH
+  "0x6B175474E89094C44Da98b954EedeAC495271d0F": "2000000000000000000", // DAI
 });
 ```
 
@@ -89,28 +91,30 @@ let result = await sdk.api.util.toSymbols({
 }
 ```
 
-### getLogs(*object*)
+### getLogs(_object_)
 
 Get a list of event logs thrown by the smart contracts for a given set of arguments.
 
 ###### Arguments
-| Type                           | Description                                                                                                              |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| *object*                       | *(target)*: *string*, *(topic)*: *string*, *(keys)*: *array[*string*]*, *(fromBlock)*: *number*, *(toBlock)*: *number*   |
+
+| Type     | Description                                                                                                            |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| _object_ | _(target)_: _string_, _(topic)_: _string_, _(keys)_: *array[*string*]*, _(fromBlock)_: _number_, _(toBlock)_: _number_ |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *array*                        | List of event logs                                           |
+
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| ethCallCount | _number_ | Number of Ethereum network calls used |
+| output       | _array_  | List of event logs                    |
 
 ###### Example Call
 
 ```js
 let result = await sdk.api.util.getLogs({
-  target: '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd',
-  topic: 'LOG_NEW_POOL(address,address)',
-  keys: ['topics'],
+  target: "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd",
+  topic: "LOG_NEW_POOL(address,address)",
+  keys: ["topics"],
   fromBlock: 9562480,
   toBlock: 10411347,
 });
@@ -148,10 +152,10 @@ let result = await sdk.api.util.getLogs({
 Get a list of tokens supported by Kyber Network.
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| output                         | *object*                       | *(address)*: *object(decimals, ethPrice, symbol)*            |
 
+| Name   | Type     | Description                                       |
+| ------ | -------- | ------------------------------------------------- |
+| output | _object_ | _(address)_: _object(decimals, ethPrice, symbol)_ |
 
 ###### Example Call
 
@@ -215,15 +219,15 @@ let result = await sdk.api.util.tokenList();
 ]
 ```
 
-### lookupBlock(*number*)
+### lookupBlock(_number_)
 
 Get the nearest block data for a given timestamp
 
 ###### Arguments
-| Type                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| *number*                       | unix timestamp                                               |
 
+| Type     | Description    |
+| -------- | -------------- |
+| _number_ | unix timestamp |
 
 ###### Example Call
 
@@ -240,27 +244,29 @@ let result = await sdk.api.util.lookupBlock(1594115200);
 }
 ```
 
-## ERC20 - *sdk.api.erc20.___*
+## ERC20 - _sdk.api.erc20.\_\_\__
 
-### symbol(*string*)
+### symbol(_string_)
 
 Get the symbol for a given token address.
 
 ###### Arguments
-| Type                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| *string*                       | **(address)**                                                |
+
+| Type     | Description   |
+| -------- | ------------- |
+| _string_ | **(address)** |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *string*                       | Symbol                                                       |
+
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| ethCallCount | _number_ | Number of Ethereum network calls used |
+| output       | _string_ | Symbol                                |
 
 ###### Example
 
 ```js
-let result = await sdk.api.erc20.symbol('0x6B175474E89094C44Da98b954EedeAC495271d0F');
+let result = await sdk.api.erc20.symbol("0x6B175474E89094C44Da98b954EedeAC495271d0F");
 ```
 
 ###### Result:
@@ -272,25 +278,27 @@ let result = await sdk.api.erc20.symbol('0x6B175474E89094C44Da98b954EedeAC495271
 }
 ```
 
-### decimals(*string*)
+### decimals(_string_)
 
 Get the decimals for a given token address.
 
 ###### Arguments
-| Type                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| *string*                       | **(address)**                                                |
+
+| Type     | Description   |
+| -------- | ------------- |
+| _string_ | **(address)** |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *number*                       | Decimals                                                     |
+
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| ethCallCount | _number_ | Number of Ethereum network calls used |
+| output       | _number_ | Decimals                              |
 
 ###### Example
 
 ```js
-let result = await sdk.api.erc20.decimals('0x6B175474E89094C44Da98b954EedeAC495271d0F');
+let result = await sdk.api.erc20.decimals("0x6B175474E89094C44Da98b954EedeAC495271d0F");
 ```
 
 ###### Result:
@@ -302,27 +310,29 @@ let result = await sdk.api.erc20.decimals('0x6B175474E89094C44Da98b954EedeAC4952
 }
 ```
 
-### info(*string*)
+### info(_string_)
 
 Get the symbol & decimals for a given token address.
 
 ###### Arguments
-| Type                           | Description                                                  |
-| ------------------------------ | ------------------------------------------------------------ |
-| *string*                       | **(address)**                                                |
+
+| Type     | Description   |
+| -------- | ------------- |
+| _string_ | **(address)** |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output (keys ▼)                | *object* (values ▼)            |                                                              |
-| -- symbol                      | *string*                       | Symbol                                                       |
-| -- decimals                    | *number*                       | Decimals                                                     |
+
+| Name            | Type                | Description                           |
+| --------------- | ------------------- | ------------------------------------- |
+| ethCallCount    | _number_            | Number of Ethereum network calls used |
+| output (keys ▼) | _object_ (values ▼) |                                       |
+| -- symbol       | _string_            | Symbol                                |
+| -- decimals     | _number_            | Decimals                              |
 
 ###### Example
 
 ```js
-let result = await sdk.api.erc20.info('0x6B175474E89094C44Da98b954EedeAC495271d0F');
+let result = await sdk.api.erc20.info("0x6B175474E89094C44Da98b954EedeAC495271d0F");
 ```
 
 ###### Result:
@@ -337,29 +347,31 @@ let result = await sdk.api.erc20.info('0x6B175474E89094C44Da98b954EedeAC495271d0
 }
 ```
 
-### totalSupply(*object*)
+### totalSupply(_object_)
 
 Call the erc20 contract method totalSupply.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| target (required)              | *string* **(address)**         | Target address to make the call on                           |
-| block (optional)               | *number*                       | Block number for the call                                    |
-| decimals (optional)            | *number*                       | Will return a decimal converted result using this value      |
+
+| Name                | Type                   | Description                                             |
+| ------------------- | ---------------------- | ------------------------------------------------------- |
+| target (required)   | _string_ **(address)** | Target address to make the call on                      |
+| block (optional)    | _number_               | Block number for the call                               |
+| decimals (optional) | _number_               | Will return a decimal converted result using this value |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *number/string*                | Result of the totalSupply call                               |
+
+| Name         | Type            | Description                           |
+| ------------ | --------------- | ------------------------------------- |
+| ethCallCount | _number_        | Number of Ethereum network calls used |
+| output       | _number/string_ | Result of the totalSupply call        |
 
 ###### Example
 
 ```js
 let result = await sdk.api.erc20.totalSupply({
-  target: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-  block: 9424366 
+  target: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  block: 9424366,
 });
 ```
 
@@ -372,31 +384,33 @@ let result = await sdk.api.erc20.totalSupply({
 }
 ```
 
-### balanceOf(*object*)
+### balanceOf(_object_)
 
 Call the erc20 contract method balanceOf.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| target (required)              | *string* **(address)**         | Target address to make the call on                           |
-| owner (required)               | *string* **(address)**         | Owner/wallet to check the balance of target token            |
-| block (optional)               | *number*                       | Block number for the call                                    |
-| decimals (optional)            | *number*                       | Will return a decimal converted result using this value      |
+
+| Name                | Type                   | Description                                             |
+| ------------------- | ---------------------- | ------------------------------------------------------- |
+| target (required)   | _string_ **(address)** | Target address to make the call on                      |
+| owner (required)    | _string_ **(address)** | Owner/wallet to check the balance of target token       |
+| block (optional)    | _number_               | Block number for the call                               |
+| decimals (optional) | _number_               | Will return a decimal converted result using this value |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *number/string*                | Result of the balanceOf call                                 |
+
+| Name         | Type            | Description                           |
+| ------------ | --------------- | ------------------------------------- |
+| ethCallCount | _number_        | Number of Ethereum network calls used |
+| output       | _number/string_ | Result of the balanceOf call          |
 
 ###### Example
 
 ```js
 let result = await sdk.api.erc20.balanceOf({
-  target: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
-  owner: '0x3FfBa143f5e69Aa671C9f8e3843C88742b1FA2D9',
-  block: 9424627
+  target: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+  owner: "0x3FfBa143f5e69Aa671C9f8e3843C88742b1FA2D9",
+  block: 9424627,
 });
 ```
 
@@ -409,31 +423,33 @@ let result = await sdk.api.erc20.balanceOf({
 }
 ```
 
-## ETH - *sdk.api.eth.___*
+## ETH - _sdk.api.eth.\_\_\__
 
-### getBalance(*object*)
+### getBalance(_object_)
 
 get the ETH/wei balance for a given address.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| target (required)              | *string* **(address)**         | Target address to make the call on                           |
-| block (optional)               | *number*                       | Block number for the call                                    |
-| decimals (optional)            | *number*                       | Will return a decimal converted result using this value      |
+
+| Name                | Type                   | Description                                             |
+| ------------------- | ---------------------- | ------------------------------------------------------- |
+| target (required)   | _string_ **(address)** | Target address to make the call on                      |
+| block (optional)    | _number_               | Block number for the call                               |
+| decimals (optional) | _number_               | Will return a decimal converted result using this value |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *number/string*                | ETH/wei balance                                              |
+
+| Name         | Type            | Description                           |
+| ------------ | --------------- | ------------------------------------- |
+| ethCallCount | _number_        | Number of Ethereum network calls used |
+| output       | _number/string_ | ETH/wei balance                       |
 
 ###### Example
 
 ```js
 let result = await sdk.api.eth.getBalance({
-  target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b',
-  block: 9424627
+  target: "0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b",
+  block: 9424627,
 });
 ```
 
@@ -446,29 +462,31 @@ let result = await sdk.api.eth.getBalance({
 }
 ```
 
-### getBalances(*object*)
+### getBalances(_object_)
 
 get the ETH/wei balances for a given list of addresses.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| targets (required)             | *array* **([address])**        | Target addresses to make the call on                           |
-| block (optional)               | *number*                       | Block number for the call                                    |
-| decimals (optional)            | *number*                       | Will return a decimal converted result using this value      |
+
+| Name                | Type                    | Description                                             |
+| ------------------- | ----------------------- | ------------------------------------------------------- |
+| targets (required)  | _array_ **([address])** | Target addresses to make the call on                    |
+| block (optional)    | _number_                | Block number for the call                               |
+| decimals (optional) | _number_                | Will return a decimal converted result using this value |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *array/object*                 | ETH/wei balance                                              |
+
+| Name         | Type           | Description                           |
+| ------------ | -------------- | ------------------------------------- |
+| ethCallCount | _number_       | Number of Ethereum network calls used |
+| output       | _array/object_ | ETH/wei balance                       |
 
 ###### Example
 
 ```js
 let result = await sdk.api.eth.getBalances({
-  targets: ['0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'],
-  block: 9424627
+  targets: ["0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b", "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"],
+  block: 9424627,
 });
 ```
 
@@ -490,7 +508,7 @@ let result = await sdk.api.eth.getBalances({
 }
 ```
 
-## ABI - *sdk.api.abi.___*
+## ABI - _sdk.api.abi.\_\_\__
 
 Make Ethereum network calls using a provided ABI object.
 
@@ -504,34 +522,34 @@ The following cached ABI's are available:
 
 Even though equivelent api methods already exist for each of these, the are exposed here so they can also be used in batch calls as well.
 
-
-### call(*object*)
+### call(_object_)
 
 Make a single ABI call.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| target (required)              | *string* **(address)**         | Target address to make the call on                           |
-| abi (required)                 | *object* or *string*           | ABI object, or a string naming one of the pre-cached options |
-| block (optional)               | *number*                       | Block number for the call                                    |
-| params (optional)              | *string* or *array*            | Argument or list of arguments for the call                   |
 
+| Name              | Type                   | Description                                                  |
+| ----------------- | ---------------------- | ------------------------------------------------------------ |
+| target (required) | _string_ **(address)** | Target address to make the call on                           |
+| abi (required)    | _object_ or _string_   | ABI object, or a string naming one of the pre-cached options |
+| block (optional)  | _number_               | Block number for the call                                    |
+| params (optional) | _string_ or _array_    | Argument or list of arguments for the call                   |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *object* or *value*            | parsed object from the ABI, or just a value if only one output|
+
+| Name         | Type                | Description                                                    |
+| ------------ | ------------------- | -------------------------------------------------------------- |
+| ethCallCount | _number_            | Number of Ethereum network calls used                          |
+| output       | _object_ or _value_ | parsed object from the ABI, or just a value if only one output |
 
 ###### Example
 
 ```js
 let result = await sdk.api.abi.call({
-  target: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
-  params: '0x3FfBa143f5e69Aa671C9f8e3843C88742b1FA2D9',
-  abi: 'erc20:balanceOf',
-  block: 9424627
+  target: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+  params: "0x3FfBa143f5e69Aa671C9f8e3843C88742b1FA2D9",
+  abi: "erc20:balanceOf",
+  block: 9424627,
 });
 ```
 
@@ -544,37 +562,40 @@ let result = await sdk.api.abi.call({
 }
 ```
 
-### multiCall(*object*)
+### multiCall(_object_)
 
 Make a multiple calls in a batch sharing one ABI.
 
 ###### Options Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| abi (required)                 | *object* or *string*           | ABI object, or a string naming one of the pre-cached options |
-| calls (required)               | *array*                        | Array of call objects                                        |
-| block (optional)               | *number*                       | block number for the call                                    |
-| target (optional)              | *string* **(address)**         | Target address to make all calls on, can be specified in call object instead if more than one target is in the batch |
+
+| Name              | Type                   | Description                                                                                                          |
+| ----------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| abi (required)    | _object_ or _string_   | ABI object, or a string naming one of the pre-cached options                                                         |
+| calls (required)  | _array_                | Array of call objects                                                                                                |
+| block (optional)  | _number_               | block number for the call                                                                                            |
+| target (optional) | _string_ **(address)** | Target address to make all calls on, can be specified in call object instead if more than one target is in the batch |
 
 ###### Call Objects
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| params (optional)              | *string* or *array*            | Argument or list of arguments for the call                   |
-| target (required)              | *string* **(address)**         | Target address to make all calls on, can instead be specified just once in the main options |
 
+| Name              | Type                   | Description                                                                                 |
+| ----------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
+| params (optional) | _string_ or _array_    | Argument or list of arguments for the call                                                  |
+| target (required) | _string_ **(address)** | Target address to make all calls on, can instead be specified just once in the main options |
 
 ###### Return Object
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| ethCallCount                   | *number*                       | Number of Ethereum network calls used                        |
-| output                         | *array*                        | Array of output objects                                      |
+
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| ethCallCount | _number_ | Number of Ethereum network calls used |
+| output       | _array_  | Array of output objects               |
 
 ###### Output Objects
-| Name                           | Type                           | Description                                                  |
-| ------------------------------ | ------------------------------ | ------------------------------------------------------------ |
-| input                          | *object*                       | object containing the target & array of parameters for the call|
-| success                        | *bool*                         | true if the results could be parsed according to the ABI     |
-| output                         | *object* or *value*            | parsed object from the ABI, or just a value if only one output|
+
+| Name    | Type                | Description                                                     |
+| ------- | ------------------- | --------------------------------------------------------------- |
+| input   | _object_            | object containing the target & array of parameters for the call |
+| success | _bool_              | true if the results could be parsed according to the ABI        |
+| output  | _object_ or _value_ | parsed object from the ABI, or just a value if only one output  |
 
 ###### Example
 
@@ -582,39 +603,39 @@ Make a multiple calls in a batch sharing one ABI.
 let result = await sdk.api.abi.multiCall({
   calls: [
     {
-      target: '0x0000000000085d4780B73119b644AE5ecd22b376',
-      params: '0x802275979B020F0ec871c5eC1db6e412b72fF20b'
+      target: "0x0000000000085d4780B73119b644AE5ecd22b376",
+      params: "0x802275979B020F0ec871c5eC1db6e412b72fF20b",
     },
     {
-      target: '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359',
-      params: '0xaf38668f4719ecf9452dc0300be3f6c83cbf3721'
-    }
+      target: "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+      params: "0xaf38668f4719ecf9452dc0300be3f6c83cbf3721",
+    },
   ],
-  abi: 'erc20:balanceOf',
-  block: 9424627 
+  abi: "erc20:balanceOf",
+  block: 9424627,
 });
 ```
 
 ###### Result:
 
 ```js
-{ 
+{
   "ethCallCount":1,
-  "output":[ 
-    { 
-      "input":{ 
+  "output":[
+    {
+      "input":{
         "target":"0x0000000000085d4780B73119b644AE5ecd22b376",
-        "params":[ 
+        "params":[
           "0x802275979B020F0ec871c5eC1db6e412b72fF20b"
         ]
       },
       "success":true,
       "output":"9075930471597257944363"
     },
-    { 
-      "input":{ 
+    {
+      "input":{
         "target":"0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
-        "params":[ 
+        "params":[
           "0xaf38668f4719ecf9452dc0300be3f6c83cbf3721"
         ]
       },
@@ -624,6 +645,3 @@ let result = await sdk.api.abi.multiCall({
   ]
 }
 ```
-
-  
-

@@ -1,17 +1,21 @@
 {
-  "balanceOf":{
+  "balanceOf": {
     "constant": true,
-    "inputs": [{
+    "inputs": [
+      {
         "internalType": "address",
         "name": "account",
         "type": "address"
-    }],
+      }
+    ],
     "name": "balanceOf",
-    "outputs": [{
+    "outputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-    }],
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"

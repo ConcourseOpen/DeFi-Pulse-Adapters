@@ -3,7 +3,8 @@
     "constant": false,
     "inputs": [],
     "name": "getBaseData",
-    "outputs": [{
+    "outputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"

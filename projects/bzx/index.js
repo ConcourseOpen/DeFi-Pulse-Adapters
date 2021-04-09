@@ -2,26 +2,25 @@
   Modules
 ==================================================*/
 
-const sdk = require('../../sdk');
-const BigNumber = require('bignumber.js');
-const _ = require('underscore');
+const sdk = require("../../sdk");
+const BigNumber = require("bignumber.js");
+const _ = require("underscore");
 
-const abi = require('./abi');
-const registry = require('./registry');
-const itoken = require('./itoken');
-const { sum } = require('../../sdk/util');
-
+const abi = require("./abi");
+const registry = require("./registry");
+const itoken = require("./itoken");
+const { sum } = require("../../sdk/util");
 
 let iTokens = [
   // sUSD
   {
     iTokenAddress: "0x49f4592E641820e928F9919Ef4aBd92a719B4b49",
-    underlyingAddress: "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51"
+    underlyingAddress: "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
   },
   // CHAI
   {
     iTokenAddress: "0x493C57C4763932315A328269E1ADaD09653B9081",
-    underlyingAddress: "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215"
+    underlyingAddress: "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215",
   },
 ];
 
@@ -52,14 +51,14 @@ async function tvl(timestamp, block) {
     block,
     target: legacyRegistryContractAddress,
     params: [0, 200, 0],
-    abi: abi["getTokens"]
+    abi: abi["getTokens"],
   });
 
   _.each(getTokensResultLegacy.output, (token) => {
-    if (token[4] === '1') {
+    if (token[4] === "1") {
       iTokens.push({
         iTokenAddress: token[0],
-        underlyingAddress: token[1]
+        underlyingAddress: token[1],
       });
     }
   });
@@ -69,36 +68,36 @@ async function tvl(timestamp, block) {
       block,
       target: registryContractAddress,
       params: [0, 200],
-      abi: registry["getTokens"]
+      abi: registry["getTokens"],
     });
 
     _.each(getTokensResult.output, (token) => {
       iTokensNew.push({
         iTokenAddress: token[0],
-        underlyingAddress: token[1]
+        underlyingAddress: token[1],
       });
     });
   }
   iTokens = iTokens.concat(iTokensNew);
   const iTokenCalls = _.map(iTokens, (iToken) => ({
-    target: iToken.iTokenAddress
+    target: iToken.iTokenAddress,
   }));
 
   const supplyResult = await sdk.api.abi.multiCall({
     block,
     calls: iTokenCalls,
-    abi: abi["totalAssetSupply"]
+    abi: abi["totalAssetSupply"],
   });
 
   const borrowResult = await sdk.api.abi.multiCall({
     block,
     calls: iTokenCalls,
-    abi: abi["totalAssetBorrow"]
+    abi: abi["totalAssetBorrow"],
   });
 
   _.each(iTokens, (iToken) => {
-    const supply = _.find(supplyResult.output, (result) => (result.input.target === iToken.iTokenAddress));
-    const borrow = _.find(borrowResult.output, (result) => (result.input.target === iToken.iTokenAddress));
+    const supply = _.find(supplyResult.output, (result) => result.input.target === iToken.iTokenAddress);
+    const borrow = _.find(borrowResult.output, (result) => result.input.target === iToken.iTokenAddress);
 
     if (supply.success && borrow.success) {
       const totalSupply = supply.output;
@@ -113,37 +112,37 @@ async function tvl(timestamp, block) {
   balanceOfCallsLegacy = [
     ..._.map(kyberTokens, (data, address) => ({
       target: address,
-      params: bzxLetacyProtocolAddress
-    }))
+      params: bzxLetacyProtocolAddress,
+    })),
   ];
 
   // new bZx address
   balanceOfCalls = [
     ..._.map(kyberTokens, (data, address) => ({
       target: address,
-      params: bzxProtocolAddress
-    }))
+      params: bzxProtocolAddress,
+    })),
   ];
 
   const balanceOfResultLegacy = await sdk.api.abi.multiCall({
     block,
     calls: balanceOfCallsLegacy,
-    abi: 'erc20:balanceOf',
+    abi: "erc20:balanceOf",
   });
 
   const balanceOfResult = await sdk.api.abi.multiCall({
     block,
     calls: balanceOfCalls,
-    abi: 'erc20:balanceOf',
+    abi: "erc20:balanceOf",
   });
 
-  let balanceOfvBZRX = {}
+  let balanceOfvBZRX = {};
   if (block > v2VestingDeployBlock) {
     balanceOfvBZRX = await sdk.api.abi.call({
       target: vbzrxTokenAddress,
       params: bzxProtocolAddress,
-      abi: 'erc20:balanceOf',
-      block
+      abi: "erc20:balanceOf",
+      block,
     });
   }
 
@@ -156,7 +155,9 @@ async function tvl(timestamp, block) {
         if (BigNumber(balance).toNumber() <= 0) {
           return;
         }
-        balances[address.toUpperCase()] = BigNumber(balances[address.toUpperCase()] || 0).plus(balance).toFixed();
+        balances[address.toUpperCase()] = BigNumber(balances[address.toUpperCase()] || 0)
+          .plus(balance)
+          .toFixed();
       }
     });
   }
@@ -177,7 +178,6 @@ async function tvl(timestamp, block) {
   return balances;
 }
 
-
 /*==================================================
   Rates
   ==================================================*/
@@ -185,42 +185,42 @@ async function rates(timestamp, block) {
   let ratesData = { lend: {}, borrow: {}, supply: {} };
 
   const iTokenCalls = _.map(iTokensNew, (iToken) => ({
-    target: iToken.iTokenAddress
+    target: iToken.iTokenAddress,
   }));
 
   const supplyInterestRate = await sdk.api.abi.multiCall({
     block,
     calls: iTokenCalls,
-    abi: itoken["supplyInterestRate"]
+    abi: itoken["supplyInterestRate"],
   });
 
   const borrowInterestRate = await sdk.api.abi.multiCall({
     block,
     calls: iTokenCalls,
-    abi: itoken["borrowInterestRate"]
+    abi: itoken["borrowInterestRate"],
   });
 
   const totalAssetBorrow = await sdk.api.abi.multiCall({
     block,
     calls: iTokenCalls,
-    abi: itoken["totalAssetBorrow"]
+    abi: itoken["totalAssetBorrow"],
   });
 
   const iTokenUnderlyingCalls = _.map(iTokensNew, (iToken) => ({
-    target: iToken.underlyingAddress
+    target: iToken.underlyingAddress,
   }));
 
   const underlyingSymbol = await sdk.api.abi.multiCall({
     block,
     calls: iTokenUnderlyingCalls,
-    abi: 'erc20:symbol'
+    abi: "erc20:symbol",
   });
 
   _.each(iTokensNew, (iToken) => {
-    const supply = _.find(supplyInterestRate.output, (result) => (result.input.target === iToken.iTokenAddress));
-    const borrow = _.find(borrowInterestRate.output, (result) => (result.input.target === iToken.iTokenAddress));
-    const totalBorrow = _.find(totalAssetBorrow.output, (result) => (result.input.target === iToken.iTokenAddress));
-    let symbol = _.find(underlyingSymbol.output, (result) => (result.input.target === iToken.underlyingAddress));
+    const supply = _.find(supplyInterestRate.output, (result) => result.input.target === iToken.iTokenAddress);
+    const borrow = _.find(borrowInterestRate.output, (result) => result.input.target === iToken.iTokenAddress);
+    const totalBorrow = _.find(totalAssetBorrow.output, (result) => result.input.target === iToken.iTokenAddress);
+    let symbol = _.find(underlyingSymbol.output, (result) => result.input.target === iToken.underlyingAddress);
 
     if (iToken.underlyingAddress.toUpperCase() == mkrAddress.toUpperCase()) {
       symbol.output = "MKR";
@@ -239,11 +239,11 @@ async function rates(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'bZx',
-  token: 'BZRX',
-  category: 'lending',
+  name: "bZx",
+  token: "BZRX",
+  category: "lending",
   website: "https://bzx.network",
-  start: 1559433540,  // Saturday, June 1, 2019 11:59:00 PM
+  start: 1559433540, // Saturday, June 1, 2019 11:59:00 PM
   tvl,
   rates,
   term: "1 block",

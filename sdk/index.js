@@ -1,4 +1,4 @@
 module.exports = {
-  api: require('./api'),
-  util: require('./util')
-}
+  api: require("./api"),
+  util: require("./util"),
+};

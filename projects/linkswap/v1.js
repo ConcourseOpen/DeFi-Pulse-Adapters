@@ -14,58 +14,54 @@ module.exports = async function tvl(_, block) {
       toBlock: block,
       target: FACTORY,
       fromBlock: START_BLOCK,
-      topic: "PairCreated(address,address,address,uint256)"
+      topic: "PairCreated(address,address,address,uint256)",
     })
   ).output;
 
   const pairAddresses = logs.map((
     log // sometimes the full log is emitted
-  ) =>
-    typeof log === "string"
-      ? log.toLowerCase()
-      : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()
-  );
+  ) => (typeof log === "string" ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()));
 
   const [token0Addresses, token1Addresses] = await Promise.all([
     (
       await sdk.api.abi.multiCall({
         abi: token0,
-        calls: pairAddresses.map(pairAddress => ({
-          target: pairAddress
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
         })),
-        block
+        block,
       })
     ).output,
     (
       await sdk.api.abi.multiCall({
         abi: token1,
-        calls: pairAddresses.map(pairAddress => ({
-          target: pairAddress
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
         })),
-        block
+        block,
       })
-    ).output
+    ).output,
   ]);
 
   const pairs = {};
-  token0Addresses.forEach(token0Address => {
+  token0Addresses.forEach((token0Address) => {
     if (token0Address.success) {
       const tokenAddress = token0Address.output.toLowerCase();
       const pairAddress = token0Address.input.target.toLowerCase();
       pairs[pairAddress] = {
-        token0Address: tokenAddress
+        token0Address: tokenAddress,
       };
     }
   });
 
   // add token1Addresses
-  token1Addresses.forEach(token1Address => {
+  token1Addresses.forEach((token1Address) => {
     if (token1Address.success) {
       const tokenAddress = token1Address.output.toLowerCase();
       const pairAddress = token1Address.input.target.toLowerCase();
       pairs[pairAddress] = {
         ...(pairs[pairAddress] || {}),
-        token1Address: tokenAddress
+        token1Address: tokenAddress,
       };
     }
   });
@@ -73,10 +69,10 @@ module.exports = async function tvl(_, block) {
   const reserves = (
     await sdk.api.abi.multiCall({
       abi: getReserves,
-      calls: Object.keys(pairs).map(pairAddress => ({
-        target: pairAddress
+      calls: Object.keys(pairs).map((pairAddress) => ({
+        target: pairAddress,
       })),
-      block
+      block,
     })
   ).output;
 
@@ -89,13 +85,9 @@ module.exports = async function tvl(_, block) {
       if (pair.token0Address) {
         const reserve0 = new BigNumber(reserve.output["0"]);
         if (!reserve0.isZero()) {
-          const existingBalance = new BigNumber(
-            accumulator[pair.token0Address] || "0"
-          );
+          const existingBalance = new BigNumber(accumulator[pair.token0Address] || "0");
 
-          accumulator[pair.token0Address] = existingBalance
-            .plus(reserve0)
-            .toFixed();
+          accumulator[pair.token0Address] = existingBalance.plus(reserve0).toFixed();
         }
       }
 
@@ -104,13 +96,9 @@ module.exports = async function tvl(_, block) {
         const reserve1 = new BigNumber(reserve.output["1"]);
 
         if (!reserve1.isZero()) {
-          const existingBalance = new BigNumber(
-            accumulator[pair.token1Address] || "0"
-          );
+          const existingBalance = new BigNumber(accumulator[pair.token1Address] || "0");
 
-          accumulator[pair.token1Address] = existingBalance
-            .plus(reserve1)
-            .toFixed();
+          accumulator[pair.token1Address] = existingBalance.plus(reserve1).toFixed();
         }
       }
     }

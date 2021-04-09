@@ -14,7 +14,7 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "balance" : {
+  "balance": {
     "constant": true,
     "inputs": [],
     "name": "balance",
