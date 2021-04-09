@@ -106,8 +106,9 @@ async function call(target, abi, block, params) {
         contract = new client_1.default.Contract([abi], target);
         functionSignature = client_1.default.abi.encodeFunctionSignature(abi);
     }
+    params = params !== undefined ? (Array.isArray(params) ? params : [params]) : [];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-    const result = await contract.methods[functionSignature](params).call(undefined, block);
+    const result = await contract.methods[functionSignature](...params).call(undefined, block);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return result;
 }
@@ -124,10 +125,10 @@ async function multiCall(abi, calls, block, target) {
     const formattedCalls = calls.map((call, i) => {
         return {
             target: call.target ? call.target : target ? target : "",
-            call: call.params
+            call: call.params !== undefined
                 ? Array.isArray(call.params)
-                    ? [functionString, ...call.params]
-                    : [functionString, call.params]
+                    ? [functionString, ...call.params.map((t) => t.toString())]
+                    : [functionString, call.params.toString()]
                 : [functionString],
             returns: [[`result${i}`]],
         };
