@@ -1,0 +1,34 @@
+org: tvl
+app: tvl
+service: tvl-api
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  apiGateway:
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: your-domain.com
+    certificateName: "*.your-domain.com"
+    createRoute53Record: true
+    stage: prod
+    endpointType: edge
+    apiType: rest
+    autoDomain: false
+
+functions:
+  tvl:
+    handler: handler/handler.handler
+    events:
+      - http:
+          path: /
+          method: get
+    environment:
+      TVL_API_URL: https://API_URL_HERE
