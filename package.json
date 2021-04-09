@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "mocha testing/test/*.js  --project=augur",
-    "validate": "mocha testing/validate/*.js",
-    "test-token": "mocha tokens/testing/test/*.js",
-    "validate-token": "mocha tokens/testing/validate/*.js"
+    "test": "jest test/handler.spec.js"
   },
   "dependencies": {
     "async-retry": "^1.3.1",
