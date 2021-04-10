@@ -49,11 +49,11 @@ async function kyberTokensHandler() {
 }
 
 async function tokenListHandler() {
-  const result = await tokenList();
+  const result = tokenList();
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ ethCallCount: 0, output: result }),
+    body: JSON.stringify(result),
   };
 }
 

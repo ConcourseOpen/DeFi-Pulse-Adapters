@@ -87,6 +87,7 @@ functions:
           method: post
   getLogs:
     handler: dist/handler.getLogsHandler
+    timeout: 30
     events:
       - http:
           path: /util/getLogs
