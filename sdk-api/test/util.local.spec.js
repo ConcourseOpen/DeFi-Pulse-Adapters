@@ -11,6 +11,7 @@ describe("util", () => {
       DAI: "2",
     });
   });
+
   test("getLogs", async () => {
     const result = await getLogs(
       "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd",
@@ -21,6 +22,18 @@ describe("util", () => {
     );
     expect(result.slice(0, 3)).toMatchSnapshot();
   });
+
+  test("getLogs with large block range", async () => {
+    const input = {
+      keys: [],
+      toBlock: 12202080,
+      target: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+      fromBlock: 10000835,
+      topic: "PairCreated(address,address,address,uint256)",
+    };
+    await getLogs(input.target, input.topic, input.keys, input.fromBlock, input.toBlock);
+  }, 100000);
+
   test("getLogs with keys", async () => {
     const expectedResult = [
       [
@@ -48,6 +61,7 @@ describe("util", () => {
     );
     expect(result.slice(0, 3)).toEqual(expectedResult);
   });
+
   test("kyberTokens", async () => {
     const result = await kyberTokens();
     expect(result).toMatchSnapshot();
