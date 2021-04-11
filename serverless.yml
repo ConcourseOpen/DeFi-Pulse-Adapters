@@ -26,6 +26,7 @@ custom:
 functions:
   tvl:
     handler: handler/handler.handler
+    timeout: 900
     events:
       - http:
           path: /

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest test/handler.spec.js",
+    "test": "jest --forceExit test/handler.spec.js",
     "deploy": "serverless deploy"
   },
   "dependencies": {

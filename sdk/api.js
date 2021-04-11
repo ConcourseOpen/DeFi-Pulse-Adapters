@@ -13,9 +13,26 @@ const Bottleneck = require("bottleneck");
   Helper Methods
   ==================================================*/
 
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
 async function POST(endpoint, options) {
   try {
-    if (options && options.chunk && options[options.chunk.param].length > options.chunk.length) {
+    if (options && options.chunk && endpoint === "/util/getLogs") {
+      let logs = [];
+      for (let i = 0; i < Math.ceil((options.toBlock - options.fromBlock) / options.chunk.length); i++) {
+        const currFromBlock = options.fromBlock + i * options.chunk.length;
+        let currToBlock = options.fromBlock + (i + 1) * options.chunk.length;
+        currToBlock = currToBlock > options.toBlock ? options.toBlock : currToBlock;
+        let opts = {
+          ...options,
+        };
+        opts.fromBlock = currFromBlock;
+        opts.toBlock = currToBlock;
+        opts.chunk = undefined;
+        logs = logs.concat((await POST(endpoint, opts)).output);
+      }
+      return { ethCallCount: 0, output: logs };
+    } else if (options && options.chunk && options[options.chunk.param].length > options.chunk.length) {
       let chunks = _.chunk(options[options.chunk.param], options.chunk.length);
 
       let ethCallCount = 0;
@@ -87,15 +104,25 @@ async function POST(endpoint, options) {
         output,
       };
     } else {
-      let url = `${process.env.TVL_API_URL}${endpoint}`;
+      // retry for max 5 times
+      for (let i = 0; i < 5; i++) {
+        try {
+          let url = `${process.env.TVL_API_URL}${endpoint}`;
 
-      if (process.env.INFURA_KEY) {
-        url = `${url}?infura-key=${process.env.INFURA_KEY}`;
+          if (process.env.INFURA_KEY) {
+            url = `${url}?infura-key=${process.env.INFURA_KEY}`;
+          }
+
+          let response = await axios.post(url, options);
+
+          return response.data;
+        } catch (error) {
+          if (i === 4) {
+            throw error;
+          }
+          await wait(100);
+        }
       }
-
-      let response = await axios.post(url, options);
-
-      return response.data;
     }
   } catch (error) {
     throw error.response ? error.response.data : error;
@@ -141,7 +168,7 @@ async function cdp(endpoint, options) {
 module.exports = {
   abi: {
     call: (options) => abi("call", { ...options }),
-    multiCall: (options) => abi("multiCall", { ...options, chunk: { param: "calls", length: 5000, combine: "array" } }),
+    multiCall: (options) => abi("multiCall", { ...options, chunk: { param: "calls", length: 400, combine: "array" } }),
   },
   cdp: {
     getAssetsLocked: (options) =>
@@ -162,7 +189,7 @@ module.exports = {
     },
   },
   util: {
-    getLogs: (options) => util("getLogs", { ...options }),
+    getLogs: (options) => util("getLogs", { ...options, chunk: { length: 200000 } }),
     tokenList: () => util("tokenList"),
     kyberTokens: () => util("kyberTokens"),
     getEthCallCount: () => util("getEthCallCount"),
