@@ -12,12 +12,17 @@ const tokenLists_json_1 = __importDefault(require("./tokenLists.json"));
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 async function toSymbols(addresses) {
     const queryAddresses = Object.keys(addresses).filter((t) => t !== "0x0000000000000000000000000000000000000000");
-    const symbols = (await abi_1.multiCall("erc20:symbol", queryAddresses.map((t) => {
+    const symbols = (await abi_1.multiCall("erc20:symbol", queryAddresses
+        .filter((t) => t !== "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2")
+        .map((t) => {
         return { target: t };
     }))).reduce((m, t) => {
         m[t.input.target] = t.output;
         return m;
-    }, { "0x0000000000000000000000000000000000000000": "ETH" });
+    }, {
+        "0x0000000000000000000000000000000000000000": "ETH",
+        "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2": "MKR",
+    });
     const decimals = (await abi_1.multiCall("erc20:decimals", queryAddresses.map((t) => {
         return { target: t };
     }))).reduce((m, t) => {

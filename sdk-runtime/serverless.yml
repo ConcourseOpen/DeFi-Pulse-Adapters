@@ -30,6 +30,7 @@ functions:
           method: post
   multiCall:
     handler: dist/handler.multiCallHandler
+    timeout: 120
     events:
       - http:
           path: /abi/multiCall

@@ -122,7 +122,11 @@ async function multiCall(abi, calls, block, target) {
         functionString = _jsonInterfaceMethodToString(abi);
     }
     // TODO: multi output support
-    const formattedCalls = calls.map((call, i) => {
+    const formattedCalls = calls
+        .filter((call) => call.params !== "0x000000000000000000000000000000000000dEaD" &&
+        call.params !== "0x0000000000000000000000000000000000000000" &&
+        call.params !== "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+        .map((call, i) => {
         return {
             target: call.target ? call.target : target ? target : "",
             call: call.params !== undefined
