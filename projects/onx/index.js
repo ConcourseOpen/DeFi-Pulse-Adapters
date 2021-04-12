@@ -44,7 +44,7 @@ async function tvl(timestamp, block) {
       balances["0xE95A203B1a91a908F9B9CE46459d101078c2c3cb"] = 0;
     }
 
-    return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -55,7 +55,7 @@ module.exports = {
   name: "OnX Finance",
   website: "https://onx.finance",
   token: "ONX",
-  category: "lending",
+  category: "Lending",
   start: 1614052706, // Feb-23-2021 03:58:26 AM +UTC
   tvl,
 };
