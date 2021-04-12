@@ -16,24 +16,35 @@ const constant = {
 };
 
 async function tvl(timestamp, block) {
-  const ethSupply = await sdk.api.abi.call({
-    block,
-    target: constant.lendingPool.address,
-    abi: abi["totalStake"],
-  });
+    let balances = {
+      "0x0000000000000000000000000000000000000000": 0,
+      "0xE95A203B1a91a908F9B9CE46459d101078c2c3cb": 0,
+    }
 
-  const aEthPledge = await sdk.api.abi.call({
-    block,
-    target: constant.lendingPool.address,
-    abi: abi["totalPledge"],
-  });
+    try {
+      const ethSupply = await sdk.api.abi.call({
+        block,
+        target: constant.lendingPool.address,
+        abi: abi["totalStake"],
+      });
 
-  let balances = {
-    "0x0000000000000000000000000000000000000000": ethSupply.output,
-    "0xE95A203B1a91a908F9B9CE46459d101078c2c3cb": aEthPledge.output,
-  };
+      balances["0xE95A203B1a91a908F9B9CE46459d101078c2c3cb"] = ethSupply.output;
+    }catch (error){
+      balances["0x0000000000000000000000000000000000000000"] = 0;
+    }
 
-  return balances;
+    try {
+      const aEthPledge = await sdk.api.abi.call({
+        block,
+        target: constant.lendingPool.address,
+        abi: abi["totalPledge"],
+      });
+      balances["0xE95A203B1a91a908F9B9CE46459d101078c2c3cb"] = aEthPledge.output;
+    }catch (error){
+      balances["0xE95A203B1a91a908F9B9CE46459d101078c2c3cb"] = 0;
+    }
+
+    return balances;
 }
 
 /*==================================================
