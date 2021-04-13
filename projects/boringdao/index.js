@@ -57,7 +57,7 @@ async function tvl(timestamp, block) {
   result = (result.isNaN()) ? 0: result.toFixed();
 
   const balances = { "0x0000000000000000000000000000000000000000": result};
-    return balances
+  return balances
 }
 
 
