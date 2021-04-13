@@ -5,6 +5,7 @@
     "test": "jest --forceExit",
     "test:local": "yarn test local",
     "test:remote": "yarn test remote",
+    "dev": "nodemon --exec 'serverless offline --httpPort 3100 --lambdaPort 3101' -e 'js yml json'",
     "deploy": "serverless deploy"
   },
   "dependencies": {
@@ -19,8 +20,10 @@
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",
     "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "serverless": "^2.34.0",
-    "serverless-domain-manager": "^5.1.0"
+    "serverless-domain-manager": "^5.1.0",
+    "serverless-offline": "^6.9.0"
   }
 }

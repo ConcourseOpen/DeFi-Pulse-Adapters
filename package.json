@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "nodemon --exec 'serverless offline --httpPort 3200 --lambdaPort 3201' -e 'js yml json' --ignore 'sdk-runtime/'",
     "test": "jest --forceExit test/handler.spec.js",
     "deploy": "serverless deploy"
   },
@@ -26,8 +27,10 @@
   "devDependencies": {
     "eslint": "^7.23.0",
     "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "serverless": "^2.34.0",
-    "serverless-domain-manager": "^5.1.0"
+    "serverless-domain-manager": "^5.1.0",
+    "serverless-offline": "^6.9.0"
   }
 }

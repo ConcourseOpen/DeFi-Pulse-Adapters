@@ -12,6 +12,7 @@ provider:
 
 plugins:
   - serverless-domain-manager
+  - serverless-offline
 
 custom:
   customDomain:

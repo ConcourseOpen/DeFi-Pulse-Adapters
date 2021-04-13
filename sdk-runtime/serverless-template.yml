@@ -10,6 +10,7 @@ provider:
 
 plugins:
   - serverless-domain-manager
+  - serverless-offline
 
 custom:
   customDomain:
@@ -24,13 +25,15 @@ custom:
 functions:
   call:
     handler: dist/handler.callHandler
+    timeout: 30
     events:
       - http:
           path: /abi/call
           method: post
+
   multiCall:
     handler: dist/handler.multiCallHandler
-    timeout: 120
+    timeout: 30
     events:
       - http:
           path: /abi/multiCall
@@ -38,30 +41,39 @@ functions:
 
   totalSupply:
     handler: dist/handler.totalSupplyHandler
+    timeout: 30
     events:
       - http:
           path: /erc20/totalSupply
           method: post
+
   decimals:
     handler: dist/handler.decimalsHandler
+    timeout: 30
     events:
       - http:
           path: /erc20/decimals
           method: post
+
   symbol:
     handler: dist/handler.symbolHandler
+    timeout: 30
     events:
       - http:
           path: /erc20/symbol
           method: post
+
   balanceOf:
     handler: dist/handler.balanceOfHandler
+    timeout: 30
     events:
       - http:
           path: /erc20/balanceOf
           method: post
+
   info:
     handler: dist/handler.infoHandler
+    timeout: 30
     events:
       - http:
           path: /erc20/info
@@ -69,12 +81,15 @@ functions:
 
   getBalance:
     handler: dist/handler.getBalanceHandler
+    timeout: 30
     events:
       - http:
           path: /eth/getBalance
           method: post
+
   getBalances:
     handler: dist/handler.getBalancesHandler
+    timeout: 30
     events:
       - http:
           path: /eth/getBalances
@@ -82,10 +97,12 @@ functions:
 
   toSymbols:
     handler: dist/handler.toSymbolsHandler
+    timeout: 30
     events:
       - http:
           path: /util/toSymbols
           method: post
+
   getLogs:
     handler: dist/handler.getLogsHandler
     timeout: 30
@@ -93,20 +110,26 @@ functions:
       - http:
           path: /util/getLogs
           method: post
+
   kyberTokens:
     handler: dist/handler.kyberTokensHandler
+    timeout: 30
     events:
       - http:
           path: /util/kyberTokens
           method: post
+
   tokenList:
     handler: dist/handler.tokenListHandler
+    timeout: 30
     events:
       - http:
           path: /util/tokenList
           method: post
+
   lookupBlock:
     handler: dist/handler.lookupBlockHandler
+    timeout: 30
     events:
       - http:
           path: /util/lookupBlock
