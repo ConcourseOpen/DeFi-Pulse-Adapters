@@ -5,100 +5,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.multiCall = exports.call = void 0;
 const client_1 = __importDefault(require("./client"));
-const web3_utils_1 = __importDefault(require("web3-utils"));
+const ethers_1 = require("ethers");
 const client_2 = require("./client");
 const erc20_json_1 = __importDefault(require("./abi/erc20.json"));
-const multicall_1 = require("@makerdao/multicall");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isString(str) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    if (str && typeof str.valueOf() === "string") {
-        return true;
-    }
-    return false;
-}
-function _flattenTypes(includeTuple, puts) {
-    const types = [];
-    if (puts !== undefined) {
-        puts.forEach(function (param) {
-            if (typeof param.components === "object") {
-                if (param.type.substring(0, 5) !== "tuple") {
-                    throw new Error("components found but type is not tuple");
-                }
-                let suffix = "";
-                const arrayBracket = param.type.indexOf("[");
-                if (arrayBracket >= 0) {
-                    suffix = param.type.substring(arrayBracket);
-                }
-                const result = _flattenTypes(includeTuple, param.components);
-                if (Array.isArray(result) && includeTuple) {
-                    types.push("tuple(" + result.join(",") + ")" + suffix);
-                }
-                else if (!includeTuple) {
-                    types.push("(" + result.join(",") + ")" + suffix);
-                }
-                else {
-                    types.push(`(${result.toString()})`);
-                }
-            }
-            else {
-                types.push(param.type);
-            }
-        });
-    }
-    return types;
-}
-function _jsonInterfaceMethodToString(json) {
-    if (!json.name) {
-        throw new Error("Function name is undefined or null");
-    }
-    if (json.name.indexOf("(") !== -1) {
-        return json.name;
-    }
-    return `${json.name}(${_flattenTypes(false, json.inputs).join(",")})(${_flattenTypes(false, json.outputs).join(",")})`;
-}
 function getCachedFunction(abiString) {
     let contract;
     let functionSignature;
-    let functionString;
+    let abi;
     switch (abiString) {
         case "erc20:symbol": {
             contract = new client_1.default.Contract(erc20_json_1.default);
-            const symbolAbi = erc20_json_1.default.filter((t) => t.name === "symbol")[0];
-            functionSignature = client_1.default.abi.encodeFunctionSignature(symbolAbi);
-            functionString = _jsonInterfaceMethodToString(symbolAbi);
+            const abiItem = erc20_json_1.default.filter((t) => t.name === "symbol")[0];
+            abi = abiItem;
+            functionSignature = client_1.default.abi.encodeFunctionSignature(abiItem);
             break;
         }
         case "erc20:decimals": {
             contract = new client_1.default.Contract(erc20_json_1.default);
-            const decimalsAbi = erc20_json_1.default.filter((t) => t.name === "decimals")[0];
-            functionSignature = client_1.default.abi.encodeFunctionSignature(decimalsAbi);
-            functionString = _jsonInterfaceMethodToString(decimalsAbi);
+            const abiItem = erc20_json_1.default.filter((t) => t.name === "decimals")[0];
+            abi = abiItem;
+            functionSignature = client_1.default.abi.encodeFunctionSignature(abiItem);
             break;
         }
         case "erc20:balanceOf": {
             contract = new client_1.default.Contract(erc20_json_1.default);
-            const balanceOfAbi = erc20_json_1.default.filter((t) => t.name === "balanceOf")[0];
-            functionSignature = client_1.default.abi.encodeFunctionSignature(balanceOfAbi);
-            functionString = _jsonInterfaceMethodToString(balanceOfAbi);
+            const abiItem = erc20_json_1.default.filter((t) => t.name === "balanceOf")[0];
+            abi = abiItem;
+            functionSignature = client_1.default.abi.encodeFunctionSignature(abiItem);
             break;
         }
         case "erc20:totalSupply": {
             contract = new client_1.default.Contract(erc20_json_1.default);
-            const totalSupplyAbi = erc20_json_1.default.filter((t) => t.name === "totalSupply")[0];
-            functionSignature = client_1.default.abi.encodeFunctionSignature(totalSupplyAbi);
-            functionString = _jsonInterfaceMethodToString(totalSupplyAbi);
+            const abiItem = erc20_json_1.default.filter((t) => t.name === "totalSupply")[0];
+            abi = abiItem;
+            functionSignature = client_1.default.abi.encodeFunctionSignature(abiItem);
             break;
         }
         default:
             throw new Error("Unknown string ABI");
     }
-    return { contract, functionSignature, functionString };
+    return { contract, functionSignature, abi };
 }
 async function call(target, abi, block, params) {
     let contract;
     let functionSignature;
-    if (isString(abi)) {
+    if (typeof abi === "string") {
         ({ contract, functionSignature } = getCachedFunction(abi));
         contract.options.address = target;
     }
@@ -114,46 +65,46 @@ async function call(target, abi, block, params) {
 }
 exports.call = call;
 async function multiCall(abi, calls, block, target) {
-    let functionString;
-    if (isString(abi)) {
-        ({ functionString } = getCachedFunction(abi));
+    let functionFragmentAbi;
+    if (typeof abi === "string") {
+        ({ abi: functionFragmentAbi } = getCachedFunction(abi));
     }
     else {
-        functionString = _jsonInterfaceMethodToString(abi);
+        functionFragmentAbi = abi;
     }
-    // TODO: multi output support
-    const formattedCalls = calls
-        .filter((call) => call.params !== "0x000000000000000000000000000000000000dEaD" &&
-        call.params !== "0x0000000000000000000000000000000000000000" &&
-        call.params !== "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
-        .map((call, i) => {
-        return {
-            target: call.target ? call.target : target ? target : "",
-            call: call.params !== undefined
-                ? Array.isArray(call.params)
-                    ? [functionString, ...call.params.map((t) => t.toString())]
-                    : [functionString, call.params.toString()]
-                : [functionString],
-            returns: [[`result${i}`]],
-        };
-    });
-    const results = (await multicall_1.aggregate(formattedCalls, { block: block ? web3_utils_1.default.toHex(block) : undefined, ...client_2.multiCallConfig })).results;
-    // TODO: multi output support
+    const templateContract = new ethers_1.ethers.Contract(calls[0]?.target ?? target ?? "", [functionFragmentAbi], client_2.multiCallProvider);
+    const result = await Promise.allSettled(calls.map((call) => {
+        const contract = templateContract.attach(call.target ?? target ?? "");
+        const params = call.params !== undefined ? (Array.isArray(call.params) ? call.params : [call.params]) : [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const resultPromise = contract[functionFragmentAbi.name ?? ""](...params, {
+            blockTag: block,
+        });
+        return resultPromise;
+    }));
+    if (result.filter((t) => t.status === "rejected").length === result.length) {
+        throw new Error("Decoding failed");
+    }
     const mappedResults = calls.map((call, i) => {
         let output;
-        if (typeof results.transformed[`result${i}`] === "number") {
-            output = results.transformed[`result${i}`];
+        if (result[i].status === "fulfilled") {
+            if (typeof result[i].value === "number") {
+                output = result[i].value;
+            }
+            else {
+                // eslint-disable-next-line @typescript-eslint/ban-types
+                output = result[i].value.toString();
+            }
         }
         else {
-            // eslint-disable-next-line @typescript-eslint/ban-types
-            output = results.transformed[`result${i}`].toString();
+            output = undefined;
         }
         return {
             input: {
                 target: call.target ? call.target : target ? target : "",
                 params: call.params ? (Array.isArray(call.params) ? call.params : [call.params]) : [],
             },
-            success: true,
+            success: result[i].status === "fulfilled",
             output: output,
         };
     });
