@@ -14,35 +14,50 @@ const btcKey = "0x42544300000000000000000000000000000000000000000000000000000000
 const ltcKey = "0x4c54430000000000000000000000000000000000000000000000000000000000"
 
 async function tvl(timestamp, block) {
-    const tunnelTVl = await sdk.api.abi.multiCall({
-        block,
-        calls: [{ target: btcTunnel }, { target: ltcTunnel }],
-        abi: abi['totalTVL']
+  let tunnelTVl, total, price;
+
+  try {
+    tunnelTVl = await sdk.api.abi.multiCall({
+      block,
+      calls: [{target: btcTunnel}, {target: ltcTunnel}],
+      abi: abi['totalTVL']
     })
+  }catch (error) {
+    console.error(error);
+  }
 
-    const total = await sdk.api.abi.multiCall({
-        block,
-        calls: [{ target: obtc }, { target: oltc }],
-        abi: 'erc20:totalSupply'
+  try {
+    total = await sdk.api.abi.multiCall({
+      block,
+      calls: [{target: obtc}, {target: oltc}],
+      abi: 'erc20:totalSupply'
     })
+  }catch (error) {
+    console.error(error);
+  }
 
-    const price = await sdk.api.abi.multiCall({
-        block,
-        calls: [
-            { params: btcKey, target: oracle, },
-            { block, params: ltcKey, target: oracle, }
-        ],
-        abi: abi['getPrice']
+  try {
+    price = await sdk.api.abi.multiCall({
+      block,
+      calls: [
+        {params: btcKey, target: oracle,},
+        {block, params: ltcKey, target: oracle,}
+      ],
+      abi: abi['getPrice']
     })
+  }catch (error) {
+    console.error(error);
+  }
 
-    const obtcTVL = BigNumber(price.output[0].output).multipliedBy(total.output[0].output).div(10 ** 18)
-    const oltcTVL = BigNumber(price.output[1].output).multipliedBy(total.output[1].output).div(10 ** 18)
+    const obtcTVL = BigNumber(price.output[0].output).multipliedBy(total.output[0].output).div(10 ** 18);
+    const oltcTVL = BigNumber(price.output[1].output).multipliedBy(total.output[1].output).div(10 ** 18);
 
-    const result = obtcTVL.plus(oltcTVL).plus(tunnelTVl.output[0].output).plus(tunnelTVl.output[1].output)
 
-    return {
-        "0x0000000000000000000000000000000000000000": result.toFixed()
-    }
+  let result = obtcTVL.plus(oltcTVL).plus(tunnelTVl.output[0].output).plus(tunnelTVl.output[1].output);
+  result = (result.isNaN()) ? 0: result.toFixed();
+
+  const balances = { "0x0000000000000000000000000000000000000000": result};
+    return balances
 }
 
 
