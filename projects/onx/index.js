@@ -28,7 +28,7 @@ async function tvl(timestamp, block) {
         abi: abi["totalStake"],
       });
 
-      balances["0xE95A203B1a91a908F9B9CE46459d101078c2c3cb"] = ethSupply.output;
+      balances["0x0000000000000000000000000000000000000000"] = ethSupply.output;
     }catch (error){
       balances["0x0000000000000000000000000000000000000000"] = 0;
     }
