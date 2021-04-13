@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.multiCall = exports.call = void 0;
 const client_1 = __importDefault(require("./client"));
+const web3_utils_1 = __importDefault(require("web3-utils"));
 const ethers_1 = require("ethers");
 const client_2 = require("./client");
 const erc20_json_1 = __importDefault(require("./abi/erc20.json"));
@@ -88,12 +89,13 @@ async function multiCall(abi, calls, block, target) {
     const mappedResults = calls.map((call, i) => {
         let output;
         if (result[i].status === "fulfilled") {
-            if (typeof result[i].value === "number") {
-                output = result[i].value;
-            }
-            else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (web3_utils_1.default.isBigNumber(result[i].value)) {
                 // eslint-disable-next-line @typescript-eslint/ban-types
                 output = result[i].value.toString();
+            }
+            else {
+                output = result[i].value;
             }
         }
         else {
