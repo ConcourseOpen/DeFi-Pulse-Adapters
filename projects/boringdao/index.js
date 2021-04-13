@@ -57,14 +57,14 @@ async function tvl(timestamp, block) {
   result = (result.isNaN()) ? 0: result.toFixed();
 
   const balances = { "0x0000000000000000000000000000000000000000": result};
-  return balances
+  return (await sdk.api.util.toSymbols(balances)).output
 }
 
 
 module.exports = {
     name: 'BoringDAO',
     token: null,
-    category: 'assets',
+    category: 'Assets',
     start: 1607745161,  // Nov-24-2018 09:45:52 PM +UTC
     tvl,
 };
