@@ -161,7 +161,7 @@
       })
     ).output;
 
-    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
+    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {}, supply_stable: {} };
 
     reserveDataResults.map((result) => {
       if (!result || !result.success) return;
@@ -190,6 +190,7 @@
       ratesData.borrow[symbol] = borrowRate;
       ratesData.borrow_stable[symbol] = borrowStableRate;
       ratesData.supply[symbol] = outStandingBorrows;
+      ratesData.supply_stable[symbol] = BigNumber(reserveData.totalBorrowsStable).div(10 ** reserveDict.decimals).toFixed();
     });
 
     reserveConfigResult.map((result) => {
@@ -210,6 +211,7 @@
         delete ratesData.borrow[symbol];
         delete ratesData.borrow_stable[symbol];
         delete ratesData.supply[symbol];
+        delete ratesData.supply_stable[symbol];
         return;
       }
 
@@ -234,7 +236,9 @@
 
     if (uniswapReserves.length === 0) {
       // Does not take into account Uniswap LP assets (not yet supported on DeFiPulse)
-      uniswapReserves = await _getV1Assets(uniswapLendingPoolCore, block);
+      if (block > 10094855) {
+        uniswapReserves = await _getV1Assets(uniswapLendingPoolCore, block);
+      }
     }
   }
 
@@ -403,7 +407,7 @@
       })
     ).output
 
-    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {} };
+    let ratesData = { lend: {}, borrow: {}, supply: {}, borrow_stable: {}, supply_stable: {} };
     
     reserveData.map(result => {
       if (!result || !result.success) return;
@@ -430,6 +434,7 @@
       ratesData.borrow[symbol] = borrowRate;
       ratesData.borrow_stable[symbol] = borrowStableRate;
       ratesData.supply[symbol] = outStandingBorrows;
+      ratesData.supply_stable[symbol] = BigNumber(details.totalStableDebt).div(10 ** reserveDetails.decimals).toFixed();
     })
 
     return ratesData
@@ -444,22 +449,25 @@
     await getV1Reserves(block)
     let balances = await _multiMarketV1Tvl(aaveLendingPoolCore, aaveReserves, block);
 
-    const uniswapMarketTvlBalances = await _multiMarketV1Tvl(
-      uniswapLendingPoolCore,
-      uniswapReserves,
-      block
-    );
+    if (block > 10094855) {
+      const uniswapMarketTvlBalances = await _multiMarketV1Tvl(
+        uniswapLendingPoolCore,
+        uniswapReserves,
+        block
+      );
+  
+      // ...add v1 uniswap market TVL
+      Object.keys(uniswapMarketTvlBalances).forEach(address => {
+        if (balances[address]) {
+          balances[address] = BigNumber(
+            balances[address]
+          ).plus(uniswapMarketTvlBalances[address]).toFixed();
+        } else {
+          balances[address] = uniswapMarketTvlBalances[address];
+        }
+      });
+    }
 
-    // ...add v1 uniswap market TVL
-    Object.keys(uniswapMarketTvlBalances).forEach(address => {
-      if (balances[address]) {
-        balances[address] = BigNumber(
-          balances[address]
-        ).plus(uniswapMarketTvlBalances[address]).toFixed();
-      } else {
-        balances[address] = uniswapMarketTvlBalances[address];
-      }
-    });
 
     // Staking TVL
     if (block >= 10926829) {
@@ -508,9 +516,14 @@
     });
 
     const ratesV1 = await _multiMarketV1Rates(aaveLendingPool, aaveReserves, block)
+    let ratesV2 = {
+      lend: []
+    };
 
-    await getV2Reserves(block)
-    const ratesV2 = await getV2Rates(block)
+    if (block >= 11360925) {
+      await getV2Reserves(block)
+      ratesV2 = await getV2Rates(block)
+    }
 
     if (Object.keys(ratesV2.lend).length > 0) {
       return { 
@@ -518,6 +531,7 @@
         borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
         borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
         supply: { ...ratesV1.supply, ...ratesV2.supply }, 
+        supply_stable: { ...ratesV1.supply_stable, ...ratesV2.supply_stable },
       };
     } else {
       return ratesV1
@@ -533,7 +547,7 @@
     website: "https://aave.com",
     token: "AAVE",
     category: "Lending",
-    start: 1578355200, // 01/07/2020 @ 12:00am (UTC)
+    start: 1578555200, // 01/07/2020 @ 12:00am (UTC)
     tvl,
     rates,
     term: "1 block",
