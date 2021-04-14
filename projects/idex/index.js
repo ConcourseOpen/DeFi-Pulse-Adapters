@@ -17,7 +17,7 @@ async function tvl(timestamp, block) {
   const balances = {
     "0x0000000000000000000000000000000000000000": (
       await sdk.api.eth.getBalance({ target: IDEX_CUSTODY_CONTRACT, block })
-    ).output,
+    ).output
   };
 
   const assetBalancesResult = await sdk.api.abi.multiCall({

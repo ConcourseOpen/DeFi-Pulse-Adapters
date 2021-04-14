@@ -13,7 +13,7 @@ const BigNumber = require("bignumber.js");
 const versions = [
   "0xCB6c6Bdf0AA4cF0188518783b871931EFB64248f",
   "0x01Bde0b02740D6311e4a87CA112DeEEddb057EFB",
-  "0x5f9AE054C7F0489888B1ea46824b4B9618f8A711",
+  "0x5f9AE054C7F0489888B1ea46824b4B9618f8A711"
 ];
 
 /*==================================================
@@ -26,9 +26,9 @@ module.exports = async function tvl(timestamp, block) {
   let latestIds = (
     await sdk.api.abi.multiCall({
       block,
-      calls: _.map(versions, (version) => {
+      calls: _.map(versions, version => {
         return {
-          target: version,
+          target: version
         };
       }),
       abi: {
@@ -38,29 +38,29 @@ module.exports = async function tvl(timestamp, block) {
         outputs: [
           {
             name: "",
-            type: "uint256",
-          },
+            type: "uint256"
+          }
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-      },
+        type: "function"
+      }
     })
   ).output;
 
   let fundCalls = [];
 
-  _.each(latestIds, (latestId) => {
+  _.each(latestIds, latestId => {
     // edge case error where getLastFundId reports incorrectly with a very high number
     // possible overflow bug or different output type by design to signal error
     // check for reasonable number string length to mitigate
     if (latestId.success && latestId.output.length < 10) {
       let ids = _.range(Number(latestId.output) + 1);
 
-      _.each(ids, (id) => {
+      _.each(ids, id => {
         fundCalls.push({
           target: latestId.input.target,
-          params: id,
+          params: id
         });
       });
     }
@@ -75,35 +75,35 @@ module.exports = async function tvl(timestamp, block) {
         inputs: [
           {
             name: "withId",
-            type: "uint256",
-          },
+            type: "uint256"
+          }
         ],
         name: "getFundById",
         outputs: [
           {
             name: "",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-      },
+        type: "function"
+      }
     })
   ).output;
 
   let accountingCalls = _.map(
     _.uniq(
       _.pluck(
-        _.filter(funds, (fund) => {
+        _.filter(funds, fund => {
           return fund.success;
         }),
         "output"
       )
     ),
-    (fund) => {
+    fund => {
       return {
-        target: fund,
+        target: fund
       };
     }
   );
@@ -119,22 +119,22 @@ module.exports = async function tvl(timestamp, block) {
         outputs: [
           {
             name: "",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-      },
+        type: "function"
+      }
     })
   ).output;
 
   let holdingCalls = [];
 
-  _.each(accounting, (account) => {
+  _.each(accounting, account => {
     if (account.success) {
       holdingCalls.push({
-        target: account.output,
+        target: account.output
       });
     }
   });
@@ -150,25 +150,25 @@ module.exports = async function tvl(timestamp, block) {
         outputs: [
           {
             name: "",
-            type: "uint256[]",
+            type: "uint256[]"
           },
           {
             name: "",
-            type: "address[]",
-          },
+            type: "address[]"
+          }
         ],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-      },
+        type: "function"
+      }
     })
   ).output;
 
-  _.each(fundHoldings, (holdings) => {
+  _.each(fundHoldings, holdings => {
     if (holdings.success) {
       let output = _.zip(holdings.output[1], holdings.output[0]);
 
-      _.each(output, (balance) => {
+      _.each(output, balance => {
         let address = balance[0];
         let value = balance[1];
         balances[address] = BigNumber(balances[address] || 0)
@@ -179,4 +179,4 @@ module.exports = async function tvl(timestamp, block) {
   });
 
   return balances;
-};
+}

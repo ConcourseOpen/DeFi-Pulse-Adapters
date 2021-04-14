@@ -3,35 +3,35 @@
   ==================================================*/
 
 const sdk = require("../../sdk");
-const abi = require("./abi.json");
+const abi = require('./abi.json')
 const BigNumber = require("bignumber.js");
 const _ = require("underscore");
 
 async function tvl(timestamp, block) {
-  const vesperPoolAddresses = [];
+  const vesperPoolAddresses = []
   const balances = {};
   const collateralToken = {};
-  const controller = "0xa4F1671d3Aee73C05b552d57f2d16d3cfcBd0217";
+  const controller = '0xa4F1671d3Aee73C05b552d57f2d16d3cfcBd0217'
 
   // Get pool list
   let poolAddressListResponse = await sdk.api.abi.call({
     target: controller,
-    abi: abi["pools"],
+    abi: abi["pools"]
   });
 
   let poolsCountResponse = await sdk.api.abi.call({
     target: poolAddressListResponse.output,
-    abi: abi["length"],
+    abi: abi["length"]
   });
 
-  const calls = [];
-  let i = 0;
-  while (i < parseInt(poolsCountResponse.output)) {
+  const calls = []
+  let i = 0
+  while(i < parseInt(poolsCountResponse.output)) {
     calls.push({
       target: poolAddressListResponse.output,
-      params: i,
-    });
-    i++;
+      params: i
+    })
+    i++
   }
   const poolListResponse = await sdk.api.abi.multiCall({
     calls,
@@ -40,14 +40,14 @@ async function tvl(timestamp, block) {
 
   _.each(poolListResponse.output, (response) => {
     if (response.success) {
-      vesperPoolAddresses.push(response.output);
+      vesperPoolAddresses.push(response.output)
     }
   });
 
   // Get collateral token
   const collateralTokenResponse = await sdk.api.abi.multiCall({
     calls: _.map(vesperPoolAddresses, (poolAddress) => ({
-      target: poolAddress,
+      target: poolAddress
     })),
     abi: abi["token"],
   });

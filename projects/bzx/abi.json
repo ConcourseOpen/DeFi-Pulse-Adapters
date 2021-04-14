@@ -27,7 +27,9 @@
   },
   "totalAssetSupply": {
     "constant": true,
-    "inputs": [],
+    "inputs": [
+
+    ],
     "name": "totalAssetSupply",
     "outputs": [
       {
@@ -41,7 +43,9 @@
   },
   "totalAssetBorrow": {
     "constant": true,
-    "inputs": [],
+    "inputs": [
+
+    ],
     "name": "totalAssetBorrow",
     "outputs": [
       {

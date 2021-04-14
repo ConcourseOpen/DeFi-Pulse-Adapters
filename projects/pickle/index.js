@@ -5,7 +5,9 @@
 const sdk = require("../../sdk");
 const abi = require("./abi.json");
 const BigNumber = require("bignumber.js");
-const ERROR = BigNumber("3963877391197344453575983046348115674221700746820753546331534351508065746944");
+const ERROR = BigNumber(
+  "3963877391197344453575983046348115674221700746820753546331534351508065746944"
+);
 
 /*==================================================
   TVL
@@ -270,7 +272,9 @@ async function tvl(timestamp, block) {
       .toFixed(0),
 
     // USDC
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0].plus(pSLPUSDC[0]).toFixed(0),
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
+      .plus(pSLPUSDC[0])
+      .toFixed(0),
 
     // USDT
     "0xdAC17F958D2ee523a2206206994597C13D831ec7": pUNIUSDT[1]
@@ -280,7 +284,9 @@ async function tvl(timestamp, block) {
       .toFixed(0),
 
     // WBTC
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0].plus(pSLPWBTC[0]).toFixed(0),
+    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599": pUNIWBTC[0]
+      .plus(pSLPWBTC[0])
+      .toFixed(0),
 
     // YFI
     "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(0),
@@ -295,12 +301,14 @@ async function tvl(timestamp, block) {
     "0x4b4D2e899658FB59b1D518b68fe836B100ee8958": pSLPMIS[0].toFixed(0),
 
     // yveCRV
-    "0xc5bddf9843308380375a611c18b50fb9341f502a": pSLPYVECRV[1].toFixed(0),
+    "0xc5bddf9843308380375a611c18b50fb9341f502a": pSLPYVECRV[1].toFixed(0),    
 
     // RenBTC
-    "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV.times(BigNumber("10").pow(-10)).toFixed(0),
+    "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
+      .times(BigNumber("10").pow(-10))
+      .toFixed(0),
   };
-  console.table(balances);
+  console.table(balances)
   return balances;
 }
 
@@ -346,10 +354,15 @@ async function getUniswapUnderlying(token, block) {
 
       const poolUnderlyingReservesToken0 = BigNumber(reserves.output[0]);
       const poolUnderlyingReservesToken1 = BigNumber(reserves.output[1]);
-      const poolFraction = BigNumber(balance.output).div(BigNumber(totalSupply.output));
+      const poolFraction = BigNumber(balance.output).div(
+        BigNumber(totalSupply.output)
+      );
 
       if (!poolFraction.isNaN() && !poolFraction.isEqualTo(ERROR)) {
-        return [poolFraction.times(poolUnderlyingReservesToken0), poolFraction.times(poolUnderlyingReservesToken1)];
+        return [
+          poolFraction.times(poolUnderlyingReservesToken0),
+          poolFraction.times(poolUnderlyingReservesToken1),
+        ];
       }
     } catch (e) {
       return [BigNumber(0), BigNumber(0)];

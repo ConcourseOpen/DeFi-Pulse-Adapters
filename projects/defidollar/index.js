@@ -3,21 +3,18 @@
   ==================================================*/
 
 const sdk = require("../../sdk");
-const _ = require("underscore");
+const _ = require('underscore');
 
-const yVault = "0x5dbcf33d8c2e976c6b560249878e6f1491bca25c";
-const yCRV = "0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8";
+const yVault = '0x5dbcf33d8c2e976c6b560249878e6f1491bca25c';
+const yCRV = '0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8'
 
-const markets = [
-  {
-    asset: "0x88ff54ed47402a97f6e603737f26bb9e4e6cb03d",
+const markets = [{
+    asset: '0x88ff54ed47402a97f6e603737f26bb9e4e6cb03d',
     pool: yVault,
-  },
-  {
-    asset: "0xa89bd606d5dadda60242e8dedeebc95c41ad8986",
+  }, {
+    asset: '0xa89bd606d5dadda60242e8dedeebc95c41ad8986',
     pool: yCRV,
-  },
-];
+}];
 
 /*==================================================
   TVL
@@ -30,30 +27,30 @@ async function tvl(timestamp, block) {
   _.each(markets, (market) => {
     calls.push({
       target: market.pool,
-      params: market.asset,
-    });
+      params: market.asset
+    })
   });
 
   try {
     let balanceOfResults = await sdk.api.abi.multiCall({
       block,
       calls,
-      abi: "erc20:balanceOf",
+      abi: 'erc20:balanceOf'
     });
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-  } catch (error) {
+  }catch (error){
     balances = {
       "0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8": 0,
-      "0x5dbcf33d8c2e976c6b560249878e6f1491bca25c": 0,
-    };
+      "0x5dbcf33d8c2e976c6b560249878e6f1491bca25c": 0
+    }
   }
 
-  if (_.isEmpty(balances)) {
+  if(_.isEmpty(balances)){
     balances = {
       "0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8": 0,
-      "0x5dbcf33d8c2e976c6b560249878e6f1491bca25c": 0,
-    };
+      "0x5dbcf33d8c2e976c6b560249878e6f1491bca25c": 0
+    }
   }
 
   return balances;

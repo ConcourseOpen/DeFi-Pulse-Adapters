@@ -14,7 +14,7 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "calcPoolValueInToken": {
+  "calcPoolValueInToken" : {
     "constant": true,
     "inputs": [],
     "name": "calcPoolValueInToken",
@@ -29,7 +29,7 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "balance": {
+  "balance" : {
     "constant": true,
     "inputs": [],
     "name": "balance",

@@ -7,14 +7,18 @@
     "type": "function"
   },
   "abiGetOrderId": {
-    "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
+    ],
     "name": "getActiveOrderId",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   "abiGetOrder": {
-    "inputs": [{ "internalType": "uint256", "name": "orderId", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "orderId", "type": "uint256" }
+    ],
     "name": "getOrder",
     "outputs": [
       {

@@ -2,10 +2,10 @@
   Modules
   ==================================================*/
 
-const sdk = require("../../sdk");
-const abi = require("./abi");
-const _ = require("underscore");
-const BigNumber = require("bignumber.js");
+const sdk = require('../../sdk');
+const abi = require('./abi');
+const _ = require('underscore');
+const BigNumber = require('bignumber.js');
 
 /*==================================================
   Settings
@@ -28,20 +28,20 @@ const yTokenAddresses = [
 ];
 
 const yVaultAddresses = [
-  "0xec0d8D3ED5477106c6D4ea27D90a60e594693C90", // yGUSD (added - November 2020)
-  "0x9cA85572E6A3EbF24dEDd195623F188735A5179f", // y3CRV (added - November 2020)
-  "0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7", // yETH
-  "0xBA2E7Fed597fd0E3e70f5130BcDbbFE06bB94fe1", // yYFI
-  "0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c", // yyCRV (counted in yearn v2)
-  "0x2994529C0652D127b7842094103715ec5299bBed", // yyBUSD (counted in yearn v3)
-  "0x7Ff566E1d69DEfF32a7b244aE7276b9f90e9D0f6", // ySBTC
-  "0xACd43E627e64355f1861cEC6d3a6688B31a6F952", // yDAI
-  "0x37d19d1c4E1fa9DC47bD1eA12f742a0887eDa74a", // yTUSD
-  "0x2f08119C6f07c006695E079AAFc638b8789FAf18", // yUSDT
-  "0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e", // yUSDC
-  "0x29E240CFD7946BA20895a7a02eDb25C210f9f324", // yaLINK
-  "0x881b06da56BB5675c54E4Ed311c21E54C5025298", // yLINK
-];
+  '0xec0d8D3ED5477106c6D4ea27D90a60e594693C90', // yGUSD (added - November 2020)
+  '0x9cA85572E6A3EbF24dEDd195623F188735A5179f', // y3CRV (added - November 2020)
+  '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7', // yETH
+  '0xBA2E7Fed597fd0E3e70f5130BcDbbFE06bB94fe1', // yYFI
+  '0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c', // yyCRV (counted in yearn v2)
+  '0x2994529C0652D127b7842094103715ec5299bBed', // yyBUSD (counted in yearn v3)
+  '0x7Ff566E1d69DEfF32a7b244aE7276b9f90e9D0f6', // ySBTC
+  '0xACd43E627e64355f1861cEC6d3a6688B31a6F952', // yDAI
+  '0x37d19d1c4E1fa9DC47bD1eA12f742a0887eDa74a', // yTUSD
+  '0x2f08119C6f07c006695E079AAFc638b8789FAf18', // yUSDT
+  '0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e',  // yUSDC
+  '0x29E240CFD7946BA20895a7a02eDb25C210f9f324', // yaLINK
+  '0x881b06da56BB5675c54E4Ed311c21E54C5025298', // yLINK
+]
 
 /*==================================================
   TVL
@@ -55,13 +55,13 @@ async function tvl(timestamp, block) {
   // Get yToken's underlying tokens
   const underlyingYTokenAddressResults = await sdk.api.abi.multiCall({
     calls: _.map(yTokenAddresses, (address) => ({
-      target: address,
+      target: address
     })),
-    abi: abi["token"],
+    abi: abi["token"]
   });
 
   _.each(underlyingYTokenAddressResults.output, (token) => {
-    if (token.success) {
+    if(token.success) {
       const underlyingTokenAddress = token.output;
       const yTokenAddress = token.input.target;
       yTokenToUnderlyingToken[yTokenAddress] = underlyingTokenAddress;
@@ -75,31 +75,29 @@ async function tvl(timestamp, block) {
   const yTokenValueResults = await sdk.api.abi.multiCall({
     block,
     calls: _.map(yTokenAddresses, (address) => ({
-      target: address,
+      target: address
     })),
-    abi: abi["calcPoolValueInToken"],
+    abi: abi["calcPoolValueInToken"]
   });
 
   _.each(yTokenValueResults.output, (tokenBalance) => {
-    if (tokenBalance.success) {
+    if(tokenBalance.success) {
       const valueInToken = tokenBalance.output;
       const yTokenAddress = tokenBalance.input.target;
-      balances[yTokenToUnderlyingToken[yTokenAddress]] = BigNumber(
-        balances[yTokenToUnderlyingToken[yTokenAddress]]
-      ).plus(valueInToken);
+      balances[yTokenToUnderlyingToken[yTokenAddress]] = BigNumber(balances[yTokenToUnderlyingToken[yTokenAddress]]).plus(valueInToken);
     }
   });
 
   // Get yVault's underlying tokens
   const underlyingYVaultAddressResults = await sdk.api.abi.multiCall({
     calls: _.map(yVaultAddresses, (address) => ({
-      target: address,
+      target: address
     })),
-    abi: abi["token"],
+    abi: abi["token"]
   });
 
   _.each(underlyingYVaultAddressResults.output, (token) => {
-    if (token.success) {
+    if(token.success) {
       const underlyingTokenAddress = token.output;
       const yVaultAddress = token.input.target;
       yVaultToUnderlyingToken[yVaultAddress] = underlyingTokenAddress;
@@ -113,18 +111,16 @@ async function tvl(timestamp, block) {
   const yVaultBalanceResults = await sdk.api.abi.multiCall({
     block,
     calls: _.map(yVaultAddresses, (address) => ({
-      target: address,
+      target: address
     })),
-    abi: abi["balance"],
+    abi: abi["balance"]
   });
 
   _.each(yVaultBalanceResults.output, (tokenBalanceResult) => {
-    if (tokenBalanceResult.success) {
+    if(tokenBalanceResult.success) {
       const valueInToken = tokenBalanceResult.output;
       const yVaultAddress = tokenBalanceResult.input.target;
-      balances[yVaultToUnderlyingToken[yVaultAddress]] = BigNumber(
-        balances[yVaultToUnderlyingToken[yVaultAddress]]
-      ).plus(valueInToken);
+      balances[yVaultToUnderlyingToken[yVaultAddress]] = BigNumber(balances[yVaultToUnderlyingToken[yVaultAddress]]).plus(valueInToken);
     }
   });
 
@@ -136,10 +132,10 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: "yearn.finance",
-  token: "YFI",
-  category: "assets",
-  start: 1581465600, // 02/12/2020 @ 12:00am (UTC)
+  name: 'yearn.finance',
+  token: 'YFI',
+  category: 'assets',
+  start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
   tvl,
-  contributesTo: ["Curve", "Aave"],
+  contributesTo: ['Curve','Aave'],
 };

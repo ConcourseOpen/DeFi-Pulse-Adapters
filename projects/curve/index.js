@@ -62,13 +62,11 @@ async function tvl(timestamp, block) {
   let CurveRegistryAddress;
 
   if (registryStart) {
-    CurveRegistryAddress = (
-      await sdk.api.abi.call({
-        block,
-        target: CurveAddressProvider,
-        abi: abi["get_registry"],
-      })
-    ).output;
+    CurveRegistryAddress = (await sdk.api.abi.call({
+      block,
+      target: CurveAddressProvider,
+      abi: abi["get_registry"]
+    })).output
   }
 
   let poolCount = registryStart
@@ -82,16 +80,14 @@ async function tvl(timestamp, block) {
     : curvePools.length;
 
   for (let i = 0; i < poolCount; i++) {
-    let poolAddress = registryStart
-      ? (
-          await sdk.api.abi.call({
-            block,
-            target: CurveRegistryAddress,
-            abi: abi["pool_list"],
-            params: i,
-          })
-        ).output
-      : curvePools[i];
+    let poolAddress = registryStart ? (
+      await sdk.api.abi.call({
+        block,
+        target: CurveRegistryAddress,
+        abi: abi["pool_list"],
+        params: i,
+      })
+    ).output : curvePools[i];
     poolInfo[poolAddress] = {};
 
     for (let x = 0; ; x++) {
@@ -149,14 +145,15 @@ async function tvl(timestamp, block) {
       if (!balances[coinKeys[x]]) balances[coinKeys[x]] = 0;
 
       balances[coinKeys[x]] = String(
-        parseFloat(balances[coinKeys[x]]) + parseFloat(poolInfo[poolKeys[i]][coinKeys[x]])
+        parseFloat(balances[coinKeys[x]]) +
+          parseFloat(poolInfo[poolKeys[i]][coinKeys[x]])
       );
     }
   }
 
-  delete balances["0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490"];
-  delete balances["0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3"];
-  delete balances["0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8"];
+  delete balances['0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490'];
+  delete balances['0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3'];
+  delete balances['0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8']
 
   let { output } = await sdk.api.util.toSymbols(balances);
 
@@ -225,11 +222,15 @@ async function tvl(timestamp, block) {
         output.push(_data);
       }
       // Update balance
-      _data.balance = String(parseFloat(_data.balance) + parseFloat(_token.balance));
+      _data.balance = String(
+        parseFloat(_data.balance) + parseFloat(_token.balance)
+      );
     }
   });
 
-  output = output.filter((_token) => !yTokens.find((token) => token.symbol === _token.symbol));
+  output = output.filter(
+    (_token) => !yTokens.find((token) => token.symbol === _token.symbol)
+  );
   for (let out of output) {
     if (out.symbol === "ETH") {
       out.address = etherAddress;
