@@ -21,14 +21,14 @@
   TVL
   ==================================================*/
 
-  async function getFundBalances(block) {
+  async function getFundBalances(block, timestamp) {
     let calls = [];
     let balances = {};
 
     _.each(acceptableTokens, (tokenAddress) => {
       calls.push({
         target: tokenAddress,
-        params: fundContract
+        params: (timestamp < 1618185600) ? "0x6DE5673d00D42323Fb2E7F34ADcA156280370876": fundContract
       })
     });
 
@@ -48,7 +48,7 @@
   }
 
   async function tvl(timestamp, block) {
-    const balances = await getFundBalances(block);
+    const balances = await getFundBalances(block, timestamp);
     return (await sdk.api.util.toSymbols(balances)).output;
   }
 
