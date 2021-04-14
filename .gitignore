@@ -6,3 +6,4 @@ output
 csv
 .vscode
 .replit
+serverless.yml
