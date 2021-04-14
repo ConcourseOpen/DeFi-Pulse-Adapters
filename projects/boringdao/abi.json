@@ -1,0 +1,36 @@
+{
+    "totalTVL": {
+        "inputs": [],
+        "name": "totalTVL",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    "getPrice": {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "_symbol",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getPrice",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+      }
+}
