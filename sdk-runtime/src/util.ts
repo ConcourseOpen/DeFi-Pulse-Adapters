@@ -2,7 +2,6 @@ import eth from "./client";
 import utils from "web3-utils";
 import { multiCall } from "./abi";
 import fetch from "node-fetch";
-import tokenLists from "./tokenLists.json";
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 type LogArray = ThenArg<ReturnType<typeof eth.getPastLogs>>;
@@ -121,13 +120,9 @@ async function kyberTokens() {
   return result;
 }
 
-function tokenList() {
-  return tokenLists;
-}
-
 // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
 async function lookupBlock(timestamp: number) {
   throw new Error("Not implemented");
 }
 
-export { toSymbols, getLogs, kyberTokens, tokenList, lookupBlock };
+export { toSymbols, getLogs, kyberTokens, lookupBlock };

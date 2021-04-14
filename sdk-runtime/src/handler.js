@@ -1,7 +1,7 @@
 const { call, multiCall } = require("./abi");
 const { totalSupply, decimals, symbol, balanceOf, info } = require("./erc20");
 const { getBalance, getBalances } = require("./eth");
-const { toSymbols, getLogs, kyberTokens, tokenList, lookupBlock } = require("./util");
+const { toSymbols, getLogs, kyberTokens, lookupBlock } = require("./util");
 
 async function toSymbolsHandler(event) {
   let data;
@@ -45,15 +45,6 @@ async function kyberTokensHandler() {
   return {
     statusCode: 200,
     body: JSON.stringify({ ethCallCount: 0, output: result }),
-  };
-}
-
-async function tokenListHandler() {
-  const result = tokenList();
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(result),
   };
 }
 
@@ -252,5 +243,4 @@ module.exports.getBalancesHandler = getBalancesHandler;
 module.exports.toSymbolsHandler = toSymbolsHandler;
 module.exports.getLogsHandler = getLogsHandler;
 module.exports.kyberTokensHandler = kyberTokensHandler;
-module.exports.tokenListHandler = tokenListHandler;
 module.exports.lookupBlockHandler = lookupBlockHandler;
