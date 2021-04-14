@@ -11,7 +11,6 @@
   ==================================================*/
 
   const zeroAddress = '0x0000000000000000000000000000000000000000'
-  const fundContract = '0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478'
   const acceptableTokens = [
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
     '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
@@ -25,10 +24,13 @@
     let calls = [];
     let balances = {};
 
+    let fundContract = (timestamp < 1618185600) ?
+      "0x6DE5673d00D42323Fb2E7F34ADcA156280370876":
+      "0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478;"
     _.each(acceptableTokens, (tokenAddress) => {
       calls.push({
         target: tokenAddress,
-        params: (timestamp < 1618185600) ? "0x6DE5673d00D42323Fb2E7F34ADcA156280370876": fundContract
+        params: fundContract
       })
     });
 
