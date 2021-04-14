@@ -26,7 +26,7 @@
 
     let fundContract = (timestamp < 1618185600) ?
       "0x6DE5673d00D42323Fb2E7F34ADcA156280370876":
-      "0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478;"
+      "0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478"
     _.each(acceptableTokens, (tokenAddress) => {
       calls.push({
         target: tokenAddress,
