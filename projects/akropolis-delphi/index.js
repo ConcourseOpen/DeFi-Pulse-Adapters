@@ -25,8 +25,16 @@ async function getTotalStaked(address, block, startBlock) {
 
 async function tvl(timestamp, block) {
   return {
-    [akroTokenAddress]: await getTotalStaked(akroStakingPool, block, akroStartBlock),
-    [adelTokenAddress]: await getTotalStaked(adelStakingPool, block, adelStartBlock),
+    [akroTokenAddress]: await getTotalStaked(
+      akroStakingPool,
+      block,
+      akroStartBlock
+    ),
+    [adelTokenAddress]: await getTotalStaked(
+      adelStakingPool,
+      block,
+      adelStartBlock
+    ),
   };
 }
 

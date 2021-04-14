@@ -45,7 +45,9 @@ async function tvl(timestamp, block) {
         abi: abi.asset.balances,
       })
     ).output;
-    balances[token] = balances[token] ? balances[token].plus(output) : new BigNumber(output);
+    balances[token] = balances[token]
+      ? balances[token].plus(output)
+      : new BigNumber(output);
   }
   return balances;
 }

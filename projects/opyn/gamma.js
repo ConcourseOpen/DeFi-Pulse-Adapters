@@ -2,11 +2,11 @@
   Modules
 ==================================================*/
 
-const sdk = require("../../sdk");
-const _ = require("underscore");
-const BigNumber = require("bignumber.js");
+const sdk = require('../../sdk');
+const _ = require('underscore');
+const BigNumber = require('bignumber.js');
 
-const isWhitelistedCollateral = require("./abis/gamma/isWhitelistedCollateral.json");
+const isWhitelistedCollateral = require('./abis/gamma/isWhitelistedCollateral.json');
 
 /*==================================================
   Settings
@@ -20,58 +20,51 @@ const marginPool = "0x5934807cc0654d46755ebd2848840b616256c6ef";
   TVL
 ==================================================*/
 
-module.exports = async function tvl(timestamp, block) {
+module.exports = async function tvl(timestamp, block) {  
   let balances = {};
 
-  if (block >= START_BLOCK) {
-    const supportedTokens = await sdk.api.util
-      .tokenList()
-      .then((supportedTokens) => supportedTokens.map(({ contract }) => contract));
-
+  if(block >= START_BLOCK) {
+    const supportedTokens = await (
+      sdk
+        .api
+        .util
+        .tokenList()
+        .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
+    );
+    
     // get ETH balance
-    const balance = (await sdk.api.eth.getBalance({ target: marginPool, block })).output;
-    balances["0x0000000000000000000000000000000000000000"] = BigNumber(
-      balances["0x0000000000000000000000000000000000000000"] || 0
-    )
-      .plus(BigNumber(balance))
-      .toFixed();
+    const balance = (await sdk.api.eth.getBalance({target: marginPool, block})).output;
+    balances["0x0000000000000000000000000000000000000000"] = BigNumber(balances["0x0000000000000000000000000000000000000000"] || 0).plus(BigNumber(balance)).toFixed();
+  
+    await Promise.all(supportedTokens.map(async (pulseToken) => {
+      const collateralAsset = pulseToken.toLocaleLowerCase();
 
-    await Promise.all(
-      supportedTokens.map(async (pulseToken) => {
-        const collateralAsset = pulseToken.toLocaleLowerCase();
-
-        if (
-          collateralAsset.substring(0, 2) == "0x" &&
-          collateralAsset != "0x0000000000000000000000000000000000000000"
-        ) {
-          let isWhitelistedCollateralToken = (
+      if(collateralAsset.substring(0, 2) == "0x" && collateralAsset != "0x0000000000000000000000000000000000000000") {
+        let isWhitelistedCollateralToken = (
+          await sdk.api.abi.call({
+            target: whitelist,
+            abi: isWhitelistedCollateral,
+            params: [collateralAsset],
+            fromBlock: START_BLOCK,
+            toBlock: block
+          })
+        ).output;
+    
+        if(isWhitelistedCollateralToken) {
+          const balanceOfResult = (
             await sdk.api.abi.call({
-              target: whitelist,
-              abi: isWhitelistedCollateral,
-              params: [collateralAsset],
-              fromBlock: START_BLOCK,
-              toBlock: block,
+              target: collateralAsset,
+              params: marginPool,
+              abi: 'erc20:balanceOf',
+              block
             })
           ).output;
 
-          if (isWhitelistedCollateralToken) {
-            const balanceOfResult = (
-              await sdk.api.abi.call({
-                target: collateralAsset,
-                params: marginPool,
-                abi: "erc20:balanceOf",
-                block,
-              })
-            ).output;
-
-            balances[collateralAsset] = BigNumber(balances[collateralAsset] || 0)
-              .plus(BigNumber(balanceOfResult))
-              .toFixed();
-          }
+          balances[collateralAsset] = BigNumber(balances[collateralAsset] || 0).plus(BigNumber(balanceOfResult)).toFixed();          
         }
-      })
-    );
+      }
+    }));
   }
 
   return balances;
-};
+}

@@ -28,7 +28,8 @@ async function tvl(timestamp, block) {
   ).output;
 
   const balances = ETHBalances.reduce(
-    (accumulator, ETHBalance) => accumulator.plus(new BigNumber(ETHBalance.balance)),
+    (accumulator, ETHBalance) =>
+      accumulator.plus(new BigNumber(ETHBalance.balance)),
     new BigNumber("0")
   ).toFixed();
 

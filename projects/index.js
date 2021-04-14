@@ -1,56 +1,57 @@
-const moment = require("moment");
+const moment = require('moment');
 
 let projects = {};
 
-AddAdapter("aave");
-AddAdapter("augur");
+AddAdapter('aave');
+AddAdapter('augur');
 // AddAdapter('bancor');
 // AddAdapter('bzx');
-AddAdapter("compound");
-AddAdapter("ddex");
-AddAdapter("dforce");
+AddAdapter('compound');
+AddAdapter('ddex');
+AddAdapter('dforce');
 // AddAdapter('dharma');
-AddAdapter("erasure");
+AddAdapter('erasure');
 // AddAdapter('instadapp');
-AddAdapter("loopring");
-AddAdapter("melon");
-AddAdapter("nexus");
+AddAdapter('loopring');
+AddAdapter('melon');
+AddAdapter('nexus');
 // AddAdapter('nuo-network');
-AddAdapter("opyn");
-AddAdapter("ray");
-AddAdapter("set-protocol");
+AddAdapter('opyn');
+AddAdapter('ray');
+AddAdapter('set-protocol');
 
 function AddAdapter(slug, overrides = {}) {
-  let adapter = require("./" + slug);
+  let adapter = require('./' + slug);
 
   projects[slug] = {
     name: adapter.name,
-    chain: adapter.chain || "Ethereum",
+    chain: adapter.chain || 'Ethereum',
     category: adapter.category,
-    start: moment.unix(adapter.start).utcOffset(0).startOf("day").unix(),
+    start: moment.unix(adapter.start).utcOffset(0).startOf('day').unix(),
     tvl: adapter.tvl,
-    website: adapter.website,
-  };
+    website: adapter.website
+  }
 
-  if (adapter.token) {
+  if(adapter.token) {
     projects[slug].token = adapter.token;
   }
 
-  if (adapter.shortName) {
+  if(adapter.shortName) {
     projects[slug].shortName = adapter.shortName;
   }
 
-  if (adapter.contributesTo) {
+  if(adapter.contributesTo) {
     projects[slug].contributesTo = adapter.contributesTo;
   }
 
-  if (adapter.rates) {
+  if(adapter.rates) {
     projects[slug] = {
       ...projects[slug],
       rates: adapter.rates,
       permissioning: adapter.permissioning,
-      variability: adapter.variability,
-    };
+      variability: adapter.variability
+    }
+
   }
 }
 
