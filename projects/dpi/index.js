@@ -5,6 +5,7 @@ const assetContracts = {
   dpi: '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b',
   cgi: '0xada0a1202462085999652dc5310a7a9e2bf3ed42',
   fli: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd',
+  mvi: '0x72e364f2abdc788b7e918bc238b21f109cd634d7',
 };
 
 async function getBalances(block, target) {
@@ -41,7 +42,10 @@ async function tvl(timestamp, block) {
   // Same as CGI, we need to start getting balances since the inception timestamp
   let fliBalances = (block >= 12035541 || timestamp >= 1615709597) ? await getBalances(block, assetContracts.fli) : {};
 
-  balances = Object.assign(balances, dpiBalances, cgiBalances, fliBalances);
+  // MVI inception timestamp
+  let mviBalances = (block >= 12184150 || timestamp >= 1617688800) ? await getBalances(block, assetContracts.mvi) : {};
+
+  balances = Object.assign(balances, dpiBalances, cgiBalances, fliBalances, mviBalances);
 
   return balances;
 };
