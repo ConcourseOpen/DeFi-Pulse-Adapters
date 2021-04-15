@@ -2,128 +2,125 @@
   Modules
   ==================================================*/
 
-const sdk = require('../../sdk');
-const abi = require('./abi');
-const _ = require('underscore');
-const BigNumber = require('bignumber.js');
+const sdk = require("../../sdk");
+const abi = require("./abi");
+const _ = require("underscore");
+const BigNumber = require("bignumber.js");
 
 /*==================================================
   Settings
   ==================================================*/
 
-const yTokenAddresses = [
-  // yearn earn - exclude from TVL calculation for easier reconciliation
-  // yearn v2
-  // '0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01', // yDAI
-  // '0xd6aD7a6750A7593E092a9B218d66C0A814a3436e', // yUSDC
-  // '0xF61718057901F84C4eEC4339EF8f0D86D2B45600', // ySUSD
-  // '0xe6354ed5bc4b393a5aad09f21c46e101e692d447', // yUSDT
-  // '0x04Aa51bbcB46541455cCF1B8bef2ebc5d3787EC9', // ywBTC
-  // '0x73a052500105205d34Daf004eAb301916DA8190f', // yTUSD
-  // yearn v3
-  // '0xc2cb1040220768554cf699b0d863a3cd4324ce32', // yDAI
-  // '0x26ea744e5b887e5205727f55dfbe8685e3b21951', // yUSDC
-  // '0x83f798e925BcD4017Eb265844FDDAbb448f1707D', // yUSDT
-  // '0x04bc0ab673d88ae9dbc9da2380cb6b79c4bca9ae', // yBUSD
+const registryAdapterAddresses = [
+  "0xF4fB8903A41fC78686b26DE55502cdE42a4c6c78", // V1 Vaults
+  "0x14d6E0908baE40A2487352B2a9Cb1A6232DA8785", // V2 Vaults
+  "0xec7Ac8AC897f5082B2c3d4e8D2173F992A097F24", // Iron Bank
+  "0x1007eD6fdFAC72bbea9c719cf1Fa9C355D248691", // Earn
 ];
 
-const yVaultAddresses = [
-  '0xec0d8D3ED5477106c6D4ea27D90a60e594693C90', // yGUSD (added - November 2020)
-  '0x9cA85572E6A3EbF24dEDd195623F188735A5179f', // y3CRV (added - November 2020)
-  '0xe1237aA7f535b0CC33Fd973D66cBf830354D16c7', // yETH
-  '0xBA2E7Fed597fd0E3e70f5130BcDbbFE06bB94fe1', // yYFI
-  '0x5dbcF33D8c2E976c6b560249878e6F1491Bca25c', // yyCRV (counted in yearn v2)
-  '0x2994529C0652D127b7842094103715ec5299bBed', // yyBUSD (counted in yearn v3)
-  '0x7Ff566E1d69DEfF32a7b244aE7276b9f90e9D0f6', // ySBTC
-  '0xACd43E627e64355f1861cEC6d3a6688B31a6F952', // yDAI
-  '0x37d19d1c4E1fa9DC47bD1eA12f742a0887eDa74a', // yTUSD
-  '0x2f08119C6f07c006695E079AAFc638b8789FAf18', // yUSDT
-  '0x597aD1e0c13Bfe8025993D9e79C69E1c0233522e',  // yUSDC
-  '0x29E240CFD7946BA20895a7a02eDb25C210f9f324', // yaLINK
-  '0x881b06da56BB5675c54E4Ed311c21E54C5025298', // yLINK
-]
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 4,
+});
+
+const balances = {};
+let tvlByAdapter = {};
+let totalTvl = new BigNumber(0);
 
 /*==================================================
   TVL
   ==================================================*/
 
+async function buildBalancesForAdapter(registryAdapterAddress, block) {
+  const adapterAddresses = (
+    await sdk.api.abi.call({
+      target: registryAdapterAddress,
+      abi: abi["assetsAddresses"],
+      block,
+    })
+  ).output;
+  const adapterInfo = (
+    await sdk.api.abi.call({
+      target: registryAdapterAddress,
+      abi: abi["adapterInfo"],
+      block,
+    })
+  ).output;
+  const adapterTypeId = adapterInfo[1];
+
+  let totalAdapterTvl = new BigNumber(0);
+  const tvlByAsset = {};
+  for (const adapterAddress of adapterAddresses) {
+    const tvlBreakdown = (
+      await sdk.api.abi.call({
+        target: registryAdapterAddress,
+        params: adapterAddress,
+        abi: abi["assetTvlBreakdown"],
+        block,
+      })
+    ).output;
+    const assetAddress = tvlBreakdown[0]; // Not used
+    const tokenAddress = tvlBreakdown[1];
+    const tokenPriceUsdc = tvlBreakdown[2]; // Not used
+    const tokenBalance = tvlBreakdown[3]; // Not used
+    const delegatedBalance = tvlBreakdown[4]; // Not used
+    const adjustedBalance = tvlBreakdown[5]; // tokenBalance - delegatedBalance
+    const assetTvl = tvlBreakdown[6]; // Not used
+    totalAdapterTvl = totalAdapterTvl.plus(assetTvl);
+    totalTvl = totalTvl.plus(assetTvl);
+    const currentBalancesForAsset = balances[tokenAddress];
+    if (currentBalancesForAsset) {
+      balances[tokenAddress] = currentBalancesForAsset.plus(adjustedBalance);
+    } else {
+      balances[tokenAddress] = new BigNumber(adjustedBalance);
+    }
+
+    tvlByAsset[assetAddress] = {
+      assetTvl,
+      assetAddress,
+    };
+  }
+
+  console.log("");
+  console.log("-----------------------------");
+  console.log(`${adapterTypeId} (${adapterAddresses.length} assets)`);
+  console.log("-----------------------------");
+
+  const sortedTvlByAsset = _.sortBy(tvlByAsset, (item) => item.assetTvl * -1);
+  _.each(sortedTvlByAsset, ({ assetTvl, assetAddress }) => {
+    console.log(`${assetAddress} ${formatter.format(assetTvl / 10 ** 6)}`);
+  });
+  console.log(
+    `${adapterTypeId} TVL: ${formatter.format(
+      totalAdapterTvl.div(10 ** 6).toFixed()
+    )}`
+  );
+
+  tvlByAdapter[adapterTypeId] = {
+    adapterTvl: totalAdapterTvl,
+    adapterTypeId,
+  };
+}
+
 async function tvl(timestamp, block) {
-  const balances = {};
-  const yTokenToUnderlyingToken = {};
-  const yVaultToUnderlyingToken = {};
+  for (const registryAdapterAddress of registryAdapterAddresses) {
+    await buildBalancesForAdapter(registryAdapterAddress, block);
+  }
 
-  // Get yToken's underlying tokens
-  const underlyingYTokenAddressResults = await sdk.api.abi.multiCall({
-    calls: _.map(yTokenAddresses, (address) => ({
-      target: address
-    })),
-    abi: abi["token"]
+  const sortedTvlByAdapter = _.sortBy(
+    tvlByAdapter,
+    (item) => item.adapterTvl * -1
+  );
+  console.log("");
+  console.log("=============================");
+  console.log(" TVL Summary");
+  console.log("=============================");
+  _.each(sortedTvlByAdapter, ({ adapterTvl, adapterTypeId }) => {
+    console.log(`${adapterTypeId} ${formatter.format(adapterTvl / 10 ** 6)}`);
   });
-
-  _.each(underlyingYTokenAddressResults.output, (token) => {
-    if(token.success) {
-      const underlyingTokenAddress = token.output;
-      const yTokenAddress = token.input.target;
-      yTokenToUnderlyingToken[yTokenAddress] = underlyingTokenAddress;
-      if (!balances.hasOwnProperty(underlyingTokenAddress)) {
-        balances[underlyingTokenAddress] = 0;
-      }
-    }
-  });
-
-  // Calculate yToken's values
-  const yTokenValueResults = await sdk.api.abi.multiCall({
-    block,
-    calls: _.map(yTokenAddresses, (address) => ({
-      target: address
-    })),
-    abi: abi["calcPoolValueInToken"]
-  });
-
-  _.each(yTokenValueResults.output, (tokenBalance) => {
-    if(tokenBalance.success) {
-      const valueInToken = tokenBalance.output;
-      const yTokenAddress = tokenBalance.input.target;
-      balances[yTokenToUnderlyingToken[yTokenAddress]] = BigNumber(balances[yTokenToUnderlyingToken[yTokenAddress]]).plus(valueInToken);
-    }
-  });
-
-  // Get yVault's underlying tokens
-  const underlyingYVaultAddressResults = await sdk.api.abi.multiCall({
-    calls: _.map(yVaultAddresses, (address) => ({
-      target: address
-    })),
-    abi: abi["token"]
-  });
-
-  _.each(underlyingYVaultAddressResults.output, (token) => {
-    if(token.success) {
-      const underlyingTokenAddress = token.output;
-      const yVaultAddress = token.input.target;
-      yVaultToUnderlyingToken[yVaultAddress] = underlyingTokenAddress;
-      if (!balances.hasOwnProperty(underlyingTokenAddress)) {
-        balances[underlyingTokenAddress] = 0;
-      }
-    }
-  });
-
-  // Get yVault's balances in underlying token
-  const yVaultBalanceResults = await sdk.api.abi.multiCall({
-    block,
-    calls: _.map(yVaultAddresses, (address) => ({
-      target: address
-    })),
-    abi: abi["balance"]
-  });
-
-  _.each(yVaultBalanceResults.output, (tokenBalanceResult) => {
-    if(tokenBalanceResult.success) {
-      const valueInToken = tokenBalanceResult.output;
-      const yVaultAddress = tokenBalanceResult.input.target;
-      balances[yVaultToUnderlyingToken[yVaultAddress]] = BigNumber(balances[yVaultToUnderlyingToken[yVaultAddress]]).plus(valueInToken);
-    }
-  });
-
+  console.log("");
+  console.log(`Total TVL ${formatter.format(totalTvl.toFixed() / 10 ** 6)}`);
   return balances;
 }
 
@@ -132,10 +129,10 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'yearn.finance',
-  token: 'YFI',
-  category: 'assets',
-  start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
+  name: "yearn.finance",
+  token: "YFI",
+  category: "assets",
+  start: 1581465600, // 02/12/2020 @ 12:00am (UTC)
   tvl,
-  contributesTo: ['Curve','Aave'],
+  // contributesTo: ["Curve", "Aave"], // TODO: Determine entire list of contributions
 };
