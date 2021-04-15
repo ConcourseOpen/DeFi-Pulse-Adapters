@@ -1,402 +1,502 @@
 [
   {
     "symbol": "LTC",
-    "contract": "0x4338665cbb7b2485a8855a139b75d5e34ab0db94"
+    "contract": "0x4338665cbb7b2485a8855a139b75d5e34ab0db94",
+    "decimals": "18"
   },
   {
     "symbol": "WBNB",
-    "contract": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+    "contract": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+    "decimals": "18"
   },
   {
     "symbol": "YFII",
-    "contract": "0x7f70642d88cf1c4a3a7abb072b53b929b653eda5"
+    "contract": "0x7f70642d88cf1c4a3a7abb072b53b929b653eda5",
+    "decimals": "18"
   },
   {
     "symbol": "COMP",
-    "contract": "0x52ce071bd9b1c4b00a0b92d298c512478cad67e8"
+    "contract": "0x52ce071bd9b1c4b00a0b92d298c512478cad67e8",
+    "decimals": "18"
   },
   {
     "symbol": "vLTC",
-    "contract": "0x57a5297f2cb2c0aac9d554660acd6d385ab50c6b"
+    "contract": "0x57a5297f2cb2c0aac9d554660acd6d385ab50c6b",
+    "decimals": "8"
   },
   {
     "symbol": "ANKR",
-    "contract": "0xf307910a4c7bbc79691fd374889b36d8531b08e3"
+    "contract": "0xf307910a4c7bbc79691fd374889b36d8531b08e3",
+    "decimals": "18"
   },
   {
     "symbol": "KOGE",
-    "contract": "0xe6df05ce8c8301223373cf5b969afcb1498c5528"
+    "contract": "0xe6df05ce8c8301223373cf5b969afcb1498c5528",
+    "decimals": "18"
   },
   {
     "symbol": "CREAM",
-    "contract": "0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888"
+    "contract": "0xd4cb328a82bdf5f03eb737f37fa6b370aef3e888",
+    "decimals": "18"
   },
   {
     "symbol": "DOGE",
-    "contract": "0xba2ae424d960c26247dd6c32edc70b295c744c43"
+    "contract": "0xba2ae424d960c26247dd6c32edc70b295c744c43",
+    "decimals": "8"
   },
   {
     "symbol": "IOTX",
-    "contract": "0x9678e42cebeb63f23197d726b29b1cb20d0064e5"
+    "contract": "0x9678e42cebeb63f23197d726b29b1cb20d0064e5",
+    "decimals": "18"
   },
   {
     "symbol": "TKO",
-    "contract": "0x9f589e3eabe42ebc94a44727b3f3531c0c877809"
+    "contract": "0x9f589e3eabe42ebc94a44727b3f3531c0c877809",
+    "decimals": "18"
   },
   {
     "symbol": "XVS",
-    "contract": "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63"
+    "contract": "0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63",
+    "decimals": "18"
   },
   {
     "symbol": "BTD",
-    "contract": "0xd1102332a213e21faf78b69c03572031f3552c33"
+    "contract": "0xd1102332a213e21faf78b69c03572031f3552c33",
+    "decimals": "18"
   },
   {
     "symbol": "BUSD",
-    "contract": "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+    "contract": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+    "decimals": "18"
   },
   {
     "symbol": "ETH",
-    "contract": "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+    "contract": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+    "decimals": "18"
   },
   {
     "symbol": "USDC",
-    "contract": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+    "contract": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+    "decimals": "18"
   },
   {
     "symbol": "STAX",
-    "contract": "0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4"
+    "contract": "0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4",
+    "decimals": "18"
   },
   {
     "symbol": "ADA",
-    "contract": "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+    "contract": "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47",
+    "decimals": "18"
   },
   {
     "symbol": "REEF",
-    "contract": "0xf21768ccbc73ea5b6fd3c687208a7c2def2d966e"
+    "contract": "0xf21768ccbc73ea5b6fd3c687208a7c2def2d966e",
+    "decimals": "18"
   },
   {
     "symbol": "ACS",
-    "contract": "0x4197c6ef3879a08cd51e5560da5064b773aa1d29"
+    "contract": "0x4197c6ef3879a08cd51e5560da5064b773aa1d29",
+    "decimals": "18"
   },
   {
     "symbol": "BAND",
-    "contract": "0xad6caeb32cd2c308980a548bd0bc5aa4306c6c18"
+    "contract": "0xad6caeb32cd2c308980a548bd0bc5aa4306c6c18",
+    "decimals": "18"
   },
   {
     "symbol": "DDIM",
-    "contract": "0xc9132c76060f6b319764ea075973a650a1a53bc9"
+    "contract": "0xc9132c76060f6b319764ea075973a650a1a53bc9",
+    "decimals": "18"
   },
   {
     "symbol": "UNI",
-    "contract": "0xbf5140a22578168fd562dccf235e5d43a02ce9b1"
+    "contract": "0xbf5140a22578168fd562dccf235e5d43a02ce9b1",
+    "decimals": "18"
   },
   {
     "symbol": "vXVS",
-    "contract": "0x151b1e2635a717bcdc836ecd6fbb62b674fe3e1d"
+    "contract": "0x151b1e2635a717bcdc836ecd6fbb62b674fe3e1d",
+    "decimals": "8"
   },
   {
     "symbol": "JulD",
-    "contract": "0x5a41f637c3f7553dba6ddc2d3ca92641096577ea"
+    "contract": "0x5a41f637c3f7553dba6ddc2d3ca92641096577ea",
+    "decimals": "18"
   },
   {
     "symbol": "MATH",
-    "contract": "0xf218184af829cf2b0019f8e6f0b2423498a36983"
+    "contract": "0xf218184af829cf2b0019f8e6f0b2423498a36983",
+    "decimals": "18"
   },
   {
     "symbol": "vUSDC",
-    "contract": "0xeca88125a5adbe82614ffc12d0db554e2e2867c8"
+    "contract": "0xeca88125a5adbe82614ffc12d0db554e2e2867c8",
+    "decimals": "8"
   },
   {
     "symbol": "vBETH",
-    "contract": "0x972207a639cc1b374b893cc33fa251b55ceb7c07"
+    "contract": "0x972207a639cc1b374b893cc33fa251b55ceb7c07",
+    "decimals": "8"
   },
   {
     "symbol": "ARGON",
-    "contract": "0x851f7a700c5d67db59612b871338a85526752c25"
+    "contract": "0x851f7a700c5d67db59612b871338a85526752c25",
+    "decimals": "18"
   },
   {
     "symbol": "BRY",
-    "contract": "0xf859bf77cbe8699013d6dbc7c2b926aaf307f830"
+    "contract": "0xf859bf77cbe8699013d6dbc7c2b926aaf307f830",
+    "decimals": "18"
   },
   {
     "symbol": "BAT",
-    "contract": "0x101d82428437127bf1608f699cd651e6abf9766e"
+    "contract": "0x101d82428437127bf1608f699cd651e6abf9766e",
+    "decimals": "18"
   },
   {
     "symbol": "DODO",
-    "contract": "0x67ee3cb086f8a16f34bee3ca72fad36f7db929e2"
+    "contract": "0x67ee3cb086f8a16f34bee3ca72fad36f7db929e2",
+    "decimals": "18"
   },
   {
     "symbol": "TWT",
-    "contract": "0x4b0f1812e5df2a09796481ff14017e6005508003"
+    "contract": "0x4b0f1812e5df2a09796481ff14017e6005508003",
+    "decimals": "18"
   },
   {
     "symbol": "vFIL",
-    "contract": "0xf91d58b5ae142dacc749f58a49fcbac340cb0343"
+    "contract": "0xf91d58b5ae142dacc749f58a49fcbac340cb0343",
+    "decimals": "8"
   },
   {
     "symbol": "LIT",
-    "contract": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723"
+    "contract": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
+    "decimals": "18"
   },
   {
     "symbol": "BHC",
-    "contract": "0x6fd7c98458a943f469e1cf4ea85b173f5cd342f4"
+    "contract": "0x6fd7c98458a943f469e1cf4ea85b173f5cd342f4",
+    "decimals": "18"
   },
   {
     "symbol": "LINK",
-    "contract": "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
+    "contract": "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd",
+    "decimals": "18"
   },
   {
     "symbol": "vDAI",
-    "contract": "0x334b3ecb4dca3593bccc3c7ebd1a1c1d1780fbf1"
+    "contract": "0x334b3ecb4dca3593bccc3c7ebd1a1c1d1780fbf1",
+    "decimals": "8"
   },
   {
     "symbol": "EGG",
-    "contract": "0xf952fc3ca7325cc27d15885d37117676d25bfda6"
+    "contract": "0xf952fc3ca7325cc27d15885d37117676d25bfda6",
+    "decimals": "18"
   },
   {
     "symbol": "1INCH",
-    "contract": "0x111111111117dc0aa78b770fa6a738034120c302"
+    "contract": "0x111111111117dc0aa78b770fa6a738034120c302",
+    "decimals": "18"
   },
   {
     "symbol": "vSXP",
-    "contract": "0x2ff3d0f6990a40261c66e1ff2017acbc282eb6d0"
+    "contract": "0x2ff3d0f6990a40261c66e1ff2017acbc282eb6d0",
+    "decimals": "8"
   },
   {
     "symbol": "MDA",
-    "contract": "0xd72aa9e1cddc2f6d6e0444580002170fba1f8eed"
+    "contract": "0xd72aa9e1cddc2f6d6e0444580002170fba1f8eed",
+    "decimals": "18"
   },
   {
     "symbol": "EOS",
-    "contract": "0x56b6fb708fc5732dec1afc8d8556423a2edccbd6"
+    "contract": "0x56b6fb708fc5732dec1afc8d8556423a2edccbd6",
+    "decimals": "18"
   },
   {
     "symbol": "BSCX",
-    "contract": "0x5ac52ee5b2a633895292ff6d8a89bb9190451587"
+    "contract": "0x5ac52ee5b2a633895292ff6d8a89bb9190451587",
+    "decimals": "18"
   },
   {
     "symbol": "ATOM",
-    "contract": "0x0eb3a705fc54725037cc9e008bdede697f62f335"
+    "contract": "0x0eb3a705fc54725037cc9e008bdede697f62f335",
+    "decimals": "18"
   },
   {
     "symbol": "vLINK",
-    "contract": "0x650b940a1033b8a1b1873f78730fcfc73ec11f1f"
+    "contract": "0x650b940a1033b8a1b1873f78730fcfc73ec11f1f",
+    "decimals": "8"
   },
   {
     "symbol": "ONT",
-    "contract": "0xfd7b3a77848f1c2d67e05e54d78d174a0c850335"
+    "contract": "0xfd7b3a77848f1c2d67e05e54d78d174a0c850335",
+    "decimals": "18"
   },
   {
     "symbol": "COS",
-    "contract": "0x96dd399f9c3afda1f194182f71600f1b65946501"
+    "contract": "0x96dd399f9c3afda1f194182f71600f1b65946501",
+    "decimals": "18"
   },
   {
     "symbol": "AUTO",
-    "contract": "0xa184088a740c695e156f91f5cc086a06bb78b827"
+    "contract": "0xa184088a740c695e156f91f5cc086a06bb78b827",
+    "decimals": "18"
   },
   {
     "symbol": "SXP",
-    "contract": "0x47bead2563dcbf3bf2c9407fea4dc236faba485a"
+    "contract": "0x47bead2563dcbf3bf2c9407fea4dc236faba485a",
+    "decimals": "18"
   },
   {
     "symbol": "USDT",
-    "contract": "0x55d398326f99059ff775485246999027b3197955"
+    "contract": "0x55d398326f99059ff775485246999027b3197955",
+    "decimals": "18"
   },
   {
     "symbol": "Fuel",
-    "contract": "0x2090c8295769791ab7a3cf1cc6e0aa19f35e441a"
+    "contract": "0x2090c8295769791ab7a3cf1cc6e0aa19f35e441a",
+    "decimals": "18"
   },
   {
     "symbol": "vBTC",
-    "contract": "0x882c173bc7ff3b7786ca16dfed3dfffb9ee7847b"
+    "contract": "0x882c173bc7ff3b7786ca16dfed3dfffb9ee7847b",
+    "decimals": "8"
   },
   {
     "symbol": "FRONT",
-    "contract": "0x928e55dab735aa8260af3cedada18b5f70c72f1b"
+    "contract": "0x928e55dab735aa8260af3cedada18b5f70c72f1b",
+    "decimals": "18"
   },
   {
     "symbol": "JNTR",
-    "contract": "0x5f2caa99fc378248ac02cbbaac27e3fa155ed2c4"
+    "contract": "0x5f2caa99fc378248ac02cbbaac27e3fa155ed2c4",
+    "decimals": "18"
   },
   {
     "symbol": "UST",
-    "contract": "0x23396cf899ca06c4472205fc903bdb4de249d6fc"
+    "contract": "0x23396cf899ca06c4472205fc903bdb4de249d6fc",
+    "decimals": "18"
   },
   {
     "symbol": "SFP",
-    "contract": "0xd41fdb03ba84762dd66a0af1a6c8540ff1ba5dfb"
+    "contract": "0xd41fdb03ba84762dd66a0af1a6c8540ff1ba5dfb",
+    "decimals": "18"
   },
   {
     "symbol": "BAKE",
-    "contract": "0xe02df9e3e622debdd69fb838bb799e3f168902c5"
+    "contract": "0xe02df9e3e622debdd69fb838bb799e3f168902c5",
+    "decimals": "18"
   },
   {
     "symbol": "ALPACA",
-    "contract": "0x8f0528ce5ef7b51152a59745befdd91d97091d2f"
+    "contract": "0x8f0528ce5ef7b51152a59745befdd91d97091d2f",
+    "decimals": "18"
   },
   {
     "symbol": "DAI",
-    "contract": "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3"
+    "contract": "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
+    "decimals": "18"
   },
   {
     "symbol": "Helmet",
-    "contract": "0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8"
+    "contract": "0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8",
+    "decimals": "18"
   },
   {
     "symbol": "DITTO",
-    "contract": "0x233d91a0713155003fc4dce0afa871b508b3b715"
+    "contract": "0x233d91a0713155003fc4dce0afa871b508b3b715",
+    "decimals": "9"
   },
   {
     "symbol": "BURGER",
-    "contract": "0xae9269f27437f0fcbc232d39ec814844a51d6b8f"
+    "contract": "0xae9269f27437f0fcbc232d39ec814844a51d6b8f",
+    "decimals": "18"
   },
   {
     "symbol": "BIFI",
-    "contract": "0xca3f508b8e4dd382ee878a314789373d80a5190a"
+    "contract": "0xca3f508b8e4dd382ee878a314789373d80a5190a",
+    "decimals": "18"
   },
   {
     "symbol": "XRP",
-    "contract": "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+    "contract": "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe",
+    "decimals": "18"
   },
   {
     "symbol": "ALPHA",
-    "contract": "0xa1faa113cbe53436df28ff0aee54275c13b40975"
+    "contract": "0xa1faa113cbe53436df28ff0aee54275c13b40975",
+    "decimals": "18"
   },
   {
     "symbol": "EPS",
-    "contract": "0xa7f552078dcc247c2684336020c03648500c6d9f"
+    "contract": "0xa7f552078dcc247c2684336020c03648500c6d9f",
+    "decimals": "18"
   },
   {
     "symbol": "TLM",
-    "contract": "0x2222227e22102fe3322098e4cbfe18cfebd57c95"
+    "contract": "0x2222227e22102fe3322098e4cbfe18cfebd57c95",
+    "decimals": "4"
   },
   {
     "symbol": "NMX",
-    "contract": "0xd32d01a43c869edcd1117c640fbdcfcfd97d9d65"
+    "contract": "0xd32d01a43c869edcd1117c640fbdcfcfd97d9d65",
+    "decimals": "18"
   },
   {
     "symbol": "FREE",
-    "contract": "0x12e34cdf6a031a10fe241864c32fb03a4fdad739"
+    "contract": "0x12e34cdf6a031a10fe241864c32fb03a4fdad739",
+    "decimals": "18"
   },
   {
     "symbol": "bCFX",
-    "contract": "0x045c4324039da91c52c55df5d785385aab073dcf"
+    "contract": "0x045c4324039da91c52c55df5d785385aab073dcf",
+    "decimals": "18"
   },
   {
     "symbol": "vUSDT",
-    "contract": "0xfd5840cd36d94d7229439859c0112a4185bc0255"
+    "contract": "0xfd5840cd36d94d7229439859c0112a4185bc0255",
+    "decimals": "8"
   },
   {
     "symbol": "BETH",
-    "contract": "0x250632378e573c6be1ac2f97fcdf00515d0aa91b"
+    "contract": "0x250632378e573c6be1ac2f97fcdf00515d0aa91b",
+    "decimals": "18"
   },
   {
     "symbol": "BELT",
-    "contract": "0xe0e514c71282b6f4e823703a39374cf58dc3ea4f"
+    "contract": "0xe0e514c71282b6f4e823703a39374cf58dc3ea4f",
+    "decimals": "18"
   },
   {
     "symbol": "CTK",
-    "contract": "0xa8c2b8eec3d368c0253ad3dae65a5f2bbb89c929"
+    "contract": "0xa8c2b8eec3d368c0253ad3dae65a5f2bbb89c929",
+    "decimals": "6"
   },
   {
     "symbol": "LINA",
-    "contract": "0x762539b45a1dcce3d36d080f74d1aed37844b878"
+    "contract": "0x762539b45a1dcce3d36d080f74d1aed37844b878",
+    "decimals": "18"
   },
   {
     "symbol": "VAI",
-    "contract": "0x4bd17003473389a42daf6a0a729f6fdb328bbbd7"
+    "contract": "0x4bd17003473389a42daf6a0a729f6fdb328bbbd7",
+    "decimals": "18"
   },
   {
     "symbol": "BUX",
-    "contract": "0x211ffbe424b90e25a15531ca322adf1559779e45"
+    "contract": "0x211ffbe424b90e25a15531ca322adf1559779e45",
+    "decimals": "18"
   },
   {
     "symbol": "XTZ",
-    "contract": "0x16939ef78684453bfdfb47825f8a5f714f12623a"
+    "contract": "0x16939ef78684453bfdfb47825f8a5f714f12623a",
+    "decimals": "18"
   },
   {
     "symbol": "vXRP",
-    "contract": "0xb248a295732e0225acd3337607cc01068e3b9c10"
+    "contract": "0xb248a295732e0225acd3337607cc01068e3b9c10",
+    "decimals": "8"
   },
   {
     "symbol": "Cake",
-    "contract": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+    "contract": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+    "decimals": "18"
   },
   {
     "symbol": "vBUSD",
-    "contract": "0x95c78222b3d6e262426483d42cfa53685a67ab9d"
+    "contract": "0x95c78222b3d6e262426483d42cfa53685a67ab9d",
+    "decimals": "8"
   },
   {
     "symbol": "PROM",
-    "contract": "0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5"
+    "contract": "0xaf53d56ff99f1322515e54fdde93ff8b3b7dafd5",
+    "decimals": "18"
   },
   {
     "symbol": "BTCST",
-    "contract": "0x78650b139471520656b9e7aa7a5e9276814a38e9"
+    "contract": "0x78650b139471520656b9e7aa7a5e9276814a38e9",
+    "decimals": "17"
   },
   {
     "symbol": "DOT",
-    "contract": "0x7083609fce4d1d8dc0c979aab8c869ea2c873402"
+    "contract": "0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
+    "decimals": "18"
   },
   {
     "symbol": "BTS",
-    "contract": "0xc2e1acef50ae55661855e8dcb72adb182a3cc259"
+    "contract": "0xc2e1acef50ae55661855e8dcb72adb182a3cc259",
+    "decimals": "18"
   },
   {
     "symbol": "BTCB",
-    "contract": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+    "contract": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+    "decimals": "18"
   },
   {
     "symbol": "YFI",
-    "contract": "0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e"
+    "contract": "0x88f1a5ae2a3bf98aeaf342d26b30a79438c9142e",
+    "decimals": "18"
   },
   {
     "symbol": "ANY",
-    "contract": "0xf68c9df95a18b2a5a5fa1124d79eeeffbad0b6fa"
+    "contract": "0xf68c9df95a18b2a5a5fa1124d79eeeffbad0b6fa",
+    "decimals": "18"
   },
   {
     "symbol": "DFY",
-    "contract": "0xd98560689c6e748dc37bc410b4d3096b1aa3d8c2"
+    "contract": "0xd98560689c6e748dc37bc410b4d3096b1aa3d8c2",
+    "decimals": "18"
   },
   {
     "symbol": "vETH",
-    "contract": "0xf508fcd89b8bd15579dc79a6827cb4686a3592c8"
+    "contract": "0xf508fcd89b8bd15579dc79a6827cb4686a3592c8",
+    "decimals": "8"
   },
   {
     "symbol": "BUNNY",
-    "contract": "0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51"
+    "contract": "0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51",
+    "decimals": "18"
   },
   {
     "symbol": "vBCH",
-    "contract": "0x5f0388ebc2b94fa8e123f404b79ccf5f40b29176"
+    "contract": "0x5f0388ebc2b94fa8e123f404b79ccf5f40b29176",
+    "decimals": "8"
   },
   {
     "symbol": "vDOT",
-    "contract": "0x1610bc33319e9398de5f57b33a5b184c806ad217"
+    "contract": "0x1610bc33319e9398de5f57b33a5b184c806ad217",
+    "decimals": "8"
   },
   {
     "symbol": "SPARTA",
-    "contract": "0xe4ae305ebe1abe663f261bc00534067c80ad677c"
+    "contract": "0xe4ae305ebe1abe663f261bc00534067c80ad677c",
+    "decimals": "18"
   },
   {
     "symbol": "FOR",
-    "contract": "0x658a109c5900bc6d2357c87549b651670e5b0539"
+    "contract": "0x658a109c5900bc6d2357c87549b651670e5b0539",
+    "decimals": "18"
   },
   {
     "symbol": "vBSWAP",
-    "contract": "0x4f0ed527e8a95ecaa132af214dfd41f30b361600"
+    "contract": "0x4f0ed527e8a95ecaa132af214dfd41f30b361600",
+    "decimals": "18"
   },
   {
     "symbol": "LTO",
-    "contract": "0x857b222fc79e1cbbf8ca5f78cb133d1b7cf34bbd"
+    "contract": "0x857b222fc79e1cbbf8ca5f78cb133d1b7cf34bbd",
+    "decimals": "18"
   },
   {
     "symbol": "ZIL",
-    "contract": "0xb86abcb37c3a4b64f74f59301aff131a1becc787"
+    "contract": "0xb86abcb37c3a4b64f74f59301aff131a1becc787",
+    "decimals": "12"
   },
   {
     "symbol": "BCH",
-    "contract": "0x8ff795a6f4d97e7887c79bea79aba5cc76444adf"
+    "contract": "0x8ff795a6f4d97e7887c79bea79aba5cc76444adf",
+    "decimals": "18"
   }
 ]

@@ -107,11 +107,23 @@ async function callOne(web3, abi, target, params) {
   // here we just intentionally request without block
   //
   // the consequence is that we can only get accurate tvl at latest block id
-  const result = await method(...(params || [])).call();
 
-  // debug("callOne", abi.name, target, params, result);
+  try {
+    // debug("callOne", abi.name, target, params, result);
+    const result = await method(...(params || [])).call();
 
-  return result;
+    return {
+      input: { target, params },
+      success: true,
+      output: result
+    }
+  } catch(err) {
+    return {
+      input: { target, params },
+      success: false,
+      output: err
+    }
+  }
 }
 
 async function singleCall({ web3, limiter, target, abi, block, params }) {

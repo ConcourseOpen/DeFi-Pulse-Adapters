@@ -13,6 +13,8 @@ async function tvl(_, block) {
     .tokenList()
     .then(supportedTokens => supportedTokens.map(({ contract }) => contract))
 
+  //console.log("TOKENS", supportedTokens.slice(0, 3))
+
   const logs = (
     await sdk.bsc.api.util.getLogs({
       keys: [],
@@ -22,6 +24,8 @@ async function tvl(_, block) {
       topic: 'PairCreated(address,address,address,uint256)'
     })
   ).output
+
+  //console.log("LOGS", logs.slice(0, 3))
 
   const pairAddresses = logs
     // sometimes the full log is emitted
@@ -52,7 +56,7 @@ async function tvl(_, block) {
       .then(({ output }) => output)
   ])
 
-  console.log('got addrs', token0Addresses, token1Addresses)
+  //console.log('got addrs', token0Addresses.slice(0, 2), token1Addresses.slice(0, 2))
 
   const pairs = {}
   // add token0Addresses
@@ -68,6 +72,8 @@ async function tvl(_, block) {
       }
     }
   })
+
+  console.log("NUM PAIRS", Object.keys(pairs).length)
 
   // add token1Addresses
   token1Addresses.forEach(token1Address => {
@@ -92,6 +98,8 @@ async function tvl(_, block) {
       block
     })
   ).output
+
+  console.log("RESERVES", reserves.filter(r => r.output['0'] !== '0').slice(0, 5))
 
   return reserves.reduce((accumulator, reserve, i) => {
     if (reserve.success) {
@@ -139,3 +147,16 @@ module.exports = {
   start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
   tvl
 }
+
+//TODO REMOVE
+function main() {
+  tvl(undefined, 6592003)
+    .then(value => {
+      console.log("RES", value)
+
+      const sum = Object.keys(value).reduce((acc, vl) => acc.plus(vl), new BigNumber(0))
+      console.log("TVL", sum.toFixed())
+    })
+}
+
+//main()
