@@ -7,6 +7,9 @@ dotenv.config();
 if (process.env.ETH_ENDPOINT_URL === undefined) {
   throw new Error("Cannot find ETH_ENDPOINT_URL in env vars");
 }
+if (process.env.MULTICALL_CONTRACT_ADDRESS === undefined) {
+  throw new Error("Cannot find MULTICALL_CONTRACT_ADDRESS in env vars");
+}
 
 const eth = new Eth(process.env.ETH_ENDPOINT_URL);
 const multiCallProvider = new providers.MulticallProvider(
@@ -14,6 +17,7 @@ const multiCallProvider = new providers.MulticallProvider(
   {
     batchSize: 500,
     verbose: true,
+    contract: process.env.MULTICALL_CONTRACT_ADDRESS,
   }
 );
 
