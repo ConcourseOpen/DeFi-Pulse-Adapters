@@ -26,7 +26,8 @@ async function tvl(timestamp, block) {
   const activeETH = new BigNumber(ethBalances[0].balance)
   const defaultETH = new BigNumber(ethBalances[1].balance)
 
-  return { [ZERO_ADDRESS]: activeETH.plus(defaultETH) }
+  const balances =  { [ZERO_ADDRESS]: activeETH.plus(defaultETH) };
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -36,7 +37,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Liquity',
   token: 'LQTY',
-  category: 'lending',
+  category: 'Lending',
   start: 1617611590,
   tvl
 }
