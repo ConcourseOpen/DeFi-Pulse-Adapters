@@ -121,14 +121,6 @@ functions:
           path: /util/kyberTokens
           method: post
 
-  tokenList:
-    handler: dist/handler.tokenListHandler
-    timeout: 30
-    events:
-      - http:
-          path: /util/tokenList
-          method: post
-
   lookupBlock:
     handler: dist/handler.lookupBlockHandler
     timeout: 30
