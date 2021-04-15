@@ -7,3 +7,4 @@ csv
 .vscode
 .replit
 serverless.yml
+.serverless

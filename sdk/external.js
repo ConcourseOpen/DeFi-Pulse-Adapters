@@ -6,6 +6,8 @@ const term = require("terminal-kit").terminal;
 const Bottleneck = require("bottleneck");
 
 async function POST(endpoint, options) {
+  console.log("calling", endpoint, options);
+
   try {
     if (options && options.chunk && endpoint === "/util/getLogs") {
       let logs = [];
@@ -111,6 +113,7 @@ async function POST(endpoint, options) {
       }
     }
   } catch (error) {
+    console.log("error requesting external server", error);
     throw error.response ? error.response.data : error;
   }
 }

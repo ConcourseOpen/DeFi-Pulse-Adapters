@@ -5,10 +5,48 @@ const token0 = require('./abis/token0.json')
 const token1 = require('./abis/token1.json')
 const getReserves = require('./abis/getReserves.json')
 
-const START_BLOCK = 586851
+// const START_BLOCK = 586851
+// for testing we can use a smaller range
+const START_BLOCK = 6548398
 const FACTORY = '0xbcfccbde45ce874adcb698cc183debcf17952812'
+const CAKE = '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82'
 
+/* For SDK Testing */
 async function tvl(_, block) {
+  console.log(
+    'bep20',
+    (await sdk.bsc.api.bep20.info(CAKE)).output,
+    (await sdk.bsc.api.bep20.symbol(CAKE)).output,
+    (await sdk.bsc.api.bep20.decimals(CAKE)).output,
+    (await sdk.bsc.api.bep20.totalSupply({ target: CAKE })).output,
+    (await sdk.bsc.api.bep20.balanceOf({ target: CAKE, owner: FACTORY })).output
+  )
+
+  console.log(
+    'bnb',
+    (await sdk.bsc.api.bnb.getBalance({ target: CAKE })).output,
+    (await sdk.bsc.api.bnb.getBalances({ targets: [CAKE, FACTORY] })).output
+  )
+
+  console.log(
+    'util',
+    (
+      await sdk.bsc.api.util.getLogs({
+        target: CAKE,
+        fromBlock: 6578300,
+        toBlock: 6578315,
+        topic: 'Transfer(from,to,value)'
+      })
+    ).output,
+    await sdk.bsc.api.util.tokenList(),
+    (
+      await sdk.bsc.api.util.toSymbols({
+        '0x2170ed0880ac9a755fd29b2688956bd959f933f8': 123456
+      })
+    ).output
+  )
+  /* For SDK Testing */
+
   const supportedTokens = await sdk.bsc.api.util
     .tokenList()
     .then(supportedTokens => supportedTokens.map(({ contract }) => contract))
@@ -133,8 +171,8 @@ async function tvl(_, block) {
 }
 
 module.exports = {
-  name: 'Pancakeswap',
-  token: 'CAKE',
+  name: 'Test',
+  token: 'TEST',
   category: 'dexes',
   start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
   tvl
