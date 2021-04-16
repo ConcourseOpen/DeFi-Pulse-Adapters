@@ -134,5 +134,5 @@ module.exports = {
   category: 'Assets',
   start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
   tvl,
-  // contributesTo: ["Curve", "Aave"], // TODO: Determine entire list of contributions
+  contributesTo: ["Curve", "Aave"], // TODO: Determine entire list of contributions
 };
