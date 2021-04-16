@@ -15,6 +15,7 @@ const registryAdapterAddresses = [
   "0xF4fB8903A41fC78686b26DE55502cdE42a4c6c78", // V1 Vaults
   "0x14d6E0908baE40A2487352B2a9Cb1A6232DA8785", // V2 Vaults
   "0xec7Ac8AC897f5082B2c3d4e8D2173F992A097F24", // Iron Bank
+  "0x560144C25E53149aC410E5D33BDB131e49A850e5", // veCRV
   "0x1007eD6fdFAC72bbea9c719cf1Fa9C355D248691", // Earn
 ];
 
@@ -84,7 +85,11 @@ async function buildBalancesForAdapter(registryAdapterAddress, block) {
 
   console.log("");
   console.log("-----------------------------");
-  console.log(`${adapterTypeId} (${adapterAddresses.length} assets)`);
+  if (adapterTypeId === "VE_CRV") {
+    console.log(`${adapterTypeId} (${adapterAddresses.length} asset)`);
+  } else {
+    console.log(`${adapterTypeId} (${adapterAddresses.length} assets)`);
+  }
   console.log("-----------------------------");
 
   const sortedTvlByAsset = _.sortBy(tvlByAsset, (item) => item.assetTvl * -1);
@@ -92,9 +97,7 @@ async function buildBalancesForAdapter(registryAdapterAddress, block) {
     console.log(`${assetAddress} ${formatter.format(assetTvl / 10 ** 6)}`);
   });
   console.log(
-    `${adapterTypeId} TVL: ${formatter.format(
-      totalAdapterTvl.div(10 ** 6).toFixed()
-    )}`
+    `TVL: ${formatter.format(totalAdapterTvl.div(10 ** 6).toFixed())}`
   );
 
   tvlByAdapter[adapterTypeId] = {
@@ -112,15 +115,17 @@ async function tvl(timestamp, block) {
     tvlByAdapter,
     (item) => item.adapterTvl * -1
   );
+  const sortedBalances = _.sortBy(balances, (item) => item.toFixed() * -1);
   console.log("");
   console.log("=============================");
   console.log(" TVL Summary");
   console.log("=============================");
   _.each(sortedTvlByAdapter, ({ adapterTvl, adapterTypeId }) => {
-    console.log(`${adapterTypeId} ${formatter.format(adapterTvl / 10 ** 6)}`);
+    console.log(`${adapterTypeId}: ${formatter.format(adapterTvl / 10 ** 6)}`);
   });
   console.log("");
   console.log(`Total TVL ${formatter.format(totalTvl.toFixed() / 10 ** 6)}`);
+  console.log("");
   return balances;
 }
 
