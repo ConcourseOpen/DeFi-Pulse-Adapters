@@ -10,13 +10,12 @@ module.exports = {
   tokenHolderMap: [{
       tokens: [
         '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
-      ],
-      holders: '0x717170b66654292dfbd89c39f5ae6753d2ac1381' // ETHVaultHandler
-    }, {
-      tokens: [
         '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
       ],
-      holders: '0x443366a7a5821619d8d57405511e4fadd9964771' // DAIVaultHandler
+      holders: [
+        '0x717170b66654292dfbd89c39f5ae6753d2ac1381', // ETHVaultHandler
+        '0x443366a7a5821619d8d57405511e4fadd9964771' // DAIVaultHandler
+      ]
     }
   ],
 };
