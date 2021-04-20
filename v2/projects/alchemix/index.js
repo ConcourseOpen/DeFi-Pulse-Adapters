@@ -21,13 +21,15 @@ module.exports = {
           '0xaB7A49B971AFdc7Ee26255038C82b4006D122086', // Transmuter
           '0xf3cFfaEEa177Db444b68FB6f033d4a82f6D8C82d', // TransmuterB
           '0x491EAFC47D019B44e13Ef7cC649bbA51E15C61d7', // TransmuterVaultAdapter
-          '0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c', // alUSD3CRV-f
+          
+          // Uncomment this to include the alUSD-3crv pool
+          //'0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c', // alUSD3CRV-f
 
-          // Comment next line out to exclude ALCX-WETH pool
-          '0xC3f279090a47e80990Fe3a9c30d24Cb117EF91a8', // ALCX-WETH SLP
+          // Uncomment this to include the ALCX-WETH pool
+          //'0xC3f279090a47e80990Fe3a9c30d24Cb117EF91a8', // ALCX-WETH SLP
 
-          // Comment next line out to exclude staked alUSD and staked ALCX
-          '0xAB8e74017a8Cc7c15FFcCd726603790d26d7DeCa', // StakingPools
+          // Uncomment this to include staked alUSD and staked ALCX
+          //'0xAB8e74017a8Cc7c15FFcCd726603790d26d7DeCa', // StakingPools
         ],
         checkETHBalance: true,
       }
