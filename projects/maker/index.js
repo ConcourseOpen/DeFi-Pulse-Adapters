@@ -38,7 +38,9 @@ async function getJoins(block) {
     for (let ilk of ilks) {
       if (ilk.output) {
         let name = utils.hexToString(ilk.output);
-        joins[name.toString()] = ilk.input.target
+        if (name.substr(0, 3) !== 'PSM') {
+          joins[name.toString()] = ilk.input.target
+        }
       }
     }
   
@@ -62,6 +64,7 @@ async function tvl(timestamp, block) {
           target: joins[join],
           abi: MakerMCDConstants.gem
         })).output;
+        console.log(gem, join)
         let balance = (await sdk.api.erc20.balanceOf({
           target: gem,
           owner: joins[join],
@@ -84,10 +87,9 @@ async function tvl(timestamp, block) {
 }
 
 module.exports = {
-    name: 'MakerDao',
+    name: 'Maker',
     token: 'MKR',
     category: 'lending',
     start: 1513566671, // 12/18/2017 @ 12:00am (UTC)
     tvl,
   };
-  

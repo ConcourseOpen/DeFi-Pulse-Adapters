@@ -6,8 +6,9 @@
   const axios = require('axios');
   const _ = require('underscore');
   const utility = require('./util');
-  const term = require( 'terminal-kit' ).terminal;
   const Bottleneck = require('bottleneck');
+  const term = require( 'terminal-kit' ).terminal;
+  const $indexerHost = 'http://defipulse-indexer-sync-server-staging.us-west-1.elasticbeanstalk.com';
 
 /*==================================================
   Helper Methods
@@ -104,6 +105,34 @@
     }
   }
 
+/**
+ *
+ * @param {Number} block
+ * @param {Number} timestamp
+ * @param {Object} project
+ * @param {Object} tokenBalanceMap
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
+  try {
+    return (
+      await axios({
+        method: 'POST',
+        url: `${$indexerHost}/test-tvl`,
+        data: {
+          block,
+          project,
+          timestamp,
+          tokenBalanceMap,
+        }
+      })
+    ).data;
+  } catch(error) {
+    throw error.response ? error.response.data : error;
+  }
+}
+
   async function erc20(endpoint, options) {
     return POST(`/erc20/${endpoint}`, options);
   }
@@ -128,6 +157,10 @@
     return POST(`/cdp/compound/${endpoint}`, options);
   }
 
+  async function aave(endpoint, options) {
+    return POST(`/cdp/aave/${endpoint}`, options);
+  }
+
   async function cdp(endpoint, options) {
     return POST(`/cdp/${endpoint}`, options);
   }
@@ -150,6 +183,9 @@
       compound: {
         tokens: (options) => compound('tokens', { ...options }),
         getAssetsLocked: (options) => compound('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
+      },
+      aave: {
+        getAssetsLocked: (options) => aave('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
       }
     },
     util: {
@@ -160,7 +196,30 @@
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
       unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: (timestamp) => util('lookupBlock', { timestamp })
+      lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+      /**
+       *
+       * @param {Number} block
+       * @param {Number} timestamp
+       * @param {Object} project
+       * @param {Object} tokenBalanceMap
+       * @returns {Promise<*>}
+       */
+      testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
+        return _testAdapter(block, timestamp, project, tokenBalanceMap);
+      }),
+      /**
+       *
+       * @param {function} func
+       * @returns {boolean}
+       */
+      isCallable: (func) => typeof func === 'function',
+      /**
+       *
+       * @param {String} str
+       * @returns {boolean}
+       */
+      isString: (str) => typeof str === 'string',
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),

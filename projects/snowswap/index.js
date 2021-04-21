@@ -103,6 +103,7 @@ async function tvl(timestamp, block) {
             continue;
           }
         }
+
         let p = await getYprice(block, coin, Pools[key][coin]);
         if (p.token === "0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B") {
           output["0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8"] = output[
