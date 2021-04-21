@@ -12,6 +12,7 @@ const BigNumber = require("bignumber.js");
   ==================================================*/
 
 // Anchor
+const anchorStart = 11915867;
 const comptroller = "0x4dcf7407ae5c07f8681e1659f626e114a7667339";
 const ignore = ["0x7Fcb7DAC61eE35b3D4a51117A7c58D53f0a8a670"]; // anDOLA will be counted through the stabilizer
 const anETH = "0x697b4acAa24430F254224eB794d2a85ba1Fa1FB8";
@@ -94,6 +95,9 @@ async function getTotalSupplies(block, tokens) {
 
 async function anchorTVL(block) {
   const balances = {};
+  if (block < anchorStart) {
+    return balances;
+  }
 
   const tokens = await getAllTokens(block);
   const [allUnderlying, cashes] = await Promise.all([
@@ -148,6 +152,10 @@ async function vaultsTVL(block) {
 }
 
 async function stabilizerTVL(block) {
+  if (block < anchorStart) {
+    return {};
+  }
+
   const supply = (
     await sdk.api.abi.call({
       block,
@@ -200,6 +208,6 @@ module.exports = {
   name: "Inverse",
   token: "INV",
   category: "assets",
-  start: 1615176498, // Mar-08-2021 04:08:18 PM +UTC
+  start: 1607731200, // Dec 12 2020 00:00:00 GMT+0000
   tvl,
 };
