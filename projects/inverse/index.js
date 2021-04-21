@@ -18,8 +18,8 @@ const anETH = "0x697b4acAa24430F254224eB794d2a85ba1Fa1FB8";
 const wETH = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 
 // Stabilizer
+const stabilizer = "0x7eC0D931AFFBa01b77711C2cD07c76B970795CDd";
 const dai = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-const dola = "0x865377367054516e17014CcdED1e7d814EDC9ce4";
 
 // Vaults
 const vaults = [
@@ -148,16 +148,16 @@ async function vaultsTVL(block) {
 }
 
 async function stabilizerTVL(block) {
-  const totalSupply = (
+  const supply = (
     await sdk.api.abi.call({
       block,
-      target: dola,
-      abi: abi["totalSupply"],
+      target: stabilizer,
+      abi: abi["supply"],
     })
   ).output;
 
   return {
-    [dai]: BigNumber(totalSupply),
+    [dai]: BigNumber(supply),
   };
 }
 
@@ -199,7 +199,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Inverse",
   token: "INV",
-  category: "lending",
+  category: "assets",
   start: 1615176498, // Mar-08-2021 04:08:18 PM +UTC
   tvl,
 };
