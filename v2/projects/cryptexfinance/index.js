@@ -2,7 +2,7 @@ const sdk = require('../../../sdk/index');
 
 module.exports = {
   /* Project Metadata */
-  name: 'Cryptex.finance',
+  name: 'Cryptex',
   token: "CTX",
   category: 'Lending',
   start: 1617940800, // Thursday, April 8, 2021 11:00:00 PM GMT-05:00
