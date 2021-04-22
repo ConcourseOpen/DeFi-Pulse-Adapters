@@ -244,6 +244,7 @@
 
   async function getV2Reserves(block) {
     if (v2Atokens.length !== 0 && v2ReserveTokens.length !== 0) return
+  
     const addressesProviders = (
       await sdk.api.abi.call({
         target: addressesProviderRegistry,
@@ -473,7 +474,7 @@
     }
 
 
-    // Staking TVLs
+    // Staking TVL
     if (block >= 10926829) {
       const stakedAaveAmount = await _stakingTvl(block);
       balances[aaveTokenAddress] = balances[aaveTokenAddress]
@@ -532,9 +533,9 @@
     }
 
     if (Object.keys(ratesV2.lend).length > 0) {
-      return {
-        lend: { ...ratesV1.lend, ...ratesV2.lend },
-        borrow: { ...ratesV1.borrow, ...ratesV2.borrow },
+      return { 
+        lend: { ...ratesV1.lend, ...ratesV2.lend }, 
+        borrow: { ...ratesV1.borrow, ...ratesV2.borrow }, 
         borrow_stable: { ...ratesV1.borrow_stable, ...ratesV2.borrow_stable },
         supply: { ...ratesV1.supply, ...ratesV2.supply }, 
         supply_stable: { ...ratesV1.supply_stable, ...ratesV2.supply_stable },
