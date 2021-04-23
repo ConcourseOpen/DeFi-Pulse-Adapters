@@ -181,6 +181,8 @@ module.exports = {
 In case your protocol follows factory pattern or is based on AMM model add log configs to pull holder addresses from smart contract events.
 By default we use ```(poolLog) => `0x${poolLog[2].slice(26)}`; ``` this code snippet as log ```transform``` function. Pass a different custom function if you need.
 
+N.B. The ```transform``` function does not create closures to it's creation contexts. When executed it will only be able to access it's own local variables, not the ones from the scope in which the function was created. 
+
 
 ## Testing
 

@@ -14,6 +14,29 @@
   Helper Methods
   ==================================================*/
 
+  /**
+   *
+   * @param {Object} any
+   * @returns {boolean}
+   * @private
+   */
+  const _isCallable = (any) => typeof any === 'function';
+
+  /**
+   *
+   * @param {String} key
+   * @param {Object} val
+   * @returns {*}
+   * @private
+   */
+  const _jsonConverter = (key, val) => {
+    if (val && _isCallable(val)) {
+      return `return ${String(val)}`;
+    }
+
+    return val;
+  };
+
   async function POST(endpoint, options) {
     try {
       if(options && options.chunk && options[options.chunk.param].length > options.chunk.length) {
@@ -115,6 +138,8 @@
  * @private
  */
 async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
+  project = JSON.stringify(project, _jsonConverter, 2);
+
   try {
     return (
       await axios({
@@ -129,6 +154,7 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
       })
     ).data;
   } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
     throw error.response ? error.response.data : error;
   }
 }
@@ -210,10 +236,8 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
       }),
       /**
        *
-       * @param {function} func
-       * @returns {boolean}
        */
-      isCallable: (func) => typeof func === 'function',
+      isCallable: _isCallable,
       /**
        *
        * @param {String} str
