@@ -4,7 +4,7 @@ module.exports = {
   /* Project Metadata */
   name: 'Cryptex',
   token: "CTX",
-  category: 'Lending',
+  category: 'Derivatives',
   start: 1617940800, // Thursday, April 8, 2021 11:00:00 PM GMT-05:00
   /* required for fetching token balances */
   tokenHolderMap: [{
