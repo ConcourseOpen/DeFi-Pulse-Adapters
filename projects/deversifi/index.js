@@ -34,7 +34,9 @@
     '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
     '0xeef9f339514298c6a857efcfc1a762af84438dee', // HEZ
     '0xa117000000f279d81a1d3cc75430faa017fa5a2e', // ANT
-    '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b' // DPI
+    '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b', // DPI
+    '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // cUSDT
+    '0x5a98fcbea516cf06857215779fd812ca3bef1b32' // LDO
   ];
 
 /*==================================================
