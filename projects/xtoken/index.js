@@ -15,6 +15,7 @@ const ethers = require("ethers");
 // xtoken addresses
 const xaaveaAddr = "0x80DC468671316E50D4E9023D3db38D3105c1C146";
 const xaavebAddr = "0x704De5696dF237c5B9ba0De9ba7e0C63dA8eA0Df";
+const xbntaAddr = "0x39F8e6c7877478de0604fe693c6080511Bc0A6DA";
 const xinchaAddr = "0x8F6A193C8B3c949E1046f1547C3A3f0836944E4b";
 const xinchbAddr = "0x6B33f15360cedBFB8F60539ec828ef52910acA9b";
 const xkncaAddr = "0x0bfEc35a1A3550Deed3F6fC76Dde7FC412729a91";
@@ -29,6 +30,7 @@ const tradeAccountingContractAddr =
 // token addresses
 const ethAddr = "0x0000000000000000000000000000000000000000";
 const aaveAddr = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
+const bntAddr = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C";
 const inchAddr = "0x111111111117dC0aa78b770fA6A738034120C302";
 const kncAddr = "0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202";
 const snxAddr = "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F";
@@ -70,6 +72,40 @@ async function tvl(timestamp, block) {
   const formatAave = ethers.utils
     .formatUnits(combinedXaaveAave, 0)
     .split(".")[0];
+
+  // xBNTa created at block 12285460
+  let xbntaStaked = "0x00";
+  let xbntaBuffer = "0x00";
+  let xbntaPending = "0x00";
+  if (block >= 12285460) {
+    xbntaStaked = await sdk.api.abi.call({
+      block,
+      target: xbntaAddr,
+      abi: abi["totalAllocatedNavBnt"],
+    });
+
+    xbntaBuffer = await sdk.api.abi.call({
+      block,
+      target: xbntaAddr,
+      abi: abi["getBufferBalanceBnt"],
+    });
+
+    xbntaPending = await sdk.api.abi.call({
+      block,
+      target: xbntaAddr,
+      abi: abi["getRewardsContributionToNavBnt"],
+    });
+
+    xbntaStaked = xbntaStaked.output;
+    xbntaBuffer = xbntaBuffer.output;
+    xbntaPending = xbntaPending.output;
+  }
+
+  const xbntaStakedBn = ethers.BigNumber.from(xbntaStaked);
+  const xbntaBufferBn = ethers.BigNumber.from(xbntaBuffer);
+  const xbntaPendingBn = ethers.BigNumber.from(xbntaPending);
+  const combinedXbntBnt = xbntaStakedBn.add(xbntaBufferBn).add(xbntaPendingBn);
+  const formatBnt = ethers.utils.formatUnits(combinedXbntBnt, 0).split(".")[0];
 
   // xINCHa created at block 11739841
   let xinchaFundHoldings = "0x00";
@@ -207,6 +243,7 @@ async function tvl(timestamp, block) {
 
   let balances = {
     [aaveAddr]: formatAave, // AAVE
+    [bntAddr]: formatBnt, // BNT
     [inchAddr]: formatInch, // 1INCH
     [kncAddr]: formatKnc, // KNC
     [snxAddr]: xsnxaSnx, // SNX
