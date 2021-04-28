@@ -16,14 +16,14 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(xUniswapV2));
 
-  return Array
-    .from(tokenAddresses)
-    .reduce((accumulator, tokenAddress) => {
+  balances = Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
       const xUniswapV2Balance = new BigNumber(xUniswapV2[tokenAddress] || '0');
       accumulator[tokenAddress] = xUniswapV2Balance.toFixed();
 
       return accumulator
     }, {});
+
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
