@@ -1,3 +1,5 @@
+const sdk = require('../../sdk');
+
 const BigNumber = require('bignumber.js')
 
 const xUniswapV2TVL = require('./xUniswapV2');
