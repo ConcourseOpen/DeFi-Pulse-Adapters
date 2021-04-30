@@ -12,7 +12,8 @@ module.exports = {
             tokens: '0x3c9d6c1c73b31c837832c72e04d3152f051fc1a9',
             holders: [
                 '0x258a1eb6537Ae84Cf612f06B557B6d53f49cC9A1', // oBTC Tunnel
-                '0xD7D997Dd57114E1e2d64ab8c0d767A0d6b2426F0' // oLTC Tunnel
+                '0xD7D997Dd57114E1e2d64ab8c0d767A0d6b2426F0', // oLTC Tunnel
+                '0x22b1AC6B2d55ade358E5b7f4281ed1Dd2f6f0077' // oDOGE Tunnel
             ]
         },
         {
@@ -25,9 +26,7 @@ module.exports = {
             ]
         },
         {
-            tokens: [
-                '0x8064d9ae6cdf087b1bcd5bdf3531bd5d8c537a68', // oBTC
-            ],
+            tokens: '0x8064d9ae6cdf087b1bcd5bdf3531bd5d8c537a68', // oBTC
             holders: [
                 '0xd81da8d904b52208541bade1bd6595d8a251f8dd',
                 '0xf29e1be74d1f9e3436e8b7ad2756f19a904e7b48',
@@ -35,6 +34,15 @@ module.exports = {
                 '0x674bdf20a0f284d710bc40872100128e2d66bd3f',
 
 
+            ]
+        },
+        {
+            tokens: '0x9c306A78b1a904e83115c05Ac67c1Ef07C653651', // oDOGE
+            holders: [
+                '0xb18fbfe3d34fdc227eb4508cde437412b6233121',
+                '0x5e9f5af18e1b9505d8ce2ab4e8a349a98abf51c1',
+                '0x34130162218d1f81bc84761b8bf863f7f409f633',
+                '0x5387aed486b9ee6ac7833640f8ddfd6bbcd01d96'
             ]
         },
         {
