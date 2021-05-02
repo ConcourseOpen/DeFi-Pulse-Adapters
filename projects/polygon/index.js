@@ -26,8 +26,8 @@ async function tvl(timestamp, block) {
         const resp = await axios.get(PoSMappedTokenList)
 
         if (resp.status === 200 && resp.data.status === 1) {
-          resp.data.tokens =
-            resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
+        //   resp.data.tokens =
+        //     resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
 
             posTokens.push(...resp.data.tokens.map(v => {
 
@@ -62,8 +62,8 @@ async function tvl(timestamp, block) {
         const resp = await axios.get(PlasmaMappedTokenList)
 
         if (resp.status === 200 && resp.data.status === 1) {
-         resp.data.tokens =
-           resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
+        //  resp.data.tokens =
+        //    resp.data.tokens.filter(token => token.rootToken.toLowerCase() !== maticToken);
 
           plasmaTokens.push(...resp.data.tokens.map(v => {
                 return {
@@ -80,9 +80,12 @@ async function tvl(timestamp, block) {
         block
     })
 
-    if (lockedPlasmaBalances.output[2].success) {
-        balances[etherAddress] =new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[2].output)
-        lockedPlasmaBalances.output[2].output = '0';
+    let wrappedETHIndex = lockedPlasmaBalances.output.findIndex(v => v.success && v.input.target.toLowerCase() == '0xa45b966996374E9e65ab991C6FE4Bfce3a56DDe8'.toLowerCase())
+    if (wrappedETHIndex > -1) {
+        
+        balances[etherAddress] = new BigNumber(balances[etherAddress]).plus(lockedPlasmaBalances.output[wrappedETHIndex].output)
+        lockedPlasmaBalances.output[wrappedETHIndex].output = '0';
+
     }
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
