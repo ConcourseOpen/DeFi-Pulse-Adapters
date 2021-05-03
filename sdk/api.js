@@ -159,6 +159,34 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
   }
 }
 
+/**
+ *
+ * @param {Number} block
+ * @param {Number} timestamp
+ * @param {Object} project
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _testStakingAdapter(block, timestamp, project) {
+
+  try {
+    return (
+      await axios({
+        method: 'POST',
+        url: `${$indexerHost}/test-staking-tvl`,
+        data: {
+          block,
+          project,
+          timestamp,
+        }
+      })
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
+}
+
   async function erc20(endpoint, options) {
     return POST(`/erc20/${endpoint}`, options);
   }
@@ -233,6 +261,16 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
        */
       testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
         return _testAdapter(block, timestamp, project, tokenBalanceMap);
+      }),
+      /**
+       *
+       * @param {Number} block
+       * @param {Number} timestamp
+       * @param {Object} project
+       * @returns {Promise<*>}
+       */
+      testStakingAdapter: ((block, timestamp, project) => {
+        return _testStakingAdapter(block, timestamp, project);
       }),
       /**
        *
