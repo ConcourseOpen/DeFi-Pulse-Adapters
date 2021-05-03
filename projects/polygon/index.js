@@ -1,8 +1,9 @@
 const _ = require('underscore');
 const sdk = require('../../sdk');
+const { default: axios } = require('axios')
 const BigNumber = require("bignumber.js");
 
-async function tvl(timestamp, block) {
+async function tvl(_, block) {
     const etherAddress = '0x0000000000000000000000000000000000000000'
 
     const posEtherPredicate = '0x8484Ef722627bf18ca5Ae6BcF031c23E6e922B30'
@@ -11,6 +12,9 @@ async function tvl(timestamp, block) {
 
     const maticToken = '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0'
     const stakeManager = '0x5e3Ef299fDDf15eAa0432E6e66473ace8c13D908'
+
+    const PoSMappedTokenList = 'https://api.bridge.matic.network/api/tokens/pos/erc20'
+    const PlasmaMappedTokenList = 'https://api.bridge.matic.network/api/tokens/plasma/erc20'
 
     let balances = {
         [etherAddress]: (await sdk.api.eth.getBalance({ target: posEtherPredicate, block })).output
@@ -41,7 +45,8 @@ async function tvl(timestamp, block) {
             }))
 
         }
-    ]
+
+    } catch (e) { }
 
     const lockedPoSBalances = await sdk.api.abi.multiCall({
         calls: posTokens,
@@ -72,7 +77,8 @@ async function tvl(timestamp, block) {
                 }
             }))
         }
-    ]
+
+    } catch (e) { }
 
     const lockedPlasmaBalances = await sdk.api.abi.multiCall({
         calls: plasmaTokens,
@@ -89,6 +95,7 @@ async function tvl(timestamp, block) {
     }
 
     await sdk.util.sumMultiBalanceOf(balances, lockedPlasmaBalances)
+    // -- Done with Plasma tokens
 
     return (await sdk.api.util.toSymbols(balances)).output;
 }
