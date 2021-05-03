@@ -29,6 +29,11 @@ module.exports = async function tvl(timestamp, block) {
       .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
 
+  console.log(await sdk
+    .api
+    .util
+    .tokenList())
+
   /* pull melon fund holding addresses */
   const logs = (await sdk.api.util
     .getLogs({
@@ -88,6 +93,7 @@ module.exports = async function tvl(timestamp, block) {
 
   /* Uniswap liquidity tokens */
 
+  // TODO: not all
   const unsupportedTokens = holdingTokensResults
     .filter(result => result.success)
     .map(result => (
@@ -211,7 +217,7 @@ module.exports = async function tvl(timestamp, block) {
       const pair = pairs[pairAddress] || {};
 
       // handle reserve0
-      if (pair.token0Address) {
+      if (pair.token0Address && pair.liquidity) {
         const reserve0 = new BigNumber(reserve.output['0']);
         if (!reserve0.isZero()) {
           const existingBalance = new BigNumber(
@@ -231,7 +237,7 @@ module.exports = async function tvl(timestamp, block) {
       if (pair.token1Address) {
         const reserve1 = new BigNumber(reserve.output['1']);
 
-        if (!reserve1.isZero()) {
+        if (!reserve1.isZero() && pair.liquidity) {
           const existingBalance = new BigNumber(
             accumulator[pair.token1Address] || '0'
           );

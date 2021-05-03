@@ -8,6 +8,8 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)));
 
+  console.log(v2)
+
   const balances = (
     Array
       .from(tokenAddresses)
