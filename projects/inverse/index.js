@@ -196,12 +196,8 @@ async function tvl(timestamp, block) {
     const balance = BigNumber(balances[token] || 0);
     balances[token] = balance.plus(BigNumber(value)).toFixed();
   });
-
-<<<<<<< HEAD
+  
   return (await sdk.api.util.toSymbols(balances)).output;
-=======
-  return balances;
->>>>>>> 0b6a47e... Merge pull request #326 from InverseFinance/inverse-adapter
 }
 
 /*==================================================
