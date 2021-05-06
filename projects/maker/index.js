@@ -37,10 +37,17 @@ async function getJoins(block) {
 
     for (let ilk of ilks) {
       if (ilk.output) {
-        let name = utils.hexToString(ilk.output);
-        if (name.substr(0, 3) !== 'PSM') {
-          joins[name.toString()] = ilk.input.target
-        }
+        try {
+          let gem = (await sdk.api.abi.call({
+            block, 
+            target: ilk.input.target,
+            abi: MakerMCDConstants.gem
+          })).output;
+          let name = utils.hexToString(ilk.output);
+          if (name.substr(0, 3) !== 'PSM') {
+            joins[name.toString()] = ilk.input.target
+          }
+        } catch (e) {}
       }
     }
   
@@ -65,7 +72,6 @@ async function tvl(timestamp, block) {
             target: joins[join],
             abi: MakerMCDConstants.gem
           })).output;
-          console.log(gem, join)
           let balance = (await sdk.api.erc20.balanceOf({
             target: gem,
             owner: joins[join],
