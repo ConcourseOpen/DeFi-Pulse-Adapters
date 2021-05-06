@@ -14,22 +14,45 @@ const $indexerHost = process.env.INDEXER_HOST || 'http://127.0.0.1:3006';
   Helper Methods
   ==================================================*/
 
-async function POST(endpoint, options) {
-  try {
-    if(options && options.chunk && options[options.chunk.param].length > options.chunk.length) {
-      let chunks = _.chunk(options[options.chunk.param], options.chunk.length);
+  /**
+   *
+   * @param {Object} any
+   * @returns {boolean}
+   * @private
+   */
+  const _isCallable = (any) => typeof any === 'function';
 
-      let ethCallCount = 0;
-      let output = [];
-      let complete = 0;
+  /**
+   *
+   * @param {String} key
+   * @param {Object} val
+   * @returns {*}
+   * @private
+   */
+  const _jsonConverter = (key, val) => {
+    if (val && _isCallable(val)) {
+      return `return ${String(val)}`;
+    }
 
-      if(process.env.LOG_PROGRESS == 'true') {
-        progressBar = term.progressBar( {
-          width: 80,
-          title: endpoint,
-          percent: true
-        });
-      }
+    return val;
+  };
+
+  async function POST(endpoint, options) {
+    try {
+      if(options && options.chunk && options[options.chunk.param].length > options.chunk.length) {
+        let chunks = _.chunk(options[options.chunk.param], options.chunk.length);
+
+        let ethCallCount = 0;
+        let output = [];
+        let complete = 0;
+
+        if(process.env.LOG_PROGRESS == 'true') {
+          progressBar = term.progressBar( {
+            width: 80,
+            title: endpoint,
+            percent: true
+          });
+        }
 
       function processRequest(chunk) {
         return new Promise(async(resolve, reject) => {
@@ -115,6 +138,8 @@ async function POST(endpoint, options) {
  * @private
  */
 async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
+  project = JSON.stringify(project, _jsonConverter, 2);
+
   try {
     return (
       await axios({
@@ -129,6 +154,7 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
       })
     ).data;
   } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
     throw error.response ? error.response.data : error;
   }
 }
@@ -183,6 +209,37 @@ module.exports = {
     compound: {
       tokens: (options) => compound('tokens', { ...options }),
       getAssetsLocked: (options) => compound('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
+    },
+    util: {
+      getLogs: (options) => util('getLogs', { ...options }),
+      tokenList: () => util('tokenList'),
+      kyberTokens: () => util('kyberTokens'),
+      getEthCallCount: () => util('getEthCallCount'),
+      resetEthCallCount: () => util('resetEthCallCount'),
+      toSymbols: (data) => util('toSymbols', { data }),
+      unwrap: (options) => util('unwrap', { ...options }),
+      lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+      /**
+       *
+       * @param {Number} block
+       * @param {Number} timestamp
+       * @param {Object} project
+       * @param {Object} tokenBalanceMap
+       * @returns {Promise<*>}
+       */
+      testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
+        return _testAdapter(block, timestamp, project, tokenBalanceMap);
+      }),
+      /**
+       *
+       */
+      isCallable: _isCallable,
+      /**
+       *
+       * @param {String} str
+       * @returns {boolean}
+       */
+      isString: (str) => typeof str === 'string',
     },
     aave: {
       getAssetsLocked: (options) => aave('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })

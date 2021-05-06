@@ -1,3 +1,5 @@
+const sdk = require('../../sdk');
+
 const BigNumber = require('bignumber.js')
 
 const xUniswapV2TVL = require('./xUniswapV2');
@@ -29,7 +31,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Impermax',
   token: null,
-  category: 'lending',
+  category: 'Lending',
   start: 1614643200, // 02/03/2021 @ 12:00am (UTC)
   tvl,
 };

@@ -155,7 +155,7 @@
 
   module.exports = {
     name: 'B.Protocol',
-    token: null,
+    token: 'BPRO',
     category: 'Lending',
     contributesTo: ['Maker', 'Compound'],
     start: 1605380632,  // 11/14/2020 @ 7:03pm (UTC)
