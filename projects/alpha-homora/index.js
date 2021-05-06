@@ -141,11 +141,11 @@ async function tvlV1(timestamp, block) {
   return tvl;
 }
 
-const coreOracleAddress = "0x1e5bddd0cdf8839d6b27b34927869ef0ad7bf692";
-const werc20Address = "0xe28d9df7718b0b5ba69e01073fe82254a9ed2f98";
-const wMasterChefAddress = "0x373ae78a14577682591e088f2e78ef1417612c68";
-const wLiquidityGauge = "0xfdb4f97953150e47c8606758c13e70b5a789a7ec";
-const wStakingRewardIndex = "0x713df2ddda9c7d7bda98a9f8fcd82c06c50fbd90";
+const coreOracleAddress = "0x6be987c6d72e25f02f6f061f94417d83a6aa13fc";
+const werc20Address = "0x06799a1e4792001aa9114f0012b9650ca28059a3";
+const wMasterChefAddress = "0xa2caea05ff7b98f10ad5ddc837f15905f33feb60";
+const wLiquidityGauge = "0xf1f32c8eeb06046d3cc3157b8f9f72b09d84ee5b";
+const wStakingRewardIndex = "0x011535fd795fd28c749363e080662d62fbb456a7";
 const wStakingRewardPerp = "0xc4635854480fff80f742645da0310e9e59795c63";
 const AlphaHomoraV2GraphUrl = `https://api.thegraph.com/subgraphs/name/hermioneeth/alpha-homora-v2-mainnet`;
 const GET_TOTAL_COLLATERALS = gql`
