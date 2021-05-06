@@ -45,6 +45,8 @@ Please fork this repository before you start building your adapter and then work
 
 # Writing a JSON Configurable Adapter
 
+*Note: We try our best to reduce dependecies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
+
 Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [xDai](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/xdai) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter gets it's own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings.
 
 ```
