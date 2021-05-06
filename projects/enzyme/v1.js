@@ -17,10 +17,10 @@ const versions = [
 ];
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-async function run(timestamp, block) {
+module.exports = async function tvl(timestamp, block) {
   let balances = {};
 
   let latestIds = (
@@ -178,17 +178,5 @@ async function run(timestamp, block) {
     }
   });
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
-
-/*==================================================
-  Exports
-  ==================================================*/
-
-module.exports = {
-  name: "Melon",
-  token: "MLN",
-  category: "Assets",
-  start: 1551398400, // 03/01/2019 @ 12:00am (UTC)
-  run
-};

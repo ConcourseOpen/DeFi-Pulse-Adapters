@@ -32,10 +32,10 @@ async function GenerateCallList(timestamp) {
 }
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-async function run(timestamp, block) {
+async function tvl(timestamp, block) {
   let ethBalance = await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block});
 
   let balances = {
@@ -75,5 +75,5 @@ module.exports = {
   name: 'DDEX',
   category: 'Lending',
   start: 1566470505, // 2019-08-22T18:41:45+08:00
-  run
+  tvl
 }

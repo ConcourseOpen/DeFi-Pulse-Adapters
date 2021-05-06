@@ -2,17 +2,18 @@
   Modules
   ==================================================*/
 
+  const abi = require('./abi');
   const sdk = require('../../sdk');
   const axios = require('axios');
   const _ = require('underscore');
   const moment = require('moment');
   const BigNumber = require('bignumber.js');
 
-/*==================================================
+  /*==================================================
   Helper Functions
   ==================================================*/
 
-  async function GenerateCallList(timestamp) {
+  async function generateCallsByAPI(timestamp) {
     let tokenConverters = [];
 
     let moreData = true;
@@ -34,16 +35,16 @@
       tokenConverters = [
         ...tokenConverters,
         ...converters
-      ]
+      ];
 
-      if(converters !== pageFetchCount) {
+      if(converters.length !== pageFetchCount) {
         moreData = false;
       }
     }
 
     tokenConverters = _.filter(tokenConverters, (converter) => {
-      let hasLength = converter.details.length == 1;
-      let isEthereum = converter.details[0].blockchain.type == 'ethereum';
+      let hasLength = converter.details.length > 0;
+      let isEthereum = converter.details[0].blockchain.type === 'ethereum';
       let createdTimestamp = moment(converter.createdAt).utcOffset(0).unix();
       let existsAtTimestamp = createdTimestamp <= timestamp;
 
@@ -79,51 +80,125 @@
     return calls;
   }
 
-/*==================================================
-  Main
-  ==================================================*/
+  async function generateCallsByBlockchain(block) {
+    const registryAddress = '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4';
+    const converterRegistryHex = '0x42616e636f72436f6e7665727465725265676973747279';
 
-  async function run(timestamp, block) {
-    let getBalance = await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block});
+    let result;
+    let converterRegistryAddress;
 
-    let balances = {
-      '0x0000000000000000000000000000000000000000': getBalance.output
-    };
+    //set converter registry address
+    if (block < 9195218) {
+      converterRegistryAddress = '0xf6E2D7F616B67E46D708e4410746E9AAb3a4C518';
+    }
+    else {
+        // get converter registry address
+        result = await sdk.api.abi.call({
+        target: registryAddress,
+        abi: abi['abiContractRegistryAddressOf'],
+        params: [converterRegistryHex],
+        block
+        });
 
-    let calls = await GenerateCallList(timestamp);
+        converterRegistryAddress = result.output;
+    }
 
-    let balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls,
-      abi: 'erc20:balanceOf'
+    // get pool anchor addresses
+    result = await sdk.api.abi.call({
+      target: converterRegistryAddress,
+      abi: abi['abiConverterRegistryGetPools'],
+      block
     });
 
-    _.each(balanceOfResults.output, (balanceOf) => {
-      if(balanceOf.success) {
-        let balance = balanceOf.output;
-        let address = balanceOf.input.target;
-
-        if (BigNumber(balance).toNumber() <= 0) {
-          return;
-        }
-
-        balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
-      }
+    // get converter addresses
+    result = await sdk.api.abi.call({
+      target: converterRegistryAddress,
+      abi: abi['abiRegistryGetConvertersBySmartTokens'],
+      params: [result.output],
+      block
     });
 
-    let symbolBalances = await sdk.api.util.toSymbols(balances);
+    // get reserve token addresses (currently limited to 2)
+    const converterAddresses = result.output;
+    const reserveTokenCalls = [];
+    for (let i = 0; i < converterAddresses.length; i++) {
+      reserveTokenCalls.push({
+        target: converterAddresses[i],
+        params: [0]
+      });
+      reserveTokenCalls.push({
+        target: converterAddresses[i],
+        params: [1]
+      });
+    }
 
-    return symbolBalances.output;
+    result = await sdk.api.abi.multiCall({
+      calls: reserveTokenCalls,
+      abi: abi['abiConverterConnectorTokens'],
+      block
+    });
+
+    // create reserve balance calls
+    const balanceCalls = [];
+    for (let i = 0; i < result.output.length; i++) {
+      const item = result.output[i];
+      balanceCalls.push({
+        target: item.output,
+        params: [item.input.target]
+      });
+    }
+
+    return balanceCalls;
   }
 
 /*==================================================
-  Exports
+  TVL
   ==================================================*/
+
+  async function tvl(timestamp, block) {
+    let balanceCalls;
+    if (timestamp < 1577836800) {
+      balanceCalls = await generateCallsByAPI(timestamp);
+    }
+    else {
+      balanceCalls = await generateCallsByBlockchain(block);
+    }
+
+    // get ETH balances
+    const ethAddress = '0x0000000000000000000000000000000000000000';
+    let balances = {
+      [ethAddress]: (await sdk.api.eth.getBalance({target: '0xc0829421C1d260BD3cB3E0F06cfE2D52db2cE315', block})).output
+    };
+
+    const ethReserveAddresses = ['0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315'];
+    const ethBalanceCalls = balanceCalls.filter((call) => ethReserveAddresses.includes(call.target.toLowerCase()));
+
+    await (
+      Promise.all(ethBalanceCalls.map(async (call) => {
+        const ethBalance = (await sdk.api.eth.getBalance({target: call.params[0], block})).output;
+        balances[ethAddress] = BigNumber(balances[ethAddress]).plus(ethBalance).toFixed();
+      }))
+    );
+
+    // get reserve balances
+    result = await sdk.api.abi.multiCall({
+      calls: balanceCalls,
+      abi: 'erc20:balanceOf',
+      block
+    });
+
+    // filtering out bad balances (hacky)
+    result.output = result.output.filter((item) => item.success && item.output.length < 60);
+
+    sdk.util.sumMultiBalanceOf(balances, result);
+
+    return (await sdk.api.util.toSymbols(balances)).output;
+  }
 
   module.exports = {
     name: 'Bancor',
     token: 'BNT',
     category: 'DEXes',
     start: 1501632000,  // 08/02/2017 @ 12:00am (UTC)
-    run
-  }
+    tvl,
+  };

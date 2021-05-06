@@ -19,10 +19,10 @@
   const poolCore = "0x786bF554473f9aB733Fd683C528212492A23D895" // dForce: Stablecoin Pool
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     const calls = _.reduce(reserves, (accum, reserve) => [...accum, {
@@ -55,6 +55,6 @@
     token: 'USDx',
     category: 'Assets',
     start: 1563991581, // Jul-25-2019 02:06:21 AM +UTC
-    run
+    tvl
   }
 

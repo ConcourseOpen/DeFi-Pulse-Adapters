@@ -1,0 +1,70 @@
+{
+  "getFundComposition": {
+   "inputs": [],
+   "name": "getFundComposition",
+   "outputs": [
+   {
+       "internalType": "bytes32[]",
+       "name": "",
+       "type": "bytes32[]"
+   },
+   {
+       "internalType": "uint256[]",
+       "name": "",
+       "type": "uint256[]"
+   },
+   {
+       "internalType": "uint256[]",
+       "name": "",
+       "type": "uint256[]"
+   }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+ },
+ "availableCurrencyKeys": {
+    "inputs": [],
+    "name": "availableCurrencyKeys",
+    "outputs": [
+    {
+        "internalType": "bytes32[]",
+        "name": "",
+        "type": "bytes32[]"
+    }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getSynth": {
+    "name": "getSynth",
+    "outputs": [
+    {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }
+    ],
+    "inputs": [
+        {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+        }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "proxy": {
+    "inputs": [],
+    "name": "proxy",
+    "outputs": [
+    {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+}

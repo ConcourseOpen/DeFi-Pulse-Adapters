@@ -6,6 +6,7 @@
   const _ = require('underscore');
   const BigNumber = require('bignumber.js');
   const moment = require('moment');
+  const axios = require('axios');
 
 /*==================================================
   Settings
@@ -24,7 +25,7 @@
     '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
     '0x514910771AF9Ca656af840dff83E8264EcF986CA', // LINK
     '0x0000000000085d4780B73119b644AE5ecd22b376', // TUSD
-    '0xc011a72400e58ecd99ee497cf89e3775d4bd732f'  // SNX 
+    '0xc011a72400e58ecd99ee497cf89e3775d4bd732f'  // SNX
   ]
 
   const escrows = [
@@ -95,10 +96,10 @@
   }
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     let calls = [];
@@ -174,35 +175,48 @@
       });
     });
 
-    aCalls = _.chunk(aCalls, 1000);
+    let actualBalances = await sdk.api.abi.multiCall({
+      block: block,
+      calls: aCalls,
+      abi: 'erc20:balanceOf'
+    });
 
-
-    await Promise.all(
-      aCalls.map(async aCalls => {
-        await fetchAccountBal(block, aCalls, balances);
-      })
-    );
+    _.each(actualBalances.output, (actualBalance) => {
+      if(actualBalance.success) {
+        let address = actualBalance.input.target
+        balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
+      }
+    });
 
     let symbolBalances = await sdk.api.util.toSymbols(balances);
 
     return symbolBalances.output;
+  }
+
+/*==================================================
+  Rates
+  ==================================================*/
+
+  async function rates(timestamp, block) {
+    // realtime only
+    let reserves = (await axios.get('https://api.nuoscan.io/overview?primary_currency_short_name=USD')).data.data.reserves;
+
+    let rates = {
+      lend: {},
+      borrow: {}
     }
 
-    async function fetchAccountBal(block, accCalls, balances) {
-      let actualBalances = await sdk.api.abi.multiCall({
-        block: block,
-        calls: accCalls,
-        abi: 'erc20:balanceOf'
-      });
+    _.each(reserves, (reserve) => {
+      if(reserve.lend_rate) {
+        rates.lend[reserve.currency.short_name] = Number(reserve.lend_rate);
+      }
+      if(reserve.borrow_rate) {
+        rates.borrow[reserve.currency.short_name] = Number(reserve.borrow_rate);
+      }
+    });
 
-      _.each(actualBalances.output, (actualBalance) => {
-        if(actualBalance.success) {
-          let address = actualBalance.input.target
-          balances[address] = BigNumber(balances[address] || 0).plus(actualBalance.output).toFixed();
-        }
-      });
-    }
-    
+    return rates;
+  }
 
 /*==================================================
   Exports
@@ -213,5 +227,10 @@
     token: null,
     category: 'Lending',
     start: 1548115200,  // 01/22/2019 @ 12:00am (UTC)
-    run
+    tvl,
+    rates,
+    permissioning: 'Open',
+    variability: 'High',
+    website: 'https://www.nuo.network/',
+    term: '1 Day'
   }

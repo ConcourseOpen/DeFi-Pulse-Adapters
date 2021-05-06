@@ -1,0 +1,81 @@
+{
+	"assetsAddresses": {
+		"inputs": [],
+		"name": "assetsAddresses",
+		"outputs": [{
+			"internalType": "address[]",
+			"name": "",
+			"type": "address[]"
+		}],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	"assetTvlBreakdown": {
+		"inputs": [{
+			"internalType": "address",
+			"name": "assetAddress",
+			"type": "address"
+		}],
+		"name": "assetTvlBreakdown",
+		"outputs": [{
+			"components": [{
+				"internalType": "address",
+				"name": "assetId",
+				"type": "address"
+			}, {
+				"internalType": "address",
+				"name": "tokenId",
+				"type": "address"
+			}, {
+				"internalType": "uint256",
+				"name": "tokenPriceUsdc",
+				"type": "uint256"
+			}, {
+				"internalType": "uint256",
+				"name": "underlyingTokenBalance",
+				"type": "uint256"
+			}, {
+				"internalType": "uint256",
+				"name": "delegatedBalance",
+				"type": "uint256"
+			}, {
+				"internalType": "uint256",
+				"name": "adjustedBalance",
+				"type": "uint256"
+			}, {
+				"internalType": "uint256",
+				"name": "adjustedBalanceUsdc",
+				"type": "uint256"
+			}],
+			"internalType": "struct TvlAdapterV2Vaults.AssetTvlBreakdown",
+			"name": "",
+			"type": "tuple"
+		}],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	"adapterInfo": {
+		"inputs": [],
+		"name": "adapterInfo",
+		"outputs": [{
+			"components": [{
+				"internalType": "address",
+				"name": "id",
+				"type": "address"
+			}, {
+				"internalType": "string",
+				"name": "typeId",
+				"type": "string"
+			}, {
+				"internalType": "string",
+				"name": "categoryId",
+				"type": "string"
+			}],
+			"internalType": "struct TvlAdapterV2Vaults.AdapterInfo",
+			"name": "",
+			"type": "tuple"
+		}],
+		"stateMutability": "view",
+		"type": "function"
+	}
+}

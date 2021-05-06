@@ -5,7 +5,6 @@
   const sdk = require("../../sdk");
   const _ = require("underscore");
   const BigNumber = require("bignumber.js");
-  const ethers = require("ethers");
 
   const abi = require('./abi');
 
@@ -27,10 +26,10 @@
   ]
 
 /*==================================================
-  Main
+  TVL
   ==================================================*/
 
-  async function run(timestamp, block) {
+  async function tvl(timestamp, block) {
     let balances = {};
 
     // instances count for each registry
@@ -133,5 +132,5 @@
     token: "NMR",
     category: "Derivatives",
     start: 1566518400, // 08/23/2019 @ 12:00am (UTC)
-    run
+    tvl
   };

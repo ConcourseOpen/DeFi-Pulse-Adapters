@@ -1,0 +1,29 @@
+{
+  "getSnxBalance": {
+    "constant": true,
+    "inputs": [],
+    "name": "getSnxBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getEthBalance": {
+    "constant": true,
+    "inputs": [],
+    "name": "getEthBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getActiveSetAssetBalance": {
+    "constant": true,
+    "inputs": [],
+    "name": "getActiveSetAssetBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
