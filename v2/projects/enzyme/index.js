@@ -42,7 +42,7 @@ module.exports = {
         },
         transform: null
       },
-      checkETHBalance: true,
+      checkETHBalance: false,
     },
     { // Melon v1 (VaultFactory deployed on 2020-02-14 23:31:59)
       tokens: [
@@ -79,7 +79,7 @@ module.exports = {
         },
         transform: null
       },
-      checkETHBalance: true,
+      checkETHBalance: false,
     },
     { // Enzyme v2 (Dispatcher deployd on 2021-01-11 23:00:07)
       tokens: async () => {
