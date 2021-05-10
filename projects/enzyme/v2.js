@@ -29,11 +29,6 @@ module.exports = async function tvl(timestamp, block) {
       .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
 
-  console.log(await sdk
-    .api
-    .util
-    .tokenList())
-
   /* pull melon fund holding addresses */
   const logs = (await sdk.api.util
     .getLogs({
