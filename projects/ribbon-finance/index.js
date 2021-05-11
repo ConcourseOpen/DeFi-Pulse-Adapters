@@ -19,40 +19,31 @@ const zero = "0";
   TVL
   ==================================================*/
 
+async function getVaultTotalBalance(vault, block) {
+  try {
+    const output = (
+      await sdk.api.abi.call({
+        target: vault,
+        block,
+        abi: abi.totalBalance,
+      })
+    ).output;
+    return output;
+  } catch (err) {
+    return 0;
+  }
+}
+
 async function tvl(timestamp, block) {
-  let ethCallVaultBalance = 0;
-  let wbtcCallVaultBalance = 0;
-  let ethPutVaultBalance = 0;
-
-  try {
-    ethCallVaultBalance = (
-      await sdk.api.abi.call({
-        target: ethCallVault,
-        block,
-        abi: abi.totalBalance,
-      })
-    ).output;
-  } catch (err) {}
-
-  try {
-    wbtcCallVaultBalance = (
-      await sdk.api.abi.call({
-        target: wbtcCallVault,
-        block,
-        abi: abi.totalBalance,
-      })
-    ).output;
-  } catch (err) {}
-
-  try {
-    ethPutVaultBalance = (
-      await sdk.api.abi.call({
-        target: ethPutVault,
-        block,
-        abi: abi.totalBalance,
-      })
-    ).output;
-  } catch (err) {}
+  const [
+    ethCallVaultBalance,
+    wbtcCallVaultBalance,
+    ethPutVaultBalance,
+  ] = await Promise.all([
+    getVaultTotalBalance(ethCallVault, block),
+    getVaultTotalBalance(wbtcCallVault, block),
+    getVaultTotalBalance(ethPutVault, block),
+  ]);
 
   let balances = {
     [weth]: ethCallVaultBalance,
