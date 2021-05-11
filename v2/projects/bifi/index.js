@@ -1,12 +1,12 @@
 module.exports = {
   /* Project Metadata */
-  name: '',
-  token: '',
-  category: '',
-  start: 1438269973, // using genesis block since provided no block number on the actual PR
+  name: 'BiFi',
+  token: 'BIFI',
+  category: 'Lending',
+  start: 1609792137, // using Bifi contract creation date
   /* required for fetching token balances */
   tokenHolderMap: [{
-    tokens: null,
+    tokens: '0x0000000000000000000000000000000000000000',
     holders: '0x13000c4a215efe7e414bb329b2f11c39bcf92d78',      // ETH Pool
     checkETHBalance: true,
   }, {
