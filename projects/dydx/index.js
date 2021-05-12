@@ -72,7 +72,7 @@
   module.exports = {
     name: 'dYdX',
     token: null,
-    category: 'derivatives',
+    category: 'Derivatives',
     start: 1538179200,  // 09/29/2018 @ 12:00am (UTC)
     tvl,
   };
