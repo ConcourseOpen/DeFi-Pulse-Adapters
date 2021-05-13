@@ -6,6 +6,7 @@ const assetContracts = {
   cgi: '0xada0a1202462085999652dc5310a7a9e2bf3ed42',
   fli: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd',
   mvi: '0x72e364f2abdc788b7e918bc238b21f109cd634d7',
+  flibtc: '0x0b498ff89709d3838a063f1dfa463091f9801c2b'
 };
 
 async function getBalances(block, target) {
@@ -45,7 +46,10 @@ async function tvl(timestamp, block) {
   // MVI inception timestamp
   let mviBalances = (block >= 12184150 || timestamp >= 1617688800) ? await getBalances(block, assetContracts.mvi) : {};
 
-  balances = Object.assign(balances, dpiBalances, cgiBalances, fliBalances, mviBalances);
+  // btc fli timestamp
+  let btcBalances = (block >= 12375760  || timestamp >= 1620238070) ? await getBalances(block, assetContracts.flibtc) : {};
+
+  balances = Object.assign(balances, dpiBalances, cgiBalances, fliBalances, mviBalances, btcBalances);
 
   return balances;
 };
