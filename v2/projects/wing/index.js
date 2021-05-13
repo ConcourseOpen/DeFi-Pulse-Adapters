@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'Wing Finance (Ethereum)',
+  name: 'Wing Finance',
   token: 'WING',
   category: 'Lending',
   start: 1617717600,
