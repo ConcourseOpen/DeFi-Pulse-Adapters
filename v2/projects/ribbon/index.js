@@ -1,6 +1,6 @@
 module.exports = {
     /* Project Metadata */
-    name: 'Ribbon Finance',
+    name: 'Ribbon',
     token: null,
     category: 'Derivatives',
     start: 1618185600,
