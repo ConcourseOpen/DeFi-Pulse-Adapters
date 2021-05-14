@@ -37,6 +37,6 @@ module.exports = {
   name: 'UMA',
   token: 'UMA',
   category: 'derivatives',
-  start: 1587761324, // Apr-24-2020 08:48:44 PM +UTC
+  start: 1578581061, // Jan-09-2020 02:44:21 PM +UTC
   tvl
 }
