@@ -1,5 +1,6 @@
+const ethers = require('ethers');
 const { request, gql } = require("graphql-request");
-const sdk = require('../../sdk')
+const sdk = require('../../sdk');
 
 const endpoint = 'https://api.thegraph.com/subgraphs/name/umaprotocol/mainnet-contracts'
 const query = gql`
@@ -15,6 +16,23 @@ query get_tvl($block: Int) {
 }
 `;
 
+function sumSingleBalance(
+  balances,
+  token,
+  balance
+) {
+  if (typeof balance === 'number') {
+    const prevBalance = balances[token] ?? 0
+    if (typeof prevBalance !== 'number') {
+      throw new Error(`Trying to merge token balance and CoinGecko amount for ${token}`)
+    }
+    (balances[token]) = prevBalance + balance;
+  } else {
+    const prevBalance = ethers.BigNumber.from(balances[token] ?? "0");
+    balances[token] = prevBalance.add(ethers.BigNumber.from(balance)).toString();
+  }
+}
+
 async function tvl(timestamp, block) {
   const balances = {};
   const results = await await request(endpoint, query, {block})
@@ -26,7 +44,7 @@ async function tvl(timestamp, block) {
         owner: contract.address,
         block
       })
-      sdk.util.sumSingleBalance(balances, collateral, amount.output)
+      sumSingleBalance(balances, collateral, amount.output)
     })
   )
 
