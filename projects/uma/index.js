@@ -34,5 +34,9 @@ async function tvl(timestamp, block) {
 }
 
 module.exports = {
+  name: 'UMA',
+  token: 'UMA',
+  category: 'derivatives',
+  start: 1587761324, // Apr-24-2020 08:48:44 PM +UTC
   tvl
 }
