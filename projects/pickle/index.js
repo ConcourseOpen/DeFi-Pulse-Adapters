@@ -188,6 +188,18 @@ const pTokens = {
     contract: "0x9eb0aAd5Bb943D3b2F7603Deb772faa35f60aDF9",
     created: 12294044,
   },
+  pYEARNUSDCV2: {
+    underlying: "USDC",
+    decimals: 6,
+    contract: "0xEB801AB73E9A2A482aA48CaCA13B1954028F4c94",
+    created: 12389759	,
+  },
+  pYEARNCRVLUSD: {
+    underlying: "lusdCRV",
+    decimals: 18,
+    contract: "0x4fFe73Cf2EEf5E8C8E0E10160bCe440a029166D2",
+    created: 12389563,
+  },
 };
 
 const uniPools = {
@@ -369,6 +381,8 @@ async function tvl(timestamp, block) {
     pSLPYVBOOSTETH,
     pUNILUSDETH,
     pSUSHIALCX,
+    pYEARNUSDCV2,
+    pYEARNCRVLUSD
   ] = await Promise.all([
     getUnderlying("psCRV-v2", block),
     getUnderlying("prenCRV", block),
@@ -399,6 +413,8 @@ async function tvl(timestamp, block) {
     getUniswapUnderlying("pSLPYVBOOSTETH", block),
     getUniswapUnderlying("pUNILUSDETH", block),
     getUniswapUnderlying("pSUSHIALCX", block),
+    getUnderlying("pYEARNUSDCV2", block),
+    getUnderlying("pYEARNCRVLUSD", block),
   ]);
 
   let balances = {
@@ -428,11 +444,13 @@ async function tvl(timestamp, block) {
       .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
+      .plus(pYEARNCRVLUSD) // Estimate
       .toFixed(0),
 
     // USDC
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
       .plus(pSLPUSDC[0])
+      .plus(pYEARNUSDCV2)
       .toFixed(0),
 
     // USDT
@@ -506,7 +524,7 @@ async function tvl(timestamp, block) {
     // UST
     "0xa47c8bf37f92abed4a126bda807a7b7498661acd": pUNIMIRUST[1]
       .plus(pUNImTSLAUST[1])
-      .plus(pUNImAAPLUST[0])
+      .plus(pUNImAAPLUST[1])
       .plus(pUNImQQQUST[1])
       .plus(pUNImSLVUST[1])
       .plus(pUNImBABAUST[1])
