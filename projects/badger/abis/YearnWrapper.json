@@ -1,0 +1,10 @@
+{
+  "pricePerShare": {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "pricePerShare",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "gas": 17041
+  }
+}
