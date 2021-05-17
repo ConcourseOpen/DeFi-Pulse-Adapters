@@ -51,7 +51,7 @@ async function tvl(timestamp, block) {
     [usdc]: ethPutVaultBalance,
   };
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
