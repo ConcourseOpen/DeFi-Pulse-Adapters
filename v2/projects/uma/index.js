@@ -1,60 +1,44 @@
-const ethers = require('ethers');
-const { request, gql } = require("graphql-request");
-const sdk = require('../../sdk');
-
-const endpoint = 'https://api.thegraph.com/subgraphs/name/umaprotocol/mainnet-contracts'
-const query = gql`
-query get_tvl($block: Int) {
-  financialContracts(
-    block: { number: $block }
-  ) {
-    address
-    collateralToken{
-      address
-    }
-  }
-}
-`;
-
-function sumSingleBalance(
-  balances,
-  token,
-  balance
-) {
-  if (typeof balance === 'number') {
-    const prevBalance = balances[token] ?? 0
-    if (typeof prevBalance !== 'number') {
-      throw new Error(`Trying to merge token balance and CoinGecko amount for ${token}`)
-    }
-    (balances[token]) = prevBalance + balance;
-  } else {
-    const prevBalance = ethers.BigNumber.from(balances[token] ?? "0");
-    balances[token] = prevBalance.add(ethers.BigNumber.from(balance)).toString();
-  }
-}
-
-async function tvl(timestamp, block) {
-  const balances = {};
-  const results = await await request(endpoint, query, {block})
-  await Promise.all(
-    results.financialContracts.map(async contract => {
-      const collateral = contract.collateralToken.address
-      const amount = await sdk.api.erc20.balanceOf({
-        target: collateral,
-        owner: contract.address,
-        block
-      })
-      sumSingleBalance(balances, collateral, amount.output)
-    })
-  )
-
-  return balances;
-}
-
 module.exports = {
   name: 'UMA',
   token: 'UMA',
   category: 'Derivatives',
   start: 1578581061, // Jan-09-2020 02:44:21 PM +UTC
-  tvl
+  /* required for fetching token balances */
+  tokenHolderMap: [
+    {
+      // tokens: [
+      //   '0xdac17f958d2ee523a2206206994597c13d831ec7',  // USDT
+      //   '0x6B175474E89094C44Da98b954EedeAC495271d0F',  // DAI
+      //   '0x514910771AF9Ca656af840dff83E8264EcF986CA',  // LINK
+      //   '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',  // USDC
+      //   '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',  // WBTC
+      //   '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2',  // MKR
+      // ],
+      holders: {
+        pullFromLogs: true,
+        logConfig: {
+          target: '0x3e532e6222afe9Bcf02DCB87216802c75D5113aE',
+          topic: 'NewContractRegistered(address,address,address[])',
+          fromBlock: 9937650,
+        },
+        transform: (poolLog) => `0x${poolLog.substr(26, 40)}`,
+      },
+      tokens: {
+        pullFromPools: true,
+        abi: {
+          inputs: [],
+          name: "collateralCurrency",
+          outputs: [
+            {
+              internalType: "contract IERC20",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      },
+    }
+  ]
 }
