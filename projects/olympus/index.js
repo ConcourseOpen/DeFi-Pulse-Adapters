@@ -55,7 +55,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Olympus',
   token: 'OHM',
-  category: 'assets',
+  category: 'Assets',
   start: 1616569200, // March 24th, 2021
   tvl
 }
