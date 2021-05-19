@@ -41,10 +41,10 @@ async function tvl(timestamp, block) {
   // const treasuryDaiBalance = treasurySlpBalance * daiSLPBalance / (totalSLPSupply * Math.pow(10, 2));
   // const treasuryOHMBalance = treasurySlpBalance * ohmSLPBalance * Math.pow(10, 9) / totalSLPSupply;
 
-  return (await sdk.api.util.toSymbols({
+  return {
     [dai]: treasuryDai,
     [slp]: treasurySlpBalance
-  })).output;
+  }
 }
 
 
