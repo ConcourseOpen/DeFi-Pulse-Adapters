@@ -25,26 +25,26 @@ async function tvl(timestamp, block) {
     await sdk.api.erc20.balanceOf({ target: slp, owner: treasuryAddress, block })
   ).output;
 
-  // Calculate total SLP and DAI+OHM breakdown.
-  const totalSLPSupply = (
-    await sdk.api.erc20.totalSupply({ target: slp, block })
-  ).output;
-  const daiSLPBalance = (
-    await sdk.api.erc20.balanceOf({ target: dai, owner: slp, block })
-  ).output;
-  const ohmSLPBalance = (
-    await sdk.api.erc20.balanceOf({ target: ohm, owner: slp, block })
-  ).output;
+  // // Calculate total SLP and DAI+OHM breakdown.
+  // const totalSLPSupply = (
+  //   await sdk.api.erc20.totalSupply({ target: slp, block })
+  // ).output;
+  // const daiSLPBalance = (
+  //   await sdk.api.erc20.balanceOf({ target: dai, owner: slp, block })
+  // ).output;
+  // const ohmSLPBalance = (
+  //   await sdk.api.erc20.balanceOf({ target: ohm, owner: slp, block })
+  // ).output;
 
-  // Calculate how much dai + ohm the protocol owns in the SLP.
-  // Multiply and divide by power of 10 to normalize to wei.
-  const treasuryDaiBalance = treasurySlpBalance * daiSLPBalance / (totalSLPSupply * Math.pow(10, 2));
-  const treasuryOHMBalance = treasurySlpBalance * ohmSLPBalance * Math.pow(10, 9) / totalSLPSupply;
+  // // Calculate how much dai + ohm the protocol owns in the SLP.
+  // // Multiply and divide by power of 10 to normalize to wei.
+  // const treasuryDaiBalance = treasurySlpBalance * daiSLPBalance / (totalSLPSupply * Math.pow(10, 2));
+  // const treasuryOHMBalance = treasurySlpBalance * ohmSLPBalance * Math.pow(10, 9) / totalSLPSupply;
 
-  return {
+  return (await sdk.api.util.toSymbols({
     [dai]: treasuryDai,
-    [ohm]: treasuryOHMBalance
-  }
+    [slp]: treasurySlpBalance
+  })).output;
 }
 
 
