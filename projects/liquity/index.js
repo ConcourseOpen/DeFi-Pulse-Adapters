@@ -43,9 +43,9 @@ async function tvl(timestamp, block) {
 
   let balances = {
     [ZERO_ADDRESS]: activeETH.plus(defaultETH),
-    [STABILITY_POOL]: stabilityPoolLUSD
+    [LUSD_TOKEN]: stabilityPoolLUSD
   }
-  
+    
   return (await sdk.api.util.toSymbols(balances)).output;
 }
 
