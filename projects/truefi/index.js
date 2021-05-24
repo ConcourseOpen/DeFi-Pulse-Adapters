@@ -2,7 +2,7 @@ const sdk = require('../../sdk');
 const abi = require('./abi.json');
 
 
-const POOL = '0xa1e72267084192db7387c8cc1328fade470e4149';
+const tfTUSD = '0xa1e72267084192db7387c8cc1328fade470e4149';
 const stkTRU = '0x23696914Ca9737466D8553a2d619948f548Ee424';
 const TRU = '0x4C19596f5aAfF459fA38B0f7eD92F11AE6543784';
 const TUSD = '0x0000000000085d4780B73119b644AE5ecd22b376';
@@ -10,15 +10,15 @@ const TUSD = '0x0000000000085d4780B73119b644AE5ecd22b376';
 
 async function tvl(timestamp, block) {
     let balances = {};
-    let poolTVL;
+    let tftusdTVL;
     let truTVL;
     try {
-       poolTVL = await sdk.api.abi.call({
-        target: POOL,
+       tftusdTVL = await sdk.api.abi.call({
+        target: tfTUSD,
         abi: abi['poolValue'],
         block: block
       });
-    }catch (e){poolTVL = {output: '0'}}
+    }catch (e){tftusdTVL = {output: '0'}}
     try{
       truTVL = await sdk.api.abi.call({
         target: stkTRU,
@@ -27,7 +27,7 @@ async function tvl(timestamp, block) {
       });
     }catch (e) {truTVL = {output: '0'}}
 
-    balances[TUSD] = poolTVL.output;
+    balances[TUSD] = tftusdTVL.output;
     balances[TRU] = truTVL.output;
 
     return balances;
