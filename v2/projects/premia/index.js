@@ -3,7 +3,7 @@ module.exports = {
     name: 'Premia',         // Premia
     token: 'PREMIA',            // PREMIA token
     category: 'Derivatives',      // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 11775757,        // Feb-02-2021 08:31:29 AM +UTC
+    start: 1612272689,        // Feb-02-2021 08:31:29 AM +UTC
     /* required for fetching token balances */
     tokenHolderMap: [
       {
