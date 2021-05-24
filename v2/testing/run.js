@@ -29,7 +29,8 @@ const _run = async (projectAdapter, timeUnit = 'day', timeOffset = 0) => {
     } else {
       timestamp = moment().utcOffset(0).startOf(timeUnit).add(timeOffset, timeUnit).unix();
     }
-    let point = await sdk.api.util.lookupBlock(timestamp);
+
+    let point = await sdk.api.util.lookupBlock(timestamp, projectAdapter.chain);
 
     if (projectAdapter.tvl && sdk.api.util.isCallable(projectAdapter.tvl)) {
       tokenBalanceMap = await projectAdapter.tvl(timestamp, point.block);
@@ -95,8 +96,10 @@ module.exports = async (projectAdapter, timeUnit, timeOffset = 0) => {
   });
 
   afterEach('save project adapter output', () => {
+    let path;
+    path = `output/${projectAdapter.chain || 'ethereum'}/${projectAdapter.name}/tvl`;
+
     const time = moment.unix(testResult.timestamp).utcOffset(0).format();
-    const path = `v2/output/${projectAdapter.name}/tvl`;
     const name = `${time}.json`;
 
     shell.mkdir('-p', path);
