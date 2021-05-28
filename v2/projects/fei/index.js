@@ -1,12 +1,10 @@
 const sdk = require('../../../sdk/index');
 
 module.exports = {
-    /* Project Metadata */
     name: 'Fei Protocol',
     token: null,
     category: 'Assets',
     start: 1617087600, // Start of Tuesday March 30th PT
-    /* required for fetching token balances */
     tokenHolderMap: [
         {
             checkETHBalance: true,
