@@ -126,7 +126,7 @@
   module.exports = {
     name: "Nsure Network",
     website: "https://nsure.network",
-    category: "derivatives",
+    category: "Derivatives",
     start: 1619081169, // Thu Apr 22 2021 16:46:35
     tvl,
   };
