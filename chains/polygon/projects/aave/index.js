@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: "Aave",
+  name: "Aave_Polygon",
   token: "AAVE",
   chain: 'polygon',
   category: "Lending",
