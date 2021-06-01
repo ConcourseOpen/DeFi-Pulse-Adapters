@@ -159,6 +159,24 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
   }
 }
 
+/**
+ *
+ * @param {Number} timestamp
+ * @param {String} chain
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _lookupBlock(timestamp, chain) {
+  try {
+    return (
+      await axios.get(`${$indexerHost}/lookup-block?chain=${chain || ''}&&timestamp=${timestamp}`)
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
+}
+
   async function erc20(endpoint, options) {
     return POST(`/erc20/${endpoint}`, options);
   }
@@ -222,7 +240,7 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
       unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+      lookupBlock: _lookupBlock,
       /**
        *
        * @param {Number} block
