@@ -3,8 +3,6 @@ const path = require('path');
 
 const vaults = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'ethparser-vaults.json'), 'utf-8')).data;
 
-const pools = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'ethparser-pools.json'), 'utf-8')).data;
-
 const getVaultByContractName = (contractName) => {
   return vaults.find((data) => {
     return data.contract.name === contractName
@@ -128,7 +126,6 @@ function getUnderlyingAddressByVault(vault) {
 
 module.exports = {
   vaults,
-  pools,
   singleAssetVaults,
   liquidityPools,
   oldMooniswapVaults,
