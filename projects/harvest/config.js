@@ -9,8 +9,6 @@ const getVaultByContractName = (contractName) => {
   })
 }
 
-// should we include iFarm??
-
 const singleAssetVaults = [
   'V_USDC_#V1',
   'V_WETH_#V1',
