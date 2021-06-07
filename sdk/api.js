@@ -6,12 +6,36 @@
   const axios = require('axios');
   const _ = require('underscore');
   const utility = require('./util');
-  const term = require( 'terminal-kit' ).terminal;
   const Bottleneck = require('bottleneck');
+  const term = require( 'terminal-kit' ).terminal;
+  const $indexerHost = 'http://defipulse-indexer-sync-server-staging.us-west-1.elasticbeanstalk.com';
 
 /*==================================================
   Helper Methods
   ==================================================*/
+
+  /**
+   *
+   * @param {Object} any
+   * @returns {boolean}
+   * @private
+   */
+  const _isCallable = (any) => typeof any === 'function';
+
+  /**
+   *
+   * @param {String} key
+   * @param {Object} val
+   * @returns {*}
+   * @private
+   */
+  const _jsonConverter = (key, val) => {
+    if (val && _isCallable(val)) {
+      return `return ${String(val)}`;
+    }
+
+    return val;
+  };
 
   async function POST(endpoint, options) {
     try {
@@ -104,6 +128,55 @@
     }
   }
 
+/**
+ *
+ * @param {Number} block
+ * @param {Number} timestamp
+ * @param {Object} project
+ * @param {Object} tokenBalanceMap
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
+  project = JSON.stringify(project, _jsonConverter, 2);
+
+  try {
+    return (
+      await axios({
+        method: 'POST',
+        url: `${$indexerHost}/test-tvl`,
+        data: {
+          block,
+          project,
+          timestamp,
+          tokenBalanceMap,
+        }
+      })
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
+}
+
+/**
+ *
+ * @param {Number} timestamp
+ * @param {String} chain
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _lookupBlock(timestamp, chain) {
+  try {
+    return (
+      await axios.get(`${$indexerHost}/lookup-block?chain=${chain || ''}&&timestamp=${timestamp}`)
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
+}
+
   async function erc20(endpoint, options) {
     return POST(`/erc20/${endpoint}`, options);
   }
@@ -128,6 +201,10 @@
     return POST(`/cdp/compound/${endpoint}`, options);
   }
 
+  async function aave(endpoint, options) {
+    return POST(`/cdp/aave/${endpoint}`, options);
+  }
+
   async function cdp(endpoint, options) {
     return POST(`/cdp/${endpoint}`, options);
   }
@@ -150,6 +227,9 @@
       compound: {
         tokens: (options) => compound('tokens', { ...options }),
         getAssetsLocked: (options) => compound('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
+      },
+      aave: {
+        getAssetsLocked: (options) => aave('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} })
       }
     },
     util: {
@@ -160,7 +240,28 @@
       resetEthCallCount: () => util('resetEthCallCount'),
       toSymbols: (data) => util('toSymbols', { data }),
       unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: (timestamp) => util('lookupBlock', { timestamp })
+      lookupBlock: _lookupBlock,
+      /**
+       *
+       * @param {Number} block
+       * @param {Number} timestamp
+       * @param {Object} project
+       * @param {Object} tokenBalanceMap
+       * @returns {Promise<*>}
+       */
+      testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
+        return _testAdapter(block, timestamp, project, tokenBalanceMap);
+      }),
+      /**
+       *
+       */
+      isCallable: _isCallable,
+      /**
+       *
+       * @param {String} str
+       * @returns {boolean}
+       */
+      isString: (str) => typeof str === 'string',
     },
     eth: {
       getBalance: (options) => eth('getBalance', options),

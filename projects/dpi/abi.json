@@ -1,0 +1,16 @@
+{
+  "getComponents": {
+    "constant": true,
+    "inputs": [],
+    "name": "getComponents",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}

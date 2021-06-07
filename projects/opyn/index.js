@@ -1,138 +1,34 @@
-/*==================================================
-  Modules
-  ==================================================*/
+const BigNumber = require('bignumber.js')
 
-  const sdk = require('../../sdk');
-  const _ = require('underscore');
-  const BigNumber = require('bignumber.js');
+const v1TVL = require('./convexity');
+const v2TVL = require('./gamma');
 
-  const getNumberOfOptionsContractsAbi = require('./abis/getNumberOfOptionsContracts.json');
-  const optionsContractsAbi = require('./abis/optionsContracts.json');
-  const collateralAbi = require('./abis/collateral.json');
+const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
+const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase();
 
-/*==================================================
-  Settings
-  ==================================================*/
+async function tvl(timestamp, block) {
+  const [v1, v2] = await Promise.all([v1TVL(timestamp, block), v2TVL(timestamp, block)]);
 
-  const factoriesAddresses = [
-    "0xb529964F86fbf99a6aA67f72a27e59fA3fa4FEaC",
-    "0xcC5d905b9c2c8C9329Eb4e25dc086369D6C7777C"
-  ]
+  // replace WETH with ETH for Gamma(v2)
+  v2[ETH] = v2[WETH];
+  delete v2[WETH];
 
-/*==================================================
-  TVL
-  ==================================================*/
+  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)));
 
-  async function tvl(timestamp, block) {  
-    const supportedTokens = await (
-      sdk
-        .api
-        .util
-        .tokenList()
-        .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
-    );
-  
-    let balances = {};
+  const balances = (
+    Array
+      .from(tokenAddresses)
+      .reduce((accumulator, tokenAddress) => {
+        const v1Balance = new BigNumber(v1[tokenAddress] || '0');
+        const v2Balance = new BigNumber(v2[tokenAddress] || '0');
+        accumulator[tokenAddress] = v1Balance.plus(v2Balance).toFixed();
 
-    for(let i = 0; i < factoriesAddresses.length; i++) {
-      // number of created oTokens
-      let numberOfOptionsContracts = (
-        await sdk.api.abi.call({
-          target: factoriesAddresses[i],
-          abi: getNumberOfOptionsContractsAbi,
-        })
-      ).output;
+        return accumulator
+      }, {})
+  );
 
-      // batch getOptionsContracts calls
-      let getOptionsContractsCalls = [];
-
-      for(let j = 0; j < numberOfOptionsContracts; j++) {
-        getOptionsContractsCalls.push({
-          target: factoriesAddresses[i],
-          params: j
-        })
-      }
-
-      let optionsContracts = (
-        await sdk.api.abi.multiCall({
-          calls: getOptionsContractsCalls,
-          abi: optionsContractsAbi,
-          block
-        })
-      ).output;
-
-      // list of options addresses
-      let optionsAddresses = []
-
-      _.each(optionsContracts, async (contracts) => {
-        if(contracts.output != null) {
-          optionsAddresses = [
-            ...optionsAddresses,
-            contracts.output
-          ]  
-        }
-      });    
-      
-      // batch getCollateralAsset calls
-      let getCollateralAssetCalls = [];
-
-      _.each(optionsAddresses, (optionAddress) => {
-        getCollateralAssetCalls.push({
-          target: optionAddress
-        })
-      })
-
-      // get list of options collateral assets
-      let optionsCollateral = (
-        await sdk.api.abi.multiCall({
-          calls: getCollateralAssetCalls,
-          abi: collateralAbi,
-          block
-        })
-      ).output;
-
-      let optionsCollateralAddresses = []
-
-      _.each(optionsCollateral, async (collateralAsset) => {     
-        // only consider supported tokens   
-        if((collateralAsset.output.toLowerCase() != null) && (collateralAsset.output.toLowerCase() !== "0x0000000000000000000000000000000000000000") && (supportedTokens.includes(collateralAsset.output.toLowerCase())) && (!optionsCollateralAddresses.includes(collateralAsset.output.toLowerCase())) ) {
-          optionsCollateralAddresses = [
-            ...optionsCollateralAddresses,
-            collateralAsset.output.toLowerCase()
-          ]  
-        }
-      });
-
-      // get ETH balance
-      _.each(optionsAddresses, async (optionAddress) => {
-        let balance = (await sdk.api.eth.getBalance({target: optionAddress, block})).output;
-        balances["0x0000000000000000000000000000000000000000"] = BigNumber(balances["0x0000000000000000000000000000000000000000"] || 0).plus(BigNumber(balance)).toFixed();
-      })
-
-      // batch balanceOf calls
-      let balanceOfCalls = [];
-
-      _.each(optionsCollateralAddresses, async (optionCollateralAddress) => {
-        optionsAddresses.forEach((optionAddress) => {
-          balanceOfCalls.push({
-            target: optionCollateralAddress,
-            params: [optionAddress]
-          });  
-        })
-      });
- 
-      // get tokens balances
-      const balanceOfResults = await sdk.api.abi.multiCall({
-        block,
-        calls: balanceOfCalls,
-        abi: "erc20:balanceOf"
-      });
-
-      await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
-    }
-
-    return balances;
-  }
+  return balances;
+}
 
 /*==================================================
   Exports

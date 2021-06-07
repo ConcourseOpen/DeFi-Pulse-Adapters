@@ -1,0 +1,64 @@
+{
+  "getFundHoldings": {
+    "inputs": [],
+    "name": "getFundHoldings",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "totalAllocatedNavBnt": {
+    "inputs": [],
+    "name": "totalAllocatedNav",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+
+  "getBufferBalanceBnt": {
+    "inputs": [],
+    "name": "getBufferBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getRewardsContributionToNavBnt": {
+    "inputs": [],
+    "name": "getRewardsContributionToNav",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getNav": {
+    "inputs": [],
+    "name": "getNav",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getFundKncBalanceTwei": {
+    "inputs": [],
+    "name": "getFundKncBalanceTwei",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "debtBalanceOf": {}
+}
