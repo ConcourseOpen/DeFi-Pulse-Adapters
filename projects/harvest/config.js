@@ -35,7 +35,7 @@ const singleAssetVaults = [
   // 'V_CRV_ust3CRV',
   // 'V_CRV_ust3CRV_#V1',
   // 'V_CRV_eursCRV',
-  // 'V_CRV_steCRV',
+  'V_CRV_steCRV',
   // 'V_CRV_a3CRV',
   // 'V_CRV_linkCRV',
   // 'V_SUSHI',
