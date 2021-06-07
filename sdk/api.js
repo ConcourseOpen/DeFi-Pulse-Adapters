@@ -124,7 +124,8 @@
         return response.data;
       }
     } catch(error) {
-      throw error.response ? error.response.data : error;
+      throw error
+      // throw error.response ? error.response.data : error;
     }
   }
 
