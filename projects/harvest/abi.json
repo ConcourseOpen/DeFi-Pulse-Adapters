@@ -54,6 +54,25 @@
     "stateMutability": "view",
     "type": "function"
   },
+  "1inchGetBalanceForAddition": {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "getBalanceForAddition",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
   "token0": {
     "constant": true,
     "inputs": [],

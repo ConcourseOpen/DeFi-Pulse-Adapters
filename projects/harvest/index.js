@@ -12,6 +12,8 @@
     fs.readFileSync(path.resolve(__dirname, 'liquidity-pool-info.json'), 'utf-8')
   );
 
+  const address0x = '0x0000000000000000000000000000000000000000'
+
   async function getSingleAssetVault(contractName, timestamp, block) {
     const vault = getVaultByContractName(contractName)
 
@@ -42,34 +44,75 @@
       throw(`Error: ${contractName} not found in eth-vaults.json`)
     }
 
-    const [
-      totalSupply,
-      sharePrice,
-      underlyingUnit,
-      underlyingTotalSupply,
-      underlyingReserves
-    ] = await Promise.all([
-      sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
-      sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABISharePrice'], }),
-      sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABIUnderlyingUnit'], }),
-      sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['totalSupply'], }),
-      sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['uniABIReserves'], })
-    ])
-
-    const lpTokenCount = new BigNumber(totalSupply.output)
-      .times(new BigNumber(sharePrice.output))
-      .div(new BigNumber(underlyingUnit.output))
-
-    const harvestShareOfPool = lpTokenCount.div(BigNumber(underlyingTotalSupply.output))
-    const amountToken0 = BigNumber(underlyingReserves.output[0]).times(harvestShareOfPool)
-    const amountToken1 = BigNumber(underlyingReserves.output[1]).times(harvestShareOfPool)
     const token0Address = liquidityPoolInfo[vault.underlying.address].token0
     const token1Address = liquidityPoolInfo[vault.underlying.address].token1
 
-    return {
-      [token0Address]: amountToken0,
-      [token1Address]: amountToken1
+    let returnVals = {}
+
+    // ETH pair with different API
+    if (token0Address === address0x) {
+      const [
+        totalSupply,
+        sharePrice,
+        underlyingUnit,
+        underlyingTotalSupply,
+        underlyingETH,
+        underlyingTokenBalance
+      ] = await Promise.all([
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABISharePrice'], }),
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABIUnderlyingUnit'], }),
+        sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['totalSupply'], }),
+        sdk.api.eth.getBalance({target: vault.underlying.address, block}),
+        sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['1inchGetBalanceForAddition'], params: [token1Address] })
+      ])
+
+      const lpTokenCount = new BigNumber(totalSupply.output)
+        .times(new BigNumber(sharePrice.output))
+        .div(new BigNumber(underlyingUnit.output))
+
+      console.log('underlyingTokenBalance', underlyingTokenBalance)
+
+      const harvestShareOfPool = lpTokenCount.div(BigNumber(underlyingTotalSupply.output))
+      const amountToken0 = BigNumber(underlyingETH.output).times(harvestShareOfPool).times(BigNumber(10 ** 8))
+      const amountToken1 = BigNumber(underlyingTokenBalance.output).times(harvestShareOfPool)
+
+      returnVals = {
+        [token0Address]: amountToken0,
+        [token1Address]: amountToken1
+      }
+
+    // Uniswap pair
+    } else {
+      const [
+        totalSupply,
+        sharePrice,
+        underlyingUnit,
+        underlyingTotalSupply,
+        underlyingReserves
+      ] = await Promise.all([
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABISharePrice'], }),
+        sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABIUnderlyingUnit'], }),
+        sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['totalSupply'], }),
+        sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['uniABIReserves'], })
+      ])
+
+      const lpTokenCount = new BigNumber(totalSupply.output)
+        .times(new BigNumber(sharePrice.output))
+        .div(new BigNumber(underlyingUnit.output))
+
+      const harvestShareOfPool = lpTokenCount.div(BigNumber(underlyingTotalSupply.output))
+      const amountToken0 = BigNumber(underlyingReserves.output[0]).times(harvestShareOfPool)
+      const amountToken1 = BigNumber(underlyingReserves.output[1]).times(harvestShareOfPool)
+
+      returnVals = {
+        [token0Address]: amountToken0,
+        [token1Address]: amountToken1
+      }
     }
+
+    return returnVals
   }
 
   async function tvl(timestamp, block) {
