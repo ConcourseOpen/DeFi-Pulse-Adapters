@@ -559,4 +559,5 @@
     rates,
     term: "1 block",
     variability: "medium",
+    chain: 'Multichain,Ethereum-Polygon'
   };
