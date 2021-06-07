@@ -102,6 +102,23 @@ const liquidityPools = [
   'V_SUSHI_DAI_WETH_#V3',
 ]
 
+// Handle OLD VAULTS which have been updated, yet not reflected in
+// in the ethparser-vaults data.
+function getUnderlyingAddressByVault(vault) {
+  switch(vault.contract.name) {
+    case 'V_SUSHI_WBTC_WETH_#V2':
+      return '0xceff51756c56ceffca006cd410b03ffc46dd3a58';
+    case 'V_SUSHI_USDC_WETH_#V2':
+      return '0x397ff1542f962076d0bfe58ea045ffa2d347aca0';
+    case 'V_SUSHI_WETH_USDT_#V2':
+      return '0x06da0fd433c1a5d7a4faa01111c044910a184553';
+    case 'V_SUSHI_DAI_WETH_#V3':
+      return '0xc3d03e4f041fd4cd388c549ee2a29a9e5075882f';
+    default:
+      return vault.underlying.address
+  }
+}
+
 // TODO old mooniswap vaults
 // V_1INCH_1INCH_USDC,
 // V_1INCH_ETH_1INCH
@@ -112,5 +129,6 @@ module.exports = {
   pools,
   singleAssetVaults,
   liquidityPools,
-  getVaultByContractName
+  getVaultByContractName,
+  getUnderlyingAddressByVault
 }

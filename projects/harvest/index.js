@@ -7,12 +7,18 @@
   const BigNumber = require('bignumber.js');
   const fs = require('fs');
   const path = require('path');
-  const { vaults, pools, singleAssetVaults, liquidityPools, getVaultByContractName } = require('./config');
+  const {
+    vaults,
+    pools,
+    singleAssetVaults,
+    liquidityPools,
+    getVaultByContractName,
+    getUnderlyingAddressByVault
+  } = require('./config');
   const liquidityPoolInfo = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, 'liquidity-pool-info.json'), 'utf-8')
   );
 
-  const address0x = '0x0000000000000000000000000000000000000000'
   const FARM_TOKEN_ADDRESS = '0xa0246c9032bC3A600820415aE600c6388619A14D'
   const FARM_REWARD_POOL_ADDRESS = '0x8f5adc58b32d4e5ca02eac0e293d35855999436c'
 
@@ -37,25 +43,6 @@
       vault.underlying.address,
       underlyingCount
     ])
-  }
-
-  // Handle OLD VAULTS which have been updated, yet not reflected in
-  // in the ethparser-vaults data.
-  function getUnderlyingAddressByVault(vault) {
-    switch(vault.contract.name) {
-      case 'V_SUSHI_WBTC_WETH_#V2':
-        return '0xceff51756c56ceffca006cd410b03ffc46dd3a58';
-      case 'V_SUSHI_USDC_WETH_#V2':
-        return '0x397ff1542f962076d0bfe58ea045ffa2d347aca0';
-      case 'V_SUSHI_WETH_USDT_#V2':
-        return '0x06da0fd433c1a5d7a4faa01111c044910a184553';
-      case 'V_SUSHI_DAI_WETH_#V3':
-        return '0xc3d03e4f041fd4cd388c549ee2a29a9e5075882f';
-      case 'V_1INCH_ETH_1INCH':
-        return '0x0ef1b8a0e726fc3948e15b23993015eb1627f210';
-      default:
-        return vault.underlying.address
-    }
   }
 
   async function getStakedFarm(timestamp, block) {
