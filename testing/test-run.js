@@ -80,7 +80,6 @@
         let name = `${time}.json`;
 
         shell.mkdir('-p', path);
-        console.log(this.currentTest.value)
         fs.writeFileSync(`${path}/${name}`, JSON.stringify(this.currentTest.value, null, 2));
       });
     }
