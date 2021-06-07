@@ -27,7 +27,7 @@
     const vault = getVaultByContractName(contractName)
 
     if (!vault) throw(`Error: ${contractName} not found in eth-vaults.json`);
-    if (vault.contract.created > timestamp) return [];
+    if (vault.contract.created > block) return [];
 
     const [totalSupply, sharePrice, underlyingUnit] = await Promise.all([
       sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
@@ -48,7 +48,7 @@
   async function getStakedFarm(timestamp, block) {
     const vault = getVaultByContractName('V_PS_#V1')
 
-    if (vault.contract.created > timestamp) return [];
+    if (vault.contract.created > block) return 0;
 
     let result = await sdk.api.abi.call({
       target: FARM_TOKEN_ADDRESS,
@@ -64,7 +64,7 @@
     const vault = getVaultByContractName(contractName)
 
     if (!vault) throw(`Error: ${contractName} not found in eth-vaults.json`);
-    if (vault.contract.created > timestamp) return [];
+    if (vault.contract.created > block) return [];
 
     const underlyingAddress = getUnderlyingAddressByVault(vault)
 
@@ -103,7 +103,7 @@
     const vault = getVaultByContractName(contractName)
 
     if (!vault) throw(`Error: ${contractName} not found in eth-vaults.json`);
-    if (vault.contract.created > timestamp) return [];
+    if (vault.contract.created > block) return [];
 
     const underlyingAddress = getUnderlyingAddressByVault(vault)
 
@@ -186,11 +186,15 @@
       }
     })
 
+    /// Cleanup undefined values
+    delete assetAmounts[undefined]
+
     // Finally, convert the BigNums to strings
     const assetAmountStrings = {}
     for (const [k, v] of Object.entries(assetAmounts)) {
       assetAmountStrings[k] = v.toString()
     }
+
     console.table(assetAmountStrings)
     return assetAmountStrings
   }
