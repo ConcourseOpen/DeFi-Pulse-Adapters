@@ -11,6 +11,8 @@ const getVaultByContractName = (contractName) => {
   })
 }
 
+// should we include iFarm??
+
 const singleAssetVaults = [
   'V_USDC_#V1',
   'V_WETH_#V1',
@@ -41,15 +43,13 @@ const singleAssetVaults = [
   'V_CRV_gusd3CRV',
   'V_WBTC',
   'V_DAI_#V1',
-  'V_USDC_#V1'
+  'V_USDC_#V1',
+  'V_CRV_usdp3CRV'
 ];
 
-// ????? Vaults
-//
-// 'V_BAC',
-// 'V_ETHx5-USDC-1Jun21-LP',
-// 'V_CRV_usdp3CRV',
-// 'V_1INCH_ETH_DAI',
+
+// TODO
+// 'V_1INCH_ETH_DAI', empty
 // 'V_1INCH_ETH_1INCH',
 // 'V_1INCH_1INCH_WBTC',
 // 'V_1INCH_1INCH_USDC',
@@ -60,6 +60,7 @@ const singleAssetVaults = [
 // 'V_UNI_USDC_WETH', 1inch1?
 // 'V_SUSHI_WBTC_WETH_#V1',
 // 'V_SUSHI_WBTC_WETH_#V2',
+
 
 const liquidityPools = [
   'V_UNI_WETH_USDT_#V1',
