@@ -37,6 +37,25 @@
     ])
   }
 
+  // Handle OLD VAULTS which have been updated, yet not reflected in
+  // in the ethparser-vaults data.
+  function getUnderlyingAddressByVault(vault) {
+    switch(vault.contract.name) {
+      case 'V_SUSHI_WBTC_WETH_#V2':
+        return '0xceff51756c56ceffca006cd410b03ffc46dd3a58';
+      case 'V_SUSHI_USDC_WETH_#V2':
+        return '0x397ff1542f962076d0bfe58ea045ffa2d347aca0';
+      case 'V_SUSHI_WETH_USDT_#V2':
+        return '0x06da0fd433c1a5d7a4faa01111c044910a184553';
+      case 'V_SUSHI_DAI_WETH_#V3':
+        return '0xc3d03e4f041fd4cd388c549ee2a29a9e5075882f';
+      case 'V_1INCH_ETH_1INCH':
+        return '0x0ef1b8a0e726fc3948e15b23993015eb1627f210';
+      default:
+        return vault.underlying.address
+    }
+  }
+
   async function getLiquidityPool(contractName, timestamp, block) {
     const vault = getVaultByContractName(contractName)
 
@@ -44,8 +63,10 @@
       throw(`Error: ${contractName} not found in eth-vaults.json`)
     }
 
-    const token0Address = liquidityPoolInfo[vault.underlying.address].token0
-    const token1Address = liquidityPoolInfo[vault.underlying.address].token1
+    const underlyingAddress = getUnderlyingAddressByVault(vault)
+
+    const token0Address = liquidityPoolInfo[underlyingAddress].token0
+    const token1Address = liquidityPoolInfo[underlyingAddress].token1
 
     const [
       totalSupply,
@@ -57,8 +78,8 @@
       sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
       sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABISharePrice'], }),
       sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABIUnderlyingUnit'], }),
-      sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['totalSupply'], }),
-      sdk.api.abi.call({ block, target: vault.underlying.address, abi: abi['uniABIReserves'], })
+      sdk.api.abi.call({ block, target: underlyingAddress, abi: abi['totalSupply'], }),
+      sdk.api.abi.call({ block, target: underlyingAddress, abi: abi['uniABIReserves'], })
     ])
 
     const lpTokenCount = new BigNumber(totalSupply.output)
