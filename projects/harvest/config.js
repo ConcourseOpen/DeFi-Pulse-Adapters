@@ -102,6 +102,12 @@ const liquidityPools = [
   'V_SUSHI_DAI_WETH_#V3',
 ]
 
+const oldMooniswapVaults = [
+  'V_1INCH_1INCH_USDC',
+  'V_1INCH_ETH_1INCH',
+  'V_1INCH_1INCH_WBTC'
+]
+
 // Handle OLD VAULTS which have been updated, yet not reflected in
 // in the ethparser-vaults data.
 function getUnderlyingAddressByVault(vault) {
@@ -119,16 +125,13 @@ function getUnderlyingAddressByVault(vault) {
   }
 }
 
-// TODO old mooniswap vaults
-// V_1INCH_1INCH_USDC,
-// V_1INCH_ETH_1INCH
-// V_1INCH_1INCH_WBTC
 
 module.exports = {
   vaults,
   pools,
   singleAssetVaults,
   liquidityPools,
+  oldMooniswapVaults,
   getVaultByContractName,
   getUnderlyingAddressByVault
 }

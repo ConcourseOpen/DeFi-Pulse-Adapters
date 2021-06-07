@@ -3,7 +3,7 @@ const path = require('path');
 const sdk = require('../../sdk');
 const abi = require('./abi.json');
 
-const { vaults, pools, singleAssetVaults, liquidityPools, getVaultByContractName } = require('./config');
+const { vaults, pools, singleAssetVaults, liquidityPools, oldMooniswapVaults, getVaultByContractName } = require('./config');
 
 async function getLiquidityPoolInfo(vaultName) {
   const vault = getVaultByContractName(vaultName)
@@ -26,7 +26,7 @@ async function main() {
   let liquidityPoolInfo = {}
 
   const liquidityPoolValues = await Promise.all(
-    liquidityPools.map(
+    [...liquidityPools, ...oldMooniswapVaults].map(
       (vaultName) => getLiquidityPoolInfo(vaultName)
     )
   )

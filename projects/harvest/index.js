@@ -12,6 +12,7 @@
     pools,
     singleAssetVaults,
     liquidityPools,
+    oldMooniswapVaults,
     getVaultByContractName,
     getUnderlyingAddressByVault
   } = require('./config');
@@ -96,8 +97,64 @@
     }
   }
 
+  async function getMooniswapLP(contractName, timestamp, block) {
+    const vault = getVaultByContractName(contractName)
+
+    if (!vault) {
+      throw(`Error: ${contractName} not found in eth-vaults.json`)
+    }
+
+    const underlyingAddress = getUnderlyingAddressByVault(vault)
+
+    const token0Address = liquidityPoolInfo[underlyingAddress].token0
+    const token1Address = liquidityPoolInfo[underlyingAddress].token1
+
+    const [
+      totalSupply,
+      sharePrice,
+      underlyingUnit,
+      underlyingTotalSupply,
+      underlyingToken0,
+      underlyingToken1
+    ] = await Promise.all([
+      sdk.api.abi.call({ block, target: vault.contract.address, abi: 'erc20:totalSupply', }),
+      sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABISharePrice'], }),
+      sdk.api.abi.call({ block, target: vault.contract.address, abi: abi['fABIUnderlyingUnit'], }),
+      sdk.api.abi.call({ block, target: underlyingAddress, abi: abi['totalSupply'], }),
+      sdk.api.abi.call({ block, target: underlyingAddress, abi: abi['1inchGetBalanceForAddition'], params: [token0Address] }),
+      sdk.api.abi.call({ block, target: underlyingAddress, abi: abi['1inchGetBalanceForAddition'], params: [token1Address] }),
+    ])
+
+    const lpTokenCount = new BigNumber(totalSupply.output)
+      .times(new BigNumber(sharePrice.output))
+      .div(new BigNumber(underlyingUnit.output))
+
+    const harvestShareOfPool = lpTokenCount.div(BigNumber(underlyingTotalSupply.output))
+    const amountToken0 = BigNumber(underlyingToken0.output).times(harvestShareOfPool)
+    const amountToken1 = BigNumber(underlyingToken1.output).times(harvestShareOfPool)
+
+    return {
+      [token0Address]: amountToken0,
+      [token1Address]: amountToken1
+    }
+  }
+
   async function tvl(timestamp, block) {
     const assetAmounts = {}
+
+    /////////////// Old mooniswap vaults //////////////////
+    const mooniswapVaultValues = await Promise.all(
+      oldMooniswapVaults.map(
+        (contractName) => getMooniswapLP(contractName, timestamp, block)
+      )
+    )
+
+    mooniswapVaultValues.forEach((val) => {
+      for (const [k, v] of Object.entries(val)) {
+        let existingVal = BigNumber(assetAmounts[k] || 0)
+        assetAmounts[k] = BigNumber.sum(existingVal, v)
+      }
+    })
 
     /////////////// FARM staking ////////////////////
     assetAmounts[FARM_TOKEN_ADDRESS] = await getStakedFarm(timestamp, block)
