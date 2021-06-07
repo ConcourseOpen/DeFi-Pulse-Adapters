@@ -13,6 +13,8 @@
   );
 
   const address0x = '0x0000000000000000000000000000000000000000'
+  const FARM_TOKEN_ADDRESS = '0xa0246c9032bC3A600820415aE600c6388619A14D'
+  const FARM_REWARD_POOL_ADDRESS = '0x8f5adc58b32d4e5ca02eac0e293d35855999436c'
 
   async function getSingleAssetVault(contractName, timestamp, block) {
     const vault = getVaultByContractName(contractName)
@@ -54,6 +56,17 @@
       default:
         return vault.underlying.address
     }
+  }
+
+  async function getStakedFarm(timestamp, block) {
+    let result = await sdk.api.abi.call({
+      target: FARM_TOKEN_ADDRESS,
+      params: FARM_REWARD_POOL_ADDRESS,
+      abi: 'erc20:balanceOf',
+      block: block
+    })
+
+    return result.output
   }
 
   async function getLiquidityPool(contractName, timestamp, block) {
@@ -99,7 +112,10 @@
   async function tvl(timestamp, block) {
     const assetAmounts = {}
 
-    // Single asset vaults
+    /////////////// FARM staking ////////////////////
+    assetAmounts[FARM_TOKEN_ADDRESS] = await getStakedFarm(timestamp, block)
+
+    /////////////// Single asset vaults ///////////////////////
     const singleAssetVaultValues = await Promise.all(
       singleAssetVaults.map(
         (contractName) => getSingleAssetVault(contractName, timestamp, block)
@@ -111,7 +127,7 @@
       assetAmounts[val[0]] = BigNumber.sum(existingVal, val[1])
     })
 
-    // Liquidity pools
+    //////////////  Liquidity pools ///////////////////////////
     const liquidityPoolValues = await Promise.all(
       liquidityPools.map(
         (contractName) => getLiquidityPool(contractName, timestamp, block)
