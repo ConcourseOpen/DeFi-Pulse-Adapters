@@ -115,7 +115,7 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
   module.exports = {
-    name: 'Visor', // project name
+    name: 'Visor Finance', // project name
     token: 'VISR',              // null, or token symbol if project has a custom token
     category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1623078120,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
