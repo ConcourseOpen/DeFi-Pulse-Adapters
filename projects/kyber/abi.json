@@ -1,5 +1,5 @@
 {
-  "networkAddress": "0x9ae49C0d7F8F9EF4B864e004FE86Ac8294E20950",
+  "networkAddress": "0x7C66550C9c730B6fdd4C03bc2e73c5462c5F7ACC",
   "getReserves": {
     "constant": true,
     "inputs": [],
