@@ -66,6 +66,6 @@
     name: 'Kyber',
     token: 'KNC',
     category: 'DEXes',
-    start: 1594003275,  // Jan-03-2019 11:37:38 AM +UTC
+    start: 1594003275,  // Jul-06-2020 02:41:15 AM +UTC
     tvl,
   };
