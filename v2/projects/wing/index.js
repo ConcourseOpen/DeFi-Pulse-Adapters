@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'Wing Finance (Ethereum)',
+  name: 'Wing Finance',
   token: 'WING',
   category: 'Lending',
   start: 1617717600,
@@ -11,8 +11,10 @@ module.exports = {
       holders: '0x4FA2425edf435B52016447Ab897d300d78c0Afe4',
     },
     {
-      tokens: '0x0000000000000000000000000000000000000000', // ETH
+      tokens: null, // ETH
       holders: '0xD93F4cf882D7d576a8Dc09e606B38CaF18Eda796',
+      checkETHBalance: true,
+      
     },
     {
       tokens: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', // WBTC
