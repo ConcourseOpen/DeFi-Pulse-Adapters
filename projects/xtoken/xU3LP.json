@@ -1,0 +1,30 @@
+{
+  "getBufferToken0Balance": {
+    "inputs": [],
+    "name": "getBufferToken0Balance",
+    "outputs": [
+      { "internalType": "uint256", "name": "amount0", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getBufferToken1Balance": {
+    "inputs": [],
+    "name": "getBufferToken1Balance",
+    "outputs": [
+      { "internalType": "uint256", "name": "amount1", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getStakedTokenBalance": {
+    "inputs": [],
+    "name": "getStakedTokenBalance",
+    "outputs": [
+      { "internalType": "uint256", "name": "amount0", "type": "uint256" },
+      { "internalType": "uint256", "name": "amount1", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
