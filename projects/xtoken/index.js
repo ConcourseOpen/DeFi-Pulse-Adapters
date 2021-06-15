@@ -48,12 +48,7 @@ const sUsdAddr = "0x57ab1e02fee23774580c119740129eac7081e9d3";
   TVL
   ==================================================*/
 
-const testTs = 1619913600;
-const testBlock = 12351434;
-
 async function tvl(timestamp, block) {
-  console.log("timestamp : ", timestamp);
-  console.log("block : ", block);
   // xAAVEa created at block 11338426
   let xaaveaFundHoldings = ethers.BigNumber.from("0");
   if (block >= 11338426) {
@@ -481,21 +476,6 @@ async function tvl(timestamp, block) {
     .formatUnits(combinedXu3lpcSusd, 0)
     .split(".")[0];
 
-  console.log("formatAave : ", ethers.utils.formatUnits(formatAave));
-  console.log("formatBnt : ", ethers.utils.formatUnits(formatBnt));
-  console.log("formatInch : ", ethers.utils.formatUnits(formatInch));
-  console.log("formatKnc : ", ethers.utils.formatUnits(formatKnc));
-  console.log("xsnxaSnx, : ", ethers.utils.formatUnits(formatXsnxaSnx));
-  console.log("xsnxaEth : ", ethers.utils.formatUnits(formatXsnxaEth));
-  console.log(
-    "xsnxaEthrsi6040 : ",
-    ethers.utils.formatUnits(formatXsnxaEthrsi6040)
-  );
-  console.log("formatUsdc : ", ethers.utils.formatUnits(formatUsdc));
-  console.log("formatDai : ", ethers.utils.formatUnits(formatDai));
-  console.log("formatUsdt : ", ethers.utils.formatUnits(formatUsdt));
-  console.log("formatSusd : ", ethers.utils.formatUnits(formatSusd));
-
   let balances = {
     [aaveAddr]: formatAave, // AAVE
     [bntAddr]: formatBnt, // BNT
@@ -512,8 +492,6 @@ async function tvl(timestamp, block) {
 
   return balances;
 }
-
-tvl(testTs, testBlock);
 
 /*==================================================
   Exports
