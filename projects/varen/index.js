@@ -29,8 +29,8 @@ async function tvl(timestamp, block) {
 }
 
 module.exports = {
-  name: 'LINKSWAP',
-  token: 'YFL',
+  name: 'Varen',
+  token: 'VRN',
   category: 'dexes',
   start: 1606392528, // 11/26/2020 @ 12:08:48am (UTC)
   tvl,
