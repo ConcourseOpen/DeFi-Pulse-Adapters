@@ -25,13 +25,13 @@ async function tvl(timestamp, block) {
       }, {})
   );
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
-  name: 'LINKSWAP',
-  token: 'YFL',
-  category: 'dexes',
+  name: 'Varen',
+  token: 'VRN',
+  category: 'DEXes',
   start: 1606392528, // 11/26/2020 @ 12:08:48am (UTC)
   tvl,
 };
