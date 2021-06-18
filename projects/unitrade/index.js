@@ -56,7 +56,7 @@ async function tvl(_, block) {
   balances = balances.reduce((acc, item) => {
     return Object.assign(acc, { [item.input.target]: [item.output] });
   }, {});
-  //fetching first 10 gateway tokens and formatting output
+  //fetching first 10 gateway tokens and formatting output (temp fix until we can fetch addedTokens.length )
   const gatewayTokens = (
     await sdk.api.abi.multiCall({
       abi: gatewayAbi.abi.filter((item) => item.name === "tokens")[0],
