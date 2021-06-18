@@ -79,7 +79,7 @@ async function tvl(_, block) {
       block,
     })
   ).output;
-  //combinining balance from orderbook and gateway
+  //combining balance from orderbook and gateway
   gatewayBalances.forEach((balance) => {
     if (!balances[balance.input.target]) {
       balances[balance.input.target] = [balance.output];
@@ -96,10 +96,10 @@ async function tvl(_, block) {
   let ethBalanceGateway = (
     await sdk.api.eth.getBalance({ target: UNITRADE_BRIDGE, block })
   ).output;
-  const combinedBalances =
+  const combinedETHBalances =
     parseInt(ethBalanceGateway) + parseInt(ethBalanceOrderbook);
 
-  balances["0x0000000000000000000000000000000000000000"] = combinedBalances;
+  balances["0x0000000000000000000000000000000000000000"] = combinedETHBalances;
 
   return balances;
 }
