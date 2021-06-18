@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'DefireX',
+  name: 'DeFireX',
   token: 'DFX',
   category: 'Assets',
   start: 1599810285 , // using DefireX contract creation date
