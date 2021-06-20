@@ -91,10 +91,7 @@ const liquidityPools = [
   'V_SUSHI_USDC_WETH',
   'V_SUSHI_USDC_WETH_#V1',
   'V_UNI_WETH_MCAT20',
-  'V_SUSHI_WBTC_WETH_#V2',
   'V_SUSHI_WBTC_WETH_#V1',
-  'V_SUSHI_USDC_WETH_#V2',
-  'V_SUSHI_WETH_USDT_#V2',
   'V_SUSHI_DAI_WETH_#V3',
 ]
 
