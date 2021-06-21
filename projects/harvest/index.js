@@ -354,7 +354,7 @@
     }
 
     console.table(assetAmountStrings)
-    return assetAmountStrings
+    return (await sdk.api.util.toSymbols(assetAmountStrings)).output;
   }
 
 /*==================================================
