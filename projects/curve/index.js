@@ -5,6 +5,7 @@
 const sdk = require("../../sdk");
 const _ = require("underscore");
 _.flatMap = _.compose(_.flatten, _.map);
+const BN = require('bignumber.js');
 
 const abi = require("./abi.json");
 const { object } = require("underscore");
@@ -17,6 +18,11 @@ const CurveAddressProvider = "0x0000000022d53366457f9d5e68ec105046fc4383";
 const etherAddress = "0x0000000000000000000000000000000000000000";
 const curveEtherAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 const CurveRegistryStart = 11218787;
+
+const factoryAddress = "0x0959158b6040D32d04c301A72CBFD6b39E21c9AE";
+const factoryStartBlock = 11942404;
+
+const triCrypto = "0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5";
 
 /*==================================================
   TVL
@@ -54,6 +60,8 @@ async function tvl(timestamp, block) {
   ];
 
   let registryStart = block > CurveRegistryStart;
+  let factoryStart = block > factoryStartBlock;
+
   let balances = {};
   balances[curveEtherAddress] = 0;
   balances["0x6B175474E89094C44Da98b954EedeAC495271d0F"] = 0;
@@ -90,65 +98,71 @@ async function tvl(timestamp, block) {
     ).output : curvePools[i];
     poolInfo[poolAddress] = {};
 
-    for (let x = 0; ; x++) {
-      try {
-        let coin = await sdk.api.abi.call({
-          block,
-          target: poolAddress,
-          abi: abi["coins128"],
-          params: x,
-        });
+    let coins = (await sdk.api.abi.call({
+      block,
+      target: CurveRegistryAddress,
+      abi: abi["get_coins"],
+      params: poolAddress
+    })).output;
 
-        if (coin.output) {
-          let balance = await sdk.api.abi.call({
-            block,
-            target: poolAddress,
-            abi: abi["balances128"],
-            params: x,
-          });
-          if (balance.output) {
-            poolInfo[poolAddress][coin.output] = balance.output;
-          }
-        }
-      } catch (e) {
-        try {
-          let coin = await sdk.api.abi.call({
-            block,
-            target: poolAddress,
-            abi: abi["coins256"],
-            params: x,
-          });
+    let coinBalances = (await sdk.api.abi.call({
+      block,
+      target: CurveRegistryAddress,
+      abi: abi["get_balances"],
+      params: poolAddress
+    })).output
 
-          if (coin.output) {
-            let balance = await sdk.api.abi.call({
-              block,
-              target: poolAddress,
-              abi: abi["balances256"],
-              params: x,
-            });
-            if (balance.output) {
-              poolInfo[poolAddress][coin.output] = balance.output;
-            }
-          }
-        } catch (e) {
-          break;
-        }
+    for (let i = 0; i < coins.length; i++) {
+      let coin = coins[i];
+      let balance = coinBalances[i];
+      if (coin !== "0x0000000000000000000000000000000000000000") {
+        balances[coin] = balances[coin] ? new BN(balances[coin]).plus(balance) : balance
       }
     }
   }
 
-  let poolKeys = Object.keys(poolInfo);
-  for (let i = 0; i < poolKeys.length; i++) {
-    let coinKeys = Object.keys(poolInfo[poolKeys[i]]);
+  if (factoryStart) {
+    poolCount = (
+        await sdk.api.abi.call({
+          block,
+          target: factoryAddress,
+          abi: abi["pool_count"],
+        })
+      ).output
 
-    for (let x = 0; x < coinKeys.length; x++) {
-      if (!balances[coinKeys[x]]) balances[coinKeys[x]] = 0;
+  for (let i = 0; i < poolCount; i++) {
+    let poolAddress = (
+      await sdk.api.abi.call({
+        block,
+        target: factoryAddress,
+        abi: abi["pool_list"],
+        params: i,
+      })
+    ).output;
+    poolInfo[poolAddress] = {};
 
-      balances[coinKeys[x]] = String(
-        parseFloat(balances[coinKeys[x]]) +
-          parseFloat(poolInfo[poolKeys[i]][coinKeys[x]])
-      );
+    let coins = (await sdk.api.abi.call({
+      block,
+      target: factoryAddress,
+      abi: abi["get_coinsf"],
+      params: poolAddress
+    })).output;
+
+    let coinBalances = (await sdk.api.abi.call({
+      block,
+      target: factoryAddress,
+      abi: abi["get_balancesf"],
+      params: poolAddress
+    })).output
+
+    for (let i = 0; i < coins.length; i++) {
+      let coin = coins[i];
+      let balance = coinBalances[i];
+      if (coin !== "0x0000000000000000000000000000000000000000") {
+        balances[coin] = balances[coin] ? new BN(balances[coin]).plus(balance) : balance
+      }
     }
+  }
   }
 
   delete balances['0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490'];
