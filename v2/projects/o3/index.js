@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'O3 Swap Token', // project name
+  name: 'O3 Swap', // project name
   token: 'O3', // null, or token symbol if project has a custom token
   category: 'Assets', // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1614589793,
