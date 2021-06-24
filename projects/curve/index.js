@@ -96,7 +96,7 @@ async function tvl(timestamp, block) {
         params: i,
       })
     ).output : curvePools[i];
-    poolInfo[poolAddress] = {};
+    poolInfo[poolAddress] = true;
 
     let coins = (await sdk.api.abi.call({
       block,
@@ -139,7 +139,10 @@ async function tvl(timestamp, block) {
         params: i,
       })
     ).output;
-    poolInfo[poolAddress] = {};
+    if (poolInfo[poolAddress]) {
+      continue;
+    }
+    poolInfo[poolAddress] = true;
 
     let coins = (await sdk.api.abi.call({
       block,
