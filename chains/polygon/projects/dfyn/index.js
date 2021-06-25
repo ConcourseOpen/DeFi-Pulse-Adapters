@@ -1,6 +1,6 @@
 module.exports = {
     /* Project Metadata */
-    name: "Dfyn",
+    name: "Dfyn Network",
     token: "DFYN",
     chain: 'polygon',
     category: "DEXes",
