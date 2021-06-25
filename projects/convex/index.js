@@ -140,6 +140,6 @@ module.exports = {
   name: 'Convex Finance', // project name
   token: "CVX",              // null, or token symbol if project has a custom token
   category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-  start: 12457381,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
+  start: 1621296000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl                       // tvl adapter
 }
