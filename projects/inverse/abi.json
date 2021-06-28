@@ -1,44 +1,47 @@
 {
-  "getTrackedAssets": {
+  "getAllMarkets": {
+    "constant": true,
     "inputs": [],
-    "name": "getTrackedAssets",
+    "name": "getAllMarkets",
     "outputs": [
       {
-        "internalType": "address[]",
-        "name": "trackedAssets_",
+        "internalType": "contract CToken[]",
+        "name": "",
         "type": "address[]"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "signature": "0xb0772d0b"
   },
-  "token0": {
+  "underlying": {
     "constant": true,
     "inputs": [],
-    "name": "token0",
+    "name": "underlying",
     "outputs": [
       {
-        "internalType": "address",
         "name": "",
         "type": "address"
       }
     ],
     "payable": false,
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "signature": "0x6f307dc3"
   },
-  "token1": {
+  "getCash": {
     "constant": true,
     "inputs": [],
-    "name": "token1",
+    "name": "getCash",
     "outputs": [
       {
-        "internalType": "address",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "payable": false,
+    "signature": "0x3b1d21a2",
     "stateMutability": "view",
     "type": "function"
   },
@@ -56,25 +59,14 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "getReserves": {
+  "supply": {
     "constant": true,
     "inputs": [],
-    "name": "getReserves",
+    "name": "supply",
     "outputs": [
       {
-        "internalType": "uint112",
-        "name": "_reserve0",
-        "type": "uint112"
-      },
-      {
-        "internalType": "uint112",
-        "name": "_reserve1",
-        "type": "uint112"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_blockTimestampLast",
-        "type": "uint32"
+        "name": "",
+        "type": "uint256"
       }
     ],
     "payable": false,
