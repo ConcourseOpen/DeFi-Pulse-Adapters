@@ -161,24 +161,18 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
 
 /**
  *
- * @param {Number} block
  * @param {Number} timestamp
- * @param {Object} project
+ * @param {String} depositor
  * @returns {Promise<*>}
  * @private
  */
-async function _testStakingAdapter(block, timestamp, project) {
+async function _testStakingAdapter(timestamp, depositor) {
 
   try {
     return (
       await axios({
-        method: 'POST',
-        url: `${$indexerHost}/test-staking-tvl`,
-        data: {
-          block,
-          project,
-          timestamp,
-        }
+        method: 'GET',
+        url: `${$indexerHost}/api/project/${depositor}/staking?timestamp=${timestamp}`,
       })
     ).data;
   } catch(error) {
@@ -279,13 +273,12 @@ module.exports = {
       }),
       /**
        *
-       * @param {Number} block
        * @param {Number} timestamp
-       * @param {Object} project
+       * @param {String} depositor
        * @returns {Promise<*>}
        */
-      testStakingAdapter: ((block, timestamp, project) => {
-        return _testStakingAdapter(block, timestamp, project);
+      testStakingAdapter: ((timestamp, depositor) => {
+        return _testStakingAdapter(timestamp, depositor);
       }),
       /**
        *

@@ -6,7 +6,6 @@ const shell = require('shelljs');
 const sdk = require('../../sdk');
 const BigNumber = require('bignumber.js');
 
-const maxTokens = 1;
 const balanceCallTimeLimit = 1000 * 60 * 5;
 let testResult = null;
 
@@ -20,6 +19,7 @@ let testResult = null;
  */
 const _run = async (stakingAdapter, timeUnit = 'day', timeOffset = 0) => {
   try {
+    let addresses = [];
     let timestamp;
 
     if (typeof timeUnit === 'number') {
@@ -28,13 +28,23 @@ const _run = async (stakingAdapter, timeUnit = 'day', timeOffset = 0) => {
       timestamp = moment().utcOffset(0).startOf(timeUnit).add(timeOffset, timeUnit).unix();
     }
 
-    let point = await sdk.api.util.lookupBlock(timestamp);
+    if (!Array.isArray(stakingAdapter.address)) {
+      addresses = [stakingAdapter.address];
+    }
 
-    let tvl = await sdk.api.util.testStakingAdapter(point.block, timestamp, stakingAdapter);
+    const tvl = await Promise.all(addresses.map(async (address) => {
+      const data = await sdk.api.util.testStakingAdapter(timestamp, address);
+
+      return {
+        depositAddress: address,
+        ...data,
+      }
+    }));
+
     return {
-      ...point,
-      tvl
-    };
+      timestamp,
+      tvl,
+    }
   } catch (error) {
     console.error(error);
   }
@@ -60,29 +70,29 @@ module.exports = async (stakingAdapter, timeUnit, timeOffset = 0) => {
     const projectRun = await _run(stakingAdapter, timeUnit, timeOffset);
     testResult = projectRun;
     const tvl = projectRun.tvl;
-    chai.expect(Object.keys(tvl).length).to.be.at.least(maxTokens);
-    chai.expect(tvl).to.be.an('array');
 
-    _.each(tvl, (token) => {
-      const balance = BigNumber(token.balance).toNumber();
-      const price = BigNumber(token.price).toNumber();
+    chai.expect(tvl).to.be.an('array');
+    chai.expect(tvl.length).to.be.at.least(1);
+
+    _.each(tvl, ({ depositAddress, timestamp, block, balance }) => {
+      chai.expect(depositAddress).to.be.a('string');
+
+      chai.expect(timestamp).to.be.a('number');
+      chai.expect(timestamp).to.be.finite;
+
+      chai.expect(block).to.be.a('number');
+      chai.expect(block).to.be.finite;
 
       chai.expect(balance).to.be.a('number');
       chai.expect(balance).to.be.finite;
       chai.expect(balance).to.be.at.least(0);
-
-      chai.expect(price).to.be.a('number');
-      chai.expect(price).to.be.finite;
-      chai.expect(price).to.be.at.least(0);
-
-      chai.expect(token.contract).to.be.a('string');
-      chai.expect(token.symbol).to.be.a('string');
-    });
+    })
   });
+
 
   afterEach('save staking adapter output', () => {
     const time = moment.unix(testResult.timestamp).utcOffset(0).format();
-    const path = `v2/output/${stakingAdapter.name}/staking-tvl`;
+    const path = `eth2.0/output/${stakingAdapter.name}/staking-tvl`;
     const name = `${time}.json`;
 
     shell.mkdir('-p', path);

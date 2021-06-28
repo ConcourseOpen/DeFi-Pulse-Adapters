@@ -7,26 +7,26 @@ const getDirectories = source => readdirSync(source).map(name => join(source, na
 
 const args = argv.option([
   {
-    name: 'project',
-    short: 'p',
+    name: 'validator',
+    short: 'v',
     type: 'string',
-    description: 'When available, an individual project (specified by directory name in projects) to run test on, defaults to all.',
-    example: "'npm run test-project -- --project=loopring'"
+    description: 'When available, an individual validator (specified by directory name in validators) to run test on, defaults to all.',
+    example: "'npm run test-validator -- --validator=piedao'"
   },
   {
     name: 'timestamp',
     short: 'ts',
     type: 'number',
     description: 'When available, defines a unix timestamp to run the test at, defaults to latest.',
-    example: "'npm run test-project -- --project=loopring -- --timestamp=1583020800'"
+    example: "'npm run test-validator -- --validator=piedao -- --timestamp=1602667372'"
   }
 ]).run();
 
-const projects = args.options.project ? [args.options.project] : getDirectories('v2/projects').map((dir) => dir.split('/')[dir.split('/').length - 1]);
+const validators = args.options.validator ? [args.options.validator] : getDirectories('eth2.0/validators').map((dir) => dir.split('/')[dir.split('/').length - 1]);
 
 module.exports = {
-  projects: _.map(projects, (project) => {
-    let path = `v2/projects/${project}`;
+  validators: _.map(validators, (validator) => {
+    let path = `eth2.0/validators/${validator}`;
     let dataObj = {};
 
     try {
@@ -34,17 +34,12 @@ module.exports = {
         ...require(`../../${path}`)
       }
     } catch (error) {
-      if (error.code === 'MODULE_NOT_FOUND') {
-        path = `projects/${project}`;
-        dataObj = {
-          ...require(`../../${path}`)
-        }
-      }
+      console.log(error.message);
     }
 
     return {
       path,
-      project,
+      validator,
       ...dataObj
     };
   }),
