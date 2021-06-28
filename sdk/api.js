@@ -317,6 +317,15 @@ module.exports = {
     }),
     /**
      *
+     * @param {Number} timestamp
+     * @param {String} project
+     * @returns {Promise<*>}
+     */
+    testStakingAdapter: ((timestamp, depositor) => {
+      return _testStakingAdapter(timestamp, depositor);
+    }),
+    /**
+     *
      * @param {function} func
      * @returns {boolean}
      */
