@@ -172,7 +172,7 @@ async function _testStakingAdapter(timestamp, depositor) {
     return (
       await axios({
         method: 'GET',
-        url: `${$indexerHost}/api/project/${depositor}/staking?timestamp=${timestamp}`,
+        url: `${$indexerHost}/test-eth2.0-staking?timestamp=${timestamp}&depositor=${depositor}`,
       })
     ).data;
   } catch(error) {
