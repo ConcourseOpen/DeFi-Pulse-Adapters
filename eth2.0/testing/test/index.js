@@ -4,13 +4,13 @@ const args = require('../args');
 const run = require('../run');
 const spotTestCount = 10;
 
-_.each(args.projects, function(projectAdapter) {
-  describe(`${projectAdapter.name} project adapter running & output format`, function () {
+_.each(args.validators, function(stakingAdapter) {
+  describe(`${stakingAdapter.name} eth2.0 staking adapter running & output format`, function () {
     describe('runs for a variety of points at different times', function() {
       this.bail(true);
 
       const latestDay = moment().utcOffset(0).add(-10, 'days').startOf('day').unix();
-      const startDay = moment.unix(projectAdapter.start).utcOffset(0).startOf('day').unix();
+      const startDay = moment.unix(stakingAdapter.start).utcOffset(0).startOf('day').unix();
       const diff = latestDay - startDay;
       const step = diff / spotTestCount;
       let spotTests = _.range(latestDay, startDay + 10, -step);
@@ -20,15 +20,16 @@ _.each(args.projects, function(projectAdapter) {
 
       spotTests = _.uniq(spotTests);
 
-      run(projectAdapter, 'hour', 0);
-      run(projectAdapter, 'hour', -12);
-      run(projectAdapter, 'hour', -36);
-      run(projectAdapter, 'hour', -72);
+      run(stakingAdapter, 'hour', 0);
+      run(stakingAdapter, 'hour', -12);
+      run(stakingAdapter, 'hour', -36);
+      run(stakingAdapter, 'hour', -72);
 
       _.each(spotTests, (timestamp) => {
-        run(projectAdapter, timestamp, 0,);
+        run(stakingAdapter, timestamp, 0,);
       });
-      run(projectAdapter, startDay < projectAdapter.start ? startDay + 86400 : startDay);
+
+      run(stakingAdapter, startDay < stakingAdapter.start ? startDay + 86400 : startDay);
     });
   });
 });
