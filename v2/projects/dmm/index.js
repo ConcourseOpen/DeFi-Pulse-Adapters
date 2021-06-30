@@ -50,7 +50,7 @@ module.exports = {
             keys: [],
             fromBlock: 12178218
           },
-          transform: (poolLog) => `0x${poolLog.data.slice(64 - 40 + 2, 64 + 2)}`,
+          transform: null,
         },
         checkETHBalance: true,
       }
