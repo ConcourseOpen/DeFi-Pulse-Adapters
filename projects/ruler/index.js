@@ -87,7 +87,7 @@
     name: 'Ruler Protocol',
     website: "https://rulerprotocol.com",
     token: 'RULER',
-    category: 'lending',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1614757648,         // Wednesday, March 3, 2021 7:47:28 AM UTC
+    category: 'Lending',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    start: 1614857648,         // Wednesday, March 3, 2021 7:47:28 AM UTC
     tvl,                       // tvl adapter
   }
