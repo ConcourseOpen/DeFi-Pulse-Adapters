@@ -7,18 +7,50 @@ module.exports = {
     /*fetching token balances */
     tokenHolderMap: [
       {
-            tokens: async () => {
-              const allTokens = await sdk.api.util.tokenList();
-              return allTokens.map(token => token.contract);
+            tokens: {
+          pullFromPools: true,
+          abi: [
+            {
+              constant: true,
+              inputs: [],
+              name: "token1",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address"
+                }
+              ],
+              payable: false,
+              stateMutability: "view",
+              type: "function"
+            },
+            {
+              constant: true,
+              inputs: [],
+              name: "token0",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address"
+                }
+              ],
+              payable: false,
+              stateMutability: "view",
+              type: "function"
+            }
+          ]
             },
         holders: {
           pullFromLogs: true,
           logConfig: {
             target: '0x833e4083B7ae46CeA85695c4f7ed25CDAd8886dE',
-            topic: 'poolCreated(uint256,uint256)',
+            topic: 'poolCreated(address,address,address,uint32,uint256)',
+            keys: [],
             fromBlock: 12178218
           },
-          transform: null,
+          transform: (poolLog) => `0x${poolLog.data.slice(64 - 40 + 2, 64 + 2)}`,
         },
         checkETHBalance: true,
       }
