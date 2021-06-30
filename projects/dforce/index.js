@@ -191,7 +191,7 @@
       balances[asset] = BigNumber(balances[asset] || 0).plus(lockedDetails.output || 0).toFixed()
     });
 
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 /*==================================================
