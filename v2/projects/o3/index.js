@@ -13,7 +13,7 @@ module.exports = {
       '0xee9801669c6138e84bd50deb500827b776777d28', // O3
     ],
     holders: [
-      '0x250e76987d838a75310c34bf422ea9f1AC4Cc906', // Treasury 1
+      '0x250e76987d838a75310c34bf422ea9f1AC4Cc906',
     ],
   }],
 };
