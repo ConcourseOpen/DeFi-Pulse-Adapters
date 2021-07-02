@@ -202,7 +202,7 @@ module.exports = {
   name: 'dForce',
   website: 'https://dforce.network/',
   token: 'DF',
-  category: 'lending',
+  category: 'Lending',
   start: 1564165044, // Jul-27-2019 02:17:24 AM +UTC
   tvl,
   term: '1 block',
