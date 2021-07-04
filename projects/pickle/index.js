@@ -56,7 +56,7 @@ const pTokens = {
     contract: "0x09FC573c502037B149ba87782ACC81cF093EC6ef",
     created: 10960613,
   },
-  pUNIWBTC: {
+  "pUNIWBTC": {
     underlying: "UNIV2_ETH_WBTC",
     decimals: 18,
     contract: "0xc80090AA05374d336875907372EE4ee636CBC562",
@@ -92,19 +92,19 @@ const pTokens = {
     contract: "0x3261D9408604CC8607b687980D40135aFA26FfED",
     created: 11478790,
   },
-  pUNIBAC: {
+  "pUNIBAC": {
     underlying: "UNIV2_BAC_DAI",
     decimals: 18,
     contract: "0x2350fc7268F3f5a6cC31f26c38f706E41547505d",
     created: 11601177,
   },
-  pSLPMIC: {
+  "pSLPMIC": {
     underlying: "SLP_MIC_USDT",
     decimals: 18,
     contract: "0xC66583Dd4E25b3cfc8D881F6DbaD8288C7f5Fd30",
     created: 11616982,
   },
-  pSLPMIS: {
+  "pSLPMIS": {
     underlying: "SLP_MIS_USDT",
     decimals: 18,
     contract: "0x0faa189afe8ae97de1d2f01e471297678842146d",
@@ -122,6 +122,136 @@ const pTokens = {
     contract: "0x6949Bb624E8e8A90F87cD2058139fcd77D2F3F87",
     created: 11044219,
   },
+  pUNIMIRUST: {
+    underlying: "UNIV2_MIR_UST",
+    decimals: 18,
+    contract: "0x3Bcd97dCA7b1CED292687c97702725F37af01CaC",
+    created: 11888779,
+  },
+  pUNImTSLAUST: {
+    underlying: "UNIV2_mTSLA_UST",
+    decimals: 18,
+    contract: "0xaFB2FE266c215B5aAe9c4a9DaDC325cC7a497230",
+    created: 12053691,
+  },
+  pUNImAAPLUST: {
+    underlying: "UNIV2_mAAPL_UST",
+    decimals: 18,
+    contract: "0xF303B35D5bCb4d9ED20fB122F5E268211dEc0EBd",
+    created: 12055550,
+  },
+  pUNImQQQUST: {
+    underlying: "UNIV2_QQQ_UST",
+    decimals: 18,
+    contract: "0x7C8de3eE2244207A54b57f45286c9eE1465fee9f",
+    created: 12055602,
+  },
+  pUNImSLVUST: {
+    underlying: "UNIV2_mSLV_UST",
+    decimals: 18,
+    contract: "0x1ed1fD33b62bEa268e527A622108fe0eE0104C07",
+    created: 12055633,
+  },
+  pUNImBABAUST: {
+    underlying: "UNIV2_mBABA_UST",
+    decimals: 18,
+    contract: "0x1CF137F651D8f0A4009deD168B442ea2E870323A",
+    created: 12056041,
+  },
+  pSLPSUSHIETH: {
+    underlying: "SLP_SUSHI_ETH",
+    decimals: 18,
+    contract: "0xECb520217DccC712448338B0BB9b08Ce75AD61AE",
+    created: 12107605,
+  },
+  pUNIFEITRIBE: {
+    underlying: "UNIV2_FEI_TRIBE",
+    decimals: 18,
+    contract: "0xC1513C1b0B359Bc5aCF7b772100061217838768B",
+    created: 12185238,
+  },
+  pSLPYVBOOSTETH: {
+    underlying: "SLP_YVBOOST_ETH",
+    decimals: 18,
+    contract: "0xCeD67a187b923F0E5ebcc77C7f2F7da20099e378",
+    created: 12205849,
+  },
+  pUNILUSDETH: {
+    underlying: "UNIV2_LUSD_ETH",
+    decimals: 18,
+    contract: "0x927e3bCBD329e89A8765B52950861482f0B227c4",
+    created: 12254395,
+  },
+  pSUSHIALCX: {
+    underlying: "SLP_SUSHI_ALCX",
+    decimals: 18,
+    contract: "0x9eb0aAd5Bb943D3b2F7603Deb772faa35f60aDF9",
+    created: 12294044,
+  },
+  pYEARNUSDCV2: {
+    underlying: "USDC",
+    decimals: 6,
+    contract: "0xEB801AB73E9A2A482aA48CaCA13B1954028F4c94",
+    created: 12389759	,
+  },
+  pYEARNCRVLUSD: {
+    underlying: "lusdCRV",
+    decimals: 18,
+    contract: "0x4fFe73Cf2EEf5E8C8E0E10160bCe440a029166D2",
+    created: 12389563,
+  },
+  /*Larry pls help
+
+  pCOMETHWETHUSDC: {
+    underlying: "comethwethusdc",
+    decimals: 18,
+    contract: "0x9eD7e3590F2fB9EEE382dfC55c71F9d3DF12556c",
+    created: 13624727,
+  },
+  pCOMETHPICKLEMUST: {
+    underlying: "comethpicklemust",
+    decimals: 18,
+    contract: "0x7512105DBb4C0E0432844070a45B7EA0D83a23fD",
+    created: 15164840,
+  },
+  pCOMETHMATICMUST: {
+    underlying: "comethmaticmust",
+    decimals: 18,
+    contract: "0x91bcc0BBC2ecA760e3b8A79903CbA53483A7012C",
+    created: 15164454,
+  },
+  pAAVEDAI: {
+    underlying: "aavedai",
+    decimals: 18,
+    contract: "0x0519848e57Ba0469AA5275283ec0712c91e20D8E",
+    created: 14164165,
+  },
+  pCRVAAVE: {
+    underlying: "crvaave",
+    decimals: 18,
+    contract: "0x261b5619d85B710f1c2570b65ee945975E2cC221",
+    created: 14172938,
+  },
+  pSLPETHUSDT: {
+    underlying: "sushiethusdt",
+    decimals: 18,
+    contract: "0x80aB65b1525816Ffe4222607EDa73F86D211AC95",
+    created: 15165384,
+  },
+  pSLPMATICETH: {
+    underlying: "sushimaticeth",
+    decimals: 18,
+    contract: "0xd438Ba7217240a378238AcE3f44EFaaaF8aaC75A",
+    created: 15208969,
+  },
+  pQUICKMIMATICUSDC: {
+    underlying: "quickmimaticusdc",
+    decimals: 18,
+    contract: "0x74dC9cdCa9a96Fd0B7900e6eb953d1EA8567c3Ce",
+    created: 16364140,
+  },
+  
+  */
 };
 
 const uniPools = {
@@ -154,6 +284,54 @@ const uniPools = {
     created: 11355401,
     token0: "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a",
     token1: "0x6b175474e89094c44da98b954eedeac495271d0f",
+  },
+  UNIV2_MIR_UST: {
+    contract: "0x87dA823B6fC8EB8575a235A824690fda94674c88",
+    created: 11381053,
+    token0: "0x09a3ecafa817268f77be1283176b946c4ff2e608",
+    token1: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+  },
+  UNIV2_mTSLA_UST: {
+    contract: "0x5233349957586A8207c52693A959483F9aeAA50C",
+    created: 11380570,
+    token0: "0x21ca39943e91d704678f5d00b6616650f066fd63",
+    token1: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+  },
+  UNIV2_mAAPL_UST: {
+    contract: "0xB022e08aDc8bA2dE6bA4fECb59C6D502f66e953B",
+    created: 11380524,
+    token0: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+    token1: "0xd36932143f6ebdedd872d5fb0651f4b72fd15a84",
+  },
+  UNIV2_QQQ_UST: {
+    contract: "0x9E3B47B861B451879d43BBA404c35bdFb99F0a6c",
+    created: 11380653,
+    token0: "0x13b02c8de71680e71f0820c996e4be43c2f57d15",
+    token1: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+  },
+  UNIV2_mSLV_UST: {
+    contract: "0x860425bE6ad1345DC7a3e287faCBF32B18bc4fAe",
+    created: 11380858,
+    token0: "0x9d1555d8cB3C846Bb4f7D5B1B1080872c3166676",
+    token1: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+  },
+  UNIV2_mBABA_UST: {
+    contract: "0x676Ce85f66aDB8D7b8323AeEfe17087A3b8CB363",
+    created: 11380792,
+    token0: "0x56aa298a19c93c6801fdde870fa63ef75cc0af72",
+    token1: "0xa47c8bf37f92abed4a126bda807a7b7498661acd",
+  },
+  UNIV2_FEI_TRIBE: {
+    contract: "0x9928e4046d7c6513326cCeA028cD3e7a91c7590A",
+    created: 12125707,
+    token0: "0x956F47F50A910163D8BF957Cf5846D573E7f87CA",
+    token1: "0xc7283b66eb1eb5fb86327f08e1b5816b0720212b",
+  },
+  UNIV2_LUSD_ETH: {
+    contract: "0xF20EF17b889b437C151eB5bA15A47bFc62bfF469",
+    created: 12178599,
+    token0: "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
   },
   // Sushiswap Pools
   SLP_ETH_DAI: {
@@ -204,6 +382,64 @@ const uniPools = {
     token0: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     token1: "0xc5bddf9843308380375a611c18b50fb9341f502a",
   },
+  SLP_SUSHI_ETH: {
+    contract: "0x795065dCc9f64b5614C407a6EFDC400DA6221FB0",
+    created: 10829340,
+    token0: "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_YVBOOST_ETH: {
+    contract: "0x9461173740D27311b176476FA27e94C681b1Ea6b",
+    created: 12197654,
+    token0: "0x9d409a0a012cfba9b15f6d4b36ac57a46966ab9a",
+    token1: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  SLP_SUSHI_ALCX: {
+    contract: "0xC3f279090a47e80990Fe3a9c30d24Cb117EF91a8",
+    created: 11937674,
+    token0: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    token1: "0xdbdb4d16eda451d0503b854cf79d55697f90c8df",
+  },
+  /* Larry pls help
+  // Polygon Pools
+  comethwethusdc: {
+    contract: "0x1Edb2D8f791D2a51D56979bf3A25673D6E783232",
+    created: 11809952,
+    token0: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+    token1: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+  },
+  comethpicklemust: {
+    contract: "0xb0b5E3Bd18eb1E316bcD0bBa876570b3c1779C55",
+    created: 12103374,
+    token0: "0x2b88ad57897a8b496595925f43048301c37615da",
+    token1: "0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+  },
+  comethmaticmust: {
+    contract: "0x80676b414a905De269D0ac593322Af821b683B92",
+    created: 11877664,
+    token0: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+    token1: "0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f",
+  },
+  sushiethusdt: {
+    contract: "0xc2755915a85C6f6c1C0F3a86ac8C058F11Caa9C9",
+    created: 13067704,
+    token0: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+    token1: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+  },
+  sushimaticeth: {
+    contract: "0xc4e595acDD7d12feC385E5dA5D43160e8A0bAC0E",
+    created: 11333973,
+    token0: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+    token1: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+  },
+  quickmimaticusdc: {
+    contract: "0x160532D2536175d65C03B97b0630A9802c274daD",
+    created: 14026112,
+    token0: "0xa3fa99a148fa48d14ed51d610c367c61876997f1",
+    token1: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+  },
+
+  */
 };
 
 async function tvl(timestamp, block) {
@@ -226,6 +462,32 @@ async function tvl(timestamp, block) {
     pSLPMIS,
     pSLPYVECRV,
     pDAI,
+    pUNIMIRUST,
+    pUNImTSLAUST,
+    pUNImAAPLUST,
+    pUNImQQQUST,
+    pUNImSLVUST,
+    pUNImBABAUST,
+    pSLPSUSHIETH,
+    pUNIFEITRIBE,
+    pSLPYVBOOSTETH,
+    pUNILUSDETH,
+    pSUSHIALCX,
+    pYEARNUSDCV2,
+    pYEARNCRVLUSD,
+    /*Larry pls help
+
+    pCOMETHWETHUSDC,
+    pCOMETHPICKLEMUST,
+    pCOMETHMATICMUST,
+    pAAVEDAI,
+    pCRVAAVE,
+    pSLPETHUSDT,
+    pSLPMATICETH,
+    pQUICKMIMATICUSDC
+
+    */
+
   ] = await Promise.all([
     getUnderlying("psCRV-v2", block),
     getUnderlying("prenCRV", block),
@@ -245,6 +507,30 @@ async function tvl(timestamp, block) {
     getUniswapUnderlying("pSLPMIS", block),
     getUniswapUnderlying("pSLPYVECRV", block),
     getUnderlying("pDAI", block),
+    getUniswapUnderlying("pUNIMIRUST", block),
+    getUniswapUnderlying("pUNImTSLAUST", block),
+    getUniswapUnderlying("pUNImAAPLUST", block),
+    getUniswapUnderlying("pUNImQQQUST", block),
+    getUniswapUnderlying("pUNImSLVUST", block),
+    getUniswapUnderlying("pUNImBABAUST", block),
+    getUniswapUnderlying("pSLPSUSHIETH", block),
+    getUniswapUnderlying("pUNIFEITRIBE", block),
+    getUniswapUnderlying("pSLPYVBOOSTETH", block),
+    getUniswapUnderlying("pUNILUSDETH", block),
+    getUniswapUnderlying("pSUSHIALCX", block),
+    getUnderlying("pYEARNUSDCV2", block),
+    getUnderlying("pYEARNCRVLUSD", block),
+
+    /* Larry pls help
+    getUnderlying("pAAVEDAI", block),
+    getUnderlying("pCRVAAVE", block),
+    getUniswapUnderlying("pCOMETHWETHUSDC", block),
+    getUniswapUnderlying("pCOMETHPICKLEMUST", block),
+    getUniswapUnderlying("pCOMETHMATICMUST", block),
+    getUniswapUnderlying("pSLPETHUSDT", block),
+    getUniswapUnderlying("pSLPMATICETH", block),
+    getUniswapUnderlying("pQUICKMIMATICUSDC", block),
+    */
   ]);
 
   let balances = {
@@ -260,6 +546,11 @@ async function tvl(timestamp, block) {
       .plus(pSLPYFI[1])
       .plus(pSLPYVECRV[0])
       .plus(pstETHCRV) // Estimate
+      .plus(pSLPSUSHIETH[1])
+      .plus(pSLPYVBOOSTETH[1])
+      .plus(pUNILUSDETH[1])
+      .plus(pSUSHIALCX[0])
+      .plus(pSLPSUSHIETH[1])
       .toFixed(0),
 
     // DAI
@@ -269,11 +560,13 @@ async function tvl(timestamp, block) {
       .plus(pUNIBAC[1])
       .plus(psCRV) // Estimate
       .plus(p3CRV) // Estimate
+      .plus(pYEARNCRVLUSD) // Estimate
       .toFixed(0),
 
     // USDC
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": pUNIUSDC[0]
       .plus(pSLPUSDC[0])
+      .plus(pYEARNUSDCV2)
       .toFixed(0),
 
     // USDT
@@ -291,6 +584,24 @@ async function tvl(timestamp, block) {
     // YFI
     "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e": pSLPYFI[0].toFixed(0),
 
+    // SUSHI
+    "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2": pSLPSUSHIETH[0].toFixed(0),
+
+    // FEI
+    "0x956F47F50A910163D8BF957Cf5846D573E7f87CA": pUNIFEITRIBE[0].toFixed(0),
+
+    // TRIBE
+    "0xc7283b66eb1eb5fb86327f08e1b5816b0720212b": pUNIFEITRIBE[1].toFixed(0),
+
+    // YVBOOST
+    "0x9d409a0a012cfba9b15f6d4b36ac57a46966ab9a": pSLPYVBOOSTETH[0].toFixed(0),
+
+    // LUSD
+    "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0": pUNILUSDETH[0].toFixed(0),
+
+    // ALCX
+    "0xdbdb4d16eda451d0503b854cf79d55697f90c8df": pSUSHIALCX[1].toFixed(0),
+
     // BAC
     "0x3449fc1cd036255ba1eb19d65ff4ba2b8903a69a": pUNIBAC[0].toFixed(0),
 
@@ -307,6 +618,73 @@ async function tvl(timestamp, block) {
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
       .times(BigNumber("10").pow(-10))
       .toFixed(0),
+
+    // MIR
+    "0x09a3ecafa817268f77be1283176b946c4ff2e608": pUNIMIRUST[0].toFixed(0), 
+    
+    // mTSLA
+    "0x21ca39943e91d704678f5d00b6616650f066fd63": pUNImTSLAUST[0].toFixed(0),
+
+    // mAAPL
+    "0xd36932143f6ebdedd872d5fb0651f4b72fd15a84": pUNImAAPLUST[0].toFixed(0),
+
+    // mQQQ
+    "0x13b02c8de71680e71f0820c996e4be43c2f57d15": pUNImQQQUST[0].toFixed(0),
+
+    // mSLV
+    "0x9d1555d8cB3C846Bb4f7D5B1B1080872c3166676": pUNImSLVUST[0].toFixed(0),
+
+    // mBABA
+    "0x56aa298a19c93c6801fdde870fa63ef75cc0af72": pUNImBABAUST[0].toFixed(0),
+
+    // UST
+    "0xa47c8bf37f92abed4a126bda807a7b7498661acd": pUNIMIRUST[1]
+      .plus(pUNImTSLAUST[1])
+      .plus(pUNImAAPLUST[1])
+      .plus(pUNImQQQUST[1])
+      .plus(pUNImSLVUST[1])
+      .plus(pUNImBABAUST[1])
+      .toFixed(0),
+
+    /* Larry pls help
+    // Polygon Tokens' addresses are different from ETH mainnet
+
+    // Polygon WETH
+    "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619": pCOMETHWETHUSDC[0]
+      .plus(pSLPETHUSDT[0])
+      .plus(pSLPMATICETH[1])
+      .toFixed(0),
+
+    // Polygon USDC
+    "0x2791bca1f2de4661ed88a30c99a7a9449aa84174": pCOMETHWETHUSDC[1]
+      .plus(pQUICKMIMATICUSDC[1])
+      .toFixed(0),
+
+    // Polygon PICKLE
+    "0x2b88ad57897a8b496595925f43048301c37615da": pCOMETHPICKLEMUST[0].toFixed(0),
+
+    // Polygon MUST
+    "0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f": pCOMETHPICKLEMUST[1]
+      plus(pCOMETHMATICMUST[1])
+      .toFixed(0),
+    
+    // Polygon MATIC
+    "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270": pCOMETHMATICMUST[0]
+      .plus(pSLPMATICETH[0])
+      .toFixed(0),
+    
+    // Polygon DAI
+    "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063": pAAVEDAI
+      plus(pCRVAAVE)
+      .toFixed(0),
+
+    // Polygon USDT
+    "0xc2132d05d31c914a87c6611c10748aeb04b58e8f": pSLPETHUSDT[1].toFixed(0),
+
+    // Polygon MIMATIC
+    "0xa3fa99a148fa48d14ed51d610c367c61876997f1": pQUICKMIMATICUSDC[0].toFixed(0),
+    
+    */
   };
   console.table(balances)
   return balances;
