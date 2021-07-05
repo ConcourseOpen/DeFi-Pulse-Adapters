@@ -1,5 +1,5 @@
 {
-  "networkAddress": "0x7C66550C9c730B6fdd4C03bc2e73c5462c5F7ACC",
+  "StorageAddress": "0xC8fb12402cB16970F3C5F4b48Ff68Eb9D1289301",
   "getReserves": {
     "constant": true,
     "inputs": [],

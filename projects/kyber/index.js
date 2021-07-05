@@ -16,7 +16,7 @@
 
     /* pull kyber market addresses */
     const reserveAddresses = (await sdk.api.abi.call({
-      target: abi['networkAddress'],
+      target: abi['storageAddress'], //cuz now reserves will be recorded on the storage contract
       abi: abi['getReserves'],
       block
     })).output;
