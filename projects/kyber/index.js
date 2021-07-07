@@ -15,23 +15,23 @@
     const balances = {};
 
     /* pull kyber market addresses */
-    const reserve1Addresses = (await sdk.api.abi.call({
-      target: abi['networkAddress'],
+    const reserveAddresses = (await sdk.api.abi.call({
+      target: abi['StorageAddress'],
       abi: abi['getReserves'],
       block
     })).output;
 
-    const reserve2Addresses =
-      block > 9003563
-        ? (
-            await sdk.api.abi.call({
-              target: abi["networkAddress2"],
-              abi: abi["getReserves"],
-              block,
-            })
-          ).output
-        : [];
-    const reserveAddresses = _.uniq(reserve1Addresses.concat(reserve2Addresses));
+    // const reserve2Addresses =
+    //   block > 9003563
+    //     ? (
+    //         await sdk.api.abi.call({
+    //           target: abi["networkAddress2"],
+    //           abi: abi["getReserves"],
+    //           block,
+    //         })
+    //       ).output
+    //     : [];
+    // const reserveAddresses = _.uniq(reserve1Addresses.concat(reserve2Addresses));
 
     const kyberTokens = (await sdk.api.util.kyberTokens()).output;
 
@@ -80,6 +80,6 @@
     name: 'Kyber',
     token: 'KNC',
     category: 'DEXes',
-    start: 1546560000,  // Jan-03-2019 11:37:38 AM +UTC
+    start: 1594003275,  // Jul-06-2020 02:41:15 AM +UTC
     tvl,
   };
