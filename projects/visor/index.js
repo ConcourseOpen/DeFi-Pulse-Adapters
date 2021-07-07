@@ -29,15 +29,22 @@ async function tvl(timestamp, block) {
     }
   ]
 
-  const logs = (
-    await sdk.api.util.getLogs({
+  const logs = await Promise.all([
+    sdk.api.util.getLogs({
       keys: ['data'],
       toBlock: block,
-      target: '0xC878c38F0Df509a833D10De892e1Cf7D361e3A67',
+      target: '0xC878c38F0Df509a833D10De892e1Cf7D361e3A67',  // Open beta factory
       fromBlock: 12615883,
       topic: 'HypervisorCreated(address,address,uint24,address,uint256)',
-    })
-  ).output
+    }).then(({ output }) => output),
+    sdk.api.util.getLogs({
+      keys: ['data'],
+      toBlock: block,
+      target: '0xd12fa3E3B60CFb96a735aB57a071F0f324860929',
+      fromBlock: 12767944,
+      topic: 'HypervisorCreated(address,address,uint24,address,uint256)',
+    }).then(({ output }) => output)
+  ]).then((output) => output.flat());
 
   const hypervisorAddresses = []
   const token0Addresses = []
