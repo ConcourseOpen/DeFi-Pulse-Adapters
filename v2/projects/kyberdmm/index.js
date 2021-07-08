@@ -1,9 +1,9 @@
 module.exports = {
     /* Project Metadata */
-    name: 'DmmExchange',
+    name: 'KyberDmmExchange',
     token: null,
     category: 'DEXes',
-    start: 1622961237, // @6-Jun-2021, 6:33:57 AM+UTC 
+    start: 1617606651, // @5-Apr-2021, 7:10:51 AM+UTC 
     /*fetching token balances */
     tokenHolderMap: [
       {
@@ -45,10 +45,10 @@ module.exports = {
         holders: {
           pullFromLogs: true,
           logConfig: {
-            target: '0x5f1fe642060b5b9658c15721ea22e982643c095c',
+            target: '0x833e4083B7ae46CeA85695c4f7ed25CDAd8886dE',
             topic: 'poolCreated(address,address,address,uint32,uint256)',
             keys: [],
-            fromBlock: 15968294
+            fromBlock: 12178218
           },
           transform: null,
         },
