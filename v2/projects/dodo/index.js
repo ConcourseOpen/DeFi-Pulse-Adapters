@@ -43,10 +43,8 @@ module.exports = {
     // DODO V2
     { // DODO Stable Pooling Factory
       tokens: async () => {
-        let tokens = (
-          await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')
-        ).data.map(item => item.address);
-        return tokens;
+        const tokens = (await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')).data;
+        return tokens.map(item => item.address);
       },
       holders: [
         '0x3058ef90929cb8180174d74c507176cca6835d73',
@@ -61,10 +59,8 @@ module.exports = {
 
     {// DODO Vending Machine Factory
       tokens: async () => {
-        let tokens = (
-          await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')
-        ).data.map(item => item.address);
-        return tokens;
+        const tokens = (await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')).data;
+        return tokens.map(item => item.address);
       },
       holders: {
         pullFromLogs: true,
@@ -80,10 +76,8 @@ module.exports = {
 
     { // DODO Private Pool Factory
       tokens: async () => {
-        let tokens = (
-          await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')
-        ).data.map(item => item.address);
-        return tokens;
+        const tokens = (await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet')).data;
+        return tokens.map(item => item.address);
       },
 
       holders: {
