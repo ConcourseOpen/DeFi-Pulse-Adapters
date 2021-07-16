@@ -26,6 +26,7 @@ module.exports = {
         '0x3911f80530595fbd01ab1516ab61255d75aeb066', // USD Pool Address
         '0xdec2157831D6ABC3Ec328291119cc91B337272b5', // VETH Pool Address
         '0xa6018520eaacc06c30ff2e1b3ee2c7c22e64196a', // alETH Pool Address
+        '0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7', // USDv2 Pool Address
       ],
     }
   ],
