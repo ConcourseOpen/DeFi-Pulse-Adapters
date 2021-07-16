@@ -253,11 +253,12 @@ module.exports = {
     },
     util: {
       getLogs: (options) => util('getLogs', { ...options }),
+      supportedTokens: () => util('supportedTokens'),
       tokenList: () => util('tokenList'),
       kyberTokens: () => util('kyberTokens'),
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
-      toSymbols: (data) => util('toSymbols', { data }),
+      toSymbols: (data, chain=null) => util('toSymbols', { data, chain }),
       unwrap: (options) => util('unwrap', { ...options }),
       lookupBlock: _lookupBlock,
       /**
@@ -297,11 +298,12 @@ module.exports = {
   },
   util: {
     getLogs: (options) => util('getLogs', { ...options }),
+    supportedTokens: () => util('supportedTokens'),
     tokenList: () => util('tokenList'),
     kyberTokens: () => util('kyberTokens'),
     getEthCallCount: () => util('getEthCallCount'),
     resetEthCallCount: () => util('resetEthCallCount'),
-    toSymbols: (data) => util('toSymbols', { data }),
+    toSymbols: (data, chain=null) => util('toSymbols', { data, chain }),
     unwrap: (options) => util('unwrap', { ...options }),
     lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
     /**
