@@ -151,10 +151,10 @@ function toBig(n, decimals = 0) {
 }
 
 function debug(o) {
-  // Object.entries(o).forEach(([k, v]) => {
-  //   console.log("%s=%s", k, v);
-  // });
-  // console.log();
+  Object.entries(o).forEach(([k, v]) => {
+    console.log("%s=%s", k, v);
+  });
+  console.log();
 }
 
 /*==================================================
