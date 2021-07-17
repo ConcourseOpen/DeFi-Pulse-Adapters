@@ -1,0 +1,30 @@
+{
+  "lastDebtLedgerEntry": {
+    "constant": true,
+    "inputs": [],
+    "name": "lastDebtLedgerEntry",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "issuanceRatio": {
+    "constant": true,
+    "inputs": [],
+    "name": "issuanceRatio",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
