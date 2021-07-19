@@ -20,7 +20,7 @@ const _ = require('underscore');
     let holderList = await axios.get('https://api.tranche.finance/api/v1/common/holder-address?network=ethereum');
     tokenList = tokenList.data.result;
     holderList = holderList.data.result;
-    
+
     const calls = [];
     _.each(tokenList, (token) => {
         _.each(holderList, (contract) =>{
@@ -58,6 +58,6 @@ const _ = require('underscore');
     name: 'TRANCHE',
     token: "SLICE",
     category: 'Derivatives',
-    start: 1574241665,
+    start: 1621340071,
     tvl,
   }
