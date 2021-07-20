@@ -55,7 +55,7 @@ const _ = require('underscore');
   ==================================================*/
 
   module.exports = {
-    name: 'TRANCHE',
+    name: 'Tranche',
     token: "SLICE",
     category: 'Derivatives',
     start: 1621340071,
