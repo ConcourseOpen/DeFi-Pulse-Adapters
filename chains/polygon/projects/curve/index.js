@@ -62,7 +62,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'Curve_Polygon',
+    name: 'Curve Finance_Polygon',
     token: 'CRV',
     category: 'DEXes',
     start: 1618858763,
