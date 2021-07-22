@@ -4,7 +4,7 @@ module.exports = {
   token: "DFX",
   chain: "polygon",
   category: "DEXes",
-  start: 16908169, // CADC pool creation tx: https://polygonscan.com/tx/0xdc7cc890a236653f4828aacb9d3fa79c17e896d7c7857206a4abbed398622bc4
+  start: 1626404432, // CADC pool creation timestamp
   /* required for fetching token balances */
   tokenHolderMap: [
     {
