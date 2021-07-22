@@ -3,7 +3,7 @@ module.exports = {
   name: 'DeFireX',
   token: 'DFX',
   category: 'Assets',
-  start: 1599810285 , // using DefireX contract creation date
+  start: 1617705653 , // using DefireX implementation contract creation date
   /* required for fetching token balances */
   tokenHolderMap: [
     {
