@@ -300,8 +300,9 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: "Curve Finance",
-  token: null,
+  token: "CRV",
   category: "DEXes",
   start: 1581138000, // 03/01/2020 @ 5:54pm UTC
+  chain: 'Multichain,Ethereum-Polygon',
   tvl,
 };
