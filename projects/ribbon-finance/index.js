@@ -51,7 +51,7 @@ async function tvl(timestamp, block) {
   let balances = {
     [weth]: ethCallVaultBalance,
     [wbtc]: wbtcCallVaultBalance,
-    [usdc]: ethPutVaultBalance + yearnEthPutVaultBalance,
+    [usdc]: Number(ethPutVaultBalance) + Number(yearnEthPutVaultBalance),
   };
 
   return balances;
