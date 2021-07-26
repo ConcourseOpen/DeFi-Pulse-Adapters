@@ -9,6 +9,6 @@ module.exports = {
   name: "Rari",
   token: "RGT",
   category: "assets",
-  start: 1594699200,
+  start: 1594699200, // July 14, 2020
   tvl,
 };
