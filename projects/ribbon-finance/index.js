@@ -8,6 +8,7 @@ const abi = require("./abi");
 const ethCallVault = "0x0fabaf48bbf864a3947bdd0ba9d764791a60467a";
 const wbtcCallVault = "0x8b5876f5B0Bf64056A89Aa7e97511644758c3E8c";
 const ethPutVault = "0x16772a7f4a3ca291C21B8AcE76F9332dDFfbb5Ef";
+const yearnEthPutVault = "0x8FE74471F198E426e96bE65f40EeD1F8BA96e54f";
 
 const weth = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const wbtc = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
@@ -39,16 +40,18 @@ async function tvl(timestamp, block) {
     ethCallVaultBalance,
     wbtcCallVaultBalance,
     ethPutVaultBalance,
+    yearnEthPutVaultBalance,
   ] = await Promise.all([
     getVaultTotalBalance(ethCallVault, block),
     getVaultTotalBalance(wbtcCallVault, block),
     getVaultTotalBalance(ethPutVault, block),
+    getVaultTotalBalance(yearnEthPutVault, block),
   ]);
 
   let balances = {
     [weth]: ethCallVaultBalance,
     [wbtc]: wbtcCallVaultBalance,
-    [usdc]: ethPutVaultBalance,
+    [usdc]: ethPutVaultBalance + yearnEthPutVaultBalance,
   };
 
   return balances;
