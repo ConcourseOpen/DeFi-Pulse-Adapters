@@ -1,23 +1,49 @@
-
 const sdk = require("../../../sdk");
 const abi = require("./abi");
 const { default: BigNumber } = require("bignumber.js");
 
-const fusePoolLens = '0x8dA38681826f4ABBe089643D2B3fE4C6e4730493'
-const fusePoolDirectory = '0x835482FE0532f169024d5E9410199369aAD5C77E'
-const rariGovernanceTokenSushiSwapDistributor = '0x1FA69a416bCF8572577d3949b742fBB0a9CD98c7'
-const sushiETHRGTPair = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
+const earnYieldPoolProxyManagerAddressesIncludingLegacy = [
+  '0x35DDEFa2a30474E64314aAA7370abE14c042C6e8',
+  '0x6dd8e1Df9F366e6494c2601e515813e0f9219A88',
+  '0x626d6979F3607d13051594d8B27a0A64E413bC11'
+]
+const earnETHPoolFundControllerAddressesIncludingLegacy = [
+  '0x3F4931A8E9D4cdf8F56e7E8A8Cfe3BeDE0E43657',
+  '0xD9F223A36C2e398B0886F945a7e556B41EF91A3C',
+  '0xa422890cbBE5EAa8f1c88590fBab7F319D7e24B6'
+]
+const earnDAIPoolControllerAddressesIncludingLegacy = [
+  '0xaFD2AaDE64E6Ea690173F6DE59Fc09F5C9190d74',
+  '0xD7590e93a2e04110Ad50ec70EADE7490F7B8228a'
+]
+const earnStablePoolAddressesIncludingLegacy = [
+  '0x4a785fa6fcd2e0845a24847beb7bddd26f996d4d',
+  '0x27C4E34163b5FD2122cE43a40e3eaa4d58eEbeaF',
+  '0x318cfd99b60a63d265d2291a4ab982073fbf245d',
+  '0xb6b79D857858004BF475e4A57D4A446DA4884866',
+  '0xD4be7E211680e12c08bbE9054F0dA0D646c45228',
+  '0xB202cAd3965997f2F5E67B349B2C5df036b9792e',
+  '0xe4deE94233dd4d7c2504744eE6d34f3875b3B439'
+]
+
+const fusePoolLensAddress = '0x8dA38681826f4ABBe089643D2B3fE4C6e4730493'
+const fusePoolDirectoryAddress = '0x835482FE0532f169024d5E9410199369aAD5C77E'
+const sushiETHRGTPairAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
 const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
+const ETHAddress = '0x0000000000000000000000000000000000000000'
+const DAIAddress = '0x6b175474e89094c44da98b954eedeac495271d0f'
 
-const earnPoolsMinusETHPool = [
-  "0xe4deE94233dd4d7c2504744eE6d34f3875b3B439", // stable pool
-  "0x35DDEFa2a30474E64314aAA7370abE14c042C6e8", // yield pool
-  "0x3F579F097F2CE8696Ae8C417582CfAFdE9Ec9966", // dai pool
-]
 
 async function tvl(timestamp, block) {
   const balances = {}
+  const tokenList = await sdk.api.util.tokenList()
+
+  // useful for quick lookups of token info based on symbol as opposed to iterating through the tokenList
+  const tokenMapWithKeysAsSymbol = tokenList.reduce((result, item) => {
+    result[item.symbol] = item;
+    return result;
+  }, {})
 
   const updateBalance = (token, amount) => {
     if (balances[token] !== undefined) {
@@ -27,8 +53,74 @@ async function tvl(timestamp, block) {
     }
   }
 
+  // get earn data
+  const earnYieldPoolData = (await sdk.api.abi.multiCall({
+    calls: earnYieldPoolProxyManagerAddressesIncludingLegacy.map((address) => ({
+      target: address
+    })),
+    block,
+    abi: abi['getRawFundBalancesAndPrices']
+  })).output.filter(resp => resp.success === true).map((resp) => resp.output)
+  for (let j = 0; j < earnYieldPoolData.length; j++) {
+    if (earnYieldPoolData[j] && earnYieldPoolData[j]['0'] && earnYieldPoolData[j]['0'].length > 0) {
+      for (let i = 0; i < earnYieldPoolData[j]['0'].length; i++) {
+        const tokenSymbol = earnYieldPoolData[j]['0'][i].toUpperCase()
+        const tokenContractAddress = tokenMapWithKeysAsSymbol[tokenSymbol].contract ?? null
+        if (tokenContractAddress) {
+          const tokenAmount = BigNumber(earnYieldPoolData[j]['1'][i])
+          updateBalance(tokenContractAddress, tokenAmount)
+        }
+      }
+    }
+  }
+
+  const ethPoolData = (await sdk.api.abi.multiCall({
+    block,
+    abi: abi['getRawFundBalances'],
+    calls: earnETHPoolFundControllerAddressesIncludingLegacy.map((address) => ({
+      target: address
+    }))
+  })).output.filter(resp => resp.success === true).map((resp) => resp.output)
+  for (let i = 0; i < ethPoolData.length; i++) {
+    const ethAmount = BigNumber(ethPoolData[i]['0'])
+    if (ethAmount > 0) {
+      updateBalance(ETHAddress, ethAmount)
+    }
+  }
+
+  for (let i = 0; i < earnDAIPoolControllerAddressesIncludingLegacy.length; i++) {
+    const daiPoolAmount = (await sdk.api.erc20.balanceOf({
+      target: DAIAddress,
+      owner: earnDAIPoolControllerAddressesIncludingLegacy[i],
+      block: block,
+    })).output ?? 0
+
+    if (daiPoolAmount > 0) {
+      updateBalance(DAIAddress, daiPoolAmount)
+    }
+  }
+
+  const stablePoolData = (await sdk.api.abi.multiCall({
+    abi: abi['getRawFundBalancesAndPrices'],
+    calls: earnStablePoolAddressesIncludingLegacy.map((address) => ({
+      target: address
+    })),
+    block,
+  })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
+  for (let j = 0; j < stablePoolData.length; j++) {
+    for (let i = 0; i < stablePoolData['0'].length; i++) {
+      const tokenSymbol = stablePoolData[j]['0'][i].toUpperCase()
+      const tokenContractAddress = tokenMapWithKeysAsSymbol[tokenSymbol].contract ?? null
+      const underlyingTokenTotalSupply = BigNumber(stablePoolData[j]['1'][i])
+      if (underlyingTokenTotalSupply > 0) {
+        updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
+      }
+    }
+  }
+
+  // get fuse data
   const fusePools = (await sdk.api.abi.call({
-    target: fusePoolDirectory,
+    target: fusePoolDirectoryAddress,
     block,
     abi: abi['getAllPools']
   })).output ?? []
@@ -37,7 +129,7 @@ async function tvl(timestamp, block) {
     const fusePoolsTokenData = (
       await sdk.api.abi.multiCall({
         abi: abi['getPoolAssetsWithData'],
-        target: fusePoolLens,
+        target: fusePoolLensAddress,
         calls: fusePools.map((poolInfo) => ({
           params: [poolInfo[2]]
         })),
@@ -47,25 +139,26 @@ async function tvl(timestamp, block) {
     for (let i = 0; i < fusePoolsTokenData.length; i++) {
       const underlyingTokenAddress = fusePoolsTokenData[i][1]
       const underlyingTokenTotalSupply = BigNumber(fusePoolsTokenData[i][8])
-      updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
+      if (underlyingTokenTotalSupply > 0) {
+        updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
+      }
     }
   }
 
-
   // get sushiswap LP data
   const rgtETHPairData = (await sdk.api.abi.call({
-    target: sushiETHRGTPair,
+    target: sushiETHRGTPairAddress,
     block,
     abi: abi['getReserves']
-  })).output
+  })).output ?? null
 
-  updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData._reserve0))
-  updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData._reserve1))
+  if (rgtETHPairData) {
+    updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData._reserve0))
+    updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData._reserve1))
+  }
 
   return balances
 }
-
-tvl()
 
 module.exports = {
   name: 'Rari Capital', // project name
