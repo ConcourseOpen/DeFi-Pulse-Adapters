@@ -198,8 +198,6 @@ async function tvl(timestamp, block) {
   return balances
 }
 
-tvl()
-
 module.exports = {
   name: 'Rari Capital', // project name
   token: "RGT",             // null, or token symbol if project has a custom token
