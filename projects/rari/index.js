@@ -32,6 +32,7 @@ const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const DAIAddress = '0x6b175474e89094c44da98b954eedeac495271d0f'
+const bigNumZero = BigNumber('0')
 
 
 async function tvl(timestamp, block) {
@@ -68,7 +69,7 @@ async function tvl(timestamp, block) {
           const tokenContractAddress = tokenMapWithKeysAsSymbol[tokenSymbol].contract ?? null
           if (tokenContractAddress) {
             const tokenAmount = BigNumber(earnYieldPoolData[j]['1'][i])
-            if (tokenAmount > 0) {
+            if (tokenAmount.isGreaterThan(bigNumZero)) {
               updateBalance(tokenContractAddress, tokenAmount)
             }
           }
@@ -78,7 +79,6 @@ async function tvl(timestamp, block) {
   } catch(e) {
    // ignore error
   }
-
   // Earn ETH pool
   try {
     const ethPoolData = (await sdk.api.abi.multiCall({
@@ -90,7 +90,7 @@ async function tvl(timestamp, block) {
     })).output.filter(resp => resp.success === true).map((resp) => resp.output)
     for (let i = 0; i < ethPoolData.length; i++) {
       const ethAmount = BigNumber(ethPoolData[i]['0'])
-      if (ethAmount > 0) {
+      if (ethAmount.isGreaterThan(bigNumZero)) {
         updateBalance(ETHAddress, ethAmount)
       }
     }
@@ -110,7 +110,7 @@ async function tvl(timestamp, block) {
     })).output.filter(resp => resp.success).map(resp => resp.output)
     for (let i = 0; i < daiPoolData.length; i++) {
       let amount = BigNumber(daiPoolData[i])
-      if (amount > 0) {
+      if (amount.isGreaterThan(bigNumZero)) {
         updateBalance(DAIAddress, amount)
       }
     }
@@ -128,12 +128,12 @@ async function tvl(timestamp, block) {
       block,
     })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
     for (let j = 0; j < stablePoolData.length; j++) {
-      for (let i = 0; i < stablePoolData['0'].length; i++) {
+      for (let i = 0; i < stablePoolData[j]['0'].length; i++) {
         const tokenSymbol = stablePoolData[j]['0'][i].toUpperCase()
         const tokenContractAddress = tokenMapWithKeysAsSymbol[tokenSymbol].contract ?? null
         const underlyingTokenTotalSupply = BigNumber(stablePoolData[j]['1'][i])
-        if (underlyingTokenTotalSupply > 0) {
-          updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
+        if (underlyingTokenTotalSupply.isGreaterThan(bigNumZero)) {
+          updateBalance(tokenContractAddress, underlyingTokenTotalSupply)
         }
       }
     }
@@ -163,7 +163,7 @@ async function tvl(timestamp, block) {
       for (let i = 0; i < fusePoolsTokenData.length; i++) {
         const underlyingTokenAddress = fusePoolsTokenData[i][1]
         const underlyingTokenTotalSupply = BigNumber(fusePoolsTokenData[i][8])
-        if (underlyingTokenTotalSupply > 0) {
+        if (underlyingTokenTotalSupply.isGreaterThan(bigNumZero)) {
           updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
         }
       }
@@ -183,10 +183,10 @@ async function tvl(timestamp, block) {
     if (rgtETHPairData && rgtETHPairData.output) {
       const reserve0Balanace = BigNumber(rgtETHPairData.output._reserve0)
       const reserve1Balance = BigNumber(rgtETHPairData.output._reserve1)
-      if (reserve0Balanace > 0) {
+      if (reserve0Balanace.isGreaterThan(bigNumZero)) {
         updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData.output._reserve0))
       }
-      if (reserve1Balance) {
+      if (reserve1Balance.isGreaterThan(bigNumZero)) {
         updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData.output._reserve1))
       }
     }
@@ -197,6 +197,8 @@ async function tvl(timestamp, block) {
 
   return balances
 }
+
+tvl()
 
 module.exports = {
   name: 'Rari Capital', // project name
