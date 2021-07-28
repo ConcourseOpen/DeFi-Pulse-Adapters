@@ -1,7 +1,7 @@
 /*==================================================
   Modules
   ==================================================*/
-  
+
   const _ = require('underscore')
   const axios = require("axios");
   const sdk = require('../../sdk');
@@ -10,7 +10,11 @@
   Settings
   ==================================================*/
 
-  const sablier = '0xA4fc358455Febe425536fd1878bE67FfDBDEC59a';
+  const sablierAddresses = {
+      "v1.0.0": "0xA4fc358455Febe425536fd1878bE67FfDBDEC59a",
+      "v1.1.0": "0xCD18eAa163733Da39c232722cBC4E8940b1D8888",
+  };
+
 /*==================================================
   TVL
   ==================================================*/
@@ -21,16 +25,16 @@ async function tvl(timestamp, block) {
         method: "post",
         data: {
             query: `
-            query AllTokens {
-                tokens {
-                id
+                query AllTokens {
+                    tokens {
+                    id
+                    }
                 }
-            }
             `
         }
         });
     let allTokens = result.data.data.tokens;
-    allTokens = allTokens.map(token => token.id );
+    allTokens = allTokens.map(token => token.id);
 
     const balances = {
         '0x0000000000000000000000000000000000000000': 0
@@ -38,10 +42,16 @@ async function tvl(timestamp, block) {
 
     const calls = [];
     _.each(allTokens, (token) => {
-        calls.push({
-        target: token,
-        params: sablier
-        });
+        calls.push(
+            {
+                target: token,
+                params: sablierAddresses["v1.0.0"]
+            },
+            {
+                target: token,
+                params: sablierAddresses["v1.1.0"]
+            }
+        );
     });
 
     const balanceOfResults = await sdk.api.abi.multiCall({
