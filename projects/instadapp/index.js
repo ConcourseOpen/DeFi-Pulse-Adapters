@@ -71,7 +71,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'InstaDApp',
-  token: null,
+  token: 'INST',
   category: 'Lending',
   contributesTo: ['Maker', 'Compound'],
   start: 1543622400,  // 12/01/2018 @ 12:00am (UTC)

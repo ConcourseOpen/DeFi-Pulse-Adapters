@@ -7,6 +7,7 @@ const spotTestCount = 10;
 _.each(args.projects, function(projectAdapter) {
   describe(`${projectAdapter.name} project adapter running & output format`, function () {
     describe('runs for a variety of points at different times', function() {
+      describe(`See your results at test.defipulse.com/${projectAdapter.name.replace(' ','-').toLowerCase()}`, function() {
       this.bail(true);
 
       const latestDay = moment().utcOffset(0).add(-10, 'days').startOf('day').unix();
@@ -29,6 +30,7 @@ _.each(args.projects, function(projectAdapter) {
         run(projectAdapter, timestamp, 0,);
       });
       run(projectAdapter, startDay < projectAdapter.start ? startDay + 86400 : startDay);
+    });
     });
   });
 });

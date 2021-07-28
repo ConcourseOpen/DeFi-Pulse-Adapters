@@ -159,9 +159,50 @@ async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
   }
 }
 
-async function erc20(endpoint, options) {
-  return POST(`/erc20/${endpoint}`, options);
+/**
+ *
+ * @param {Number} timestamp
+ * @param {String} depositor
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _testStakingAdapter(timestamp, depositor) {
+
+  try {
+    return (
+      await axios({
+        method: 'GET',
+        url: `${$indexerHost}/test-eth2.0-staking?timestamp=${timestamp}&depositor=${depositor}`,
+      })
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
 }
+
+
+/**
+ *
+ * @param {Number} timestamp
+ * @param {String} chain
+ * @returns {Promise<*>}
+ * @private
+ */
+async function _lookupBlock(timestamp, chain) {
+  try {
+    return (
+      await axios.get(`${$indexerHost}/lookup-block?chain=${chain || ''}&&timestamp=${timestamp}`)
+    ).data;
+  } catch(error) {
+    console.error(`Error: ${error.response ? error.response.data : error}`);
+    throw error.response ? error.response.data : error;
+  }
+}
+
+  async function erc20(endpoint, options) {
+    return POST(`/erc20/${endpoint}`, options);
+  }
 
 async function eth(endpoint, options) {
   return POST(`/eth/${endpoint}`, options);
@@ -212,13 +253,14 @@ module.exports = {
     },
     util: {
       getLogs: (options) => util('getLogs', { ...options }),
+      supportedTokens: () => util('supportedTokens'),
       tokenList: () => util('tokenList'),
       kyberTokens: () => util('kyberTokens'),
       getEthCallCount: () => util('getEthCallCount'),
       resetEthCallCount: () => util('resetEthCallCount'),
-      toSymbols: (data) => util('toSymbols', { data }),
+      toSymbols: (data, chain=null) => util('toSymbols', { data, chain }),
       unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+      lookupBlock: _lookupBlock,
       /**
        *
        * @param {Number} block
@@ -229,6 +271,15 @@ module.exports = {
        */
       testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
         return _testAdapter(block, timestamp, project, tokenBalanceMap);
+      }),
+      /**
+       *
+       * @param {Number} timestamp
+       * @param {String} depositor
+       * @returns {Promise<*>}
+       */
+      testStakingAdapter: ((timestamp, depositor) => {
+        return _testStakingAdapter(timestamp, depositor);
       }),
       /**
        *
@@ -247,11 +298,12 @@ module.exports = {
   },
   util: {
     getLogs: (options) => util('getLogs', { ...options }),
+    supportedTokens: () => util('supportedTokens'),
     tokenList: () => util('tokenList'),
     kyberTokens: () => util('kyberTokens'),
     getEthCallCount: () => util('getEthCallCount'),
     resetEthCallCount: () => util('resetEthCallCount'),
-    toSymbols: (data) => util('toSymbols', { data }),
+    toSymbols: (data, chain=null) => util('toSymbols', { data, chain }),
     unwrap: (options) => util('unwrap', { ...options }),
     lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
     /**
@@ -264,6 +316,15 @@ module.exports = {
      */
     testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
       return _testAdapter(block, timestamp, project, tokenBalanceMap);
+    }),
+    /**
+     *
+     * @param {Number} timestamp
+     * @param {String} project
+     * @returns {Promise<*>}
+     */
+    testStakingAdapter: ((timestamp, depositor) => {
+      return _testStakingAdapter(timestamp, depositor);
     }),
     /**
      *

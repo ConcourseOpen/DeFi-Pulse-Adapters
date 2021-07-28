@@ -38,7 +38,9 @@ Please fork this repository before you start building your adapter and then work
 
 # Writing a JSON Configurable Adapter
 
-Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [xDai](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/xdai) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter gets it's own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings.
+*Note: We try our best to reduce dependecies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
+
+Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter gets it's own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings.
 
 ```
 v2
@@ -181,9 +183,16 @@ N.B. The ```transform``` function does not create closures to it's creation cont
 
 While writing your project adapter, you'll need to run the code to check for errors, check for output etc. Some testing commands are provided for this purpose.
 
+Project on Ethereum:
 ```
 npm run validate-metadata -- --project=<projectName>
 npm run test-tvl -- --project=<projectName>
+```
+
+Project on Polygon:
+```
+npm run validate-metadata -- --project=<projectName> --chain=polygon
+npm run test-tvl -- --project=<projectName> --chain=polygon
 ```
 
 Run `validate-metadata` command to check if you have project `Metadata` setup correctly.
@@ -231,9 +240,9 @@ Loopring project adapter running & output format
   15 passing (41s)
 ```
 
-Output of tests are stored in json files under `v2/output/**project_name**/tvl` and are named based on the time they were run to fetch data for.
+Output of tests are stored in json files under `output/**chain_name**/**project_name**/tvl` and are named based on the time they were run to fetch data for.
 
-In the above example, the output is saved to `v2/output/Loopring/tvl/2021-03-08T13:00:00Z.json` since the project is `Loopring`, and the data the test script retrieved is tvl. It's output is shown below:
+In the above example, the output is saved to `output/ethereum/Loopring/tvl/2021-03-08T13:00:00Z.json` since the project is `Loopring`, and the data the test script retrieved is tvl. It's output is shown below:
 ```
 {
   "timestamp": 1615208400,
@@ -465,19 +474,17 @@ npm run validate -- --project=yearn
 The `test` command will run a project adapter once for the latest hourly point, perform some basic checks on it's output, and log the result.
 
 ```
- _template project running & output format
-    runs for specified time: latest
-      ✓ returns valid data at point hour 0 (1600ms)
-    ✔ Output: {
-      "ethCallCount": 0,
-      "timestamp": 1581026400,
-      "block": 9431690,
-      "output": {
-        "ETH": "1",
-        "DAI": "2"
-      }
-    }
+_template project running & output format
+  runs for specified time: latest hour
+    ✓ returns valid tvl data at hour 0 (1172ms)
 
+
+1 passing (1s)
+```
+
+Output of tests are stored in json files under `output/**chain_name**/**project_name**/**adapter_type**` and are named based on the time they were run to fetch data for.
+
+In the above example, the output is saved to `output/ethereum/_template/tvl/2020-04-16T17:00:00Z.json` since the project is `_template`, and the adapter provided is for tvl. It's output is shown below:
 
   1 passing (2s)
 ```
