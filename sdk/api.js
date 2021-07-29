@@ -216,7 +216,7 @@ async function _lookupBlock(timestamp, chain) {
   module.exports = {
     abi: {
       call: (options) => abi('call', { ...options }),
-      multiCall: (options) => abi('multiCall', { ...options, chunk: {param: 'calls', length: 5000, combine: 'array'} })
+      multiCall: (options) => abi('multiCall', { ...options, chunk: {param: 'calls', length: 2500, combine: 'array'} })
     },
     cdp: {
       getAssetsLocked: (options) => cdp('getAssetsLocked', { ...options, chunk: {param: 'targets', length: 1000, combine: 'balances'} }),
@@ -270,7 +270,7 @@ async function _lookupBlock(timestamp, chain) {
     erc20: {
       info: (target) => erc20('info', { target }),
       symbol: (target) => erc20('symbol', { target }),
-      decimals: (target) => erc20('decimals', { target }),
+      decimals: (target, chain=null) => erc20('decimals', { target, chain }),
       totalSupply: (options) => erc20('totalSupply', { ...options }),
       balanceOf: (options) => erc20('balanceOf', { ...options }),
     }

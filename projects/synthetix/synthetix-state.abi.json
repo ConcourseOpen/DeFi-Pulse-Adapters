@@ -1,28 +1,22 @@
 {
-  "StorageAddress": "0xC8fb12402cB16970F3C5F4b48Ff68Eb9D1289301",
-  "getReserves": {
+  "lastDebtLedgerEntry": {
     "constant": true,
     "inputs": [],
-    "name": "getReserves",
+    "name": "lastDebtLedgerEntry",
     "outputs": [
       {
         "name": "",
-        "type": "address[]"
+        "type": "uint256"
       }
     ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
-  "getBalance": {
+  "issuanceRatio": {
     "constant": true,
-    "inputs": [
-      {
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "getBalance",
+    "inputs": [],
+    "name": "issuanceRatio",
     "outputs": [
       {
         "name": "",

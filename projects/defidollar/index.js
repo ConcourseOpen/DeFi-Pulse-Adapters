@@ -20,7 +20,7 @@ async function tvl(timestamp, block) {
   let balances = {};
 
   try {
-    const [yCrvDistribution, ibbtcSupply, pps] = await Promise.all([
+    const [yCrvDistribution, ibbtcSupply] = await Promise.all([
       sdk.api.abi.call({
         block,
         target: yCrvPeak,
@@ -30,33 +30,23 @@ async function tvl(timestamp, block) {
         target: IBBTC,
         block,
       }),
-      sdk.api.abi.call({
-        target: IBBTC,
-        abi: abi.pricePerShare,
-        block,
-      }),
     ]);
-
-    const bitcoinBalance = BigNumber(ibbtcSupply.output)
-      .times(pps.output)
-      .div(10 ** 36)
-      .toNumber();
 
     balances = {
       [yCRV]: yCrvDistribution.output.total,
-      bitcoin: bitcoinBalance,
+      [IBBTC]: ibbtcSupply.output,
     };
   } catch (error) {
     balances = {
       [yCRV]: 0,
-      bitcoin: 0,
+      [IBBTC]: 0,
     };
   }
 
   if (_.isEmpty(balances)) {
     balances = {
       [yCRV]: 0,
-      bitcoin: 0,
+      [IBBTC]: 0,
     };
   }
 
