@@ -26,10 +26,10 @@ module.exports = {
           '0x491EAFC47D019B44e13Ef7cC649bbA51E15C61d7', // TransmuterVaultAdapter
 
           // alETH
-          '0x6B566554378477490ab040f6F757171c967D03ab', // AlchemistEth
-          '0xEBA649E0010818Aa4321088D34bD6162d65E7971', // YearnVaultAdapterEth
-          '0x45f81eF5F2ae78f49851f7A62e4061FF54Ff674B', // TransmuterEth
-          '0x54dc35eb8c2E2E20f3657Af6F84cd9949C08CF38', // TransmuterEthYearnVaultAdapter
+          '0xf8317BD5F48B6fE608a52B48C856D3367540B73B', // AlchemistEth
+          '0x546E6711032Ec744A7708D4b7b283A210a85B3BC', // YearnVaultAdapterEth
+          '0x8d513E6552aae771CaBD6b2Bf8875A8A2e38f19f', // TransmuterEth
+          '0xb0101a35A860fF1fb71BF524550C3B46F895B2d2', // TransmuterEthYearnVaultAdapter
           
           // Uncomment this to include the alUSD-3crv pool
           //'0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c', // alUSD3CRV-f
