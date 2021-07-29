@@ -19,31 +19,23 @@
   async function tvl(timestamp, block) {
     let balances = {};
   
-    try {
-      const [yCrvDistribution, ibbtcSupply] = await Promise.all([
-        sdk.api.abi.call({
-          block,
-          target: yCrvPeak,
-          abi: abi.yCrvDistribution,
-        }),
-        sdk.api.erc20.totalSupply({
+    if (block > 10909861){
+    const yCrvDistribution = await sdk.api.abi.call({
+        block,
+        target: yCrvPeak,
+        abi: abi.yCrvDistribution,
+      });
+    balances[yCRV] = yCrvDistribution.output.total;
+    }
+    if (block > 12342123){
+      const ibbtcSupply = await sdk.api.erc20.totalSupply({
           target: IBBTC,
           block,
-        }),
-      ]);
-  
-      balances = {
-        [yCRV]: yCrvDistribution.output.total,
-        [IBBTC]: ibbtcSupply.output,
-      };
-    } catch (error) {
-      balances = {
-        [yCRV]: 0,
-        [IBBTC]: 0,
-      };
+        });
+        balances[IBBTC] = ibbtcSupply.output;
     }
   
-    if (_.isEmpty(balances)) {
+    if (block < 10909861) {
       balances = {
         [yCRV]: 0,
         [IBBTC]: 0,
@@ -61,6 +53,6 @@
     name: "DefiDollar",
     token: "DFD", // null, or token symbol if project has a custom token
     category: "Assets",
-    start: 1598415139, // Aug-26-2020 04:12:19 AM +UTC
+    start: 1600745136, // Aug-26-2020 04:12:19 AM +UTC
     tvl,
   };
