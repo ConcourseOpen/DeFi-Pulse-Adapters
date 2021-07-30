@@ -16,7 +16,6 @@ module.exports = {
           '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF', // ALCX
           '0xa258c4606ca8206d8aa700ce2143d7db854d168c', // yvWETH
           '0xda816459f1ab5631232fe5e97a05bbbb94970c95', // yvDAI
-          '0xa258c4606ca8206d8aa700ce2143d7db854d168c'  // yvWETH
         ],
         holders: [
 
