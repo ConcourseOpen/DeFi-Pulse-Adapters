@@ -25,6 +25,8 @@
     for (let i = 0; i < amms.length; i++) {
       const amm = amms[i];
       const collateralToken = amm['collateralToken']['id'];
+
+      // Get collateral in AMM
       const response = await sdk.api.erc20.balanceOf({
         block,
         target: collateralToken,
@@ -35,6 +37,19 @@
         result[collateralToken] = '0';
       }
       result[collateralToken] = BigNumber(result[collateralToken]).plus(response.output).toFixed();
+
+      // Get collateral in Markets
+      for (let im = 0; im < amm.markets.length; im++) {
+        const market = amm.markets[im];
+
+        const response = await sdk.api.erc20.balanceOf({
+          block,
+          target: collateralToken,
+          owner: market['id'],
+        });
+
+        result[collateralToken] = BigNumber(result[collateralToken]).plus(response.output).toFixed();
+      }
     }
 
     return result;
@@ -46,7 +61,10 @@
         id
         collateralToken {
           id
-  }
+        }
+        markets {
+          id
+        }
       }
     }
   `
