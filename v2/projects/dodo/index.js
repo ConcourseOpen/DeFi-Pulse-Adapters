@@ -116,9 +116,6 @@ for (let poolInfo of DODO_FACTORY)
       })
   }
 
-console.log(tokenHolders.length);
-console.log(tokenHolders);
-
 module.exports = {
   name: "DODO",
   token: null,
