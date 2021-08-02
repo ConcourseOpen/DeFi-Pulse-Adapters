@@ -114,6 +114,6 @@ module.exports = {
     name: 'BoringDAO',
     token: null,
     category: 'Assets',
-    start: 1607745161,  // Nov-24-2018 09:45:52 PM +UTC
+    start: 1607745161,  // Dec-12-2020
     tvl,
 };
