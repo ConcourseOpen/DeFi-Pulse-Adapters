@@ -32,7 +32,7 @@
       }
     );
     
-    const balances = {};
+    let balances = {};
     _.each(_tvlList, (element) => {
         if(element.success) {
             let address = element.input.params[0];
@@ -48,7 +48,12 @@
             console.log(element);
         }
     })
-    return balances;
+    if (_.isEmpty(balances)) {
+      balances = {
+        '0x0000000000000000000000000000000000000000': 0,
+      };
+    }
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 
@@ -59,7 +64,7 @@
   module.exports = {
     name: 'InsurAce Protocol',
     token: 'INSUR',
-    category: 'derivatives',
+    category: 'Derivatives',
     start: 1619248141, // Stakers Pool creation time, Saturday, 24 April 2021 07:09:01 AM
     tvl
   }
