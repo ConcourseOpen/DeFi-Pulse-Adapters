@@ -159,7 +159,7 @@ async function tvl(timestamp, block) {
             params: [poolInfo[2]]
           })),
           block,
-        })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
+        })).output.filter((resp) => resp.success === true).map((resp) => resp.output).reduce((acc, val) => [ ...acc, ...val ], [])
 
       for (let i = 0; i < fusePoolsTokenData.length; i++) {
         const underlyingTokenAddress = fusePoolsTokenData[i][1]
