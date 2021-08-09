@@ -127,7 +127,7 @@ async function tvl(timestamp, block) {
         target: address
       })),
       block,
-    })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
+    })).output.filter((resp) => resp.success === true).map((resp) => resp.output).reduce((acc, val) => [ ...acc, ...val ], [])
     for (let j = 0; j < stablePoolData.length; j++) {
       for (let i = 0; i < stablePoolData[j]['0'].length; i++) {
         const tokenSymbol = stablePoolData[j]['0'][i].toUpperCase()
