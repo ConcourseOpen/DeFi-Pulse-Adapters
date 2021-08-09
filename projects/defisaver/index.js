@@ -8,7 +8,6 @@ const { bytesToString, getContractAddress, getContractMethod, getContractBlock }
 async function tvl(timestamp, block) {
   let makerSubs = [];
   let compoundSubs = [];
-  let aaveSubs = [];
 
   if (block >= getContractBlock('McdSubscriptions')) makerSubs = (await sdk.api.abi.call({
     block,
@@ -51,17 +50,9 @@ async function tvl(timestamp, block) {
     abi: getContractMethod('getSubscribers', 'CompoundSubscriptions'),
   })).output;
 
-  if (block >= getContractBlock('AaveSubscriptions')) aaveSubs = (await sdk.api.abi.call({
-    block,
-    target: getContractAddress('AaveSubscriptions'),
-    abi: getContractMethod('getSubscribers', 'AaveSubscriptions'),
-  })).output;
-
   const compoundSubscribers = new Set();
-  const aaveSubscribers = new Set();
 
   for (const sub of compoundSubs) { compoundSubscribers.add(sub[0]); }
-  for (const sub of aaveSubs) { aaveSubscribers.add(sub[0]); }
 
   let makerBalances = (await sdk.api.cdp.maker.getAssetsLocked({
     block,
@@ -74,12 +65,7 @@ async function tvl(timestamp, block) {
     targets: [...compoundSubscribers]
   })).output;
 
-  let aaveBalances = (await sdk.api.cdp.aave.getAssetsLocked({
-    block,
-    targets: [...aaveSubscribers]
-  })).output;
-
-  let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
+  let balances = utils.sum([makerBalances, compoundBalances]);
   if (Object.keys(balances).length === 0) {
     balances = {
       "0x0000000000000000000000000000000000000000": "0"
