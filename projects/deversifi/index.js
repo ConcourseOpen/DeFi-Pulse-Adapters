@@ -34,7 +34,12 @@
     '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', // AAVE
     '0xeef9f339514298c6a857efcfc1a762af84438dee', // HEZ
     '0xa117000000f279d81a1d3cc75430faa017fa5a2e', // ANT
-    '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b' // DPI
+    '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b', // DPI
+    '0xdddddd4301a082e62e84e43f474f044423921918', // DVF
+    '0x5a98fcbea516cf06857215779fd812ca3bef1b32', // LDO
+    '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // CUSDT
+    '0x5d22045daceab03b158031ecb7d9d06fad24609b', // CEL
+    '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2' // SUSHI
   ];
 
 /*==================================================
@@ -73,7 +78,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'DeversiFi',
-  token: 'NEC',
+  token: 'DVF',
   category: 'dexes',
   start: 1590969600, // 06/01/2020
   tvl,
