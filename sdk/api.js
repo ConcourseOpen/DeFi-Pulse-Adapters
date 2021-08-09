@@ -138,6 +138,7 @@
  * @private
  */
 async function _testAdapter(block, timestamp, project, tokenBalanceMap) {
+  project.name = project.testName;
   project = JSON.stringify(project, _jsonConverter, 2);
 
   try {

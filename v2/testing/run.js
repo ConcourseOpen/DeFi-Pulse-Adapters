@@ -105,4 +105,6 @@ module.exports = async (projectAdapter, timeUnit, timeOffset = 0) => {
     shell.mkdir('-p', path);
     fs.writeFileSync(`${path}/${name}`, JSON.stringify(testResult, null, 2));
   });
+
+  console.log(`Please go to the Leaderboard at https://test.defipulse.com and search for project ${projectAdapter.testName} to validate the tvl!`);
 };
