@@ -38,7 +38,7 @@ const args = argv.option([
 
 const chain = args.options.chain;
 const projects = args.options.project ? [args.options.project] : getDirectories('v2/projects').map((dir) => dir.split('/')[dir.split('/').length - 1]);
-const testName = args.options.testName || (new Date()).getTime();
+const testName = args.options.testName || `test-${(new Date()).getTime()}`;
 
 module.exports = {
   projects: _.map(projects, (project) => {
