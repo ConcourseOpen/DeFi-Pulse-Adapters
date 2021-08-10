@@ -31,6 +31,14 @@ const xu3lpaAddr = "0xDa4d2152B2230e33c80b0A88b7C28b1C464EE3c2";
 const xu3lpbAddr = "0x420CF01fdC7e3c42c3D89ae8799bACCBfFa9ceAA";
 const xu3lpcAddr = "0x74e87FBA6C4bCd17fe5f14D73f590eD3C13E821B";
 
+const xu3lps = [
+  "0xdD699Eae49A3504a28AeB9BD76a3f0369fA08471",
+  "0x828EC6E678A40c251f1F37DA389db0f820Af6f9D",
+  "0x4296d40183356A770Fd8cA3Ba0592f0163BE9CA3",
+  "0x28ce95124FB0d5Febe6Ab258072848f5fe1010eC",
+  "0x9ed880b7F75a220C0450E4884521ba8d500eb4bb",
+];
+
 // token addresses
 const ethAddr = "0x0000000000000000000000000000000000000000";
 const aaveAddr = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
@@ -447,9 +455,9 @@ async function tvl(timestamp, block) {
   const combinedXu3lpbUsdc = xu3lpbUsdcBufferHoldings.add(
     xu3lpbUsdcStakedBalance
   );
-  const combinedXu3lpbUsdt = xu3lpbUsdtBufferHoldings.add(
-    xu3lpbUsdtStakedBalance
-  ).div(Math.pow(10,12));
+  const combinedXu3lpbUsdt = xu3lpbUsdtBufferHoldings
+    .add(xu3lpbUsdtStakedBalance)
+    .div(Math.pow(10, 12));
 
   const combinedXu3lpcSusd = xu3lpcSusdBufferHoldings.add(
     xu3lpcSusdStakedBalance
@@ -460,7 +468,8 @@ async function tvl(timestamp, block) {
 
   const combinedUsdc = combinedXu3lpaUsdc
     .add(combinedXu3lpbUsdc)
-    .add(combinedXu3lpcUsdc).div(Math.pow(10,12));
+    .add(combinedXu3lpcUsdc)
+    .div(Math.pow(10, 12));
 
   const formatUsdc = ethers.utils.formatUnits(combinedUsdc, 0).split(".")[0];
 
@@ -477,18 +486,121 @@ async function tvl(timestamp, block) {
     .split(".")[0];
 
   let balances = {
-    [aaveAddr]: formatAave, // AAVE
-    [bntAddr]: formatBnt, // BNT
-    [inchAddr]: formatInch, // 1INCH
-    [kncAddr]: formatKnc, // KNC
-    [snxAddr]: formatXsnxaSnx, // SNX
-    [ethAddr]: formatXsnxaEth, // ETH
-    [ethrsi6040Addr]: formatXsnxaEthrsi6040, // ETHRSI6040
-    [usdcAddr]: formatUsdc, // USDC
-    [daiAddr]: formatDai, // DAI
-    [usdtAddr]: formatUsdt, // USDT
-    [sUsdAddr]: formatSusd, // sUSD
+    [aaveAddr.toLowerCase()]: formatAave, // AAVE
+    [bntAddr.toLowerCase()]: formatBnt, // BNT
+    [inchAddr.toLowerCase()]: formatInch, // 1INCH
+    [kncAddr.toLowerCase()]: formatKnc, // KNC
+    [snxAddr.toLowerCase()]: formatXsnxaSnx, // SNX
+    [ethAddr.toLowerCase()]: formatXsnxaEth, // ETH
+    [ethrsi6040Addr.toLowerCase()]: formatXsnxaEthrsi6040, // ETHRSI6040
+    [usdcAddr.toLowerCase()]: formatUsdc, // USDC
+    [daiAddr.toLowerCase()]: formatDai, // DAI
+    [usdtAddr.toLowerCase()]: formatUsdt, // USDT
+    [sUsdAddr.toLowerCase()]: formatSusd, // sUSD
   };
+
+  for (let xu3lp of xu3lps) {
+    try {
+      let pool = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: abi["poolAddress"],
+        })
+      ).output;
+
+      let token0 = (
+        await sdk.api.abi.call({
+          block,
+          target: pool,
+          abi: abi["token0"],
+        })
+      ).output;
+
+      let token1 = (
+        await sdk.api.abi.call({
+          block,
+          target: pool,
+          abi: abi["token1"],
+        })
+      ).output;
+
+      let buffer0 = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: xU3LP["getBufferToken0Balance"],
+        })
+      ).output;
+
+      let buffer1 = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: xU3LP["getBufferToken1Balance"],
+        })
+      ).output;
+
+      let staked = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: xU3LP["getStakedTokenBalance"],
+        })
+      ).output;
+
+      let decimal0 = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: abi["token0DecimalMultiplier"],
+        })
+      ).output;
+
+      let decimal1 = (
+        await sdk.api.abi.call({
+          block,
+          target: xu3lp,
+          abi: abi["token1DecimalMultiplier"],
+        })
+      ).output;
+
+      balances[token0.toLowerCase()] = balances[token0.toLowerCase()]
+        ? ethers.utils
+            .formatUnits(
+              ethers.BigNumber.from(buffer0)
+                .add(staked.amount0)
+                .div(decimal0)
+                .add(balances[token0.toLowerCase()]),
+              0
+            )
+            .split(".")[0]
+        : ethers.utils
+            .formatUnits(
+              ethers.BigNumber.from(buffer0).add(staked.amount0).div(decimal0),
+              0
+            )
+            .split(".")[0];
+      balances[token1.toLowerCase()] = balances[token1.toLowerCase()]
+        ? ethers.utils
+            .formatUnits(
+              ethers.BigNumber.from(buffer1)
+                .add(staked.amount1)
+                .div(decimal1)
+                .add(balances[token1.toLowerCase()]),
+              0
+            )
+            .split(".")[0]
+        : ethers.utils
+            .formatUnits(
+              ethers.BigNumber.from(buffer1).add(staked.amount1).div(decimal1),
+              0
+            )
+            .split(".")[0];
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return balances;
 }
