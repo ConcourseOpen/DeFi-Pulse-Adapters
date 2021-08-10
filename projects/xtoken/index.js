@@ -490,7 +490,7 @@ async function tvl(timestamp, block) {
     [sUsdAddr]: formatSusd, // sUSD
   };
 
-  return (await sdk.api.util.toSymbols(balances)).output;
+  return balances;
 }
 
 /*==================================================
