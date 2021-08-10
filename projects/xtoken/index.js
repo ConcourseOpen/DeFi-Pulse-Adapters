@@ -449,7 +449,7 @@ async function tvl(timestamp, block) {
   );
   const combinedXu3lpbUsdt = xu3lpbUsdtBufferHoldings.add(
     xu3lpbUsdtStakedBalance
-  );
+  ).div(Math.pow(10,12));
 
   const combinedXu3lpcSusd = xu3lpcSusdBufferHoldings.add(
     xu3lpcSusdStakedBalance
@@ -460,7 +460,7 @@ async function tvl(timestamp, block) {
 
   const combinedUsdc = combinedXu3lpaUsdc
     .add(combinedXu3lpbUsdc)
-    .add(combinedXu3lpcUsdc);
+    .add(combinedXu3lpcUsdc).div(Math.pow(10,12));
 
   const formatUsdc = ethers.utils.formatUnits(combinedUsdc, 0).split(".")[0];
 
@@ -490,7 +490,7 @@ async function tvl(timestamp, block) {
     [sUsdAddr]: formatSusd, // sUSD
   };
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
