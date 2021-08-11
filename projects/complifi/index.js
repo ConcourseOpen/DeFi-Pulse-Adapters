@@ -15,7 +15,7 @@
   TVL
   ==================================================*/
 async function tvl(timestamp, block){
-    let tokenList = await axios.get('https://eth.complifi.me/api/protocol/pulse?networkId=137');
+    let tokenList = await axios.get('https://eth.complifi.me/api/protocol/pulse?networkId=1');
     let tokens = tokenList.data.tokens || [];
     let holders = tokenList.data.holders || [];
     let calls = [];
@@ -34,7 +34,6 @@ async function tvl(timestamp, block){
         block,
         calls,
         abi: 'erc20:balanceOf',
-        chain: 'polygon'
       });
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
@@ -44,7 +43,7 @@ async function tvl(timestamp, block){
       };
     }
     
-    return (await sdk.api.util.toSymbols(balances, 'polygon')).output;
+    return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
@@ -53,5 +52,5 @@ module.exports = {
     category: 'Derivatives',
     start: 1621938255,  // May-25-2021 10:24:15 AM UTC
     tvl,
-    chain: 'Polygon',
+    chain: 'Multichain,Ethereum-Polygon'
   }
