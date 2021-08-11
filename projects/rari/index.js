@@ -32,6 +32,7 @@ const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const bigNumZero = BigNumber('0')
+const fTokenDecimals = 8
 
 
 async function tvl(timestamp, block) {
@@ -45,6 +46,7 @@ async function tvl(timestamp, block) {
   }, {})
 
   const updateBalance = (token, amount) => {
+    token = token.toLowerCase()
     if (balances[token] !== undefined) {
       balances[token] = balances[token].plus(amount)
     } else {
@@ -149,8 +151,12 @@ async function tvl(timestamp, block) {
           continue
         }
         const exchangeRate = BigNumber(fusePoolsTokenData[i][14])
-        const decimals = BigNumber('1000000000000000000')
-        const underlyingBalance = BigNumber(fusePoolsTokenData[i][7]).multipliedBy(exchangeRate).dividedBy(decimals)
+        const underlyingDecimals = parseInt(fusePoolsTokenData[i][4])
+        const mantissa = 18 + underlyingDecimals - fTokenDecimals
+        const divisor = new BigNumber(Math.pow(10, mantissa))
+        const onefTokenInUnderlying = exchangeRate.dividedBy(divisor);
+        const fTokenSupply = BigNumber(fusePoolsTokenData[i][8]).dividedBy(new BigNumber(Math.pow(10, fTokenDecimals)))
+        const underlyingBalance = fTokenSupply.multipliedBy(onefTokenInUnderlying)
         if (underlyingBalance.isGreaterThan(bigNumZero)) {
           updateBalance(underlyingTokenAddress, underlyingBalance)
         }
@@ -183,6 +189,10 @@ async function tvl(timestamp, block) {
   catch(e) {
     // ignore error
   }
+
+  // for (key in balances) {
+  //   console.log(key, balances[key].toString())
+  // }
 
   return balances
 }
