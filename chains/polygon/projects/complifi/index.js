@@ -1,33 +1,57 @@
+/*==================================================
+  Modules
+  ==================================================*/
+
+  const sdk = require("../../sdk");
+  const _ = require('underscore');
+  const BigNumber = require('bignumber.js');
+  const axios = require('axios');
+
+/*==================================================
+ Vars
+==================================================*/
+
+/*==================================================
+  TVL
+  ==================================================*/
+async function tvl(timestamp, block){
+    let tokenList = await axios.get('https://eth.complifi.me/api/protocol/pulse?networkId=137');
+    let tokens = tokenList.data.tokens || [];
+    let holders = tokenList.data.holders || [];
+    let calls = [];
+    let balances = {};
+
+    _.each(tokens, (token) => {
+        _.each(holders, (holder) => {
+            calls.push({
+                target: token,
+                params: holder
+            });
+        });
+    });
+
+    let balanceOfResults = await sdk.api.abi.multiCall({
+        block,
+        calls,
+        abi: 'erc20:balanceOf',
+        chain: 'polygon'
+      });
+
+    sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+    if (_.isEmpty(balances)) {
+      balances = {
+        '0x2791bca1f2de4661ed88a30c99a7a9449aa84174': 0,
+      };
+    }
+    
+    return (await sdk.api.util.toSymbols(balances, 'polygon')).output;
+}
+
 module.exports = {
     name: 'CompliFi',
     token: 'COMFI',
-    chain: 'polygon',
     category: 'Derivatives',
     start: 1621938255,  // May-25-2021 10:24:15 AM UTC
-    tokenHolderMap: [
-      {
-        tokens: [
-          '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',   // USD Coin (PoS)
-        ],
-        holders: [
-          "0xBC8822d5db2ae80686727345fB6818064d1e6D00",
-          "0x0121314498462e3Eae63C3E0F9bB7b9d25302070",
-          "0x298881F0E5962CC1E6e8ce330EB9D72f4FC26b30",
-          "0x6D97fCF8Ca60d125ec61F60428ae084CC4559b74"
-        ],
-        // holders: {
-        //   pullFromLogs: true,
-        //   logConfig: {
-        //     target: '0xE970b0B1a2789e3708eC7DfDE88FCDbA5dfF246a', // CompliFi Vault Factory
-        //     topic: 'VaultCreated(bytes32,address,address)',
-        //     keys: ['topics'],
-        //     fromBlock: 14908452
-        //   },
-        //   transform: (poolLog) => {
-        //     return `0x${poolLog}` // can't receive access to event.data field
-        //   },
-        // }
-      }
-    ],
-  };
-  
+    tvl,
+    chain: 'Polygon',
+  }
