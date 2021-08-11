@@ -34,7 +34,6 @@ async function tvl(timestamp, block){
         block,
         calls,
         abi: 'erc20:balanceOf',
-        chain: 'polygon'
       });
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
@@ -48,10 +47,10 @@ async function tvl(timestamp, block){
 }
 
 module.exports = {
-    name: 'CompliFi',
+    name: 'CompliFi_Polygon',
     token: 'COMFI',
     category: 'Derivatives',
     start: 1621938255,  // May-25-2021 10:24:15 AM UTC
     tvl,
-    chain: 'Polygon',
+    chain: 'Multichain,Ethereum-Polygon',
   }
