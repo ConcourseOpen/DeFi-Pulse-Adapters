@@ -51,7 +51,6 @@ async function tvl(timestamp, block) {
       balances[token] = amount
     }
   }
-
   const getBalancesFromEarnPool = async (addresses) => {
     const earnPoolData = (await sdk.api.abi.multiCall({
       calls: addresses.map((address) => ({
@@ -146,11 +145,17 @@ async function tvl(timestamp, block) {
 
       for (let i = 0; i < fusePoolsTokenData.length; i++) {
         const underlyingTokenAddress = fusePoolsTokenData[i][1]
-        const underlyingTokenTotalSupply = BigNumber(fusePoolsTokenData[i][8])
-        if (underlyingTokenTotalSupply.isGreaterThan(bigNumZero)) {
-          updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
+        if (fusePoolsTokenData[i][14] === '0') {
+          continue
+        }
+        const exchangeRate = BigNumber(fusePoolsTokenData[i][14])
+        const decimals = BigNumber('1000000000000000000')
+        const underlyingBalance = BigNumber(fusePoolsTokenData[i][7]).multipliedBy(exchangeRate).dividedBy(decimals)
+        if (underlyingBalance.isGreaterThan(bigNumZero)) {
+          updateBalance(underlyingTokenAddress, underlyingBalance)
         }
       }
+
     }
   } catch(e) {
     // ignore error
