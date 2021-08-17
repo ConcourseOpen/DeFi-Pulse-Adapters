@@ -14,6 +14,7 @@ const BigNumber = require("bignumber.js");
 const CompoundStrategyAddress = "0xd5433168ed0b1f7714819646606db509d9d8ec1f";
 const CurveStrategyAddress = "0x3c5fe0a3922777343cbd67d3732fcdc9f2fa6f2f";
 const AaveStrategyAddress = "0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce";
+const OriginVaultAddress = "0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce";
 
 
 // /*==================================================
@@ -30,11 +31,11 @@ async function tvl(timestamp, block) {
     '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // cUSDT
     '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
   ];
-  let balances = {
+  const balances = {
     '0x0000000000000000000000000000000000000000': 0
   };
 
-  let calls = [];
+  const calls = [];
   _.each(tokens, (token) => {
     calls.push(
       {
@@ -48,8 +49,11 @@ async function tvl(timestamp, block) {
       {
         target: token,
         params: AaveStrategyAddress
+      },
+      {
+        target: token,
+        params: OriginVaultAddress
       }
-      // TODO add unallocated amount
     );
   });
 
@@ -63,6 +67,10 @@ async function tvl(timestamp, block) {
 
   return balances;
 }
+
+// /*==================================================
+// Exports
+// ==================================================*/
 
 module.exports = {
   name: "Origin Dollar",
