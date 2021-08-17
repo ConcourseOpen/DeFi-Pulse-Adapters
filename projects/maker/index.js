@@ -38,9 +38,7 @@ async function getJoins(block) {
     for (let ilk of ilks) {
       if (ilk.output) {
         let name = utils.hexToString(ilk.output);
-        if (name.substr(0, 3) !== 'PSM') {
-          joins[name.toString()] = ilk.input.target
-        }
+        joins[name.toString()] = ilk.input.target
       }
     }
   
