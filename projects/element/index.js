@@ -135,7 +135,7 @@ async function tvl(timestamp, block) {
         };
       }
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
 }
 
 
@@ -143,7 +143,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Element Finance',               // project name
   token: null,
-  category: 'Lending',          // Lending
+  category: 'lending',          // Lending
   start: 1624388593,            // 
   tvl,                           // tvl adapter
   contributesTo: ['Curve, yearn']
