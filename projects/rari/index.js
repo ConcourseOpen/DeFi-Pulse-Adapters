@@ -32,8 +32,6 @@ const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const bigNumZero = BigNumber('0')
-const fTokenDecimals = 8
-
 
 async function tvl(timestamp, block) {
   const balances = {}
@@ -132,37 +130,24 @@ async function tvl(timestamp, block) {
     const fusePools = (await sdk.api.abi.call({
       target: fusePoolDirectoryAddress,
       block,
-      abi: abi['getAllPools']
-    })).output ?? []
-    if (fusePools.length > 0) {
-      const fusePoolsTokenData = (
-        await sdk.api.abi.multiCall({
-          abi: abi['getPoolAssetsWithData'],
-          target: fusePoolLensAddress,
-          calls: fusePools.map((poolInfo) => ({
-            params: [poolInfo[2]]
-          })),
-          block,
-        })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
+      abi: abi['getPublicPools']
+    })).output['1']
 
-      for (let i = 0; i < fusePoolsTokenData.length; i++) {
-        const underlyingTokenAddress = fusePoolsTokenData[i][1]
-        if (fusePoolsTokenData[i][14] === '0') {
-          continue
-        }
-        const exchangeRate = BigNumber(fusePoolsTokenData[i][14])
-        const underlyingDecimals = parseInt(fusePoolsTokenData[i][4])
-        const mantissa = 18 + underlyingDecimals - fTokenDecimals
-        const divisor = new BigNumber(Math.pow(10, mantissa))
-        const onefTokenInUnderlying = exchangeRate.dividedBy(divisor);
-        const fTokenSupply = BigNumber(fusePoolsTokenData[i][8]).dividedBy(new BigNumber(Math.pow(10, fTokenDecimals)))
-        const underlyingBalance = fTokenSupply.multipliedBy(onefTokenInUnderlying)
-        if (underlyingBalance.isGreaterThan(bigNumZero)) {
-          updateBalance(underlyingTokenAddress, underlyingBalance)
-        }
+    const poolSummaries = (await sdk.api.abi.multiCall({
+      target: fusePoolLensAddress,
+      abi: abi['getPoolSummary'],
+      calls: fusePools.map((poolInfo) => ({
+        params: [poolInfo[2]]
+      }))
+    })).output.filter(resp => resp.success === true).map((resp) => resp.output).flat()
+
+    for (let summary of poolSummaries) {
+      const supplied = BigNumber(summary['0'])
+      if (supplied.isGreaterThan(bigNumZero)) {
+        updateBalance(ETHAddress, supplied)
       }
-
     }
+
   } catch(e) {
     // ignore error
   }
@@ -189,10 +174,6 @@ async function tvl(timestamp, block) {
   catch(e) {
     // ignore error
   }
-
-  // for (key in balances) {
-  //   console.log(key, balances[key].toString())
-  // }
 
   return balances
 }
