@@ -34,6 +34,7 @@ async function tvl(timestamp, block){
         block,
         calls,
         abi: 'erc20:balanceOf',
+        chain: 'polygon'
       });
 
     sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
