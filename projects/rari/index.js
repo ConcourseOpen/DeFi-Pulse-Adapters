@@ -23,6 +23,9 @@ const earnStablePoolAddressesIncludingLegacy = [
 const fusePoolLensAddress = '0x8dA38681826f4ABBe089643D2B3fE4C6e4730493'
 const fusePoolDirectoryAddress = '0x835482FE0532f169024d5E9410199369aAD5C77E'
 const rariGovernanceTokenUniswapDistributorAddress = '0x1FA69a416bCF8572577d3949b742fBB0a9CD98c7'
+const sushiETHRGTPairAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
+const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
 const RGTETHSushiLPTokenAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const bigNumZero = BigNumber('0')
@@ -97,7 +100,7 @@ async function tvl(timestamp, block) {
    // ignore error
   }
 
-  // Earn ETH pool
+  //Earn ETH pool
   try {
     const ethPoolData = (await sdk.api.abi.multiCall({
       block,
@@ -159,16 +162,30 @@ async function tvl(timestamp, block) {
 
   // Sushiswap LP stakers
   try {
-    let totalStaked = await sdk.api.abi.call({
+    const totalStaked = await sdk.api.abi.call({
       target: rariGovernanceTokenUniswapDistributorAddress,
       block,
       abi: abi['totalStaked']
     })
+    const lpTokenSupply = await sdk.api.erc20.totalSupply({
+      target: RGTETHSushiLPTokenAddress,
+      block
+    })
+    const fractionStaked = BigNumber(totalStaked.output).dividedBy(BigNumber(lpTokenSupply.output))
+    const rgtETHPairData = await sdk.api.abi.call({
+      target: sushiETHRGTPairAddress,
+      block,
+      abi: abi['getReserves']
+    })
 
-    if (totalStaked && totalStaked.output) {
-      totalStaked = BigNumber(totalStaked.output)
-      if (totalStaked.isGreaterThan(bigNumZero)) {
-        updateBalance(RGTETHSushiLPTokenAddress, totalStaked)
+    if (rgtETHPairData && rgtETHPairData.output && fractionStaked.isGreaterThan(bigNumZero)) {
+      const reserve0Balanace = BigNumber(rgtETHPairData.output._reserve0)
+      const reserve1Balance = BigNumber(rgtETHPairData.output._reserve1)
+      if (reserve0Balanace.isGreaterThan(bigNumZero)) {
+        updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData.output._reserve0).multipliedBy(fractionStaked))
+      }
+      if (reserve1Balance.isGreaterThan(bigNumZero)) {
+        updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData.output._reserve1).multipliedBy(fractionStaked))
       }
     }
   }
