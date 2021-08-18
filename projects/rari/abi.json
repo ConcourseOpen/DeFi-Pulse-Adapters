@@ -91,6 +91,19 @@
     "stateMutability": "nonpayable",
     "type": "function"
   },
+  "getRawFundBalances": {
+    "constant": false,
+    "inputs": [],
+    "name": "getRawFundBalances",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint8[]", "name": "", "type": "uint8[]" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
   "balanceOf":{
 		"constant": true,
 		"inputs": [

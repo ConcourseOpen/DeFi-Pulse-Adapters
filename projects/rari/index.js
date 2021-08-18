@@ -2,11 +2,6 @@ const sdk = require("../../sdk");
 const abi = require("./abi");
 const { default: BigNumber } = require("bignumber.js");
 
-const earnYieldPoolProxyManagerAddressesIncludingLegacy = [
-  '0x35DDEFa2a30474E64314aAA7370abE14c042C6e8',
-  '0x6dd8e1Df9F366e6494c2601e515813e0f9219A88',
-  '0x626d6979F3607d13051594d8B27a0A64E413bC11'
-]
 const earnETHPoolFundControllerAddressesIncludingLegacy = [
   '0xD9F223A36C2e398B0886F945a7e556B41EF91A3C',
   '0xa422890cbBE5EAa8f1c88590fBab7F319D7e24B6',
@@ -42,6 +37,16 @@ async function tvl(timestamp, block) {
     result[item.symbol] = item;
     return result;
   }, {})
+
+  const getEarnYieldProxyAddressAsArray = (block) => {
+    if (block <= 11306334) {
+      return ['0x35DDEFa2a30474E64314aAA7370abE14c042C6e8']
+    } else if (block > 11306334 && block <= 11252873) {
+      return ['0x6dd8e1Df9F366e6494c2601e515813e0f9219A88']
+    } else {
+      return ['0x35DDEFa2a30474E64314aAA7370abE14c042C6e8']
+    }
+  }
 
   const updateBalance = (token, amount) => {
     token = token.toLowerCase()
@@ -86,8 +91,9 @@ async function tvl(timestamp, block) {
   }
 
   // Earn yield pool
+  const earnYieldProxyAddress = getEarnYieldProxyAddressAsArray(block)
   try {
-    await getBalancesFromEarnPool(earnYieldPoolProxyManagerAddressesIncludingLegacy)
+    await getBalancesFromEarnPool(earnYieldProxyAddress)
   } catch(e) {
    // ignore error
   }
