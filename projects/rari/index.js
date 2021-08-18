@@ -33,7 +33,6 @@ const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const bigNumZero = BigNumber('0')
 
-
 async function tvl(timestamp, block) {
   const balances = {}
   const tokenList = await sdk.api.util.tokenList()
@@ -45,13 +44,13 @@ async function tvl(timestamp, block) {
   }, {})
 
   const updateBalance = (token, amount) => {
+    token = token.toLowerCase()
     if (balances[token] !== undefined) {
       balances[token] = balances[token].plus(amount)
     } else {
       balances[token] = amount
     }
   }
-
   const getBalancesFromEarnPool = async (addresses) => {
     const earnPoolData = (await sdk.api.abi.multiCall({
       calls: addresses.map((address) => ({
@@ -131,27 +130,24 @@ async function tvl(timestamp, block) {
     const fusePools = (await sdk.api.abi.call({
       target: fusePoolDirectoryAddress,
       block,
-      abi: abi['getAllPools']
-    })).output ?? []
-    if (fusePools.length > 0) {
-      const fusePoolsTokenData = (
-        await sdk.api.abi.multiCall({
-          abi: abi['getPoolAssetsWithData'],
-          target: fusePoolLensAddress,
-          calls: fusePools.map((poolInfo) => ({
-            params: [poolInfo[2]]
-          })),
-          block,
-        })).output.filter((resp) => resp.success === true).map((resp) => resp.output).flat()
+      abi: abi['getPublicPools']
+    })).output['1']
 
-      for (let i = 0; i < fusePoolsTokenData.length; i++) {
-        const underlyingTokenAddress = fusePoolsTokenData[i][1]
-        const underlyingTokenTotalSupply = BigNumber(fusePoolsTokenData[i][8])
-        if (underlyingTokenTotalSupply.isGreaterThan(bigNumZero)) {
-          updateBalance(underlyingTokenAddress, underlyingTokenTotalSupply)
-        }
+    const poolSummaries = (await sdk.api.abi.multiCall({
+      target: fusePoolLensAddress,
+      abi: abi['getPoolSummary'],
+      calls: fusePools.map((poolInfo) => ({
+        params: [poolInfo[2]]
+      }))
+    })).output.filter(resp => resp.success === true).map((resp) => resp.output).flat()
+
+    for (let summary of poolSummaries) {
+      const supplied = BigNumber(summary['0'])
+      if (supplied.isGreaterThan(bigNumZero)) {
+        updateBalance(ETHAddress, supplied)
       }
     }
+
   } catch(e) {
     // ignore error
   }

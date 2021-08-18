@@ -24,16 +24,55 @@
     "stateMutability": "view",
     "type": "function"
   },
-  "getRawFundBalances": {
-    "constant": false,
-    "inputs": [],
-    "name": "getRawFundBalances",
+  "getPublicPools": {
+      "inputs": [],
+      "name": "getPublicPools",
+      "outputs": [
+        { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+        {
+          "components": [
+            { "internalType": "string", "name": "name", "type": "string" },
+            { "internalType": "address", "name": "creator", "type": "address" },
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockPosted",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestampPosted",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct FusePoolDirectory.FusePool[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+  },
+  "getPoolSummary": {
+    "inputs": [
+      {
+        "internalType": "contract Comptroller",
+        "name": "comptroller",
+        "type": "address"
+      }
+    ],
+    "name": "getPoolSummary",
     "outputs": [
       { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint8[]", "name": "", "type": "uint8[]" },
-      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address[]", "name": "", "type": "address[]" },
+      { "internalType": "string[]", "name": "", "type": "string[]" }
     ],
-    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -49,141 +88,6 @@
       { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
     ],
     "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  "getAllPools": {
-    "inputs": [],
-    "name": "getAllPools",
-    "outputs": [
-      {
-        "components": [
-          { "internalType": "string", "name": "name", "type": "string" },
-          { "internalType": "address", "name": "creator", "type": "address" },
-          {
-            "internalType": "address",
-            "name": "comptroller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "blockPosted",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "timestampPosted",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct FusePoolDirectory.FusePool[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  "getPoolAssetsWithData":   {
-    "inputs": [
-      {
-        "internalType": "contract Comptroller",
-        "name": "comptroller",
-        "type": "address"
-      }
-    ],
-    "name": "getPoolAssetsWithData",
-    "outputs": [
-      {
-        "components": [
-          { "internalType": "address", "name": "cToken", "type": "address" },
-          {
-            "internalType": "address",
-            "name": "underlyingToken",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "underlyingName",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "underlyingSymbol",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "underlyingDecimals",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "underlyingBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supplyRatePerBlock",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "borrowRatePerBlock",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalSupply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalBorrow",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supplyBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "borrowBalance",
-            "type": "uint256"
-          },
-          { "internalType": "uint256", "name": "liquidity", "type": "uint256" },
-          { "internalType": "bool", "name": "membership", "type": "bool" },
-          {
-            "internalType": "uint256",
-            "name": "exchangeRate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "underlyingPrice",
-            "type": "uint256"
-          },
-          { "internalType": "address", "name": "oracle", "type": "address" },
-          {
-            "internalType": "uint256",
-            "name": "collateralFactor",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "reserveFactor",
-            "type": "uint256"
-          },
-          { "internalType": "uint256", "name": "adminFee", "type": "uint256" },
-          { "internalType": "uint256", "name": "fuseFee", "type": "uint256" }
-        ],
-        "internalType": "struct FusePoolLens.FusePoolAsset[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
