@@ -81,21 +81,20 @@ module.exports = async function tvl(timestamp, block) {
     ).output;
 
     balances[usdc] = BigNumber(balances[usdc] || 0).plus(BigNumber(yvUSDCBalance)).toFixed();
+
+    // Add sdeCRV as ETH to balances
+    const sdeCRVBalance = (
+      await sdk.api.abi.call({
+        target: sdeCRV,
+        params: marginPool,
+        abi: 'erc20:balanceOf',
+        block
+      })
+    ).output;
+
+    balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(sdeCRVBalance)).toFixed();
+
   }
-
-
-  // Add sdeCRV as ETH to balances
-  const sdeCRVBalance = (
-    await sdk.api.abi.call({
-      target: sdeCRV,
-      params: marginPool,
-      abi: 'erc20:balanceOf',
-      block
-    })
-  ).output;
-
-  balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(sdeCRVBalance)).toFixed();
-
 
   return balances;
 }
