@@ -2,11 +2,6 @@ const sdk = require("../../sdk");
 const abi = require("./abi");
 const { default: BigNumber } = require("bignumber.js");
 
-const earnYieldPoolProxyManagerAddressesIncludingLegacy = [
-  '0x35DDEFa2a30474E64314aAA7370abE14c042C6e8',
-  '0x6dd8e1Df9F366e6494c2601e515813e0f9219A88',
-  '0x626d6979F3607d13051594d8B27a0A64E413bC11'
-]
 const earnETHPoolFundControllerAddressesIncludingLegacy = [
   '0xD9F223A36C2e398B0886F945a7e556B41EF91A3C',
   '0xa422890cbBE5EAa8f1c88590fBab7F319D7e24B6',
@@ -27,9 +22,11 @@ const earnStablePoolAddressesIncludingLegacy = [
 ]
 const fusePoolLensAddress = '0x8dA38681826f4ABBe089643D2B3fE4C6e4730493'
 const fusePoolDirectoryAddress = '0x835482FE0532f169024d5E9410199369aAD5C77E'
+const rariGovernanceTokenUniswapDistributorAddress = '0x1FA69a416bCF8572577d3949b742fBB0a9CD98c7'
 const sushiETHRGTPairAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
 const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 const RGTTokenAddress = '0xD291E7a03283640FDc51b121aC401383A46cC623'
+const RGTETHSushiLPTokenAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
 const ETHAddress = '0x0000000000000000000000000000000000000000'
 const bigNumZero = BigNumber('0')
 
@@ -42,6 +39,16 @@ async function tvl(timestamp, block) {
     result[item.symbol] = item;
     return result;
   }, {})
+
+  const getEarnYieldProxyAddressAsArray = (block) => {
+    if (block <= 11306334) {
+      return ['0x35DDEFa2a30474E64314aAA7370abE14c042C6e8']
+    } else if (block > 11306334 && block <= 11252873) {
+      return ['0x6dd8e1Df9F366e6494c2601e515813e0f9219A88']
+    } else {
+      return ['0x35DDEFa2a30474E64314aAA7370abE14c042C6e8']
+    }
+  }
 
   const updateBalance = (token, amount) => {
     token = token.toLowerCase()
@@ -86,13 +93,14 @@ async function tvl(timestamp, block) {
   }
 
   // Earn yield pool
+  const earnYieldProxyAddress = getEarnYieldProxyAddressAsArray(block)
   try {
-    await getBalancesFromEarnPool(earnYieldPoolProxyManagerAddressesIncludingLegacy)
+    await getBalancesFromEarnPool(earnYieldProxyAddress)
   } catch(e) {
    // ignore error
   }
 
-  // Earn ETH pool
+  //Earn ETH pool
   try {
     const ethPoolData = (await sdk.api.abi.multiCall({
       block,
@@ -152,22 +160,32 @@ async function tvl(timestamp, block) {
     // ignore error
   }
 
-  // Sushiswap LP data
+  // Sushiswap LP stakers
   try {
+    const totalStaked = await sdk.api.abi.call({
+      target: rariGovernanceTokenUniswapDistributorAddress,
+      block,
+      abi: abi['totalStaked']
+    })
+    const lpTokenSupply = await sdk.api.erc20.totalSupply({
+      target: RGTETHSushiLPTokenAddress,
+      block
+    })
+    const fractionStaked = BigNumber(totalStaked.output).dividedBy(BigNumber(lpTokenSupply.output))
     const rgtETHPairData = await sdk.api.abi.call({
       target: sushiETHRGTPairAddress,
       block,
       abi: abi['getReserves']
     })
 
-    if (rgtETHPairData && rgtETHPairData.output) {
+    if (rgtETHPairData && rgtETHPairData.output && fractionStaked.isGreaterThan(bigNumZero)) {
       const reserve0Balanace = BigNumber(rgtETHPairData.output._reserve0)
       const reserve1Balance = BigNumber(rgtETHPairData.output._reserve1)
       if (reserve0Balanace.isGreaterThan(bigNumZero)) {
-        updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData.output._reserve0))
+        updateBalance(WETHTokenAddress, BigNumber(rgtETHPairData.output._reserve0).multipliedBy(fractionStaked))
       }
       if (reserve1Balance.isGreaterThan(bigNumZero)) {
-        updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData.output._reserve1))
+        updateBalance(RGTTokenAddress, BigNumber(rgtETHPairData.output._reserve1).multipliedBy(fractionStaked))
       }
     }
   }
