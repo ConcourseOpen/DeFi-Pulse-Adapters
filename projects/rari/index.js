@@ -66,7 +66,7 @@ async function tvl(timestamp, block) {
       })),
       block,
       abi: abi['getRawFundBalancesAndPrices']
-    })).output.filter(resp => resp.success === true).map((resp) => resp.output).reduce((acc, val) => [ ...acc, ...val ], [])
+    })).output.filter(resp => resp.success === true).map((resp) => resp.output);
     for (let j = 0; j < earnPoolData.length; j++) {
       if (earnPoolData[j] && earnPoolData[j]['0'] && earnPoolData[j]['0'].length > 0) {
         for (let i = 0; i < earnPoolData[j]['0'].length; i++) {
@@ -109,7 +109,7 @@ async function tvl(timestamp, block) {
       calls: earnETHPoolFundControllerAddressesIncludingLegacy.map((address) => ({
         target: address
       }))
-    })).output.filter(resp => resp.success === true).map((resp) => resp.output).reduce((acc, val) => [ ...acc, ...val ], [])
+    })).output.filter(resp => resp.success === true).map((resp) => resp.output);
     for (let i = 0; i < ethPoolData.length; i++) {
       const ethAmount = BigNumber(ethPoolData[i]['0'])
       if (ethAmount.isGreaterThan(bigNumZero)) {
@@ -159,7 +159,6 @@ async function tvl(timestamp, block) {
 
   } catch(e) {
     // ignore error
-    console.log(e);
   }
 
   // Sushiswap LP stakers
@@ -208,6 +207,6 @@ module.exports = {
   name: 'Rari Capital', // project name
   token: "RGT",             // null, or token symbol if project has a custom token
   category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-  start: 1602275325,        // July 14, 2020
+  start: 1600210710,        // July 14, 2020
   tvl                       // tvl adapter
 }
