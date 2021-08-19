@@ -11,10 +11,11 @@
   ==================================================*/
 
   const zeroAddress = '0x0000000000000000000000000000000000000000'
-  const fundContract = '0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478'
+  const fundContract = '0x07cDB44fA1E7eCEb638c12A3451A3Dc9CE1400e4'
   const acceptableTokens = [
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
     '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
+    '0x0d8775f648430679a709e98d2b0cb6250d2887ef', // BAT
   ]
 
 /*==================================================
