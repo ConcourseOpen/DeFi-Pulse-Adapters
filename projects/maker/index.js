@@ -10,6 +10,7 @@ async function getJoins(block) {
   const joins = {};
 
   // get list of auths
+
   const logs = (
     await sdk.api.util
       .getLogs({
@@ -25,7 +26,7 @@ async function getJoins(block) {
     return `0x${auth.topics[1].substr(26)}`;
   });
 
-  const ilks = (await sdk.api.abi.multiCall({
+  let ilks = (await sdk.api.abi.multiCall({
     abi: MakerMCDConstants.ilk,
     calls: auths.map((auth) => ({
       target: auth,
@@ -33,12 +34,20 @@ async function getJoins(block) {
     block
   })).output;
 
-  for (let ilk of ilks) {
-    if (ilk.output) {
+  ilks = ilks.filter((ilk) => ilk.output);
+
+  await Promise.all(ilks.map(async (ilk) => {
+    try {
+      let gem = (await sdk.api.abi.call({
+        block,
+        target: ilk.input.target,
+        abi: MakerMCDConstants.gem
+      })).output;
+
       let name = utils.hexToString(ilk.output);
-      joins[name.toString()] = ilk.input.target
-    }
-  }
+      joins[name.toString()] = ilk.input.target;
+    } catch (e) {}
+  }));
 
   return joins;
 }
@@ -70,7 +79,7 @@ async function tvl(timestamp, block) {
 
         balances[gem] = balances[gem] ? balances[gem].plus(balance) : new BigNumber(balance);
       } catch (error) {
-        // console.log(error);
+        console.log(error.message);
       }
     }));
 
