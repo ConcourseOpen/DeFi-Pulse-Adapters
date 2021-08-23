@@ -9,6 +9,7 @@ async function tvl(timestamp, block) {
   let makerSubs = [];
   let compoundSubs = [];
   let aaveSubs = [];
+  let aaveV2Subs = [];
 
   if (block >= getContractBlock('McdSubscriptions')) makerSubs = (await sdk.api.abi.call({
     block,
@@ -51,15 +52,30 @@ async function tvl(timestamp, block) {
     abi: getContractMethod('getSubscribers', 'CompoundSubscriptions'),
   })).output;
 
-  if (block >= getContractBlock('AaveSubscriptions')) aaveSubs = (await sdk.api.abi.call({
-    block,
-    target: getContractAddress('AaveSubscriptions'),
-    abi: getContractMethod('getSubscribers', 'AaveSubscriptions'),
-  })).output;
+  // Aave V1 - contract destruction block: 12837601
+  if ((block >= getContractBlock('AaveSubscriptions')) && (block < 12837601)) {
+    aaveSubs = (await sdk.api.abi.call({
+      block,
+      target: getContractAddress('AaveSubscriptions'),
+      abi: getContractMethod('getSubscribers', 'AaveSubscriptions'),
+    })).output;
+  }
+
+  // Aave V2
+  if (block >= getContractBlock('AaveV2Subscriptions')) {
+    aaveV2Subs = (await sdk.api.abi.call({
+      block,
+      target: getContractAddress('AaveV2Subscriptions'),
+      abi: getContractMethod('getSubscribers', 'AaveV2Subscriptions'),
+    })).output;
+  }
+
 
   const compoundSubscribers = new Set();
   const aaveSubscribers = new Set();
+  const aaveV2Subscribers = new Set();
 
+  for (const sub of aaveV2Subs) { aaveV2Subscribers.add(sub[0]); }
   for (const sub of compoundSubs) { compoundSubscribers.add(sub[0]); }
   for (const sub of aaveSubs) { aaveSubscribers.add(sub[0]); }
 
@@ -79,7 +95,12 @@ async function tvl(timestamp, block) {
     targets: [...aaveSubscribers]
   })).output;
 
-  let balances = utils.sum([makerBalances, compoundBalances, aaveBalances]);
+  let aaveV2Balances = (await sdk.api.cdp.aave.getAssetsLocked({
+    block,
+    targets: [...aaveV2Subscribers]
+  })).output;
+
+  let balances = utils.sum([makerBalances, compoundBalances, aaveBalances, aaveV2Balances]);
   if (Object.keys(balances).length === 0) {
     balances = {
       "0x0000000000000000000000000000000000000000": "0"
@@ -94,7 +115,7 @@ module.exports = {
   name: 'DeFi Saver',
   token: null,
   website: 'https://defisaver.com/',
-  category: 'lending',
+  category: 'Lending',
   start: 1586430640, // 09/04/2020 @ 11:10 (UTC)
   contributesTo: ['Maker', 'Compound', 'Aave'],
 };
