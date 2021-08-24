@@ -51,8 +51,14 @@ const GUSD_data = {
   start: 12146825,
   isFPool: true
 }
+const ALUSD_data = {
+  version: 2,
+  addr: '0x4eaa01974b6594c0ee62ffd7fee56cf11e6af936',
+  start: 12806810,
+  isFPool: true
+}
 
-const fPools = [HBTC_data, TBTC_data, BUSD_data, GUSD_data];
+const fPools = [HBTC_data, TBTC_data, BUSD_data, GUSD_data, ALUSD_data];
 
 /*==================================================
 Main
