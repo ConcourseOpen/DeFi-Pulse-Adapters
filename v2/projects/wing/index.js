@@ -43,6 +43,10 @@ module.exports = {
     {
       tokens: '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
       holders: '0x0A705821cd494DfaB4C09603460126Cc05eb894f',
+    },
+    {
+      tokens: '0x45804880de22913dafe09f4980848ece6ecbaf78', // PAXG
+      holders: '0x0b3497204bda07d8b1c07c6ae246a1b267a9cecf',
     }
   ],
 };
