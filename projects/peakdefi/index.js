@@ -14,6 +14,7 @@
   const acceptableTokens = [
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
     '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
+    '0x0d8775f648430679a709e98d2b0cb6250d2887ef', // BAT
   ]
 
 /*==================================================
@@ -23,10 +24,20 @@
   async function getFundBalances(block, timestamp) {
     let calls = [];
     let balances = {};
+    let fundContract = '0x07cDB44fA1E7eCEb638c12A3451A3Dc9CE1400e4'
 
-    let fundContract = (timestamp < 1618185600) ?
-      "0x6DE5673d00D42323Fb2E7F34ADcA156280370876":
-      "0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478"
+    if (block <= 12225121)
+    {
+      fundContract = "0x6DE5673d00D42323Fb2E7F34ADcA156280370876";
+    }
+    else if (block <= 13054404)
+    {
+      fundContract = "0xaf5a490c02efd2dbc6c5d1af0c61d1470b5ed478";
+    }
+    else
+    {
+      fundContract = '0x07cDB44fA1E7eCEb638c12A3451A3Dc9CE1400e4';
+    }
     _.each(acceptableTokens, (tokenAddress) => {
       calls.push({
         target: tokenAddress,
