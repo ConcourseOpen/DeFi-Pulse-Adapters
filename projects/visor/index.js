@@ -44,7 +44,7 @@ async function tvl(timestamp, block) {
       fromBlock: 12767944,
       topic: 'HypervisorCreated(address,address,uint24,address,uint256)',
     }).then(({ output }) => output)
-  ]).then((output) => output.flat());
+  ]).then((output) => output.reduce((acc, val) => acc.concat(val), []));
 
   const hypervisorAddresses = []
   const token0Addresses = []
