@@ -164,8 +164,7 @@
           });
 
           totalBalance = totalBalance.plus(new BigNumber(balance.output));
-      }
-      catch {
+      } catch (error) {
         break;
       }
     }
