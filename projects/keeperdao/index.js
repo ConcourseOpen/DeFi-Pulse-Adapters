@@ -13,7 +13,10 @@ const ETH = '0x0000000000000000000000000000000000000000';
   Settings
   ==================================================*/
 
-const liquidityPool = '0x35ffd6e268610e764ff6944d07760d0efe5e40e5'
+const LIQUIDITY_POOL_CONTRACTS = {
+  liquidityPoolContractV3 : '0x35fFd6E268610E764fF6944d07760D0EFe5E40E5', 
+  liquidityPoolContractV4 : '0x4F868C1aa37fCf307ab38D215382e88FCA6275E2'
+}
 
 // cache some data
 let markets = {
@@ -53,7 +56,7 @@ let markets = {
   TVL
   ==================================================*/
 
-async function getToken(block, index) {
+async function getToken(block, index, liquidityPool) {
   try {
     return (await sdk.api.abi.call({
       block,
@@ -81,7 +84,7 @@ async function getAllTokens(block) {
   return tokens;
 }
 
-async function getKToken(block, token) {
+async function getKToken(block, token, liquidityPool) {
   return (await sdk.api.abi.call({
     block,
     target: liquidityPool,
@@ -91,15 +94,15 @@ async function getKToken(block, token) {
 }
 
 // returns {[underlying]: {kToken, decimals, symbol}}
-async function getMarkets(block) {
+async function getMarkets(block, liquidityPool) {
   if (block < 11908288) {
     // the allMarkets getter was only added in this block.
     return markets;
   } else {
-    let allTokens = await getAllTokens(block);
+    let allTokens = await getAllTokens(block, liquidityPool);
     // if not in cache, get from the blockchain
     for (token of allTokens) {
-      let kToken = await getKToken(block, token);
+      let kToken = await getKToken(block, token, liquidityPool);
 
       if (!markets[token]) {
         let info = await sdk.api.erc20.info(token);
@@ -113,22 +116,24 @@ async function getMarkets(block) {
 
 async function tvl(timestamp, block) {
   let balances = {};
-  let markets = await getMarkets(block);
 
-  // Get V1 tokens locked
-  let v1Locked = await sdk.api.abi.multiCall({
-    block,
-    calls: _.map(markets, (data, token) => ({
-      target: token,
-      params: liquidityPool,
-    })),
-    abi: 'erc20:balanceOf',
-  });
+  for(let liquidityPool of Object.values(LIQUIDITY_POOL_CONTRACTS)) {
+    let markets = await getMarkets(block, liquidityPool);
+    // Get V1 tokens locked
+    let v1Locked = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(markets, (data, token) => ({
+        target: token,
+        params: liquidityPool,
+      })),
+      abi: 'erc20:balanceOf',
+    });
 
-  sdk.util.sumMultiBalanceOf(balances, v1Locked);
+    sdk.util.sumMultiBalanceOf(balances, v1Locked);
 
-  let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
-  balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
+    let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
+    balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
+  }
 
   return balances;
 }
