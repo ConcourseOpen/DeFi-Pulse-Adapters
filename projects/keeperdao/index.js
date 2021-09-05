@@ -17,6 +17,9 @@ const LIQUIDITY_POOL_CONTRACTS = {
   liquidityPoolContractV3 : '0x35fFd6E268610E764fF6944d07760D0EFe5E40E5', 
   liquidityPoolContractV4 : '0x4F868C1aa37fCf307ab38D215382e88FCA6275E2'
 }
+const HIDING_VAULT_START_BLOCK_NUMBER = 12690306;
+const HIDING_VAULT_CONTRACT = '0xE2aD581Fc01434ee426BB3F471C4cB0317Ee672E';
+const COMPOUND_COMPTROLLER_ADDRESS = '0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B';
 
 // cache some data
 let markets = {
@@ -114,13 +117,99 @@ async function getMarkets(block, liquidityPool) {
   }
 }
 
-async function tvl(timestamp, block) {
-  let balances = {};
+// Calculates all the token balances in Hiding Vault NFTs minted till the given block
+async function getHidingVaultBalances(timestamp, block) {
+  let hidingVaultBalances = {}
 
+  // Track TVL of Hiding Vaults after it went live
+  if(block > HIDING_VAULT_START_BLOCK_NUMBER) {
+    // Get total Hiding Vault NFT count by calling totalSupply on Hiding Vault Contract
+    let noOfHidingVaults = (await sdk.api.erc20.totalSupply({
+      target: HIDING_VAULT_CONTRACT,
+      block: block 
+    })).output;
+    
+    const indexRange = _.range(1, parseInt(noOfHidingVaults) + 1);
+
+    // Query Hiding Vault Contract's 'tokenByIndex' with index to get individual HidingVaultNFTs
+    let totalHidingVaultNFTs = (await sdk.api.abi.multiCall({
+      target: HIDING_VAULT_CONTRACT,
+      calls: _.map(indexRange, (index) => ({
+        params: [index],
+      })),
+      abi: liquidityAbi['tokenByIndex'],
+      block: block
+    })).output;
+
+    totalHidingVaultNFTs = totalHidingVaultNFTs.filter(hidingVaultNFT => hidingVaultNFT.success == true)
+                                                .map(hidingVaultNFT => hidingVaultNFT.output);
+
+    // all of Compound's supply & borrow assets adresses
+    const { output: cTokens } = await sdk.api.abi.call(
+      {
+        block,
+        target: COMPOUND_COMPTROLLER_ADDRESS,
+        params: [],
+        abi: liquidityAbi["getAllMarkets"]
+      }
+    )
+
+    // for each of Compound's cTokens get all of hidingVaultNFT balance and the underlying token address
+    await Promise.all(cTokens.map(async (cTokenAddress) => {
+      try {
+        // get the underlying token address
+        const isCEth = cTokenAddress.toLowerCase() === "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5"
+        const { output: token } = isCEth
+          ? { output: '0x0000000000000000000000000000000000000000' } // ETH has no underlying asset on Compound
+          : await sdk.api.abi.call(
+            {
+              block,
+              target: cTokenAddress,
+              params: [],
+              abi: liquidityAbi["underlying"]
+            }
+          )
+
+        // making a call to get the asset balance for each hidingVaultNFT
+        const calls = []
+
+        totalHidingVaultNFTs.forEach(hidingVaultNFT => {
+          calls.push({
+            target: cTokenAddress,
+            params: [hidingVaultNFT]
+          })
+        })
+
+        const underlyingBalances = await sdk.api.abi.multiCall({
+          abi: liquidityAbi["balanceOfUnderlying"],
+          calls,
+          block,
+        });
+
+        // accumulating all our hidingVaultNFT balances to calculate the TVL for this cToken
+        const sumTotal = underlyingBalances.output.map(({ output }) => output).reduce((acc, val) => {
+          return (new BigNumber(acc).plus(new BigNumber(val))).toString(10)
+        }, "0")
+
+        hidingVaultBalances[token] = (new BigNumber(hidingVaultBalances[token] || "0").plus(new BigNumber(sumTotal)) ).toString(10);
+      } catch (err) {
+        console.error(err)
+      }
+    }));
+  }
+
+  return hidingVaultBalances;
+}
+
+// Calculates the token balances in Liquidity Pool Contracts till the given block
+async function getLiquidityPoolBalances(timestamp, block) {
+  let liquidityPoolBalances = {};
+
+  // Cumulative token balances from all liqudity pool contracts
   for(let liquidityPool of Object.values(LIQUIDITY_POOL_CONTRACTS)) {
     let markets = await getMarkets(block, liquidityPool);
-    // Get V1 tokens locked
-    let v1Locked = await sdk.api.abi.multiCall({
+    // Get token balances
+    let balances = await sdk.api.abi.multiCall({
       block,
       calls: _.map(markets, (data, token) => ({
         target: token,
@@ -129,13 +218,26 @@ async function tvl(timestamp, block) {
       abi: 'erc20:balanceOf',
     });
 
-    sdk.util.sumMultiBalanceOf(balances, v1Locked);
+    sdk.util.sumMultiBalanceOf(liquidityPoolBalances, balances);
 
     let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
-    balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
+    liquidityPoolBalances[ETH] = BigNumber(liquidityPoolBalances[ETH] || 0).plus(ethBalance).toFixed();
   }
 
-  return balances;
+  return liquidityPoolBalances;
+}
+
+async function tvl(timestamp, block) {
+  const liquidityPoolBalances = await getLiquidityPoolBalances(timestamp, block);
+  const hidingVaultBalances = await getHidingVaultBalances(timestamp, block);
+
+  const totalBalances = {};
+
+  _.uniq(Object.keys(hidingVaultBalances).concat(Object.keys(liquidityPoolBalances))).forEach(asset => {
+    totalBalances[asset] = new BigNumber(hidingVaultBalances[asset] || "0").plus(new BigNumber(liquidityPoolBalances[asset] || "0")).toString(10);
+  });
+
+  return totalBalances;
 }
 
 /*==================================================
@@ -160,11 +262,28 @@ module.exports = {
   name: 'KeeperDAO',
   website: 'https://keeperdao.com',
   token: 'ROOK',
-  category: 'lending',
+  category: 'Lending',
   start: 1611991703, // 01/30/2021 @ 07:28:23 AM +UTC
   tvl,
   rates,
   term: '1 block',
   permissioning: 'Open',
   variability: 'Medium',
+  tokenHolderMap: [
+    {
+      tokens: [
+        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',  // ETH
+        '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',  // WETH
+        '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',  // USDC
+        '0x6B175474E89094C44Da98b954EedeAC495271d0F',  // DAI
+        '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',  // WBTC
+        '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',  // renBTC
+      ],
+      holders: [
+        '0x35fFd6E268610E764fF6944d07760D0EFe5E40E5',  // liquidityPoolContractV3
+        '0x4F868C1aa37fCf307ab38D215382e88FCA6275E2'   // liquidityPoolContractV4
+      ],
+      checkETHBalance: true,
+    }
+  ]
 };
