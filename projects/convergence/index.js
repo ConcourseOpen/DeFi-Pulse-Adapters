@@ -35,14 +35,14 @@ async function tvl(timestamp, block) {
       }, {})
   );
 
-  return balances;
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 module.exports = {
   name: 'Convergence',
   website: 'https://conv.finance/',
   token: 'CONV',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1621220505, //2021-05-17 00:00:00 +UTC
   tvl,
 };
