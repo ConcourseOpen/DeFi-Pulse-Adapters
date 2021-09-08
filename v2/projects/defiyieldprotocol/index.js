@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'DeFiYieldProtocol',// DeFiYieldProtocol
+  name: 'DeFi Yield Protocol',// DeFiYieldProtocol
   token: 'DYP',            	// DYP token
   category: 'Assets',       // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1619654324,        // Apr-28-2021 23:58:44 PM +UTC
