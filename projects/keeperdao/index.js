@@ -124,11 +124,13 @@ async function getHidingVaultBalances(timestamp, block) {
   // Track TVL of Hiding Vaults after it went live
   if(block > HIDING_VAULT_START_BLOCK_NUMBER) {
     // Get total Hiding Vault NFT count by calling totalSupply on Hiding Vault Contract
+    // Using erc20 lib as erc721 lib isn't supported yet.
     let noOfHidingVaults = (await sdk.api.erc20.totalSupply({
       target: HIDING_VAULT_CONTRACT,
       block: block 
     })).output;
     
+    // numberRange to iterate over indexes of NFTs. Can migrate to any supported util func of erc721 when it is supported.
     const indexRange = _.range(1, parseInt(noOfHidingVaults) + 1);
 
     // Query Hiding Vault Contract's 'tokenByIndex' with index to get individual HidingVaultNFTs
