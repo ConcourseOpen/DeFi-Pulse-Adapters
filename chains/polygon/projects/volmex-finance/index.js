@@ -1,8 +1,8 @@
 module.exports = {
     /* Project Metadata */
-    name: 'volmex.finance_Polygon', // project name
+    name: 'Volmex Finance_Polygon', // project name
     token: null, // null, or token symbol if project has a custom token
-    chain: 'polygon',
+    chain: 'Polygon',
     category: 'Derivatives', // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1626263484,
     /* required for fetching token balances */
