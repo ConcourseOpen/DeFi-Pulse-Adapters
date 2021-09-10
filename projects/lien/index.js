@@ -22,7 +22,8 @@ async function tvl(timestamp, block) {
   _.forEach(ethBalances.output, (ethBalance) => {
     balance = balance.plus(ethBalance.balance);
   });
-  return { [ZERO_ADDRESS]: balance.toFixed() };
+  
+  return (await sdk.api.util.toSymbols({ [ZERO_ADDRESS]: balance.toFixed() })).output;
 }
 
 module.exports = {
