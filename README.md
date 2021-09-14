@@ -109,7 +109,7 @@ module.exports = {
 }
 ```
 
-Add ```checkETHBalance: true``` code snippet in case your adapter needs to track ETH balances as well.
+Add ```checkETHBalance: true``` code snippet in case your adapter needs to track ETH balances as well. For Polygon or other chains, add ```checkNativeBalance: true``` instead to get your chain's native gas token (e.g. MATIC on Polygon).
 
 #### ```xDai``` adapter `tokenHolderMap` configuration
 ```js
