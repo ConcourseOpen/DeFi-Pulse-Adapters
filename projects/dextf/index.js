@@ -22,11 +22,13 @@
         .reduce((accumulator, tokenAddress) => {
           const v1Balance = new BigNumber(v1[tokenAddress] || '0');
           const v2Balance = new BigNumber(v2[tokenAddress] || '0');
-          accumulator[tokenAddress] = v1Balance.plus(v2Balance).toFixed();
+          accumulator[tokenAddress.toLowerCase()] = v1Balance.plus(v2Balance).toFixed();
 
           return accumulator
         }, {})
     );
+
+    delete balances['0xa9859874e1743a32409f75bb11549892138bba1e'];  // removing IETH because the balance was 8637200000 at ts: 1608768000 which resulted in the DexTF tvl being $6698B
 
     return balances;
   }
