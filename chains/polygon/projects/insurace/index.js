@@ -51,7 +51,6 @@
             console.log(element);
         }
     })
-    console.log(balances)
     return balances;
   }
 
