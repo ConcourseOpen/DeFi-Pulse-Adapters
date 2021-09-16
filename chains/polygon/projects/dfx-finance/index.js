@@ -2,7 +2,7 @@ module.exports = {
   /* Project Metadata */
   name: "DFX Finance_Polygon",
   token: "DFX",
-  chain: "polygon",
+  chain: "Polygon",
   category: "DEXes",
   start: 1626404432, // CADC pool creation timestamp
   /* required for fetching token balances */
