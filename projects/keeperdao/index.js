@@ -13,7 +13,13 @@ const ETH = '0x0000000000000000000000000000000000000000';
   Settings
   ==================================================*/
 
-const liquidityPool = '0x35ffd6e268610e764ff6944d07760d0efe5e40e5'
+const LIQUIDITY_POOL_CONTRACTS = {
+  liquidityPoolContractV3 : '0x35fFd6E268610E764fF6944d07760D0EFe5E40E5', 
+  liquidityPoolContractV4 : '0x4F868C1aa37fCf307ab38D215382e88FCA6275E2'
+}
+const HIDING_VAULT_START_BLOCK_NUMBER = 12690306;
+const HIDING_VAULT_CONTRACT = '0xE2aD581Fc01434ee426BB3F471C4cB0317Ee672E';
+const COMPOUND_COMPTROLLER_ADDRESS = '0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B';
 
 // cache some data
 let markets = {
@@ -53,7 +59,7 @@ let markets = {
   TVL
   ==================================================*/
 
-async function getToken(block, index) {
+async function getToken(block, index, liquidityPool) {
   try {
     return (await sdk.api.abi.call({
       block,
@@ -81,7 +87,7 @@ async function getAllTokens(block) {
   return tokens;
 }
 
-async function getKToken(block, token) {
+async function getKToken(block, token, liquidityPool) {
   return (await sdk.api.abi.call({
     block,
     target: liquidityPool,
@@ -91,15 +97,15 @@ async function getKToken(block, token) {
 }
 
 // returns {[underlying]: {kToken, decimals, symbol}}
-async function getMarkets(block) {
+async function getMarkets(block, liquidityPool) {
   if (block < 11908288) {
     // the allMarkets getter was only added in this block.
     return markets;
   } else {
-    let allTokens = await getAllTokens(block);
+    let allTokens = await getAllTokens(block, liquidityPool);
     // if not in cache, get from the blockchain
     for (token of allTokens) {
-      let kToken = await getKToken(block, token);
+      let kToken = await getKToken(block, token, liquidityPool);
 
       if (!markets[token]) {
         let info = await sdk.api.erc20.info(token);
@@ -111,26 +117,129 @@ async function getMarkets(block) {
   }
 }
 
-async function tvl(timestamp, block) {
-  let balances = {};
-  let markets = await getMarkets(block);
+// Calculates all the token balances in Hiding Vault NFTs minted till the given block
+async function getHidingVaultBalances(timestamp, block) {
+  let hidingVaultBalances = {}
 
-  // Get V1 tokens locked
-  let v1Locked = await sdk.api.abi.multiCall({
-    block,
-    calls: _.map(markets, (data, token) => ({
-      target: token,
-      params: liquidityPool,
-    })),
-    abi: 'erc20:balanceOf',
+  // Track TVL of Hiding Vaults after it went live
+  if(block > HIDING_VAULT_START_BLOCK_NUMBER) {
+    // Get total Hiding Vault NFT count by calling totalSupply on Hiding Vault Contract
+    // Using erc20 lib as erc721 lib isn't supported yet.
+    let noOfHidingVaults = (await sdk.api.erc20.totalSupply({
+      target: HIDING_VAULT_CONTRACT,
+      block: block 
+    })).output;
+    
+    // numberRange to iterate over indexes of NFTs. Can migrate to any supported util func of erc721 when it is supported.
+    const indexRange = _.range(1, parseInt(noOfHidingVaults) + 1);
+
+    // Query Hiding Vault Contract's 'tokenByIndex' with index to get individual HidingVaultNFTs
+    let totalHidingVaultNFTs = (await sdk.api.abi.multiCall({
+      target: HIDING_VAULT_CONTRACT,
+      calls: _.map(indexRange, (index) => ({
+        params: [index],
+      })),
+      abi: liquidityAbi['tokenByIndex'],
+      block: block
+    })).output;
+
+    totalHidingVaultNFTs = totalHidingVaultNFTs.filter(hidingVaultNFT => hidingVaultNFT.success == true)
+                                                .map(hidingVaultNFT => hidingVaultNFT.output);
+
+    // all of Compound's supply & borrow assets adresses
+    const { output: cTokens } = await sdk.api.abi.call(
+      {
+        block,
+        target: COMPOUND_COMPTROLLER_ADDRESS,
+        params: [],
+        abi: liquidityAbi["getAllMarkets"]
+      }
+    )
+
+    // for each of Compound's cTokens get all of hidingVaultNFT balance and the underlying token address
+    await Promise.all(cTokens.map(async (cTokenAddress) => {
+      try {
+        // get the underlying token address
+        const isCEth = cTokenAddress.toLowerCase() === "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5"
+        const { output: token } = isCEth
+          ? { output: '0x0000000000000000000000000000000000000000' } // ETH has no underlying asset on Compound
+          : await sdk.api.abi.call(
+            {
+              block,
+              target: cTokenAddress,
+              params: [],
+              abi: liquidityAbi["underlying"]
+            }
+          )
+
+        // making a call to get the asset balance for each hidingVaultNFT
+        const calls = []
+
+        totalHidingVaultNFTs.forEach(hidingVaultNFT => {
+          calls.push({
+            target: cTokenAddress,
+            params: [hidingVaultNFT]
+          })
+        })
+
+        const underlyingBalances = await sdk.api.abi.multiCall({
+          abi: liquidityAbi["balanceOfUnderlying"],
+          calls,
+          block,
+        });
+
+        // accumulating all our hidingVaultNFT balances to calculate the TVL for this cToken
+        const sumTotal = underlyingBalances.output.map(({ output }) => output).reduce((acc, val) => {
+          return (new BigNumber(acc).plus(new BigNumber(val))).toString(10)
+        }, "0")
+
+        hidingVaultBalances[token] = (new BigNumber(hidingVaultBalances[token] || "0").plus(new BigNumber(sumTotal)) ).toString(10);
+      } catch (err) {
+        console.error(err)
+      }
+    }));
+  }
+
+  return hidingVaultBalances;
+}
+
+// Calculates the token balances in Liquidity Pool Contracts till the given block
+async function getLiquidityPoolBalances(timestamp, block) {
+  let liquidityPoolBalances = {};
+
+  // Cumulative token balances from all liqudity pool contracts
+  for(let liquidityPool of Object.values(LIQUIDITY_POOL_CONTRACTS)) {
+    let markets = await getMarkets(block, liquidityPool);
+    // Get token balances
+    let balances = await sdk.api.abi.multiCall({
+      block,
+      calls: _.map(markets, (data, token) => ({
+        target: token,
+        params: liquidityPool,
+      })),
+      abi: 'erc20:balanceOf',
+    });
+
+    sdk.util.sumMultiBalanceOf(liquidityPoolBalances, balances);
+
+    let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
+    liquidityPoolBalances[ETH] = BigNumber(liquidityPoolBalances[ETH] || 0).plus(ethBalance).toFixed();
+  }
+
+  return liquidityPoolBalances;
+}
+
+async function tvl(timestamp, block) {
+  const liquidityPoolBalances = await getLiquidityPoolBalances(timestamp, block);
+  const hidingVaultBalances = await getHidingVaultBalances(timestamp, block);
+
+  const totalBalances = {};
+
+  _.uniq(Object.keys(hidingVaultBalances).concat(Object.keys(liquidityPoolBalances))).forEach(asset => {
+    totalBalances[asset] = new BigNumber(hidingVaultBalances[asset] || "0").plus(new BigNumber(liquidityPoolBalances[asset] || "0")).toString(10);
   });
 
-  sdk.util.sumMultiBalanceOf(balances, v1Locked);
-
-  let ethBalance = (await sdk.api.eth.getBalance({target: liquidityPool, block})).output;
-  balances[ETH] = BigNumber(balances[ETH] || 0).plus(ethBalance).toFixed();
-
-  return balances;
+  return totalBalances;
 }
 
 /*==================================================
@@ -155,7 +264,7 @@ module.exports = {
   name: 'KeeperDAO',
   website: 'https://keeperdao.com',
   token: 'ROOK',
-  category: 'lending',
+  category: 'Lending',
   start: 1611991703, // 01/30/2021 @ 07:28:23 AM +UTC
   tvl,
   rates,
