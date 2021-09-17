@@ -271,21 +271,4 @@ module.exports = {
   term: '1 block',
   permissioning: 'Open',
   variability: 'Medium',
-  tokenHolderMap: [
-    {
-      tokens: [
-        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',  // ETH
-        '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',  // WETH
-        '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',  // USDC
-        '0x6B175474E89094C44Da98b954EedeAC495271d0F',  // DAI
-        '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',  // WBTC
-        '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',  // renBTC
-      ],
-      holders: [
-        '0x35fFd6E268610E764fF6944d07760D0EFe5E40E5',  // liquidityPoolContractV3
-        '0x4F868C1aa37fCf307ab38D215382e88FCA6275E2'   // liquidityPoolContractV4
-      ],
-      checkETHBalance: true,
-    }
-  ]
 };
