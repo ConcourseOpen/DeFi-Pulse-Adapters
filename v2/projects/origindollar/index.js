@@ -1,7 +1,7 @@
 const sdk = require('../../../sdk/index');
 
 module.exports = {
-    name: 'Origin Dollar',
+    name: 'Origin Protocol',
     token: 'OUSD',
     category: 'Assets',
     start: 1610000000, // Thu Jan 07 2021 06:13:20 GMT+0000
