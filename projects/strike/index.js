@@ -126,8 +126,14 @@ async function getMarkets(block) {
 
 async function tvl(timestamp, block) {
   let balances = {};
-  let markets = await getMarkets(block);
-
+  try{
+    let markets = await getMarkets(block);
+  }
+  catch(e)
+  {
+    console.log(e);
+    console.log('error in getMarkets');
+  }
   let locked = await sdk.api.abi.multiCall({
     block,
     calls: _.map(markets, (market) => ({
@@ -145,7 +151,12 @@ async function tvl(timestamp, block) {
         .toFixed();
     }
   });
-  return balances;
+  if (_.isEmpty(balances)) {
+    balances = {
+      '0x0000000000000000000000000000000000000000': 0,
+    };
+  }
+  return (await sdk.api.util.toSymbols(balances)).output;
 }
 
 /*==================================================
@@ -222,7 +233,7 @@ module.exports = {
   name: 'Strike',
   website: 'https://strike.org',
   token: null,
-  category: 'lending',
+  category: 'Lending',
   start: 1617004800, // 03/29/2021 @ 11:00am (UTC)
   tvl,
   rates,
