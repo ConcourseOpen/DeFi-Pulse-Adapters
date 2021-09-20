@@ -67,7 +67,7 @@ async function getToken(block, index, liquidityPool) {
       params: [index],
       abi: liquidityAbi['registeredTokens'],
     })).output
-  } catch {
+  } catch (err) {
     return null
   }
 }
