@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: 'DeFireX',
+  name: 'DeFireX_Polygon',
   token: 'DFX',
   chain: 'Polygon',
   category: 'Assets',
