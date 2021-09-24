@@ -198,7 +198,7 @@ module.exports = {
     name: 'BarnBridge',
     website: 'https://app.barnbridge.com',
     token: 'BOND',
-    category: 'derivatives',
+    category: 'Derivatives',
     chain: 'ethereum',
     start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC,
     tvl,
