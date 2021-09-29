@@ -51,7 +51,7 @@
             console.log(element);
         }
     })
-    return balances;
+    return (await sdk.api.util.toSymbols(balances)).output;
   }
 
 
@@ -64,6 +64,6 @@
     token: 'INSUR',
     chain: 'polygon',
     category: 'derivatives',
-    start: 18692990, // Stakers Pool creation time, Friday, 03 September 2021 07:21:14 AM
+    start: 1630653711, // UTC Stakers Pool creation time, Friday, 03 September 2021 07:21:14 AM
     tvl
   }
