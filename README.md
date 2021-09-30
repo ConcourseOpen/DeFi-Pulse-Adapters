@@ -47,7 +47,9 @@ Please fork this repository before you start building your adapter and then work
 
 *Note: We try our best to reduce dependecies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
 
-Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects on Polygon or other chains get their own adapter folder under `/chains/[chain name]/projects/`. 
+Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects that are multichain get their own adapter folder under `/chains/[chain name]/projects/`. Note: please only use the `/chains/` folder if your project is multichain on DeFi Pulse. If the project is solely on ethereum or a non-ethereum chain, please use the `/v2/` folder. 
+
+Example 1: your project is on Polygon only. You want to put your adapter in the `/v2/` folder. Example 2: your project is multichain; Ethereum and Polygon. You want to place your Ethereum adapter in `/v2/` and your Polygon adapter in `/chains/[chain name]/projects/`.
 
 ```
 v2
@@ -72,7 +74,7 @@ module.exports = {
 
 ## The main ```tokenHolderMap``` configurations
 
-The main tokenHolderMap part of the adapter is where you add custom configurations for your adapter. On DeFi Pulse, This tokenHolderMap configuration will be used every hour, with a unix timestamp and block number to automatically fetch token balances locked in your protocol. Please note that project adapters need to be able to run successfully for any point back to a project starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
+The main tokenHolderMap part of the adapter is where you add custom configurations for your adapter. On DeFi Pulse, This tokenHolderMap configuration will be used every hour, with a unix timestamp to automatically fetch token balances locked in your protocol. Please note that project adapters need to be able to run successfully for any point back to a project starting time, not just for recent points. This is necessary both to allow collection of historical data that may exist prior to the release of a newly added project, and for repairing or catching up a projects data history in the event of any errors.
 
 Each item in the tokenHolderMap consists of 2 main parts:
 
