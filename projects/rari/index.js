@@ -21,7 +21,7 @@ const earnStablePoolAddressesIncludingLegacy = [
   '0xe4deE94233dd4d7c2504744eE6d34f3875b3B439'
 ]
 const fusePoolLensAddress = '0x8dA38681826f4ABBe089643D2B3fE4C6e4730493'
-const fusePoolDirectoryAddress = '0x835482FE0532f169024d5E9410199369aAD5C77E'
+const fusePoolDirectoryAddress = '0xD662eFB05E8CAFe35d1558b8b5323c73e2919aBD'
 const rariGovernanceTokenUniswapDistributorAddress = '0x1FA69a416bCF8572577d3949b742fBB0a9CD98c7'
 const sushiETHRGTPairAddress = '0x18a797c7c70c1bf22fdee1c09062aba709cacf04'
 const WETHTokenAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
