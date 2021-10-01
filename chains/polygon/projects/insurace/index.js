@@ -62,8 +62,8 @@
   module.exports = {
     name: 'InsurAce Protocol',
     token: 'INSUR',
-    chain: 'polygon',
-    category: 'derivatives',
+    chain: 'Polygon',
+    category: 'Derivatives',
     start: 1630653711, // UTC Stakers Pool creation time, Friday, 03 September 2021 07:21:14 AM
     tvl
   }
