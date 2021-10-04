@@ -26,6 +26,13 @@ async function tvl(timestamp, block) {
         'token1': '0xdAC17F958D2ee523a2206206994597C13D831ec7',   // USDT
         'fromBlock': 12590301,
         'toBlock': block,
+    },
+    {
+        'address': '0x8cd73cb1e1fa35628e36b8c543c5f825cd4e77f1',  // TCR-ETH
+        'token0': '0x9C4A4204B79dd291D6b6571C5BE8BbcD0622F050',   // TCR
+        'token1': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',   // WETH
+        'fromBlock': 13328071,
+        'toBlock': block,
     }
   ]
 
