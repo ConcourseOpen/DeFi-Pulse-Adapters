@@ -60,7 +60,7 @@
   ==================================================*/
 
   module.exports = {
-    name: 'InsurAce Protocol',
+    name: 'InsurAce Protocol_Polygon',
     token: 'INSUR',
     chain: 'Polygon',
     category: 'Derivatives',
