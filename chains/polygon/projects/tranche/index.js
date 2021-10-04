@@ -1,7 +1,7 @@
 module.exports = {
-    name: "TRANCHE-POLYGON",
+    name: "TRANCHE_Polygon",
     token: "SLICE",
-    chain: 'polygon',
+    chain: 'Polygon',
     category: "Derivatives",
     website: "https://tranche.finance/",
     start: 1625640852,
