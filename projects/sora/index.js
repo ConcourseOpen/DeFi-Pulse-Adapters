@@ -58,7 +58,7 @@ async function fetch () {
       const priceUSD = new BigNumber(item.priceUSD);
       const baseAssetReserves = new BigNumber(item.baseAssetReserves);
       const targetAssetReserves = new BigNumber(item.targetAssetReserves);
-      // x + (xorReserves * xorPrice + targetAssetReserves * targetAssetPriceUSD)
+      // x += (xorReserves * xorPrice + targetAssetReserves * targetAssetPriceUSD)
       return acc.plus(baseAssetReserves.times(xorPriceUSD).plus(targetAssetReserves.times(priceUSD)));
     }, new BigNumber(0));
 
