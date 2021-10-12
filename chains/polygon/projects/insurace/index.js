@@ -24,6 +24,14 @@
     }
     const {data} = await axios.get("https://files.insurace.io/public/defipulse/polygonpools.json");
     const pools = data.pools;
+
+    for (pool in pools)
+    {
+      if (pool.PoolToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+      {
+        pool.PoolToken = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
+      }
+    }
     
     const {output: _tvlList} = await sdk.api.abi.multiCall({
         calls: pools.map((pool) => ({
