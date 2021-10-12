@@ -1,6 +1,6 @@
 module.exports = {
     /* Project Metadata */
-    name: 'DmmExchange',
+    name: 'Kyber',
     token: null,
     category: 'DEXes',
     start: 1622961237, // @6-Jun-2021, 6:33:57 AM+UTC 
