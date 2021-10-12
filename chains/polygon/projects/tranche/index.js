@@ -1,5 +1,5 @@
 module.exports = {
-    name: "TRANCHE_Polygon",
+    name: "Tranche_Polygon",
     token: "SLICE",
     chain: 'Polygon',
     category: "Derivatives",
