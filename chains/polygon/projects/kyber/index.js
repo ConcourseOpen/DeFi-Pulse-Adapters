@@ -1,7 +1,8 @@
 module.exports = {
     /* Project Metadata */
-    name: 'Kyber',
+    name: 'Kyber_Polygon',
     token: null,
+    chain: "Polygon",
     category: 'DEXes',
     start: 1622961237, // @6-Jun-2021, 6:33:57 AM+UTC 
     /*fetching token balances */
