@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 module.exports = {
-    name: 'CompliFi',
+    name: 'CompliFi_Polygon',
     token: 'COMFI',
     chain: 'Polygon',
     category: 'Derivatives',
