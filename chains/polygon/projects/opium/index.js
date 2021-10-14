@@ -17,6 +17,7 @@ module.exports = {
       holders: [
         // Opium
         "0x461e820956223cf008051Ce8506f01583A09e006", // Opium.Core v1.2
+        "0xB3F6281655276150E97e5029B607a6D4d2E21972", // Opium.Core v1.3
       
         /// OFI
         // Turbo
@@ -24,9 +25,12 @@ module.exports = {
         "0x2300091326DF68309BDB7eE885de561C2C89fea9", // Turbo AAVE Staking Pool
         "0xC1e31C2db9f238809FE58089a7Fa7cE5aA7E52c6", // Turbo MATIC Staking Pool
         "0x5C1E6bc8E52cE1a262014c743508f74923a5B0d2", // Turbo BTC Staking Pool
+        "0x020B49AE5C5f805895d4Cb0ed91236BE4345c825", // Turbo Weekly ETH Staking Pool
         
         // Protection
         "0xB3e0a40F6dFA981099879F8076B1A46C59dFe597", // ETH Dump Protection Staking Pool
+        "0xA4fe26FcA5F20F6c4e691EF60AD55712b6B26348", // Realt Whittier
+        "0x37baa047B4C062A2CB93fC6550011f72E36a3894", // Realt Kostner
       ]
     }
   ]
