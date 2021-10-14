@@ -60,4 +60,5 @@ const _ = require('underscore');
     category: 'Derivatives',
     start: 1621340071,
     tvl,
+    chain: 'Multichain,Ethereum-Polygon'
   }
