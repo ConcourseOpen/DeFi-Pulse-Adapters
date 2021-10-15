@@ -1,8 +1,8 @@
 module.exports = {
   /* Project Metadata */
-  name: "Opium Network",
+  name: "Opium Network_Polygon",
   token: "OPIUM",
-  chain: 'polygon',
+  chain: "Polygon",
   category: "Derivatives",
   start: 1618869600,
   tokenHolderMap: [
