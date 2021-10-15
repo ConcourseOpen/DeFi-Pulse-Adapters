@@ -113,6 +113,7 @@ module.exports = {
   name: 'mStable',
   category: 'Assets',
   token: 'MTA',
+  chain: 'Multichain,Ethereum-Polygon',
   start: 1590624000, // May-28-2020 00:00:00
   tvl,
 };

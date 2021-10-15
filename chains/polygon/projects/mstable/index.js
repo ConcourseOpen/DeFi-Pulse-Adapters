@@ -2,7 +2,7 @@ module.exports = {
   /* Project Metadata */
   name: "mStable_Polygon",
   token: "MTA",
-  chain: 'polygon',
+  chain: "Polygon",
   category: "Assets",
   start: 1619178565,
   /* required for fetching token balances */
