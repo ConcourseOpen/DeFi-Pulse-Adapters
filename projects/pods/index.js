@@ -11,8 +11,8 @@ async function tvl (timestamp, block) {
 
 module.exports = {
   name: 'Pods',
-  category: 'Derivatives',
+  category: 'derivatives',
   token: null,
-  start: EXPIRATION_START_FROM, // 09/04/2020 @ 10:10:39am (UTC)
+  start: EXPIRATION_START_FROM,
   tvl
 }
