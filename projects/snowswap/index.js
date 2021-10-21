@@ -73,10 +73,11 @@ async function tvl(timestamp, block) {
       "0x053c80eA73Dc6941F518a68E2FC52Ac45BDE7c9C": BN(0), //fUSDT
     },
   };
-  //construct balances data for every token
-  let tokenBalances = {};
-  for (let pool in Pools) {
-    for (let coin in Pools[pool]) {
+  
+  await Promise.all(Object.keys(Pools).map(async (pool) => {
+    const coins = Object.keys(Pools[pool]);
+
+    await Promise.all(coins.map(async (coin) => {
       try {
         const bal = await sdk.api.abi.call({
           block,
@@ -87,9 +88,11 @@ async function tvl(timestamp, block) {
         if (bal && bal.output) {
           Pools[pool][coin] = BN(bal.output);
         }
-      } catch (e) {}
-    }
-  }
+      } catch (error) {
+
+      }
+    }));
+  }));
 
   var output = {};
   //construct price(TVL) data by unwrapping Yearn & Farm assets
