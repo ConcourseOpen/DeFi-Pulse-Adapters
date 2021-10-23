@@ -1,4 +1,4 @@
-const sdk = require('../../sdk')
+const sdk = require('../../../sdk')
 
 const { EXPIRATION_START_FROM } = require('./constants.js')
 const { getOptions } = require('./subgraph.js')
