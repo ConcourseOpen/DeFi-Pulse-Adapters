@@ -2,8 +2,8 @@ const {
   getOptionAddresses,
   getPoolAddresses,
   getTokenAddresses
-} = require('../../../projects/pods/queries')
-const { NETWORK_MAINNET } = require('../../../projects/pods/constants')
+} = require('./queries')
+const { NETWORK_MAINNET } = require('./constants')
 
 module.exports = {
   /* Project Metadata */
