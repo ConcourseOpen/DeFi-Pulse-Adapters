@@ -58,7 +58,7 @@ module.exports = {
                 // Holders of FEI-DPI Sushi LP
                 '0x902199755219A9f8209862d09F1891cfb34F59a3', // DpiSushiPcvDeposit.sol
 
-                // Holders of RAI in Fuse pool 9
+                // Holders of DPI in Fuse pool 19
                 '0x3dD3d945C4253bAc5B4Cc326a001B7d3f9C4DD66', // DpiFusePcvDeposit.sol
 
                 
