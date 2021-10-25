@@ -22,11 +22,17 @@ module.exports = {
             ],
             holders: [
                 // Holders of ETH
+                '0xBFfB152b9392e38CdDc275D818a3Db7FE364596b', // GenesisGroup.sol [OLD]
+                '0xa08A721dFB595753FFf335636674D76C455B275C', // EthReserveStabilizer.sol [OLD]
                 '0x17305f0e18318994a57b494078CAC866A857F7b6', // EthReserveStabilizer.sol
+                '0xe1578B4a32Eaefcd563a9E6d0dc02a4213f673B7', // EthBondingCurve.sol [OLD]
                 '0xB783c0E21763bEf9F2d04E6499abFbe23AdB7e1F', // EthBondingCurve.sol
+                '0xDa079A280FC3e33Eb11A78708B369D5Ca2da54fE', // EthPCVDripper.sol [OLD]
 
                 // Holders of FEI-ETH Uni V2 LP 
                 '0x15958381E9E6dc98bD49655e36f524D2203a28bD', // EthUniswapPCVDeposit.sol
+                '0x5d6446880fcd004c851ea8920a628c70ca101117', // EthUniswapPCVDepost.sol [OLD]
+                '0x9b0C6299D08fe823f2C0598d97A1141507e4ad86', // EthUniswapPCVDeposit.sol [OLD]
 
                 // Holders of stETH
                 '0xAc38Ee05C0204A1E119C625d0a560D6731478880', // EthLidoPCVDeposit.sol
