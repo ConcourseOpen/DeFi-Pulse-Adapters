@@ -32,7 +32,7 @@
   module.exports = {
     name: 'Interest Bearing Bitcoin',
     symbol: 'IBBTC',
-    type: 'custodial',
+    type: 'hybrid',
     start: 1619899623,
     balance,
   };
