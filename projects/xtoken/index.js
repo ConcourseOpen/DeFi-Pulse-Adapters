@@ -16,6 +16,7 @@ const ethers = require("ethers");
 // xtoken addresses
 const xaaveaAddr = "0x80DC468671316E50D4E9023D3db38D3105c1C146";
 const xaavebAddr = "0x704De5696dF237c5B9ba0De9ba7e0C63dA8eA0Df";
+const xalphaaAddr = "0x244ca1d5331246c926Ff31250b9E82a4916C97E9";
 const xbntaAddr = "0x6949f1118FB09aD2567fF675f96DbB3B6985ACd0";
 const xinchaAddr = "0x8F6A193C8B3c949E1046f1547C3A3f0836944E4b";
 const xinchbAddr = "0x6B33f15360cedBFB8F60539ec828ef52910acA9b";
@@ -42,6 +43,7 @@ const xu3lps = [
 // token addresses
 const ethAddr = "0x0000000000000000000000000000000000000000";
 const aaveAddr = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
+const alphaAddr = "0xa1faa113cbe53436df28ff0aee54275c13b40975";
 const bntAddr = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C";
 const inchAddr = "0x111111111117dC0aa78b770fA6A738034120C302";
 const kncAddr = "0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202";
@@ -95,6 +97,25 @@ async function tvl(timestamp, block) {
   const formatAave = ethers.utils
     .formatUnits(combinedXaaveAave, 0)
     .split(".")[0];
+
+  // xALPHa created at block 13401087
+  let xalphaaNav = ethers.BigNumber.from("0");
+  if (block >= 13401087) {
+    try {
+      xalphaaNav = await sdk.api.abi.call({
+        block,
+        target: xalphaaAddr,
+        abi: abi["getNav"],
+      });
+
+      xalphaaNav = ethers.BigNumber.from(xalphaaNav.output);
+    } catch (err) {
+      console.log("xALPHAa err : ", err);
+      xalphaaNav = ethers.BigNumber.from("0");
+    }
+  }
+
+  const formatAlpha = ethers.utils.formatUnits(xalphaaNav, 0).split(".")[0];
 
   // xBNTa created at block 12285460
   let xbntaStaked = ethers.BigNumber.from("0");
@@ -405,7 +426,6 @@ async function tvl(timestamp, block) {
   let xu3lpcUsdcBufferHoldings = ethers.BigNumber.from("0");
   let xu3lpcUsdcStakedBalance = ethers.BigNumber.from("0");
   if (block >= 12415305) {
-    // TODO: add try - catch
     try {
       xu3lpcSusdBufferHoldings = await sdk.api.abi.call({
         block,
@@ -487,6 +507,7 @@ async function tvl(timestamp, block) {
 
   let balances = {
     [aaveAddr.toLowerCase()]: formatAave, // AAVE
+    [alphaAddr.toLowerCase()]: formatAlpha, // ALPHA
     [bntAddr.toLowerCase()]: formatBnt, // BNT
     [inchAddr.toLowerCase()]: formatInch, // 1INCH
     [kncAddr.toLowerCase()]: formatKnc, // KNC
