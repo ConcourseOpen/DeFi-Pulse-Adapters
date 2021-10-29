@@ -25,7 +25,8 @@ module.exports = {
         "0x2300091326DF68309BDB7eE885de561C2C89fea9", // Turbo AAVE Staking Pool
         "0xC1e31C2db9f238809FE58089a7Fa7cE5aA7E52c6", // Turbo MATIC Staking Pool
         "0x5C1E6bc8E52cE1a262014c743508f74923a5B0d2", // Turbo BTC Staking Pool
-        "0x020B49AE5C5f805895d4Cb0ed91236BE4345c825", // Turbo Weekly ETH Staking Pool
+        "0x020B49AE5C5f805895d4Cb0ed91236BE4345c825", // Suspended: Turbo Weekly ETH Staking Pool
+        "0x79Fcf1813327e88e55D07b7093cb5CA3Ecfc39A3", // Turbo Weekly ETH Staking Pool V2
         
         // Protection
         "0xB3e0a40F6dFA981099879F8076B1A46C59dFe597", // ETH Dump Protection Staking Pool
