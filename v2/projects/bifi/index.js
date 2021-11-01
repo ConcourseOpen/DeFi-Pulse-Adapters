@@ -30,5 +30,11 @@ module.exports = {
   }, {
     tokens: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',       // USDC Token
     holders: '0x128647690C7733593aA3Dd149EeBC5e256E79217',      // USDC Pool
+  }, {
+    tokens: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',       // WBTC Token
+    holders: '0x93948Aa8488F522d5b079AF84fe411FBCE476e9f',      // WBTC Pool
+  }, {
+    tokens: '0x4ca7a5Fb41660A9c5c31683B832A17f7f7457344',       // BiBTC Token
+    holders: '0x986Eb51E67e154901ff9B482835788B8f3054076',      // BiBTC Pool
   }],
 };

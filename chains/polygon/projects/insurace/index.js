@@ -25,6 +25,14 @@
     const {data} = await axios.get("https://files.insurace.io/public/defipulse/polygonpools.json");
     const pools = data.pools;
     
+    for (pool in pools)
+    {
+      if (pool.PoolToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+      {
+        pool.PoolToken = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"
+      }
+    }
+    
     const {output: _tvlList} = await sdk.api.abi.multiCall({
         calls: pools.map((pool) => ({
             target: pool.StakersPool,
@@ -60,10 +68,10 @@
   ==================================================*/
 
   module.exports = {
-    name: 'InsurAce Protocol',
+    name: 'InsurAce Protocol_Polygon',
     token: 'INSUR',
-    chain: 'polygon',
-    category: 'derivatives',
+    chain: 'Polygon',
+    category: 'Derivatives',
     start: 18692990, // Stakers Pool creation time, Friday, 03 September 2021 07:21:14 AM
     tvl
   }
