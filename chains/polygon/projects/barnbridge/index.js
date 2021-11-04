@@ -1,18 +1,15 @@
 /*==================================================
   Imports
 ==================================================*/
-const sdk = require('../../sdk');
+const sdk = require('../../../../sdk');
 const BigNumber = require('bignumber.js');
 const axios = require('axios');
 
 /*==================================================
   Settings
 ==================================================*/
-const SY_POOLS_API_URL = 'https://api-v2.barnbridge.com/api/smartyield/pools';
-const SA_POOLS_API_URL = 'https://api-v2.barnbridge.com/api/smartalpha/pools';
-
-const STK_AAVE_ADDRESS = '0x4da27a545c0c5b758a6ba100e3a049001de870f5';
-const AAVE_ADDRESS = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
+const SY_POOLS_API_URL = 'https://prod-poly-v2.api.barnbridge.com/api/smartyield/pools';
+const SA_POOLS_API_URL = 'https://prod-poly-v2.api.barnbridge.com/api/smartalpha/pools';
 
 /*==================================================
   API
@@ -146,8 +143,6 @@ class TokensBalance {
 
     resolveAddress(address) {
         switch (address) {
-            case STK_AAVE_ADDRESS:
-                return AAVE_ADDRESS;
             default:
                 return address;
         }
@@ -158,7 +153,7 @@ class TokensBalance {
   TVL
 ==================================================*/
 async function tvl(timestamp, ethBlock) {
-    const chain = '';
+    const chain = 'polygon';
     const block = ethBlock;
     const tb = new TokensBalance();
 
@@ -199,7 +194,7 @@ module.exports = {
     website: 'https://app.barnbridge.com',
     token: 'BOND',
     category: 'Derivatives',
-    chain: 'ethereum',
-    start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC,
+    chain: 'polygon',
+    start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC
     tvl,
 };
