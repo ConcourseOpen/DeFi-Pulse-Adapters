@@ -165,28 +165,38 @@ async function tvl(timestamp, ethBlock) {
     // calculate TVL from SmartYield pools
     const syPools = await fetchSyPools(SY_POOLS_API_URL);
 
-    await Promise.all(syPools.map(async syPool => {
-        const {smartYieldAddress, underlyingAddress} = syPool;
-        const underlyingTotal = await syGetUnderlyingTotal(chain, smartYieldAddress, block);
-        tb.addTokenToBalance(underlyingAddress, underlyingTotal);
-    }));
+    try {
+        await Promise.all(syPools.map(async syPool => {
+            const {smartYieldAddress, underlyingAddress} = syPool;
+            const underlyingTotal = await syGetUnderlyingTotal(chain, smartYieldAddress, block);
+            tb.addTokenToBalance(underlyingAddress, underlyingTotal);
+        }));
+    } catch (e) {
+        console.log(e)
+    }
+
 
     // calculate TVL from SmartAlpha pools
     const saPools = await fetchSaPools(SA_POOLS_API_URL);
 
-    await Promise.all(saPools.map(async saPool => {
-        const {poolAddress, poolToken} = saPool;
-        const [epochBalance, queuedJuniorsUnderlyingIn, queuedSeniorsUnderlyingIn] = await Promise.all([
-            saGetEpochBalance(chain, poolAddress, block),
-            saGetQueuedJuniorsUnderlyingIn(chain, poolAddress, block),
-            saGetQueuedSeniorsUnderlyingIn(chain, poolAddress, block),
-        ]);
+    try {
+        await Promise.all(saPools.map(async saPool => {
+            const {poolAddress, poolToken} = saPool;
+            const [epochBalance, queuedJuniorsUnderlyingIn, queuedSeniorsUnderlyingIn] = await Promise.all([
+                saGetEpochBalance(chain, poolAddress, block),
+                saGetQueuedJuniorsUnderlyingIn(chain, poolAddress, block),
+                saGetQueuedSeniorsUnderlyingIn(chain, poolAddress, block),
+            ]);
+    
+            const underlyingTotal = epochBalance
+                .plus(queuedJuniorsUnderlyingIn)
+                .plus(queuedSeniorsUnderlyingIn);
+            tb.addTokenToBalance(poolToken.address, underlyingTotal);
+        }));
+    } catch (e) {
+        console.log(e)
+    }
 
-        const underlyingTotal = epochBalance
-            .plus(queuedJuniorsUnderlyingIn)
-            .plus(queuedSeniorsUnderlyingIn);
-        tb.addTokenToBalance(poolToken.address, underlyingTotal);
-    }));
 
     return tb.balances;
 }
@@ -200,6 +210,6 @@ module.exports = {
     token: 'BOND',
     category: 'Derivatives',
     chain: 'ethereum',
-    start: 1615564559, // Mar-24-2021 02:17:40 PM +UTC,
+    start: 1615664559, // Mar-24-2021 02:17:40 PM +UTC,
     tvl,
 };
