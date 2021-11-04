@@ -128,20 +128,24 @@ function saGetQueuedSeniorsUnderlyingIn(chain, smartAlphaAddress, block) {
   Helpers
 ==================================================*/
 class TokensBalance {
-    #balances = {};
+    constructor() {
+        this._balances = {};
+      }
 
     get balances() {
-        return Object.assign({}, this.#balances);
+        return Object.assign({}, this._balances);
     }
+
+
 
     addTokenToBalance(address, amount) {
         const key = this.resolveAddress(address);
 
-        if (!this.#balances[key]) {
-            this.#balances[key] = new BigNumber(0);
+        if (!this._balances[key]) {
+            this._balances[key] = new BigNumber(0);
         }
 
-        this.#balances[key] = this.#balances[key].plus(amount);
+        this._balances[key] = this._balances[key].plus(amount);
     }
 
     resolveAddress(address) {
