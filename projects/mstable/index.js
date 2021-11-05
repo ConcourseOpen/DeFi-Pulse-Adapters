@@ -39,6 +39,12 @@ const TBTC_data = {
   start: 12146825,
   isFPool: true
 }
+const TBTCv2_data = {
+  version: 2,
+  addr: '0xc3280306b6218031E61752d060b091278d45c329',
+  start: 13460377,
+  isFPool: true
+}
 const BUSD_data = {
   version: 2,
   addr: '0xfE842e95f8911dcc21c943a1dAA4bd641a1381c6',
@@ -51,8 +57,14 @@ const GUSD_data = {
   start: 12146825,
   isFPool: true
 }
+const alUSD_data = {
+  version: 2,
+  addr: '0x4eaa01974B6594C0Ee62fFd7FEE56CF11E6af936',
+  start: 12806795,
+  isFPool: true
+}
 
-const fPools = [HBTC_data, TBTC_data, BUSD_data, GUSD_data];
+const fPools = [HBTC_data, TBTC_data, TBTCv2_data, BUSD_data, GUSD_data, alUSD_data];
 
 /*==================================================
 Main
