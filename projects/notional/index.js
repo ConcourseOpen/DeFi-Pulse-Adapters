@@ -13,6 +13,8 @@ const sdk = require("../../sdk");
 
 const v1EscrowContract = "0x9abd0b8868546105F6F48298eaDC1D9c82f7f683";
 const v2ProxyContract = "0x1344A36A1B56144C3Bc62E7757377D288fDE0369";
+const v1LaunchBlock = 11007909
+const v2LaunchBlock = 13492539
 const TokenType = {
   UnderlyingToken: '0',
   cToken: '1',
@@ -26,6 +28,8 @@ const TokenType = {
 ==================================================*/
 
 async function v1TVL(timestamp, block) {
+  if (block <= v1LaunchBlock) return {}
+
   const maxCurrencyId = (
     await sdk.api.abi.call({
       block,
@@ -72,6 +76,8 @@ async function v1TVL(timestamp, block) {
 ==================================================*/
 
 async function v2TVL(timestamp, block) {
+  if (block <= v2LaunchBlock) return {}
+
   const maxCurrencyId = (
     await sdk.api.abi.call({
       block,
