@@ -2,6 +2,7 @@
   Modules
 ==================================================*/
 
+const _ = require('underscore');
 const v1abi = require("./v1-abi");
 const v2abi = require("./v2-abi");
 const cTokenABI = require("./ctoken-abi");
@@ -28,7 +29,7 @@ const TokenType = {
 ==================================================*/
 
 async function v1TVL(timestamp, block) {
-  if (block <= v1LaunchBlock) return {}
+  if (block <= v1LaunchBlock) return []
 
   const maxCurrencyId = (
     await sdk.api.abi.call({
@@ -159,6 +160,13 @@ async function tvl(timestamp, block) {
   const v2BalanceMap = await v2TVL(timestamp, block);
 
   sdk.util.sumMultiBalanceOf(v2BalanceMap, v1BalanceMap)
+  if (_.isEmpty(v2BalanceMap)) {
+    // Catch the edge case where we return an empty object
+    return {
+      "0x0000000000000000000000000000000000000000": "0"
+    }
+  }
+
   return v2BalanceMap
 }
 
