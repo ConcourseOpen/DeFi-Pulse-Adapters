@@ -47,10 +47,9 @@ Please fork this repository before you start building your adapter and then work
 
 *Note: We try our best to reduce dependecies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
 
-Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects that are multichain get their own adapter folder under `/chains/[chain name]/projects/`. Note: please only use the `/chains/` folder if your project is multichain on DeFi Pulse. If the project is solely on ethereum or a non-ethereum chain, please use the `/v2/` folder. 
+Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects that are multichain get their own adapter folder under `/chains/[chain name]/projects/`.  
 
-Example 1: your project is on Polygon only. You want to put your adapter in the `/v2/` folder. 
-Example 2: your project is multichain; Ethereum and Polygon. You want to place your Ethereum adapter in `/v2/` and your Polygon adapter in `/chains/polygon/projects/`.
+Example: your project is multichain; Ethereum and Polygon. You want to place your Ethereum adapter in `/v2/` and your Polygon adapter in `/chains/polygon/projects/`.
 
 ```
 v2
@@ -68,6 +67,7 @@ module.exports = {
   name: 'Loopring',         // token project name
   symbol: 'LRC',            // protocol token symbol (if exists any)
   category: 'DEXes',        // allowed values can be 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  chain: 'ethereum',
   start: 1514764800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
   ...
 }
