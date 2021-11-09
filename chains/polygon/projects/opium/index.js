@@ -30,8 +30,11 @@ module.exports = {
         
         // Protection
         "0xB3e0a40F6dFA981099879F8076B1A46C59dFe597", // ETH Dump Protection Staking Pool
-        "0xA4fe26FcA5F20F6c4e691EF60AD55712b6B26348", // Realt Whittier
-        "0x37baa047B4C062A2CB93fC6550011f72E36a3894", // Realt Kostner
+        "0xA4fe26FcA5F20F6c4e691EF60AD55712b6B26348", // RealT 10700 Whittier Rent insurance
+        "0x37baa047B4C062A2CB93fC6550011f72E36a3894", // RealT 402 S Kostner Rent insurance
+        "0x20120864944fC47fed4821C1c4B1b6a7D400844b", // RealT 2661-2663 Cortland Rent insurance
+        "0xCd9955ba381e408575Acca4F712573c5f6e4b174", // RealT 20160 Conant Rent insurance
+        "0xcd465bedccBF1Bd89998757563f4A3b3D6bb01B6", // RealT 5517-5519 Elmhurst Rent insurance
       ]
     }
   ]
