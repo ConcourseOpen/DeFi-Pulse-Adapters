@@ -53,5 +53,5 @@ module.exports = {
     category: 'Derivatives',
     start: 1621938255,  // May-25-2021 10:24:15 AM UTC
     tvl,
-    chain: 'Polygon',
+    chain: 'polygon',
   }
