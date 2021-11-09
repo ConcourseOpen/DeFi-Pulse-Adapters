@@ -3,7 +3,7 @@ const axios = require('axios');
 module.exports = {
     name: 'CompliFi_Polygon',
     token: 'COMFI',
-    chain: 'Polygon',
+    chain: 'polygon',
     category: 'Derivatives',
     start: 1621938255,  // May-25-2021 10:24:15 AM UTC
     tokenHolderMap: [
