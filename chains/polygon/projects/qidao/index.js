@@ -1,9 +1,8 @@
-
 module.exports = {
   /* Project Metadata */
   name: "QiDao",
   token: "QI",
-  chain: "Polygon",
+  chain: "polygon",
   category: "Lending",
   start: 1619914589,
   /* required for fetching token balances */
