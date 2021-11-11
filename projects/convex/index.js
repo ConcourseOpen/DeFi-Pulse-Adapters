@@ -132,7 +132,7 @@ function sumSingleBalance(
   token,
   balance
 ) {
-    const prevBalance = ethers.BigNumber.from(balances[token] ?? "0");
+    const prevBalance = ethers.BigNumber.from(balances[token] || "0");
     balances[token] = prevBalance.add(ethers.BigNumber.from(balance)).toString();
 }
 
