@@ -33,5 +33,8 @@
     "terminal-kit": "^1.35.2",
     "underscore": "^1.9.1",
     "web3-utils": "^1.2.6"
+  },
+  "engines": {
+    "node": "10.24.1"
   }
 }
