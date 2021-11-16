@@ -2,7 +2,7 @@ module.exports = {
   /* Project Metadata */
   name: 'PEAKDEFI',         // Peakdefi
   token: 'PEAK',            // PEAK token
-  category: 'assets',       // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: 'Assets',       // Allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1607405152,        // Dec-08-2020 05:25:52 PM +UTC
   /* required for fetching token balances */
   tokenHolderMap: [
