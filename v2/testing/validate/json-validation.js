@@ -23,7 +23,8 @@ _.each(args.projects, (projectAdapter) => {
     });
 
     it('category matches one of the defined categories', () => {
-      chai.expect(projectAdapter.category).to.be.oneOf(categories);
+      chai.expect(projectAdapter.category,
+        `Valid categories: ${categories.join(',')}`).to.be.oneOf(categories);
     });
 
     describe('has valid tokenHolderMap configurations', () => {
