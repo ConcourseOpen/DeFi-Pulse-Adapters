@@ -8,7 +8,7 @@ const _ = require('underscore');
 const utility = require('./util');
 const Bottleneck = require('bottleneck');
 const term = require( 'terminal-kit' ).terminal;
-const $indexerHost = process.env.INDEXER_HOST || 'http://127.0.0.1:3006';
+const $indexerHost = 'https://dfp-indexer-sync-staging.defipulse.com';
 
 /*==================================================
   Helper Methods
