@@ -586,6 +586,15 @@ async function tvl(timestamp, block) {
         })
       ).output;
 
+      if (!token0) {
+        console.error("xtoken xu3lps:", xu3lp, "no token0", abi["token0"]);
+        continue;
+      }
+      if (!token1) {
+        console.error("xtoken xu3lps:", xu3lp, "no token1", abi["token1"]);
+        continue;
+      }
+
       balances[token0.toLowerCase()] = balances[token0.toLowerCase()]
         ? ethers.utils
             .formatUnits(
@@ -619,7 +628,7 @@ async function tvl(timestamp, block) {
             )
             .split(".")[0];
     } catch (e) {
-      console.log(e);
+      console.error("xtoken", xu3lp, e);
     }
   }
 
