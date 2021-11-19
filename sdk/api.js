@@ -8,7 +8,7 @@ const _ = require('underscore');
 const utility = require('./util');
 const Bottleneck = require('bottleneck');
 const term = require( 'terminal-kit' ).terminal;
-const $indexerHost = 'http://defipulse-indexer-sync-server-staging.us-west-1.elasticbeanstalk.com';
+const $indexerHost = 'https://dfp-indexer-sync-staging.defipulse.com';
 
 /*==================================================
   Helper Methods
