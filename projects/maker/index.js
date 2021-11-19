@@ -7,7 +7,7 @@ const MakerMCDConstants = require("./abis/maker-mcd.js");
 async function getJoins(block) {
   let rely = utils.sha3("rely(address)").substr(0, 10);
   let relyTopic = utils.padRight(rely, 64);
-  const joins = {};
+  const joins = [];
 
   // get list of auths
 
@@ -36,18 +36,31 @@ async function getJoins(block) {
 
   ilks = ilks.filter((ilk) => ilk.output);
 
-  await Promise.all(ilks.map(async (ilk) => {
+  for (let i = 0; i < ilks.length; i++) {
+    let ilk = ilks[i];
     try {
       let gem = (await sdk.api.abi.call({
         block,
         target: ilk.input.target,
         abi: MakerMCDConstants.gem
       })).output;
+      if (!gem) {
+        // retry in case request fail
+        gem = (await sdk.api.abi.call({
+          block,
+          target: ilk.input.target,
+          abi: MakerMCDConstants.gem
+        })).output;
+      }
+      if (!gem) {
+        throw('no gem')
+      }
 
-      let name = utils.hexToString(ilk.output);
-      joins[name.toString()] = ilk.input.target;
-    } catch (e) {}
-  }));
+      joins.push(ilk.input.target);
+    } catch (e) {
+
+    }
+  }
 
   return joins;
 }
@@ -62,18 +75,18 @@ async function tvl(timestamp, block) {
 
   if (block >= MakerMCDConstants.STARTBLOCK) {
     let joins = await getJoins(block);
-
-    await Promise.all(Object.keys(joins).map(async (join) => {
+    for (let i = 0; i < joins.length; i++){
+      let join = joins[i];
       try {
         let gem = (await sdk.api.abi.call({
           block,
-          target: joins[join],
+          target: join,
           abi: MakerMCDConstants.gem
         })).output;
 
         let balance = (await sdk.api.erc20.balanceOf({
           target: gem,
-          owner: joins[join],
+          owner: join,
           block
         })).output;
 
@@ -81,7 +94,7 @@ async function tvl(timestamp, block) {
       } catch (error) {
         console.log(error.message);
       }
-    }));
+    }
 
     let pie = (await sdk.api.abi.call({
       block,
