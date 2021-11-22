@@ -54,6 +54,9 @@ const usdtAddr = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 const daiAddr = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const sUsdAddr = "0x57ab1e02fee23774580c119740129eac7081e9d3";
 
+// creation blocks
+const XALPHA_CREATION_BLOCK = 13401087
+
 /*==================================================
   TVL
   ==================================================*/
@@ -98,9 +101,8 @@ async function tvl(timestamp, block) {
     .formatUnits(combinedXaaveAave, 0)
     .split(".")[0];
 
-  // xALPHa created at block 13401087
   let xalphaaNav = ethers.BigNumber.from("0");
-  if (block >= 13401087) {
+  if (block >= XALPHA_CREATION_BLOCK) {
     try {
       xalphaaNav = await sdk.api.abi.call({
         block,
