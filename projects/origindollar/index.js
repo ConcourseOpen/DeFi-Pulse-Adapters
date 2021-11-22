@@ -11,10 +11,10 @@ const BigNumber = require("bignumber.js");
 // Addresses
 // ==================================================*/
 
-const CompoundStrategyAddress = "0xd5433168ed0b1f7714819646606db509d9d8ec1f";
+const CompoundStrategyAddress = "0x9c459eeb3fa179a40329b81c1635525e9a0ef094";
 const CurveStrategyAddress = "0x3c5fe0a3922777343cbd67d3732fcdc9f2fa6f2f";
-const AaveStrategyAddress = "0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce";
-const OriginVaultAddress = "0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce";
+const AaveStrategyAddress = "0x5e3646a1db86993f73e6b74a57d8640b69f7e259";
+const OriginVaultAddress = "0xe75d77b1865ae93c7eaa3040b038d7aa7bc02f70";
 
 
 // /*==================================================
