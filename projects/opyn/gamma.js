@@ -104,7 +104,7 @@ module.exports = async function tvl(timestamp, block) {
       })
     ).output;
 
-    balances[WBTC] = BigNumber(balances[WBTC] || 0).plus(BigNumber(sdcrvWSBTCBalance)).toFixed();
+    balances[WBTC] = BigNumber(balances[WBTC] || 0).plus(BigNumber((sdcrvWSBTCBalance / 10**10))).toFixed();
 
   }
 
