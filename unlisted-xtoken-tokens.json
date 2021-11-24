@@ -1,8 +1,0 @@
-[
-	{
-		"coingeckoId": "eth-rsi-60-40-crossover-set",
-		"symbol": "ethrsi6040",
-		"decimals": 18,
-		"contract": "0x93e01899c10532d76c0e864537a1d26433dbbddb"
-	}
-]
