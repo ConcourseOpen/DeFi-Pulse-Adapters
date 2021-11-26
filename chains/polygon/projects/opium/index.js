@@ -18,15 +18,16 @@ module.exports = {
         // Opium
         "0x461e820956223cf008051Ce8506f01583A09e006", // Opium.Core v1.2
         "0xB3F6281655276150E97e5029B607a6D4d2E21972", // Opium.Core v1.3
-      
+
         /// OFI
         // Turbo
         "0xf5D690c9D61092112660FEAf62e542a670Fa886D", // Turbo ETH Staking Pool
-        "0x2300091326DF68309BDB7eE885de561C2C89fea9", // Turbo AAVE Staking Pool
+        "0x2300091326DF68309BDB7eE885de561C2C89fea9", // Suspended: Turbo AAVE Staking Pool
         "0xC1e31C2db9f238809FE58089a7Fa7cE5aA7E52c6", // Turbo MATIC Staking Pool
         "0x5C1E6bc8E52cE1a262014c743508f74923a5B0d2", // Turbo BTC Staking Pool
         "0x020B49AE5C5f805895d4Cb0ed91236BE4345c825", // Suspended: Turbo Weekly ETH Staking Pool
         "0x79Fcf1813327e88e55D07b7093cb5CA3Ecfc39A3", // Turbo Weekly ETH Staking Pool V2
+        "0xd051608C6Bbf32C87B268f8458D63e0BeAAF67EA", // Turbo Weekly AAVE Staking Pool V2
         
         // Protection
         "0xB3e0a40F6dFA981099879F8076B1A46C59dFe597", // ETH Dump Protection Staking Pool
