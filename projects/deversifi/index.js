@@ -38,8 +38,19 @@
     '0xdddddd4301a082e62e84e43f474f044423921918', // DVF
     '0x5a98fcbea516cf06857215779fd812ca3bef1b32', // LDO
     '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // CUSDT
-    '0x5d22045daceab03b158031ecb7d9d06fad24609b', // CEL
-    '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2' // SUSHI
+    '0xaaaebe6fe48e54f431b0c390cfaf0b017d09d42d', // CEL
+    '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2', // SUSHI
+    '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0', // MATIC
+    '0x0a0e3bfd5a8ce610e735d4469bc1b3b130402267', // ERP
+    '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE', // SHIB
+    '0xD533a949740bb3306d119CC777fa900bA034cd52', // CRV
+    '0x03ab458634910aad20ef5f1c8ee96f1d6ac54919', // RAI
+    '0x0391d2021f89dc339f60fff84546ea23e337750f', // BOND
+    '0x2e9d63788249371f1dfc918a52f8d799f4a38c94', // TOKE
+    '0x33349b282065b0284d756f0577fb39c158f935e6', // MPL
+    '0x767fe9edc9e0df98e07454847909b5e959d7ca0e', // ILV
+    '0x25f8087ead173b73d6e8b84329989a8eea16cf73', // YGG
+    '0xdddd0e38d30dd29c683033fa0132f868597763ab' // xDVF
   ];
 
 /*==================================================
