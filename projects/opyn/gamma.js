@@ -96,18 +96,20 @@ module.exports = async function tvl(timestamp, block) {
 
     balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(sdeCRVBalance)).toFixed();
 
-    // Add sdcrvWSBTC as WBTC to balances
-    const sdcrvWSBTCBalance = (
-      await sdk.api.abi.call({
-        target: sdcrvWSBTC,
-        params: marginPool,
-        abi: 'erc20:balanceOf',
-        block
-      })
-    ).output;
+    try{
+      // Add sdcrvWSBTC as WBTC to balances
+      const sdcrvWSBTCBalance = (
+        await sdk.api.abi.call({
+          target: sdcrvWSBTC,
+          params: marginPool,
+          abi: 'erc20:balanceOf',
+          block
+        })
+      ).output;
 
-    balances[WBTC] = BigNumber(balances[WBTC] || 0).plus(BigNumber((sdcrvWSBTCBalance / 10**10))).toFixed();
-
+      balances[WBTC] = BigNumber(balances[WBTC] || 0).plus(BigNumber((sdcrvWSBTCBalance / 10**10))).toFixed();
+    }
+    catch(e){}
   }
 
   return balances;
