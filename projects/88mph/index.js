@@ -185,7 +185,7 @@ async function rates (timestamp, block) {
 module.exports = {
   name: '88mph',
   token: 'MPH',
-  category: 'lending',
+  category: 'Lending',
   start: 1606109629, // Monday, November 23, 2020 5:33:49 AM GMT
   tvl,
   // rates,

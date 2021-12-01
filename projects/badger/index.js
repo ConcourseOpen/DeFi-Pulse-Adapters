@@ -55,6 +55,8 @@ const platforms = {
   tricrypto: [tricryptoCrv],
 }
 
+const curveAddresses = '0x0000000022D53366457F9d5E68Ec105046FC4383';
+
 // Setts are the badger vaults that users invest in
 const setts = {
   '0x6dEf55d2e18486B9dDfaA075bc4e4EE0B28c1545': renCrv,
@@ -82,9 +84,9 @@ const crvTokens = {
   [renCrv]: renBTC,
   [sbtcCrv]: sBTC,
   [tbtcCrv]: tBTC,
-  [hbtcCrv]: hBTC, 
-  [pbtcCrv]: pBTC, 
-  [obtcCrv]: oBTC, 
+  [hbtcCrv]: hBTC,
+  [pbtcCrv]: pBTC,
+  [obtcCrv]: oBTC,
   [bbtcCrv]: bBTC,
 }
 
@@ -107,30 +109,35 @@ const decimals = {
 let balances = {}
 
 /*==================================================
-    PLATFORM SPECIFIC
-    ==================================================*/
-async function _getPairValue(url, address, holdings) {
+  PLATFORM SPECIFIC
+  ==================================================*/
+async function _getPairValue(url, address, holdings, block) {
   let response = await axios.post(
     'https://api.thegraph.com/subgraphs/name/' + url,
     JSON.stringify({
       query: `
-          {
-            pair(id:"${address.toLowerCase()}") {
-              reserve0
-              reserve1
-              token0 {
-                id
-              }
-              token1 {
-                id
-              }
-              totalSupply
+        {
+          pair(id:"${address.toLowerCase()}", block: { number: ${block} }) {
+            reserve0
+            reserve1
+            token0 {
+              id
             }
-          }`,
-    }),
+            token1 {
+              id
+            }
+            totalSupply
+          }
+        }`,
+    })
   )
   let data = response.data
-
+  if (!data.data.pair) {
+    return [];
+  }
+  if (parseFloat(holdings) === 0) {
+    return []
+  }
   const holdingsRatio =
     parseFloat(holdings) / parseFloat(data.data.pair.totalSupply)
   const token0Holdings = parseFloat(data.data.pair.reserve0) * holdingsRatio
@@ -145,33 +152,50 @@ async function _getPairValue(url, address, holdings) {
   return returnValue
 }
 
-async function _getCurveVirtualPrice(token, holdings) {
-  let url = ''
+async function _getCurveVirtualPrice(token, holdings, block) {
+  let curveRegistry = (await sdk.api.abi.call({
+    target: curveAddresses,
+    abi: {
+      "constant": true,
+      "inputs": [],
+      "name": "get_registry",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    block
+  })).output;
 
-  switch (token) {
-    case tbtcCrv:
-      url = 'https://stats.curve.fi/raw-stats/tbtc-1m.json'
-      break
-    case obtcCrv:
-      url = 'https://stats.curve.fi/raw-stats/obtc-1m.json'
-      break
-    case hbtcCrv:
-      url = 'https://stats.curve.fi/raw-stats/hbtc-1m.json'
-      break
-    case pbtcCrv:
-      url = 'https://stats.curve.fi/raw-stats/pbtc-1m.json'
-      break
-    case bbtcCrv:
-      url = 'https://stats.curve.fi/raw-stats/bbtc-1m.json'
-      break
-    default:
-      url = 'https://stats.curve.fi/raw-stats/rens-1m.json'
-      break
-  }
-  let response = await axios.get(url)
-  let data = response.data
+  let virtualPrice = (await sdk.api.abi.call({
+    target: curveRegistry,
+    params: token,
+    abi: {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "lpTokenn",
+          "type": "address"
+        },
+      ],
+      "name": "get_virtual_price_from_lp_token",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "interestAmount",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    block
+  })).output;
+
   return BigNumber(holdings).multipliedBy(
-    BigNumber(data[0].virtual_price).div(10 ** 18),
+    BigNumber(virtualPrice).div(10 ** 18),
   )
 }
 
@@ -200,7 +224,7 @@ async function _getTricryptoPrice(holdings) {
   const usdBalance = BigNumber(data[0].balances[0]).div(10**6).multipliedBy(badgerHoldingsRatio);
   const wBTCBalance = BigNumber(data[0].balances[1]).div(10**8).multipliedBy(badgerHoldingsRatio);
   const wETHBalance = BigNumber(data[0].balances[2]).div(10**18).multipliedBy(badgerHoldingsRatio);
-  
+
 
   return [usdBalance, wBTCBalance, wETHBalance];
 }
@@ -259,56 +283,34 @@ async function tvl(timestamp, block) {
   })
 
   try {
-    // Digg setts handle price per full share differently
-    const diggVaultBalance = await sdk.api.abi.call({
-      block,
-      target: '0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a',
-      abi: settAbi['balance'],
-    })
-    const diggVaultTotalSupply = await sdk.api.abi.call({
-      block,
-      target: '0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a',
-      abi: settAbi['totalSupply'],
-    })
+    if (block > 11680422) {    // Digg setts handle price per full share differently
+      const diggVaultBalance = await sdk.api.abi.call({
+        block,
+        target: '0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a',
+        abi: settAbi['balance'],
+      })
+      const diggVaultTotalSupply = await sdk.api.abi.call({
+        block,
+        target: '0x7e7E112A68d8D2E221E11047a72fFC1065c38e1a',
+        abi: settAbi['totalSupply'],
+      })
 
-    if (diggVaultBalance.success) {
-      let diggPpfs = BigNumber(diggVaultBalance.output)
-        .div(10 ** 9)
-        .div(diggVaultTotalSupply.output.div(10 ** 18))
-      balances[digg] = underlyingAmounts[digg].multipliedBy(diggPpfs)
+      if (diggVaultBalance.success) {
+        let diggPpfs = BigNumber(diggVaultBalance.output)
+          .div(10 ** 9)
+          .div(diggVaultTotalSupply.output.div(10 ** 18))
+        balances[digg] = underlyingAmounts[digg].multipliedBy(diggPpfs)
+      }
+    } else {
+      balances[digg] = new BigNumber(0);
     }
-  } catch (err) {}
-
-  try {
-    // Yearn Wrapper has "pricePerShare" rather than "getPricePerFullShare"
-    const yearnPpfs = await sdk.api.abi.call({
-      block: block,
-      target: '0x4b92d19c11435614CD49Af1b589001b7c08cD4D5',
-      abi: yearnAbi['pricePerShare'],
-    })
-    const yearnTotalSupply = await sdk.api.abi.call({
-      block: block,
-      target: '0x4b92d19c11435614CD49Af1b589001b7c08cD4D5',
-      abi: settAbi['totalSupply'],
-    })
-
-    if (!!yearnPpfs.output) {
-      const ppfs = BigNumber(yearnPpfs.output).div(10 ** 8)
-      console.log('ppfs:', ppfs)
-      balances[wbtc] = BigNumber(yearnTotalSupply.output).multipliedBy(ppfs)
-    }
-
-    console.log('balances:', balances, balances[wbtc].toString())
-  } catch (err) {}
-
-  // Convex vaults only hold base tokens, add them directly to balance
-  balances[cvx] = isNaN(underlyingAmounts[cvx]) ? 0 : underlyingAmounts[cvx];
-  balances[cvxCrv] = isNaN(underlyingAmounts[cvxCrv]) ? 0 : underlyingAmounts[cvxCrv];
+  } catch (err) {
+  }
 
   // For each platform, iterate through the contracts and find their underlying
   await Promise.all(
     platforms['curve'].map(async (token) => {
-      await _handleCurve(token, underlyingAmounts[token])
+      await _handleCurve(token, underlyingAmounts[token], block)
     }),
   )
 
@@ -318,6 +320,7 @@ async function tvl(timestamp, block) {
         SUSHI_SUBGRAPH,
         token,
         !!underlyingAmounts[token] ? underlyingAmounts[token] : 0,
+        block
       )
       underlyingTokenBalance.forEach((pair) => {
         if (balances[Object.keys(pair)[0]] && balances[Object.keys(pair)[0]].gt(0)) {
@@ -337,6 +340,7 @@ async function tvl(timestamp, block) {
         UNI_SUBGRAPH,
         token,
         !!underlyingAmounts[token] ? underlyingAmounts[token] : 0,
+        block
       )
       underlyingTokenBalance.forEach((pair) => {
         if (balances[Object.keys(pair)[0]] && balances[Object.keys(pair)[0]].gt(0)) {
@@ -352,20 +356,64 @@ async function tvl(timestamp, block) {
 
   await Promise.all(
     platforms['tricrypto'].map(async (token) => {
-        const tricryptoBalances = await _getTricryptoPrice(underlyingAmounts[token])
-        console.log('checking tricrypto', balances[usdc], balances[wbtc], balances[wETH], tricryptoBalances)
-        if(isNaN(tricryptoBalances[0])) return;
-        balances[usdc] && balances[usdc].gt(0) ? balances[usdc] = tricryptoBalances[0].plus(balances[usdc]) : balances[usdc] = tricryptoBalances[0]
-        balances[wbtc] && balances[wbtc].gt(0) ? balances[wbtc] = tricryptoBalances[1].plus(balances[wbtc]) : balances[wbtc] = tricryptoBalances[1]
-        balances[wETH] && balances[wETH].gt(0) ? balances[wETH] = tricryptoBalances[2].plus(balances[wETH]) : balances[wETH] = tricryptoBalances[2]
+      const tricryptoBalances = await _getTricryptoPrice(underlyingAmounts[token])
+      console.log('checking tricrypto', balances[usdc], balances[wbtc], balances[wETH], tricryptoBalances)
+      if(isNaN(tricryptoBalances[0])) return;
+      balances[usdc] && balances[usdc].gt(0) ? balances[usdc] = tricryptoBalances[0].plus(balances[usdc]) : balances[usdc] = tricryptoBalances[0]
+      balances[wbtc] && balances[wbtc].gt(0) ? balances[wbtc] = tricryptoBalances[1].plus(balances[wbtc]) : balances[wbtc] = tricryptoBalances[1]
+      balances[wETH] && balances[wETH].gt(0) ? balances[wETH] = tricryptoBalances[2].plus(balances[wETH]) : balances[wETH] = tricryptoBalances[2]
     })
   )
 
   _.map(balances, (value, key) => {
+    let dec;
+    let keys = Object.keys(decimals);
+    for (let address of keys) {
+      if (key.toLowerCase() === address.toLowerCase()) {
+        dec = decimals[address];
+      }
+    }
+    if (dec < 18) {
+      let divisor = 10 ** (18 - dec)
+      balances[key] = BigNumber(value).div(divisor)
+      console.log(key, ': ', balances[key].toString())
+    } else {
       console.log(key, ': ', balances[key].toString())
     }
-  )
-  return balances
+  })
+
+  try {
+    // Yearn Wrapper has "pricePerShare" rather than "getPricePerFullShare"
+    const yearnPpfs = await sdk.api.abi.call({
+      block: block,
+      target: "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5",
+      abi: yearnAbi["pricePerShare"],
+    });
+    const yearnTotalSupply = await sdk.api.abi.call({
+      block: block,
+      target: "0x4b92d19c11435614CD49Af1b589001b7c08cD4D5",
+      abi: settAbi["totalSupply"],
+    });
+
+    if (!!yearnPpfs.output) {
+      const ppfs = BigNumber(yearnPpfs.output).div(10 ** 8);
+      console.log("ppfs:", ppfs);
+      if (balances[wbtc] > 0) {
+        balances[wbtc] = BigNumber(
+          balances[wbtc]
+        ).plus(BigNumber(yearnTotalSupply.output).multipliedBy(ppfs));
+      } else {
+        balances[wbtc] = BigNumber(yearnTotalSupply.output).multipliedBy(ppfs);
+      }
+    }
+
+    console.log("balances:", balances, balances[wbtc].toString());
+    // Convex vaults only hold base tokens, add them directly to balance
+    balances[cvx] = isNaN(underlyingAmounts[cvx]) ? 0 : underlyingAmounts[cvx];
+    balances[cvxCrv] = isNaN(underlyingAmounts[cvxCrv]) ? 0 : underlyingAmounts[cvxCrv];
+  } catch (err) {}
+
+  return balances;
 }
 
 /*==================================================
@@ -373,9 +421,9 @@ async function tvl(timestamp, block) {
     ==================================================*/
 
 module.exports = {
-  name: 'BadgerDAO', // project name
-  token: 'BADGER', // null, or token symbol if project has a custom token
-  category: 'assets', // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-  start: 1607059800, // unix timestamp (utc 0) specifying when the project began, or where live data begins
-  tvl, // tvl adapter
+  name: 'Badger DAO',        // project name
+  token: 'BADGER',          // null, or token symbol if project has a custom token
+  category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  start: 1607059800,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
+  tvl                       // tvl adapter
 }

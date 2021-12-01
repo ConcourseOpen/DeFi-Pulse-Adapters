@@ -16,7 +16,6 @@ const ethers = require("ethers");
 // xtoken addresses
 const xaaveaAddr = "0x80DC468671316E50D4E9023D3db38D3105c1C146";
 const xaavebAddr = "0x704De5696dF237c5B9ba0De9ba7e0C63dA8eA0Df";
-const xalphaaAddr = "0x244ca1d5331246c926Ff31250b9E82a4916C97E9";
 const xbntaAddr = "0x6949f1118FB09aD2567fF675f96DbB3B6985ACd0";
 const xinchaAddr = "0x8F6A193C8B3c949E1046f1547C3A3f0836944E4b";
 const xinchbAddr = "0x6B33f15360cedBFB8F60539ec828ef52910acA9b";
@@ -43,7 +42,6 @@ const xu3lps = [
 // token addresses
 const ethAddr = "0x0000000000000000000000000000000000000000";
 const aaveAddr = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
-const alphaAddr = "0xa1faa113cbe53436df28ff0aee54275c13b40975";
 const bntAddr = "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C";
 const inchAddr = "0x111111111117dC0aa78b770fA6A738034120C302";
 const kncAddr = "0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202";
@@ -53,9 +51,6 @@ const usdcAddr = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
 const usdtAddr = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 const daiAddr = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const sUsdAddr = "0x57ab1e02fee23774580c119740129eac7081e9d3";
-
-// creation blocks
-const XALPHA_CREATION_BLOCK = 13401087
 
 /*==================================================
   TVL
@@ -100,24 +95,6 @@ async function tvl(timestamp, block) {
   const formatAave = ethers.utils
     .formatUnits(combinedXaaveAave, 0)
     .split(".")[0];
-
-  let xalphaaNav = ethers.BigNumber.from("0");
-  if (block >= XALPHA_CREATION_BLOCK) {
-    try {
-      xalphaaNav = await sdk.api.abi.call({
-        block,
-        target: xalphaaAddr,
-        abi: abi["getNav"],
-      });
-
-      xalphaaNav = ethers.BigNumber.from(xalphaaNav.output);
-    } catch (err) {
-      console.log("xALPHAa err : ", err);
-      xalphaaNav = ethers.BigNumber.from("0");
-    }
-  }
-
-  const formatAlpha = ethers.utils.formatUnits(xalphaaNav, 0).split(".")[0];
 
   // xBNTa created at block 12285460
   let xbntaStaked = ethers.BigNumber.from("0");
@@ -428,6 +405,7 @@ async function tvl(timestamp, block) {
   let xu3lpcUsdcBufferHoldings = ethers.BigNumber.from("0");
   let xu3lpcUsdcStakedBalance = ethers.BigNumber.from("0");
   if (block >= 12415305) {
+    // TODO: add try - catch
     try {
       xu3lpcSusdBufferHoldings = await sdk.api.abi.call({
         block,
@@ -509,7 +487,6 @@ async function tvl(timestamp, block) {
 
   let balances = {
     [aaveAddr.toLowerCase()]: formatAave, // AAVE
-    [alphaAddr.toLowerCase()]: formatAlpha, // ALPHA
     [bntAddr.toLowerCase()]: formatBnt, // BNT
     [inchAddr.toLowerCase()]: formatInch, // 1INCH
     [kncAddr.toLowerCase()]: formatKnc, // KNC
@@ -588,15 +565,6 @@ async function tvl(timestamp, block) {
         })
       ).output;
 
-      if (!token0) {
-        console.error("xtoken xu3lps:", xu3lp, "no token0", abi["token0"]);
-        continue;
-      }
-      if (!token1) {
-        console.error("xtoken xu3lps:", xu3lp, "no token1", abi["token1"]);
-        continue;
-      }
-
       balances[token0.toLowerCase()] = balances[token0.toLowerCase()]
         ? ethers.utils
             .formatUnits(
@@ -630,7 +598,7 @@ async function tvl(timestamp, block) {
             )
             .split(".")[0];
     } catch (e) {
-      console.error("xtoken", xu3lp, e);
+      console.log(e);
     }
   }
 
@@ -644,7 +612,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "xToken", // project name
   token: "XTK", // null, or token symbol if project has a custom token
-  category: "assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: "Assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1594383978, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };

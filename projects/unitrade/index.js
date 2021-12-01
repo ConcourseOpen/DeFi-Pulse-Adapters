@@ -34,7 +34,7 @@ async function tvl(_, block) {
       })),
     })
   ).output.map((orderCall) => orderCall.output);
-  //filtering out duplicate tokens 
+  //filtering out duplicate tokens
   const uniqueLockedTokenAddresses = [
     ...new Set(activeOrders.map((order) => order.tokenIn)),
   ]
@@ -54,7 +54,7 @@ async function tvl(_, block) {
   balances = balances.reduce((acc, item) => {
     return Object.assign(acc, { [item.input.target]: [item.output] });
   }, {});
-  
+
   let ethBalance = (await sdk.api.eth.getBalance({target: UNITRADE_ORDERBOOK, block})).output;
   balances['0x0000000000000000000000000000000000000000'] = ethBalance;
 
@@ -64,7 +64,7 @@ async function tvl(_, block) {
 module.exports = {
   name: "UniTrade",
   token: "TRADE",
-  category: "dexes",
+  category: "DEXes",
   start: 1603843200, // Oct-28-2020 00:00:00 PM +UTC
   tvl,
 };

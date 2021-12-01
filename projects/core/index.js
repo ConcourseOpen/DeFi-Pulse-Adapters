@@ -24,10 +24,10 @@ const configs = {
 
 /**
  * Retrieve all the Uniswap pair information.
- * 
+ *
  * @param {[String]} pairAddresses The uniswap pair addresses
- * @param {any} timestamp 
- * @param {any} block 
+ * @param {any} timestamp
+ * @param {any} block
  * @returns {Promise<[{ token0: String,  token1: String, reserve0: String, reserve1: String }]>}
  */
 async function getUniswapPairInfo(pairAddresses, timestamp, block) {
@@ -77,9 +77,9 @@ async function getUniswapPairInfo(pairAddresses, timestamp, block) {
 
 /**
  * Retrieve the underlying reserve of each token within a pair.
- * 
+ *
  * @param {{ token0: String, token1: String, reserve0: String, reserve1: String }} pairInfo Contains the information about a pair.
- * @param {any} timestamp 
+ * @param {any} timestamp
  * @param {any} block
  * @returns {Promise<{ [String]: BigNumber }>}
  */
@@ -93,10 +93,10 @@ async function getPairUnderlyingReserves(pairInfo, timestamp, block) {
 /**
  * Retrieve the token reserve and if it's an ERC95 token, retrieve
  * each underlying assets reserves.
- * 
+ *
  * @param {String} token Token address
  * @param {String} defaultReserve Default reserve amount to use when not a ERC95 token
- * @param {any} timestamp 
+ * @param {any} timestamp
  * @param {any} block
  * @returns {Promise<{ [String]: BigNumber }>}
  */
@@ -135,7 +135,7 @@ async function getTokenUnderlyingReserves(token, defaultReserve, _timestamp, blo
 /**
  * Flatten and merge common underlying assets with their reserve sum.
  *
- * @param {[{[String]: BigNumber}]} underlyingReserves 
+ * @param {[{[String]: BigNumber}]} underlyingReserves
  * @returns {{[String]: [String]}} An object of the token address and its reserve.
  */
 function flattenUnderlyingReserves(underlyingReserves) {
@@ -162,15 +162,14 @@ function flattenUnderlyingReserves(underlyingReserves) {
 async function tvl(timestamp, block) {
   const pairInfo = await getUniswapPairInfo(configs.pairAddresses, timestamp, block);
   const underlyingReserves = await Promise.all(pairInfo.map(info => getPairUnderlyingReserves(info, timestamp, block)));
-  const balances = flattenUnderlyingReserves(underlyingReserves);
 
-  return balances;
+  return flattenUnderlyingReserves(underlyingReserves);
 }
 
 module.exports = {
   name: 'cvault.finance',
   token: 'CORE',
-  category: 'assets',
+  category: 'Assets',
   start: 1601142406,    // 2020-09-26 17:46:46 (UTC)
   tvl
 };

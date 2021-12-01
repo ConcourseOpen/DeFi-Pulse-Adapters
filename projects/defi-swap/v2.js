@@ -11,7 +11,7 @@ const {
 } = require("./constant");
 
 module.exports = async function tvl(_, block) {
-  
+
   const supportedTokens = (
     await axios.get(SUPPORTING_TOKEN_LIST_URL)
   ).data.tokens.map(({ address }) => address.toLowerCase());
@@ -28,10 +28,10 @@ module.exports = async function tvl(_, block) {
 
   const pairAddresses = logs.map((
     log // sometimes the full log is emitted
-  ) =>
-    typeof log === "string"
-      ? log.toLowerCase()
-      : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()
+    ) =>
+      typeof log === "string"
+        ? log.toLowerCase()
+        : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()
   );
 
   const [token0Addresses, token1Addresses] = await Promise.all([

@@ -1,3 +1,5 @@
+const sdk = require('../../sdk');
+
 const BigNumber = require('bignumber.js')
 
 const xUniswapV2TVL = require('./xUniswapV2');
@@ -16,20 +18,20 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(xUniswapV2));
 
-  return Array
-    .from(tokenAddresses)
-    .reduce((accumulator, tokenAddress) => {
+  balances = Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
       const xUniswapV2Balance = new BigNumber(xUniswapV2[tokenAddress] || '0');
       accumulator[tokenAddress] = xUniswapV2Balance.toFixed();
 
       return accumulator
     }, {});
+
+  return balances;
 }
 
 module.exports = {
   name: 'Impermax',
-  token: null,
-  category: 'lending',
+  token: 'IMX',
+  category: 'Lending',
   start: 1614643200, // 02/03/2021 @ 12:00am (UTC)
   tvl,
 };

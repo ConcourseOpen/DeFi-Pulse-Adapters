@@ -102,7 +102,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Swerve Finance',
   token: 'SWRV',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1599264000,        // 09/05/2020 @ 12:00am (UTC)
   tvl
 }

@@ -42,7 +42,7 @@ async function tvl(timestamp, block) {
       {}
     );
     if (Object.keys(balances).length < 1) {
-      balances["0x0000000000000000000000000000000000000000"] = "0";
+      balances['0x0000000000000000000000000000000000000000'] = '0';
     }
 
     return (await sdk.api.util.toSymbols(balances)).output;
@@ -54,13 +54,15 @@ async function tvl(timestamp, block) {
 
     const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v1_1)));
 
-    return Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
-      const v1Balance = new BigNumber(v1[tokenAddress] || "0");
-      const v1_1Balance = new BigNumber(v1_1[tokenAddress] || "0");
-      accumulator[tokenAddress] = v1Balance.plus(v1_1Balance).toFixed();
+    return (
+      Array.from(tokenAddresses).reduce((accumulator, tokenAddress) => {
+        const v1Balance = new BigNumber(v1[tokenAddress] || "0");
+        const v1_1Balance = new BigNumber(v1_1[tokenAddress] || "0");
+        accumulator[tokenAddress] = v1Balance.plus(v1_1Balance).toFixed();
 
-      return accumulator;
-    }, {});
+        return accumulator;
+      }, {})
+    )
   }
 }
 
@@ -172,7 +174,7 @@ function replaceToETHIfNeeded(token) {
 module.exports = {
   name: '1inch Liquidity Protocol',
   token: '1INCH',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1608831515, // Dec-24-2020 05:38:35 PM +UTC
   tvl
 };

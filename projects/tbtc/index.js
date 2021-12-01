@@ -17,33 +17,31 @@ const keepVaultContract = "0xCf916681a6F08fa22e9EF3e665F2966Bf3089Ff1"
 
 async function tvl(timestamp, block) {
   const btcTotalSupply = sdk.api.erc20.totalSupply({
-      block,
-      target: tbtcTokenContract
-    });
+    block,
+    target: tbtcTokenContract
+  });
 
   const totalETHBonded = sdk.api.eth.getBalance({ target: bondingContract, block });
 
-  const totalKEEPBonded = sdk.api.erc20.balanceOf({
-    target: keepTokenContract,
-    owner: keepStakingContract,
-    block: block
-  });
+  // const totalKEEPBonded = sdk.api.erc20.balanceOf({
+  //   target: keepTokenContract,
+  //   owner: keepStakingContract,
+  //   block: block
+  // });
 
-  const KeepStakedVault = sdk.api.erc20.balanceOf({
-    target: keepTokenContract,
-    owner: keepVaultContract,
-    block: block
-  });
+  // const KeepStakedVault = sdk.api.erc20.balanceOf({
+  //   target: keepTokenContract,
+  //   owner: keepVaultContract,
+  //   block: block
+  // });
 
-  const totalKEEPStaked = BigNumber((await totalKEEPBonded).output).plus((await KeepStakedVault).output).toFixed()
+  // const totalKEEPStaked = BigNumber((await totalKEEPBonded).output).plus((await KeepStakedVault).output).toFixed()
 
-  let balances = {
+  return {
     "0x0000000000000000000000000000000000000000": (await totalETHBonded).output,
     [tbtcTokenContract]: (await btcTotalSupply).output,
-    [keepTokenContract]: totalKEEPStaked
-  }
-
-  return balances;
+    // [keepTokenContract]: totalKEEPStaked
+  };
 }
 
 /*==================================================
@@ -53,7 +51,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'KEEP Network',
   token: 'KEEP',
-  category: 'assets',
+  category: 'Assets',
   start: 1600214400,   // 09/16/2020 @ 12:00am (UTC)
   tvl
 }

@@ -1,3 +1,4 @@
+
 {
   "getReserves": {
     "constant": true,
@@ -25,38 +26,38 @@
     "type": "function"
   },
   "getPublicPools": {
-      "inputs": [],
-      "name": "getPublicPools",
-      "outputs": [
-        { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
-        {
-          "components": [
-            { "internalType": "string", "name": "name", "type": "string" },
-            { "internalType": "address", "name": "creator", "type": "address" },
-            {
-              "internalType": "address",
-              "name": "comptroller",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "blockPosted",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "timestampPosted",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct FusePoolDirectory.FusePool[]",
-          "name": "",
-          "type": "tuple[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
+    "inputs": [],
+    "name": "getPublicPools",
+    "outputs": [
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      {
+        "components": [
+          { "internalType": "string", "name": "name", "type": "string" },
+          { "internalType": "address", "name": "creator", "type": "address" },
+          {
+            "internalType": "address",
+            "name": "comptroller",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "blockPosted",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestampPosted",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct FusePoolDirectory.FusePool[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
   },
   "getPoolSummary": {
     "inputs": [
@@ -105,26 +106,26 @@
     "type": "function"
   },
   "balanceOf":{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
   "totalStaked": {
     "constant": true,
     "inputs": [],
