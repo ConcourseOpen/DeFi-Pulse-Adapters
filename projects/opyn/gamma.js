@@ -30,73 +30,73 @@ const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
 module.exports = async function tvl(timestamp, block) {  
   let balances = {};
 
-  if(block >= START_BLOCK) {
-    const supportedTokens = await (
-      sdk
-        .api
-        .util
-        .tokenList()
-        .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
-    );
-    
-    // get ETH balance
-    const balance = (await sdk.api.eth.getBalance({target: marginPool, block})).output;
-    balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(balance)).toFixed();
-  
-    await Promise.all(supportedTokens.map(async (pulseToken) => {
-      const collateralAsset = pulseToken.toLocaleLowerCase();
+    if(block >= START_BLOCK) {
+      try{
+      const supportedTokens = await (
+        sdk
+          .api
+          .util
+          .tokenList()
+          .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
+      );
 
-      if(collateralAsset.substring(0, 2) == "0x" && collateralAsset != ETH) {
-        let isWhitelistedCollateralToken = (
-          await sdk.api.abi.call({
-            target: whitelist,
-            abi: isWhitelistedCollateral,
-            params: [collateralAsset],
-            fromBlock: START_BLOCK,
-            toBlock: block
-          })
-        ).output;
-    
-        if(isWhitelistedCollateralToken) {
-          const balanceOfResult = (
+      // get ETH balance
+      const balance = (await sdk.api.eth.getBalance({target: marginPool, block})).output;
+      balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(balance)).toFixed();
+
+      await Promise.all(supportedTokens.map(async (pulseToken) => {
+        const collateralAsset = pulseToken.toLocaleLowerCase();
+
+        if(collateralAsset.substring(0, 2) == "0x" && collateralAsset != ETH) {
+          let isWhitelistedCollateralToken = (
             await sdk.api.abi.call({
-              target: collateralAsset,
-              params: marginPool,
-              abi: 'erc20:balanceOf',
-              block
+              target: whitelist,
+              abi: isWhitelistedCollateral,
+              params: [collateralAsset],
+              fromBlock: START_BLOCK,
+              toBlock: block
             })
           ).output;
 
-          balances[collateralAsset] = BigNumber(balances[collateralAsset] || 0).plus(BigNumber(balanceOfResult)).toFixed();          
+          if(isWhitelistedCollateralToken) {
+            const balanceOfResult = (
+              await sdk.api.abi.call({
+                target: collateralAsset,
+                params: marginPool,
+                abi: 'erc20:balanceOf',
+                block
+              })
+            ).output;
+
+            balances[collateralAsset] = BigNumber(balances[collateralAsset] || 0).plus(BigNumber(balanceOfResult)).toFixed();          
+          }
         }
-      }
-    }));
-  
-    // Add yvUSDC as USDC to balances
-    const yvUSDCBalance = (
-      await sdk.api.abi.call({
-        target: yvUSDC,
-        params: marginPool,
-        abi: 'erc20:balanceOf',
-        block
-      })
-    ).output;
+      }));
 
-    balances[usdc] = BigNumber(balances[usdc] || 0).plus(BigNumber(yvUSDCBalance)).toFixed();
+      // Add yvUSDC as USDC to balances
+      const yvUSDCBalance = (
+        await sdk.api.abi.call({
+          target: yvUSDC,
+          params: marginPool,
+          abi: 'erc20:balanceOf',
+          block
+        })
+      ).output;
 
-    // Add sdeCRV as ETH to balances
-    const sdeCRVBalance = (
-      await sdk.api.abi.call({
-        target: sdeCRV,
-        params: marginPool,
-        abi: 'erc20:balanceOf',
-        block
-      })
-    ).output;
+      balances[usdc] = BigNumber(balances[usdc] || 0).plus(BigNumber(yvUSDCBalance)).toFixed();
 
-    balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(sdeCRVBalance)).toFixed();
+      // Add sdeCRV as ETH to balances
+      const sdeCRVBalance = (
+        await sdk.api.abi.call({
+          target: sdeCRV,
+          params: marginPool,
+          abi: 'erc20:balanceOf',
+          block
+        })
+      ).output;
 
-    try{
+      balances[ETH] = BigNumber(balances[ETH] || 0).plus(BigNumber(sdeCRVBalance)).toFixed();
+
       // Add sdcrvWSBTC as WBTC to balances
       const sdcrvWSBTCBalance = (
         await sdk.api.abi.call({
@@ -109,7 +109,9 @@ module.exports = async function tvl(timestamp, block) {
 
       balances[WBTC] = BigNumber(balances[WBTC] || 0).plus(BigNumber((sdcrvWSBTCBalance / 10**10))).toFixed();
     }
-    catch(e){}
+    catch(e){
+      console.log('error in gamma.js of opyn');
+    }
   }
 
   return balances;
