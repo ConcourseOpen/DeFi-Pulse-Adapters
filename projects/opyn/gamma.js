@@ -42,6 +42,7 @@ module.exports = async function tvl(timestamp, block) {
             toBlock: block,
             target: whitelist,
             fromBlock: START_BLOCK,
+            toBlock: block,
             topics: [whitelistTopic],
           })
       ).output;
