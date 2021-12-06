@@ -93,7 +93,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Swarm Markets",
   token: "SMT",
-  category: "dexes",
+  category: "DEXes",
   start: 1627776000, // Sunday, Aug 01, 2021 12:00:00.000 AM +UTC
   tvl, // tvl function should be kept above tokenHolderMap
   tokenHolderMap,
