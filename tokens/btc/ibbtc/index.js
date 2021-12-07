@@ -8,7 +8,7 @@
   Settings
 ==================================================*/
 
-  const hbtcTokenContract = '0x0316eb71485b0ab14103307bf65a021042c6d380';
+  const ibbtcTokenContract = '0xc4e15973e6ff2a35cc804c2cf9d2a1b817a8b40f';
 
 /*==================================================
   TVL
@@ -18,11 +18,11 @@
     const btcTotalSupply = (
       await sdk.api.erc20.totalSupply({
         block,
-        target: hbtcTokenContract
+        target: ibbtcTokenContract
       })
     ).output;
 
-    return (await sdk.api.util.toSymbols({ [hbtcTokenContract]: btcTotalSupply })).output;
+    return (await sdk.api.util.toSymbols({ [ibbtcTokenContract]: btcTotalSupply })).output;
   }
 
 /*==================================================
@@ -30,9 +30,9 @@
   ==================================================*/
 
   module.exports = {
-    name: 'Huobi BTC',
-    symbol: 'HBTC',
-    type: 'custodial',
-    start: 1575905983,
+    name: 'Interest Bearing Bitcoin',
+    symbol: 'ibBTC',
+    type: 'hybrid',
+    start: 1619899623,
     balance,
   };
