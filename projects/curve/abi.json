@@ -97,5 +97,33 @@
     "inputs": [],
     "stateMutability": "view",
     "type": "function"
+  },
+  "get_coins": {
+    "name": "get_coins",
+    "outputs": [{"name":"","type":"address[8]"}],
+    "inputs": [{"name":"_pool","type":"address"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "get_balances": {
+    "name": "get_balances",
+    "outputs": [{"name":"","type":"uint256[8]"}],
+    "inputs": [{"name":"_pool","type":"address"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "get_coinsf": {
+    "name": "get_coins",
+    "outputs": [{"name":"","type":"address[2]"}],
+    "inputs": [{"name":"_pool","type":"address"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "get_balancesf": {
+    "name": "get_balances",
+    "outputs": [{"name":"","type":"uint256[2]"}],
+    "inputs": [{"name":"_pool","type":"address"}],
+    "stateMutability": "view",
+    "type": "function"
   }
 }

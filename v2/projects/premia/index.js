@@ -37,6 +37,13 @@ module.exports = {
 
           // Uncomment this to include the locked xPremia pool
           //'0xF5aae75D1AD6fDD62Cce66137F2674c96FEda854', // premiaFeeDiscount
+          
+          '0x398D1622B10fE01f5F90a7bdA7A97eD4B54D6e28',  // weth pool
+          '0xC88aE38Cc8dF85dA9de09F9C0f587249Cc98eE23',  // wbtc pool
+          '0x26Bc47E2b076FC7EC68cB6D5824fac2047653246',  // link pool
+          '0xa4492fcDa2520cB68657d220f4D4aE3116359C10',  // weth pool
+          '0x1B63334f7bfDf0D753AB3101EB6d02B278db8852',  // wbtc pool
+          '0xFDD2FC2c73032AE1501eF4B19E499F2708F34657',  // link pool
         ],
         checkETHBalance: true,
       }

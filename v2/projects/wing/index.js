@@ -31,6 +31,22 @@ module.exports = {
     {
       tokens: '0x8F041A3940a5e6FB580075C3774E15FcFA0E1618', // oneWING
       holders: '0x363838fa35711EA3F8c8f95151203723cC6eE535',
+    },
+    {
+      tokens: '0xa47c8bf37f92aBed4A126BDA807A7b7498661acD', // UST
+      holders: '0xdB79f131acAc4Bd38B320E36c60aC542468a3B89',
+    },
+    {
+      tokens: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
+      holders: '0x12eE9b2e5F8746CA8a4a36260799301d03a066A4',
+    },
+    {
+      tokens: '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
+      holders: '0x0A705821cd494DfaB4C09603460126Cc05eb894f',
+    },
+    {
+      tokens: '0x45804880de22913dafe09f4980848ece6ecbaf78', // PAXG
+      holders: '0x0b3497204bda07d8b1c07c6ae246a1b267a9cecf',
     }
   ],
 };

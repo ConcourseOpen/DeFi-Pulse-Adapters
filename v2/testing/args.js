@@ -26,11 +26,19 @@ const args = argv.option([
     type: 'number',
     description: 'When available, defines a unix timestamp to run the test at, defaults to latest.',
     example: "'npm run test-tvl -- --project=loopring -- --timestamp=1583020800'"
+  },
+  {
+    name: 'testName',
+    short: 'tn',
+    type: 'string',
+    description: 'When available, this test name will be used to list updated TVL data in https://test.defipulse.com leaderboard',
+    example: "'npm run test-tvl -- --project=loopring -- --testName=loopring-test2'"
   }
 ]).run();
 
 const chain = args.options.chain;
 const projects = args.options.project ? [args.options.project] : getDirectories('v2/projects').map((dir) => dir.split('/')[dir.split('/').length - 1]);
+const testName = args.options.testName || `test-${(new Date()).getTime()}`;
 
 module.exports = {
   projects: _.map(projects, (project) => {
@@ -64,6 +72,7 @@ module.exports = {
     return {
       path,
       project,
+      testName: `${dataObj.name}-${testName}`,
       ...dataObj
     };
   }),

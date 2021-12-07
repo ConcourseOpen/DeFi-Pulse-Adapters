@@ -14,13 +14,32 @@ module.exports = {
           '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
           '0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9', // alUSD
           '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF', // ALCX
+          '0xa258c4606ca8206d8aa700ce2143d7db854d168c', // yvWETH
+          '0xda816459f1ab5631232fe5e97a05bbbb94970c95', // yvDAI
         ],
         holders: [
+
+          // alUSD
           '0xc21D353FF4ee73C572425697f4F5aaD2109fe35b', // Alchemist
           '0x014dE182c147f8663589d77eAdB109Bf86958f13', // YearnVaultAdapter
           '0xaB7A49B971AFdc7Ee26255038C82b4006D122086', // Transmuter
           '0xf3cFfaEEa177Db444b68FB6f033d4a82f6D8C82d', // TransmuterB
           '0x491EAFC47D019B44e13Ef7cC649bbA51E15C61d7', // TransmuterVaultAdapter
+
+          // alETH
+          '0x6B566554378477490ab040f6F757171c967D03ab', // AlchemistEth
+          '0xEBA649E0010818Aa4321088D34bD6162d65E7971', // YearnVaultAdapterEth
+          '0x45f81eF5F2ae78f49851f7A62e4061FF54Ff674B', // TransmuterEth
+          '0x54dc35eb8c2E2E20f3657Af6F84cd9949C08CF38', // TransmuterEthYearnVaultAdapter
+
+          '0xb039eA6153c827e59b620bDCd974F7bbFe68214A',
+          '0xeE69BD81Bd056339368c97c4B2837B4Dc4b796E7',
+          '0x6Fe02BE0EC79dCF582cBDB936D7037d2eB17F661',
+
+          '0xf8317BD5F48B6fE608a52B48C856D3367540B73B',
+          '0x546E6711032Ec744A7708D4b7b283A210a85B3BC',
+          '0x9FD9946E526357B35D95Bcb4b388614be4cFd4AC',
+          '0x6d75657771256C7a8CB4d475fDf5047B70160132'
           
           // Uncomment this to include the alUSD-3crv pool
           //'0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c', // alUSD3CRV-f

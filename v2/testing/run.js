@@ -63,11 +63,12 @@ const _run = async (projectAdapter, timeUnit = 'day', timeOffset = 0) => {
  */
 module.exports = async (projectAdapter, timeUnit, timeOffset = 0) => {
   let label;
+  const labelExt = `Please go to the Leaderboard at https://test.defipulse.com and search for project: ${projectAdapter.testName} to validate the tvl!`;
 
   if (typeof timeUnit === 'number') {
-    label = `returns valid tvl data at ${moment.unix(timeUnit).utcOffset(0).format()}`;
+    label = `returns valid tvl data at ${moment.unix(timeUnit).utcOffset(0).format()}. ${labelExt}`;
   } else {
-    label = `returns valid tvl data at ${timeUnit} ${timeOffset}`;
+    label = `returns valid tvl data at ${timeUnit} ${timeOffset}. ${labelExt}`;
   }
 
   it(label, async function() {
