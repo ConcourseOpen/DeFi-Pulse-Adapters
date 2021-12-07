@@ -22,7 +22,7 @@
       abi: abi['totalSupply'],
     })).output;
 
-    return { [wbtcContract]: totalSupply };
+    return (await sdk.api.util.toSymbols({ [wbtcContract]: totalSupply })).output;
   }
 
 /*==================================================
