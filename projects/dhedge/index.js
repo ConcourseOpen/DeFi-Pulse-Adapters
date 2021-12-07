@@ -114,9 +114,9 @@ async function tvl(timestamp, block) {
   }, {});
 
   if(!Object.keys(balances).length) {
-    return (await sdk.api.util.toSymbols({
+    return {
       '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f': "0"
-    })).output;
+    };
   }
 
   return balances;

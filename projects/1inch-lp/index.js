@@ -21,9 +21,9 @@ const ETH = '0x0000000000000000000000000000000000000000';
 async function tvl(timestamp, block) {
   if (block <= V1_START_BLOCK) {
     return (
-      await sdk.api.util.toSymbols({
+      {
         "0x0000000000000000000000000000000000000000": "0",
-      })
+      }
     ).output;
   } else if (block <= V1_1_START_BLOCK) {
     const [v1] = await Promise.all([
@@ -45,7 +45,7 @@ async function tvl(timestamp, block) {
       balances['0x0000000000000000000000000000000000000000'] = '0';
     }
 
-    return (await sdk.api.util.toSymbols(balances)).output;
+    return balances;
   } else {
     const [v1, v1_1] = await Promise.all([
       tvlByVersion(V1_FACTORY, V1_START_BLOCK, block),

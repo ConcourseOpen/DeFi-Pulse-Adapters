@@ -29,8 +29,8 @@ async function tvl(timestamp, block) {
   };
 
   if (timestamp < startTimestamp || block < startBlock) {
-    return (await sdk.api.util.toSymbols(balances)).output;
-  };
+    return balances;
+  }
 
   const synthCount = await sdk.api.abi.call({
     target: perlinX,
