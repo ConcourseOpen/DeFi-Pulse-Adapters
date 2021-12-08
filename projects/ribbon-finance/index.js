@@ -70,7 +70,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Ribbon Finance",
   token: null,
-  category: "derivatives",
+  category: "Derivatives",
   start: 1618185600,
   tvl,
 };
