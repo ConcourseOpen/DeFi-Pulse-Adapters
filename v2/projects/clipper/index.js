@@ -12,7 +12,7 @@ module.exports = {
   name: "Clipper",
   token: null,
   category: "DEX/AMM",
-  start: 12682246, // Unix timestamp (utc 0) specifying when the project began, or where live data begins
+  start: 1624383620, // Unix timestamp (utc 0) specifying when the project began, or where live data begins
   chain: "ethereum",
 
   /* Fetching token balances */
