@@ -1,7 +1,5 @@
 /**
 *
-* This is generated template may be used as a guide to build your own adapter.
-*
 * Project: Clipper
 * Chain: Polygon
 * Tech Lead: Edo#9130  edo@shipyardsoftware.org 
@@ -14,9 +12,9 @@
 
 module.exports = {
   /* Project Metadata */
-  name: "Clipper", // Token project name. Ex. 'MakerDAO'
-  token: null, // Token symbol (if exists). Ex. 'MKR', or NULL
-  category: "DEX/AMM", // Project category. Ex. 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  name: "Clipper",
+  token: null,
+  category: "DEX/AMM",
   start: 1636161600, // Unix timestamp (utc 0) specifying when the project began, or where live data begins
   chain: "polygon",
 
