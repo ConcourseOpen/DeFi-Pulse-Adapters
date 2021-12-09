@@ -227,7 +227,7 @@
     token: "PICKLE", // null, or token symbol if project has a custom token
     chain: "polygon",
     category: "Assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1623196292, // unix timestamp (utc 0) specifying when the project began, or where live data begins
+    start: 1620416851, // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl, // tvl adapter
   };
   
