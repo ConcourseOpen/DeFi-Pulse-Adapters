@@ -7,7 +7,7 @@ const { NETWORK_POLYGON } = require('../../../../v2/projects/pods/constants')
 
 module.exports = {
   /* Project Metadata */
-  name: 'Pods',
+  name: 'Pods_Polygon',
   category: 'Derivatives',
   chain: 'polygon',
   website: 'https://pods.finance',
