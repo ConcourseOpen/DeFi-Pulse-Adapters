@@ -12,18 +12,20 @@ module.exports = {
   chain: 'polygon',
   website: 'https://pods.finance',
   token: null,
-  start: 1605000000,
+  start: 1627794000,
   /* required for fetching token balances */
   tokenHolderMap: [
     {
       tokens: async () => {
         const result = await getTokenAddresses(NETWORK_POLYGON)
+        console.log('tokens', result)
         return result
       },
       holders: async () => {
         const options = await getOptionAddresses(NETWORK_POLYGON)
         const pools = await getPoolAddresses(NETWORK_POLYGON)
         const result = options.concat(pools)
+        console.log('pools', result)
         return result
       },
       checkNativeBalance: true
