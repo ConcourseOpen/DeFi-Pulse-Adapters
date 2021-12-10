@@ -132,6 +132,7 @@
         + Number(pSLPETHUSDT[0])
         + Number(pSLPMATICETH[1]))
     });
+    Object.keys(WETH[0].toString())
     let USDC =
       {// Polygon USDC
       "0x2791bca1f2de4661ed88a30c99a7a9449aa84174": (Number(pCOMETHWETHUSDC[1]) + Number(pQUICKMIMATICUSDC[1]))
@@ -150,9 +151,14 @@
     let USDT = ({"0xc2132d05d31c914a87c6611c10748aeb04b58e8f": pSLPETHUSDT[1]});
     // Polygon MIMATIC
     let MIMATIC = ({"0xa3fa99a148fa48d14ed51d610c367c61876997f1": pQUICKMIMATICUSDC[0]});
+    
   
     balances = Object.assign(WETH, USDC, PICKLE, MUST, MATIC, DAI, USDT, MIMATIC);
-    //console.table(balances)
+    
+    Object.keys(balances).forEach(key =>{
+      balances[key] = '' + balances[key];
+    });
+    
     return balances;
   }
   
