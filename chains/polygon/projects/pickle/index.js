@@ -132,7 +132,6 @@
         + Number(pSLPETHUSDT[0])
         + Number(pSLPMATICETH[1]))
     });
-    Object.keys(WETH[0].toString())
     let USDC =
       {// Polygon USDC
       "0x2791bca1f2de4661ed88a30c99a7a9449aa84174": (Number(pCOMETHWETHUSDC[1]) + Number(pQUICKMIMATICUSDC[1]))
