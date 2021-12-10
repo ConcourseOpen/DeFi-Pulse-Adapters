@@ -7,12 +7,12 @@ const { NETWORK_POLYGON } = require('../../../../v2/projects/pods/constants')
 
 module.exports = {
   /* Project Metadata */
-  name: 'Pods',
+  name: 'Pods_Polygon',
   category: 'Derivatives',
   chain: 'polygon',
   website: 'https://pods.finance',
   token: null,
-  start: 1605000000,
+  start: 1627794000,
   /* required for fetching token balances */
   tokenHolderMap: [
     {
