@@ -24,7 +24,9 @@ module.exports = {
         '0x956F47F50A910163D8BF957Cf5846D573E7f87CA', // FEI
         '0x853d955aCEf822Db058eb8505911ED77F175b99e', // FRAX
         '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0', // LUSD
-        "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51", // sUSD
+        '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51', // sUSD
+        '0x18084fba666a33d37592fa2633fd49a74dd93a88', // tBTCv2
+        '0xad3e3fc59dff318beceaab7d00eb4f68b1ecf195', // WCUSD
       ],
       holders: [
         '0x4f6A43Ad7cba042606dECaCA730d4CE0A57ac62e', // BTC Pool Address
@@ -33,7 +35,10 @@ module.exports = {
         '0xa6018520eaacc06c30ff2e1b3ee2c7c22e64196a', // alETH Pool Address
         '0xC69DDcd4DFeF25D8a793241834d4cc4b3668EAD6', // d4 Pool Address
         '0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7', // USDv2 Pool Address
-        '0x0C8BAe14c9f9BF2c953997C881BEfaC7729FD314', // sUSD Pool Address
+        '0x0C8BAe14c9f9BF2c953997C881BEfaC7729FD314', // sUSD Metapool Address
+        '0xdf3309771d2BF82cb2B6C56F9f5365C8bD97c4f2', // BTCv2 Pool Address
+        '0xf74ebe6e5586275dc4CeD78F5DBEF31B1EfbE7a5', // tBTCv2 Metapool address
+        '0x3F1d224557afA4365155ea77cE4BC32D5Dae2174', // WCUSD Metapool address
       ],
     }
   ],
