@@ -2,13 +2,15 @@
   "name": "defipulse-adapters",
   "version": "1.0.0",
   "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "test": "mocha testing/test/*.js",
     "validate": "mocha testing/validate/*.js",
     "test-tvl": "mocha v2/testing/test/*.js",
     "validate-metadata": "mocha v2/testing/validate/*.js",
     "test-token": "mocha tokens/testing/test/*.js",
-    "validate-token": "mocha tokens/testing/validate/*.js"
+    "validate-token": "mocha tokens/testing/validate/*.js",
+    "build-sdk": "esbuild sdk/index.js --bundle --outfile=build/sdk.js --sourcemap=inline --platform=node --target=node10.24.1 --keep-names --analyze=verbose --legal-comments=eof --tree-shaking=false --external:terminal-kit"
   },
   "dependencies": {
     "argv": "0.0.2",
@@ -36,5 +38,8 @@
   },
   "engines": {
     "node": "10.24.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.2"
   }
 }
