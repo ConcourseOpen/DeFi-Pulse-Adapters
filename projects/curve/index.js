@@ -76,10 +76,10 @@ const yTokens = [
     contract: "0x73a052500105205d34daf004eab301916da8190f",  // yTUSD
     underlying: "0x0000000000085d4780b73119b644ae5ecd22b376", // TUSD
   },
-  {
-    contract: "0x99d1fa417f94dcd62bfe781a1213c092a47041bc",  // ycDAI
-    underlying: "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643", // cDAI
-  },
+  // {
+  //   contract: "0x99d1fa417f94dcd62bfe781a1213c092a47041bc",  // ycDAI
+  //   underlying: "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643", // cDAI
+  // },
   {
     contract: "0xd6ad7a6750a7593e092a9b218d66c0a814a3436e",  // yUSDC
     underlying: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // USDC
