@@ -1,0 +1,38 @@
+{
+  "networkAddress1": "0x9ae49C0d7F8F9EF4B864e004FE86Ac8294E20950",
+  "networkAddress2": "0x65bF64Ff5f51272f729BDcD7AcFB00677ced86Cd",
+  "StorageAddress": "0xC8fb12402cB16970F3C5F4b48Ff68Eb9D1289301",
+  "getReserves": {
+    "constant": true,
+    "inputs": [],
+    "name": "getReserves",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  "getBalance": {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+}
