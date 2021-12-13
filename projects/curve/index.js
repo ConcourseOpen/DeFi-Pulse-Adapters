@@ -14,15 +14,12 @@ const { object } = require("underscore");
   Constants
   ==================================================*/
 
+const CurveRegistryStart = 11218787;
+const factoryStartBlock = 11942404;
 const CurveAddressProvider = "0x0000000022d53366457f9d5e68ec105046fc4383";
 const etherAddress = "0x0000000000000000000000000000000000000000";
-const curveEtherAddress = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
-const CurveRegistryStart = 11218787;
-
+const curveEtherAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 const factoryAddress = "0x0959158b6040D32d04c301A72CBFD6b39E21c9AE";
-const factoryStartBlock = 11942404;
-
-const triCrypto = "0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5";
 
 const curvePools = [
   "0xeDf54bC005bc2Df0Cc6A675596e843D28b16A966",
@@ -93,19 +90,161 @@ const yTokens = [
   },
 ];
 
+/**
+ *
+ * @param {Number} block
+ * @param {String} registryAddress
+ * @param {Boolean} registryStart
+ * @returns {Promise<number>}
+ * @private
+ */
+const _getPoolCount = async (block, registryAddress, registryStart) => {
+  return (
+    registryStart
+      ? (
+        await sdk.api.abi.call({
+          block,
+          target: registryAddress,
+          abi: abi["pool_count"],
+        })
+      ).output
+      : curvePools.length
+  )
+};
+
+/**
+ *
+ * @param {Number} block
+ * @param {Number} poolCount
+ * @param {String} registryAddress
+ * @param {Boolean} registryStart
+ * @returns {Promise<Array>}
+ * @private
+ */
+const _getPoolAddresses = async (block, poolCount, registryAddress, registryStart) => {
+  const poolAddresses = [];
+  const chunks = sdk.util.splitArrIntoChunks([...Array(Number(poolCount)).keys()], 20);
+
+  while (chunks.length) {
+    const chunk = chunks.shift();
+    const poolListCalls = chunk.map((index) => {
+      return new Promise(async (resolve) => {
+        try {
+          let poolAddress = registryStart ? (
+            await sdk.api.abi.call({
+              block,
+              target: registryAddress,
+              abi: abi["pool_list"],
+              params: index,
+            })
+          ).output : curvePools[index];
+
+          poolAddresses.push(poolAddress.toLowerCase());
+        } catch (error) {
+          console.log(error);
+        }
+
+        return resolve();
+      });
+    });
+
+    await Promise.all(poolListCalls);
+    console.log(`Fetched ${poolAddresses.length} pool addresses!`);
+  }
+
+  return poolAddresses;
+};
+
+/**
+ *
+ * @param {Number} block
+ * @param {Array} poolAddresses
+ * @param {String} registryAddress
+ * @param {String} method
+ * @returns {Promise<void>}
+ * @private
+ */
+const _getTokenList = async (block, poolAddresses, registryAddress, method) => {
+  const tokenList = {};
+  const chunks = sdk.util.splitArrIntoChunks(Array.from(poolAddresses), 20);
+
+  while (chunks.length) {
+    const chunk = chunks.shift();
+    const tokenListPromises = chunk.map((poolAddress) => {
+      return new Promise(async (resolve) => {
+        try {
+          tokenList[poolAddress] = (await sdk.api.abi.call({
+            block,
+            target: registryAddress,
+            abi: abi[method],
+            params: poolAddress
+          })).output;
+        } catch (error) {
+          console.log(error);
+        }
+
+        resolve();
+      })
+    });
+
+    await Promise.all(tokenListPromises);
+    console.log(`Fetched token list for ${Object.keys(tokenList).length} pool addresses!`);
+  }
+
+  return tokenList;
+};
+
+/**
+ *
+ * @param {Number} block
+ * @param {Array} poolAddresses
+ * @param {String} registryAddress
+ * @param {String} method
+ * @returns {Promise<void>}
+ * @private
+ */
+const _getBalanceList = async (block, poolAddresses, registryAddress, method) => {
+  const balanceList = {};
+  const chunks = sdk.util.splitArrIntoChunks(Array.from(poolAddresses), 20);
+
+  while (chunks.length) {
+    const chunk = chunks.shift();
+    const balanceListPromises = chunk.map((poolAddress) => {
+      return new Promise(async (resolve) => {
+        try {
+          balanceList[poolAddress] = (await sdk.api.abi.call({
+            block,
+            target: registryAddress,
+            abi: abi[method],
+            params: poolAddress
+          })).output;
+        } catch (error) {
+          console.log(error);
+        }
+
+        resolve();
+      })
+    });
+
+    await Promise.all(balanceListPromises);
+    console.log(`Fetched balance list for ${Object.keys(balanceList).length} pool addresses!`);
+  }
+
+  return balanceList;
+};
+
 /*==================================================
   TVL
   ==================================================*/
 
 async function tvl(timestamp, block) {
+  let balances = {};
   let registryStart = block > CurveRegistryStart;
   let factoryStart = block > factoryStartBlock;
 
-  let balances = {};
   balances[curveEtherAddress] = 0;
-  balances["0x6B175474E89094C44Da98b954EedeAC495271d0F"] = 0;
-  balances["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"] = 0;
-  let poolInfo = {};
+  balances["0x6b175474e89094c44da98b954eedeac495271d0f"] = 0;
+  balances["0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"] = 0;
   let CurveRegistryAddress;
 
   if (registryStart) {
@@ -116,118 +255,64 @@ async function tvl(timestamp, block) {
     })).output
   }
 
-  let poolCount = registryStart
-    ? (
-        await sdk.api.abi.call({
-          block,
-          target: CurveRegistryAddress,
-          abi: abi["pool_count"],
-        })
-      ).output
-    : curvePools.length;
+  let registryPoolCount = await _getPoolCount(block, CurveRegistryAddress, registryStart);
+  const registryPoolAddresses = await _getPoolAddresses(block, registryPoolCount, CurveRegistryAddress, registryStart);
+  const registryTokenList = await _getTokenList(block, registryPoolAddresses, CurveRegistryAddress, 'get_coins');
+  const registryBalanceList = await _getBalanceList(block, registryPoolAddresses, CurveRegistryAddress, 'get_balances');
 
-  for (let i = 0; i < poolCount; i++) {
-    let poolAddress = registryStart ? (
-      await sdk.api.abi.call({
-        block,
-        target: CurveRegistryAddress,
-        abi: abi["pool_list"],
-        params: i,
-      })
-    ).output : curvePools[i];
-    poolInfo[poolAddress] = true;
+  registryPoolAddresses.forEach((poolAddress) => {
+    const tokens = registryTokenList[poolAddress];
+    const tokenBalances = registryBalanceList[poolAddress];
+    const len = tokens.length;
 
-    let coins = (await sdk.api.abi.call({
-      block,
-      target: CurveRegistryAddress,
-      abi: abi["get_coins"],
-      params: poolAddress
-    })).output;
+    for (let idx = 0; idx < len; idx++) {
+      let token = tokens[idx].toLowerCase();
+      let balance = tokenBalances[idx];
 
-    let coinBalances = (await sdk.api.abi.call({
-      block,
-      target: CurveRegistryAddress,
-      abi: abi["get_balances"],
-      params: poolAddress
-    })).output
-
-    for (let i = 0; i < coins.length; i++) {
-      let coin = coins[i];
-      let balance = coinBalances[i];
-      if (coin !== "0x0000000000000000000000000000000000000000") {
-        balances[coin] = balances[coin] ? new BN(balances[coin]).plus(balance) : balance
+      if (token !== etherAddress) {
+        balances[token] = new BN(balances[token] || 0).plus(balance);
       }
     }
-  }
+  });
 
   if (factoryStart) {
-    poolCount = (
-        await sdk.api.abi.call({
-          block,
-          target: factoryAddress,
-          abi: abi["pool_count"],
-        })
-      ).output
+    let factoryPoolCount = await _getPoolCount(block, factoryAddress, factoryStart);
+    let factoryPoolAddresses = await _getPoolAddresses(block, factoryPoolCount, factoryAddress, factoryStart);
+    factoryPoolAddresses = factoryPoolAddresses.filter((factoryPoolAddress) => !registryPoolAddresses.find((registryPoolAddress) => factoryPoolAddress === registryPoolAddress));
+    const factoryTokenList = await _getTokenList(block, factoryPoolAddresses, factoryAddress, 'get_coinsf');
+    const factoryBalanceList = await _getBalanceList(block, factoryPoolAddresses, factoryAddress, 'get_balancesf');
 
-  for (let i = 0; i < poolCount; i++) {
-    let poolAddress = (
-      await sdk.api.abi.call({
-        block,
-        target: factoryAddress,
-        abi: abi["pool_list"],
-        params: i,
-      })
-    ).output;
-    if (poolInfo[poolAddress]) {
-      continue;
-    }
-    poolInfo[poolAddress] = true;
+    factoryPoolAddresses.forEach((poolAddress) => {
+      const tokens = factoryTokenList[poolAddress];
+      const tokenBalances = factoryBalanceList[poolAddress];
+      const len = tokens.length;
 
-    let coins = (await sdk.api.abi.call({
-      block,
-      target: factoryAddress,
-      abi: abi["get_coinsf"],
-      params: poolAddress
-    })).output;
+      for (let idx = 0; idx < len; idx++) {
+        let token = tokens[idx].toLowerCase();
+        let balance = tokenBalances[idx];
 
-    let coinBalances = (await sdk.api.abi.call({
-      block,
-      target: factoryAddress,
-      abi: abi["get_balancesf"],
-      params: poolAddress
-    })).output
-
-    for (let i = 0; i < coins.length; i++) {
-      let coin = coins[i];
-      let balance = coinBalances[i];
-      if (coin !== "0x0000000000000000000000000000000000000000") {
-        balances[coin] = balances[coin] ? new BN(balances[coin]).plus(balance) : balance
+        if (token !== etherAddress) {
+          balances[token] = new BN(balances[token] || 0).plus(balance);
+        }
       }
-    }
-  }
+    });
   }
 
-  delete balances['0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490'];
-  delete balances['0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3'];
-  delete balances['0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8'];
+  delete balances['0x6c3f90f043a72fa612cbac8115ee7e52bde6e490'];
+  delete balances['0x075b1bb99792c9e1041ba13afef80c91a1e70fb3'];
+  delete balances['0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8'];
 
   // Count y tokens as their underlying asset, ie ycDAI = cDAI
   Object
     .keys(balances)
     .forEach((contract) => {
-      const _contract = contract.toLowerCase();
-      balances[_contract] = balances[contract];
-      delete balances[contract];
-
-      const yToken = yTokens.find((token) => token.contract === _contract);
+      const yToken = yTokens.find((token) => token.contract.toLowerCase() === contract);
 
       if (yToken) {
-        const underLyingContract = yToken.underlying;
-        balances[underLyingContract] = String(
-          parseFloat(balances[underLyingContract] || 0) + parseFloat(balances[_contract])
-        );
+        const underLyingContract = yToken.underlying.toLowerCase();
+        balances[underLyingContract] = new BN(balances[underLyingContract] || 0).plus(balances[contract]);
 
-        delete balances[_contract];
+        delete balances[contract];
       }
     });
 
