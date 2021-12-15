@@ -222,7 +222,7 @@ module.exports = {
   name: 'Strike',
   website: 'https://strike.org',
   token: null,
-  category: 'lending',
+  category: 'Lending',
   start: 1617004800, // 03/29/2021 @ 11:00am (UTC)
   tvl,
   rates,
