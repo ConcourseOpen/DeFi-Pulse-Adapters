@@ -152,7 +152,11 @@
     let MIMATIC = ({"0xa3fa99a148fa48d14ed51d610c367c61876997f1": pQUICKMIMATICUSDC[0]});
   
     balances = Object.assign(WETH, USDC, PICKLE, MUST, MATIC, DAI, USDT, MIMATIC);
-    //console.table(balances)
+    
+    Object.keys(balances).forEach(key => {
+      balances[key] = '' + balances[key];
+    });
+    
     return balances;
   }
   
@@ -230,4 +234,3 @@
     start: 1620416851, // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl, // tvl adapter
   };
-  

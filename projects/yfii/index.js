@@ -38,8 +38,6 @@ async function tvl(timestamp, block) {
   const balances = {};
   const iVaultToUnderlyingToken = {};
 
-
-
   // Get iVault's underlying tokens
   const underlyingIVaultAddressResults = await sdk.api.abi.multiCall({
     calls: _.map(iVaultAddresses, (address) => ({
@@ -76,8 +74,7 @@ async function tvl(timestamp, block) {
     }
   });
 
-
-  // Get reward pool 
+  // Get reward pool
   const yfiiRewardBalanceResults = await sdk.api.abi.multiCall({
     block,
     calls: _.map(rewardPool, (address) => ({
@@ -86,21 +83,16 @@ async function tvl(timestamp, block) {
     })),
     abi: 'erc20:balanceOf',
   });
-  
+
   balances[yfii] = new BigNumber(0);
   _.each(yfiiRewardBalanceResults.output, (tokenBalanceResult) => {
     if(tokenBalanceResult.success) {
       const target = tokenBalanceResult.input.target;
       const output = tokenBalanceResult.output;
-    
-      balances[target] = balances[target].plus(BigNumber(output)); 
+
+      balances[target] = balances[target].plus(BigNumber(output));
     }
   });
-  
-
-
-  
-
 
   return balances;
 }
@@ -110,9 +102,9 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: 'dfi.money',
+  name: 'DFI.money',
   token: 'YFII',
-  category: 'assets',
+  category: 'Assets',
   start: 1600185600,    // 09/16/2020 @ 12:00am (UTC+8)
   tvl,
 };

@@ -18,16 +18,16 @@
   "coins128": {
     "name": "coins",
     "outputs": [
-     {
-      "type": "address",
-      "name": "out"
-     }
+      {
+        "type": "address",
+        "name": "out"
+      }
     ],
     "inputs": [
-     {
-      "type": "int128",
-      "name": "arg0"
-     }
+      {
+        "type": "int128",
+        "name": "arg0"
+      }
     ],
     "constant": true,
     "payable": false,
@@ -37,16 +37,16 @@
   "coins256": {
     "name": "coins",
     "outputs": [
-     {
-      "type": "address",
-      "name": "out"
-     }
+      {
+        "type": "address",
+        "name": "out"
+      }
     ],
     "inputs": [
-     {
-      "type": "uint256",
-      "name": "arg0"
-     }
+      {
+        "type": "uint256",
+        "name": "arg0"
+      }
     ],
     "constant": true,
     "payable": false,
@@ -56,16 +56,16 @@
   "balances128": {
     "name": "balances",
     "outputs": [
-     {
-      "type": "uint256",
-      "name": "out"
-     }
+      {
+        "type": "uint256",
+        "name": "out"
+      }
     ],
     "inputs": [
-     {
-      "type": "int128",
-      "name": "arg0"
-     }
+      {
+        "type": "int128",
+        "name": "arg0"
+      }
     ],
     "constant": true,
     "payable": false,
@@ -75,16 +75,16 @@
   "balances256": {
     "name": "balances",
     "outputs": [
-     {
-      "type": "uint256",
-      "name": "out"
-     }
+      {
+        "type": "uint256",
+        "name": "out"
+      }
     ],
     "inputs": [
-     {
-      "type": "uint256",
-      "name": "arg0"
-     }
+      {
+        "type": "uint256",
+        "name": "arg0"
+      }
     ],
     "constant": true,
     "payable": false,

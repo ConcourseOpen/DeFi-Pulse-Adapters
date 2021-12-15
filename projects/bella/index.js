@@ -59,7 +59,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Bella Flex Saving',
   token: 'BEL',
-  category: 'assets',
+  category: 'Assets',
   start: 1616371200,    // 03/22/2020 @ 12:00am (UTC)
   tvl,
 };

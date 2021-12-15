@@ -38,19 +38,19 @@ async function getMarkets(block) {
   let markets = {};
 
   let allCTokens = await getAllCTokens(block);
-    // if not in cache, get from the blockchain
-    await (
-      Promise.all(allCTokens.map(async (cToken) => {
-        let underlying = await getUnderlying(block, cToken);
+  // if not in cache, get from the blockchain
+  await (
+    Promise.all(allCTokens.map(async (cToken) => {
+      let underlying = await getUnderlying(block, cToken);
 
-        if (!markets[underlying]) {
-          let info = await sdk.api.erc20.info(underlying);
-          markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
-        }
-      }))
-    );
+      if (!markets[underlying]) {
+        let info = await sdk.api.erc20.info(underlying);
+        markets[underlying] = { cToken, decimals: info.output.decimals, symbol: info.output.symbol };
+      }
+    }))
+  );
 
-    return markets;
+  return markets;
 }
 
 async function tvl(timestamp, block) {
@@ -87,7 +87,7 @@ module.exports = {
   name: 'WePiggy',
   website: 'https://wepiggy.com',
   token: 'WPC',
-  category: 'lending',
+  category: 'Lending',
   start: 1610953200, // 01/18/2021 @ 03:00pm (UTC)
   tvl,
 };

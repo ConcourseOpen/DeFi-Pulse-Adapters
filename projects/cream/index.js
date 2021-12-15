@@ -158,11 +158,11 @@ async function tvl(timestamp, block) {
       params: [],
       abi: abi['getReserves']
     }) : {
-        output: {
-          _reserve0: 1,
-          _reserve1: 1
-        }
-      })
+      output: {
+        _reserve0: 1,
+        _reserve1: 1
+      }
+    })
   ]);
 
   yETHPirce = yETHPirce.output;
@@ -285,7 +285,7 @@ module.exports = {
   name: 'C.R.E.A.M. Finance',
   website: 'https://cream.finance',
   token: null,
-  category: 'lending',
+  category: 'Lending',
   start: 1596412800, // 08/03/2020 @ 12:00am (UTC)
   tvl,
   rates,

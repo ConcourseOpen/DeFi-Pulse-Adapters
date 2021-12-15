@@ -207,7 +207,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Inverse",
   token: "INV",
-  category: "assets",
+  category: "Assets",
   start: 1607731200, // Dec 12 2020 00:00:00 GMT+0000
   tvl,
 };

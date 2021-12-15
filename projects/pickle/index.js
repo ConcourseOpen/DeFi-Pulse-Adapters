@@ -496,7 +496,7 @@ async function tvl(timestamp, block) {
     "0x4b4D2e899658FB59b1D518b68fe836B100ee8958": pSLPMIS[0].toFixed(0),
 
     // yveCRV
-    "0xc5bddf9843308380375a611c18b50fb9341f502a": pSLPYVECRV[1].toFixed(0),    
+    "0xc5bddf9843308380375a611c18b50fb9341f502a": pSLPYVECRV[1].toFixed(0),
 
     // RenBTC
     "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D": prenCRV
@@ -504,8 +504,8 @@ async function tvl(timestamp, block) {
       .toFixed(0),
 
     // MIR
-    "0x09a3ecafa817268f77be1283176b946c4ff2e608": pUNIMIRUST[0].toFixed(0), 
-    
+    "0x09a3ecafa817268f77be1283176b946c4ff2e608": pUNIMIRUST[0].toFixed(0),
+
     // mTSLA
     "0x21ca39943e91d704678f5d00b6616650f066fd63": pUNImTSLAUST[0].toFixed(0),
 
@@ -530,7 +530,7 @@ async function tvl(timestamp, block) {
       .plus(pUNImBABAUST[1])
       .toFixed(0),
   };
-  console.table(balances)
+
   return balances;
 }
 

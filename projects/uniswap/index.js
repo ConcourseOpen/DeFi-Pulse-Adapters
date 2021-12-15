@@ -1,4 +1,5 @@
 const BigNumber = require('bignumber.js')
+const sdk = require('../../sdk');
 
 const v1TVL = require('./v1');
 const v2TVL = require('./v2');
@@ -20,7 +21,7 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)).concat(Object.keys(v3)));
 
-  const balances = (
+  return (
     Array
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
@@ -32,14 +33,12 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
-
-  return balances;
 }
 
 module.exports = {
   name: 'Uniswap',
-  token: 'UNI',
-  category: 'dexes',
+  token: null,
+  category: 'DEXes',
   start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
   tvl,
 };

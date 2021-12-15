@@ -17,7 +17,8 @@ const synthetixState = "0x4b9Ca5607f1fF8019c1C6A3c2f0CC8de622D5B82";
 const synthetix = "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F";
 const exchangeRates = "0xd69b189020EF614796578AfE4d10378c5e7e1138";
 const systemSettings = "0xD3C8d372bFCd36c2B452639a7ED6ef7dbFDC56F8";
-
+const wethContract = "0xC1AAE9d18bBe386B102435a8632C8063d31e747C";
+const wethToken = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 const snxGraphEndpoint =
   "https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix";
 
@@ -112,13 +113,22 @@ async function tvl(timestamp, block) {
 
   const percentLocked = snxLocked.div(snxTotal);
   debug({ percentLocked });
-  const tvl = snxTotalSupply.times(percentLocked).times(snxPrice).toFixed();
-
+  const tvl = snxTotalSupply.times(percentLocked).times(10**18).toFixed();
+  
   debug({ tvl });
 
-  return {
-    [synthetix]: tvl,
-  };
+  let balances = {[synthetix]: tvl,};
+
+  const wethBalance = await sdk.api.abi.call({
+    block,
+    target: wethToken, 
+    params: wethContract,
+    abi: 'erc20:balanceOf'
+  });
+
+  balances[wethToken] = wethBalance.output;
+
+  return balances;
 }
 
 // Uses graph protocol to run through SNX contract. Since there is a limit of 100 results per query
@@ -143,19 +153,19 @@ async function SNXHolders(blockNumber) {
     },
     max: 1000, // top 1000 SNX holders with collateral. At the time of this commit, there are 51,309 SNX holders. (7/27/2020)
   });
-}
+  }
 
-function toBig(n, decimals = 0) {
-  if (!n) return new BigNumber(0);
-  return new BigNumber(n.toString()).div(Math.pow(10, decimals));
-}
+  function toBig(n, decimals = 0) {
+    if (!n) return new BigNumber(0);
+    return new BigNumber(n.toString()).div(Math.pow(10, decimals));
+  }
 
-function debug(o) {
-  Object.entries(o).forEach(([k, v]) => {
-    console.log("%s=%s", k, v);
-  });
-  console.log();
-}
+  function debug(o) {
+    Object.entries(o).forEach(([k, v]) => {
+      console.log("%s=%s", k, v);
+    });
+    console.log();
+  }
 
 /*==================================================
   Exports
@@ -164,7 +174,7 @@ function debug(o) {
 module.exports = {
   name: "Synthetix",
   token: "SNX",
-  category: "derivatives",
+  category: "Derivatives",
   start: 1565287200, // Fri Aug 09 2019 00:00:00
   tvl,
 };

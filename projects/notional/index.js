@@ -177,7 +177,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "Notional",
   token: null,
-  category: "lending",
+  category: "Lending",
   start: 1602115200, // Oct-08-2020 12:00:00 AM +UTC
   tvl,
 };

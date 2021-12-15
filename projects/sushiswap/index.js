@@ -24,7 +24,7 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v2));
 
-  const balances = (
+  return (
     Array
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
@@ -34,14 +34,12 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
-
-  return balances;
 }
 
 module.exports = {
   name: 'SushiSwap',
   token: 'SUSHI',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1599214239, // 09/04/2020 @ 10:10:39am (UTC)
   tvl,
 };
