@@ -18,10 +18,10 @@ module.exports = {
                 '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
             ],
             holders: [
-                '0xd5433168ed0b1f7714819646606db509d9d8ec1f', // CompoundStrategyProxy.sol
+                '0x9c459eeb3fa179a40329b81c1635525e9a0ef094', // CompoundStrategyProxy.sol
                 '0x3c5fe0a3922777343cbd67d3732fcdc9f2fa6f2f', // ThreePoolStrategy.sol (Curve strategy)
-                '0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce', // InitializeGovernedUpgradeabilityProxy.sol (Aave Strategy),
-                '0x9f2b18751376cf6a3432eb158ba5f9b1abd2f7ce',
+                '0x5e3646a1db86993f73e6b74a57d8640b69f7e259', // InitializeGovernedUpgradeabilityProxy.sol (Aave Strategy),
+                '0xe75d77b1865ae93c7eaa3040b038d7aa7bc02f70', // VaultProxy.sol
             ],
         },
     ],

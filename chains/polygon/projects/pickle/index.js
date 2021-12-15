@@ -150,11 +150,10 @@
     let USDT = ({"0xc2132d05d31c914a87c6611c10748aeb04b58e8f": pSLPETHUSDT[1]});
     // Polygon MIMATIC
     let MIMATIC = ({"0xa3fa99a148fa48d14ed51d610c367c61876997f1": pQUICKMIMATICUSDC[0]});
-    
   
     balances = Object.assign(WETH, USDC, PICKLE, MUST, MATIC, DAI, USDT, MIMATIC);
     
-    Object.keys(balances).forEach(key =>{
+    Object.keys(balances).forEach(key => {
       balances[key] = '' + balances[key];
     });
     
@@ -235,4 +234,3 @@
     start: 1620416851, // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl, // tvl adapter
   };
-  
