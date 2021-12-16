@@ -34,7 +34,8 @@ async function tvl(timestamp, block) {
       '0x0000000000000000000000000000000000000000' : 0
     }
   }
-  return (await sdk.api.util.toSymbols(balances, 'polygon')).output;
+
+  return balances;
 }
 
 module.exports = {

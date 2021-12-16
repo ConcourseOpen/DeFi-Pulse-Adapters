@@ -353,8 +353,7 @@
       assetAmountStrings[k] = v.toString()
     }
 
-    console.table(assetAmountStrings)
-    return assetAmountStrings
+    return assetAmountStrings;
   }
 
 /*==================================================
@@ -365,7 +364,7 @@
     name: 'Harvest Finance', // project name
     website: 'https://harvest.finance',
     token: 'FARM',            // null, or token symbol if project has a custom token
-    category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+    category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1598893200,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
     tvl                       // tvl adapter
   };

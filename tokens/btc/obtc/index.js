@@ -22,7 +22,7 @@ async function balance (timestamp, block) {
     })
   ).output;
 
-  return { [oBTCContract]: oBTCTotalSupply };
+  return (await sdk.api.util.toSymbols({ [oBTCContract]: oBTCTotalSupply })).output;
 }
 
 /*==================================================

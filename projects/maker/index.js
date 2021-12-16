@@ -111,7 +111,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Maker',
   token: 'MKR',
-  category: 'lending',
+  category: 'Lending',
   start: 1513566671, // 12/18/2017 @ 12:00am (UTC)
   tvl,
 };

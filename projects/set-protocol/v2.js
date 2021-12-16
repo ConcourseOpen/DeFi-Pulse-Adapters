@@ -2,7 +2,7 @@ const sdk = require('../../sdk');
 const BigNumber = require('bignumber.js');
 const _ = require('underscore');
 
-const SUPPLY_SCALE = BigNumber("10").pow(18)
+const SUPPLY_SCALE = BigNumber("10").pow(18);
 const START_BLOCK = 10830496;
 const EXTERNAL_POSITION = '1';
 
@@ -62,12 +62,15 @@ module.exports = async function tvl(timestamp, block) {
 
   let uniswapPositions = {};
   _.each(positionsForSets, function(positionForSet, i) {
-    const setSupply = BigNumber(supplies[i].output);
+    let supply = supplies.find((sup) => {
+      return sup.input.target == positionForSet.input.target;
+    })
+    const setSupply = BigNumber(supply.output);
     _.each(positionForSet.output, (position) => {
       const componentAddress = position[0];
       const positionUnits = BigNumber(position[2]);
       
-      const isExternalPosition = position[3] == EXTERNAL_POSITION;
+      const isExternalPosition = position[3] === EXTERNAL_POSITION;
       if (isExternalPosition) {
         uniswapPositions[componentAddress] = BigNumber(uniswapPositions[componentAddress] || 0).plus((positionUnits).times(setSupply)).toFixed();
       } else {
@@ -96,6 +99,8 @@ module.exports = async function tvl(timestamp, block) {
   })).output;
 
   _.each(reserves, function(reserve, i) {
+    if (!reserve.success) return;
+
     const pairAddress = reserve.input.target;
     const tokenPair = pairAddresses[pairAddress];
     const setSupplyRatio = new BigNumber(uniswapPositions[pairAddress]).div(new BigNumber(reserveSupplies[i].output)).div(SUPPLY_SCALE);

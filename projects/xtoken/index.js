@@ -644,7 +644,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: "xToken", // project name
   token: "XTK", // null, or token symbol if project has a custom token
-  category: "assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: "Assets", // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1594383978, // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl, // tvl adapter
 };

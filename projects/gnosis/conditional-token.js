@@ -52,7 +52,7 @@ async function tvl(_, block) {
     const tokenWithCallData = getCallDataOfErc20Token(tokenAddress, block);
     return acc.concat(tokenWithCallData)
   }, []);
-  
+
   // [0] Batch call all ERC20 balances from the Gnosis Conditional Token contract
   // [1] Resolve initial ethBalance promise
   const balances = await abi.multiCall({

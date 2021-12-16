@@ -119,11 +119,12 @@ async function tvl(timestamp, block) {
         sumSingleBalance(balances, coinAddress, balance.toFixed(0))
       }
     }))
-  }))
-  sumSingleBalance(balances, crv, (await cvxCRVSupply).output)
-  sumSingleBalance(balances, cvx, (await cvxStaked).output)
-  console.log('convex end', balances)
-  return balances
+  }));
+
+  sumSingleBalance(balances, crv, (await cvxCRVSupply).output);
+  sumSingleBalance(balances, cvx, (await cvxStaked).output);
+
+  return balances;
 }
 
 
@@ -132,14 +133,14 @@ function sumSingleBalance(
   token,
   balance
 ) {
-    const prevBalance = ethers.BigNumber.from(balances[token] || "0");
-    balances[token] = prevBalance.add(ethers.BigNumber.from(balance)).toString();
+  const prevBalance = ethers.BigNumber.from(balances[token] || "0");
+  balances[token] = prevBalance.add(ethers.BigNumber.from(balance)).toString();
 }
 
 module.exports = {
   name: 'Convex Finance', // project name
   token: "CVX",              // null, or token symbol if project has a custom token
-  category: 'assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
   start: 1621296000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
   tvl                       // tvl adapter
-}
+};

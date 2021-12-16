@@ -2,16 +2,16 @@
   Modules
   ==================================================*/
 
-  const _ = require('underscore');
-  const sdk = require('../../sdk');
+const _ = require('underscore');
+const sdk = require('../../sdk');
 
 /*==================================================
   Settings
   ==================================================*/
 
-  const deversifiStarkAddr = '0x5d22045daceab03b158031ecb7d9d06fad24609b';
+const deversifiStarkAddr = '0x5d22045daceab03b158031ecb7d9d06fad24609b';
 
-  const listedTokens = [
+const listedTokens = [
     '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
     '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
     '0xd26114cd6EE289AccF82350c8d8487fedB8A0C07', // OMG
@@ -89,7 +89,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'DeversiFi',
-  token: 'DVF',
+  token: 'NEC',
   category: 'dexes',
   start: 1590969600, // 06/01/2020
   tvl,

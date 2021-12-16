@@ -80,6 +80,7 @@ async function tvl(timestamp, block) {
       balances[collateralToken[poolAddress]] = existingBalance.plus(new BigNumber(totalValue)).toFixed();
     }
   });
+
   return balances;
 }
 
@@ -91,7 +92,7 @@ module.exports = {
   name: "Vesper",
   website: "https://vesper.finance",
   token: "VSP",
-  category: "assets",
+  category: "Assets",
   start: 1608667205, // December 22 2020 at 8:00 PM UTC
   tvl,
   contributesTo: ["Aave", "Maker", "Compound"],

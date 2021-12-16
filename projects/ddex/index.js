@@ -12,7 +12,7 @@ const ddexMarginContractAddress = '0x241e82c79452f51fbfc89fac6d912e021db1a3b7'
   Helper Functions
   ==================================================*/
 
-async function GenerateCallList() {
+async function GenerateCallList(timestamp) {
   let assets = await axios.get('https://api.ddex.io/v4/assets');
   assets = assets.data.data.assets;
   assets = _.filter(assets, (asset) => {
@@ -36,17 +36,32 @@ async function GenerateCallList() {
   ==================================================*/
 
 async function tvl(timestamp, block) {
+  let ethBalance = await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block});
+
   let balances = {
-    '0x0000000000000000000000000000000000000000': (await sdk.api.eth.getBalance({target: ddexMarginContractAddress, block})).output
+    '0x0000000000000000000000000000000000000000': ethBalance.output
   };
+
+  let calls = await GenerateCallList(timestamp);
 
   let balanceOfResults = await sdk.api.abi.multiCall({
     block,
-    calls: await GenerateCallList(),
+    calls,
     abi: 'erc20:balanceOf'
   });
 
-  await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+  _.each(balanceOfResults.output, (balanceOf) => {
+    if(balanceOf.success) {
+      let balance = balanceOf.output;
+      let address = balanceOf.input.target;
+
+      if (BigNumber(balance).toNumber() <= 0) {
+        return;
+      }
+
+      balances[address] = BigNumber(balances[address] || 0).plus(balance).toFixed();
+    }
+  });
 
   return balances;
 }
@@ -57,7 +72,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   name: 'DDEX',
-  category: 'lending',
+  category: 'Lending',
   start: 1566470505, // 2019-08-22T18:41:45+08:00
   tvl
 }

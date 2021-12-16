@@ -83,15 +83,6 @@ async function buildBalancesForAdapter(registryAdapterAddress, block) {
     };
   }
 
-  console.log("");
-  console.log("-----------------------------");
-  if (adapterTypeId === "VE_CRV") {
-    console.log(`${adapterTypeId} (${adapterAddresses.length} asset)`);
-  } else {
-    console.log(`${adapterTypeId} (${adapterAddresses.length} assets)`);
-  }
-  console.log("-----------------------------");
-
   const sortedTvlByAsset = _.sortBy(tvlByAsset, (item) => item.assetTvl * -1);
   _.each(sortedTvlByAsset, ({ assetTvl, assetAddress }) => {
     console.log(`${assetAddress} ${formatter.format(assetTvl / 10 ** 6)}`);
@@ -116,16 +107,7 @@ async function tvl(timestamp, block) {
     (item) => item.adapterTvl * -1
   );
   const sortedBalances = _.sortBy(balances, (item) => item.toFixed() * -1);
-  console.log("");
-  console.log("=============================");
-  console.log(" TVL Summary");
-  console.log("=============================");
-  _.each(sortedTvlByAdapter, ({ adapterTvl, adapterTypeId }) => {
-    console.log(`${adapterTypeId}: ${formatter.format(adapterTvl / 10 ** 6)}`);
-  });
-  console.log("");
-  console.log(`Total TVL ${formatter.format(totalTvl.toFixed() / 10 ** 6)}`);
-  console.log("");
+
   return balances;
 }
 
@@ -134,10 +116,10 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
 module.exports = {
-  name: "yearn.finance",
-  token: "YFI",
-  category: "assets",
-  start: 1581465600, // 02/12/2020 @ 12:00am (UTC)
+  name: 'yearn.finance',
+  token: 'YFI',
+  category: 'Assets',
+  start: 1581465600,    // 02/12/2020 @ 12:00am (UTC)
   tvl,
-  // contributesTo: ["Curve", "Aave"], // TODO: Determine entire list of contributions
+  contributesTo: ["Curve", "Aave"], // TODO: Determine entire list of contributions
 };

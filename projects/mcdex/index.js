@@ -2,9 +2,9 @@
   Modules
   ==================================================*/
 
-  const sdk = require('../../sdk');
-  const _ = require('underscore');
-  const axios = require('axios');
+const sdk = require('../../sdk');
+const _ = require('underscore');
+const axios = require('axios');
 
 /*==================================================
   Helper Functions
@@ -26,7 +26,7 @@ async function GenerateCallList() {
       id2Info[id].collateralTokenAddress = status.perpetualStorage.collateralTokenAddress;
     }
   });
-  let calls = []
+  let calls = [];
   _.map(id2Info, (info, id) => {
     if (info.collateralTokenAddress && info.perpetualAddress) {
       calls.push({
@@ -42,20 +42,21 @@ async function GenerateCallList() {
   TVL
   ==================================================*/
 
-  async function tvl(timestamp, block) {
-    const ethBalance = (await sdk.api.eth.getBalance({ target: '0x220a9f0DD581cbc58fcFb907De0454cBF3777f76', block })).output;
-    let balances = {
-      "0x0000000000000000000000000000000000000000": ethBalance,
-    };
+async function tvl(timestamp, block) {
+  const ethBalance = (await sdk.api.eth.getBalance({ target: '0x220a9f0DD581cbc58fcFb907De0454cBF3777f76', block })).output;
+  let balances = {
+    "0x0000000000000000000000000000000000000000": ethBalance,
+  };
 
-    const erc20Calls = await GenerateCallList();
-    const balanceOfResults = await sdk.api.abi.multiCall({
-      block,
-      calls: erc20Calls,
-      abi: 'erc20:balanceOf'
-    });
+  const erc20Calls = await GenerateCallList();
+  const balanceOfResults = await sdk.api.abi.multiCall({
+    block,
+    calls: erc20Calls,
+    abi: 'erc20:balanceOf'
+  });
 
     await sdk.util.sumMultiBalanceOf(balances, balanceOfResults);
+
     return balances;
   }
 
@@ -63,11 +64,11 @@ async function GenerateCallList() {
   Exports
   ==================================================*/
 
-  module.exports = {
-    name: 'MCDEX',
-    website: 'https://mcdex.io',
-    token: 'MCB',
-    category: 'derivatives',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
-    start: 1592478252,        // block 10289326 
-    tvl,
-  };
+module.exports = {
+  name: 'MCDEX',
+  website: 'https://mcdex.io',
+  token: 'MCB',
+  category: 'Derivatives',  // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
+  start: 1592478252,        // block 10289326
+  tvl,
+};

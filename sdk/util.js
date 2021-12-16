@@ -9,6 +9,22 @@
   Helper Methods
   ==================================================*/
 
+/**
+ *
+ * @param {Array} inputArr
+ * @param {Number} chuckSize
+ * @returns {*}
+ */
+const splitArrIntoChunks = (inputArr, chuckSize = 100) => {
+  const chunkArr = [];
+
+  while (inputArr.length) {
+    chunkArr.push(inputArr.splice(0, chuckSize));
+  }
+
+  return chunkArr;
+};
+
   function Sum(balanceArray) {
     let balances = {};
 
@@ -42,5 +58,6 @@
 
   module.exports = {
     sum: Sum,
+    splitArrIntoChunks,
     sumMultiBalanceOf: SumMultiBalanceOf
   }
