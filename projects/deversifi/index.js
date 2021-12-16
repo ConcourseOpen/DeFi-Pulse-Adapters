@@ -35,7 +35,6 @@ const listedTokens = [
     '0xeef9f339514298c6a857efcfc1a762af84438dee', // HEZ
     '0xa117000000f279d81a1d3cc75430faa017fa5a2e', // ANT
     '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b', // DPI
-    '0xdddddd4301a082e62e84e43f474f044423921918', // DVF
     '0x5a98fcbea516cf06857215779fd812ca3bef1b32', // LDO
     '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // CUSDT
     '0xaaaebe6fe48e54f431b0c390cfaf0b017d09d42d', // CEL
@@ -50,7 +49,8 @@ const listedTokens = [
     '0x33349b282065b0284d756f0577fb39c158f935e6', // MPL
     '0x767fe9edc9e0df98e07454847909b5e959d7ca0e', // ILV
     '0x25f8087ead173b73d6e8b84329989a8eea16cf73', // YGG
-    '0xdddd0e38d30dd29c683033fa0132f868597763ab' // xDVF
+    //'0xdddddd4301a082e62e84e43f474f044423921918', // DVF - Governance
+    //'0xdddd0e38d30dd29c683033fa0132f868597763ab' // xDVF - Governance
   ];
 
 /*==================================================
