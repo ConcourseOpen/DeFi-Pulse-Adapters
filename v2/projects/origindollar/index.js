@@ -14,6 +14,8 @@ module.exports = {
         '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', // cDAI
         '0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9', // cUSDT
         '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
+        '0x028171bca77440897b824ca71d1c56cac55b68a3', // aDai
+        '0x4da27a545c0c5b758a6ba100e3a049001de870f5', // stkAAVE (Staked Aave)
       ],
       holders: [
         '0x9c459eeb3fa179a40329b81c1635525e9a0ef094', // CompoundStrategyProxy.sol
