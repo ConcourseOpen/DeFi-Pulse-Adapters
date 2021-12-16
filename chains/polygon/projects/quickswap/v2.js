@@ -80,14 +80,19 @@ module.exports = async function tvl(_, block) {
   let balanceCalls = []
 
   for (let pair of Object.keys(pairs)) {
-    balanceCalls.push({
-      target: pairs[pair].token0Address,
-      params: pair,
-    })
-    balanceCalls.push({
-      target: pairs[pair].token1Address,
-      params: pair,
-    })
+    if (pairs[pair].token0Address) {
+      balanceCalls.push({
+        target: pairs[pair].token0Address,
+        params: pair,
+      })
+    }
+
+    if (pairs[pair].token1Address) {
+      balanceCalls.push({
+        target: pairs[pair].token1Address,
+        params: pair,
+      })
+    }
   }
 
   const tokenBalances = (
