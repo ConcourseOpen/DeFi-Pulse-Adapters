@@ -2,7 +2,7 @@
   Modules
   ==================================================*/
 const BigNumber = require('bignumber.js');
-const sdk = require('../../sdk');
+const sdk = require('../../../../sdk');
 const v2TVL = require('./v2');
 
 /*==================================================
@@ -43,6 +43,6 @@ module.exports = {
   token: 'QUICK',
   category: 'DEXes',
   start: 1601614800, // 09/04/2020 @ 10:10:39am (UTC)
+  chain: 'polygon',
   tvl,
-  chain: 'Polygon'
 };
