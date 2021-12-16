@@ -29,6 +29,7 @@ module.exports = {
   category: 'Assets',
   token: 'GRO',
   website: 'https://www.gro.xyz',
+  chain: 'ethereum',
   start: 1622204347, // 28-05-2021 12:19:07 (UTC)
   tvl,
 };
