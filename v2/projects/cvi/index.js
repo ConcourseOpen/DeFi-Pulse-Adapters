@@ -4,6 +4,7 @@ module.exports = {
   website: "https://cvi.finance/",
   token: "GOVI",
   category: "Derivatives",
+  chain: 'Multichain,Ethereum-Polygon',
   start: 1611073144,
   /* required for fetching token balances */
   tokenHolderMap: [
