@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: "CVI",
+  name: "Crypto Volatility Index",
   website: "https://cvi.finance/",
   token: "GOVI",
   category: "Derivatives",
