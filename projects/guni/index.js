@@ -66,8 +66,7 @@ const tvl = async (timestamp, block, chainBlocks) => {
 
 module.exports = {
   name: 'G-UNI',
-  token: 'G-UNI',
-  category: 'dexes',
+  category: 'assets',
   start: 1625112000, // 7/01/2021 @ 10:00am GMT+4
   tvl,
 };
