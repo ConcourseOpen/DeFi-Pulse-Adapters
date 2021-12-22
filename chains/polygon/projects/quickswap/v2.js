@@ -1,12 +1,8 @@
 /*==================================================
   Modules
   ==================================================*/
-const BigNumber = require('bignumber.js');
 const sdk = require('../../../../sdk');
-const token0 = require('./abis/token0.json');
-const token1 = require('./abis/token1.json');
-const getReserves = require('./abis/getReserves.json');
-
+const assert = require('assert');
 
 /*==================================================
   Settings
@@ -52,7 +48,7 @@ module.exports = async function tvl(_, block) {
   }
 
   pairAddresses = (logs.map((log) =>         // sometimes the full log is emitted
-        typeof log === 'string' ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()));
+    typeof log === 'string' ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()));
 
 
   const pairs = {}
@@ -98,28 +94,27 @@ module.exports = async function tvl(_, block) {
   // break into 150 web3 call chunks bc this gets huge fast
   const chunk = 150;
   let balanceCallChunks = [];
-  if (balanceCalls.length >= 150){
-    for (let i = 0, j = balanceCalls.length, count=0; i < j; i += chunk, count++) {
-      balanceCallChunks[count] = balanceCalls.slice(i, i+chunk);
+  if (balanceCalls.length >= 150) {
+    for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
+      balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
     }
+    assert.equal(balanceCalls.length, balanceCallChunks
+      .map(arr => arr.length)
+      .reduce((accumulator, value) => {
+        return accumulator + value
+      }, 0))
   }
-  let tokenBalances = [], counter =0;
-  for (balanceCall of balanceCallChunks){
-    tokenBalances[counter] = (
+  let tokenBalances, balances = {};
+  for (let balanceCall of balanceCallChunks) {
+    tokenBalances = (
       await sdk.api.abi.multiCall({
         abi: 'erc20:balanceOf',
         calls: balanceCall,
         block,
         chain: 'polygon'
       }));
-    counter++;
+    sdk.util.sumMultiBalanceOf(balances, tokenBalances)
   }
-
-  tokenBalances.reduce((acc, val) => acc.concat(val), []);
-
-  let balances = {};
-
-  sdk.util.sumMultiBalanceOf(balances, tokenBalances)
 
   return balances;
 };
