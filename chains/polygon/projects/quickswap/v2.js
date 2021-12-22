@@ -95,14 +95,27 @@ module.exports = async function tvl(_, block) {
     }
   }
 
-  const tokenBalances = (
-    await sdk.api.abi.multiCall({
-      abi: 'erc20:balanceOf',
-      calls: balanceCalls,
-      block,
-      chain: 'polygon'
-    })
-  )
+  // break into 150 web3 call chunks bc this gets huge fast
+  const chunk = 150;
+  let balanceCallChunks = [];
+  if (balanceCalls.length >= 150){
+    for (let i = 0, j = balanceCalls.length, count=0; i < j; i += chunk, count++) {
+      balanceCallChunks[count] = balanceCalls.slice(i, i+chunk);
+    }
+  }
+  let tokenBalances = [], counter =0;
+  for (balanceCall of balanceCallChunks){
+    tokenBalances[counter] = (
+      await sdk.api.abi.multiCall({
+        abi: 'erc20:balanceOf',
+        calls: balanceCall,
+        block,
+        chain: 'polygon'
+      }));
+    counter++;
+  }
+
+  tokenBalances.reduce((acc, val) => acc.concat(val), []);
 
   let balances = {};
 
