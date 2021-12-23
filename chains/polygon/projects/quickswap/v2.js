@@ -3,6 +3,9 @@
   ==================================================*/
 const sdk = require('../../../../sdk');
 const assert = require('assert');
+const factoryAbi = require('./abis/factory.json');
+const token0 = require('./abis/token0.json');
+const token1 = require('./abis/token1.json');
 
 /*==================================================
   Settings
@@ -27,83 +30,109 @@ module.exports = async function tvl(_, block) {
   );
   supportedTokens = supportedTokens.filter(token => token)
 
-  const logs = (
-    await sdk.api.util
-      .getLogs({
-        keys: [],
-        toBlock: block,
-        target: FACTORY,
-        fromBlock: START_BLOCK,
-        topic: 'PairCreated(address,address,address,uint256)',
-        chain: 'polygon'
-      })
-  ).output;
+  let pairAddresses;
 
-  let pairAddresses = []
-  const token0Addresses = []
-  const token1Addresses = []
-  for (let log of logs) {
-    token0Addresses.push(`0x${log.topics[1].substr(-40)}`.toLowerCase())
-    token1Addresses.push(`0x${log.topics[2].substr(-40)}`.toLowerCase())
+  const pairLength = (await sdk.api.abi.call({
+    target: FACTORY,
+    abi: factoryAbi.allPairsLength,
+    chain: 'polygon',
+    block
+  })).output
+  if(pairLength === null){
+    throw new Error("allPairsLength() failed")
   }
+  const pairNums = Array.from(Array(Number(pairLength)).keys());
+  const pairs = (await sdk.api.abi.multiCall({
+    abi: factoryAbi.allPairs,
+    chain: 'polygon',
+    calls: pairNums.map(num => ({
+      target: FACTORY,
+      params: [num]
+    })),
+    block
+  })).output
 
-  pairAddresses = (logs.map((log) =>         // sometimes the full log is emitted
-    typeof log === 'string' ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()));
+  pairAddresses = pairs.map(result => result.output.toLowerCase())
+  const [token0Addresses, token1Addresses] = await Promise.all([
+    (
+      await sdk
+        .api
+        .abi
+        .multiCall({
+          abi: token0,
+          calls: pairAddresses.map((pairAddress) => ({
+            target: pairAddress,
+          })),
+          block,
+          chain: 'polygon'
+        })
+    ).output,
+    (
+      await sdk
+        .api
+        .abi
+        .multiCall({
+          abi: token1,
+          calls: pairAddresses.map((pairAddress) => ({
+            target: pairAddress,
+          })),
+          block,
+          chain: 'polygon'
+        })
+    ).output,
+  ]);
 
-
-  const pairs = {}
+  const tokenPairs = {}
   // add token0Addresses
   token0Addresses.forEach((token0Address, i) => {
-    if (supportedTokens.includes(token0Address)) {
+    if (supportedTokens.includes(token0Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
-      pairs[pairAddress] = {
-        token0Address: token0Address,
+      tokenPairs[pairAddress] = {
+        token0Address: token0Address.output.toLowerCase(),
       }
     }
   })
 
   // add token1Addresses
   token1Addresses.forEach((token1Address, i) => {
-    if (supportedTokens.includes(token1Address)) {
+    if (supportedTokens.includes(token1Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
-      pairs[pairAddress] = {
+      tokenPairs[pairAddress] = {
         ...(pairs[pairAddress] || {}),
-        token1Address: token1Address,
+        token1Address: token1Address.output.toLowerCase(),
       }
     }
   })
 
-  let balanceCalls = []
+  let balanceCalls = [];
 
-  for (let pair of Object.keys(pairs)) {
-    if (pairs[pair].token0Address) {
+  for (let pair of Object.keys(tokenPairs)) {
+    if (tokenPairs[pair].token0Address) {
       balanceCalls.push({
-        target: pairs[pair].token0Address,
+        target: tokenPairs[pair].token0Address,
         params: pair,
       })
     }
 
-    if (pairs[pair].token1Address) {
+    if (tokenPairs[pair].token1Address) {
       balanceCalls.push({
-        target: pairs[pair].token1Address,
+        target: tokenPairs[pair].token1Address,
         params: pair,
       })
     }
   }
 
-  // break into 150 web3 call chunks bc this gets huge fast
-  const chunk = 150;
+  // break into call chunks bc this gets huge fast
+  const chunk = 2500;
   let balanceCallChunks = [];
-  if (balanceCalls.length >= 150) {
-    for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
-      balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
-    }
-    assert.equal(balanceCalls.length, balanceCallChunks
-      .map(arr => arr.length)
-      .reduce((accumulator, value) => {
-        return accumulator + value
-      }, 0))
+  for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
+    balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
   }
+  assert.equal(balanceCalls.length, balanceCallChunks
+    .map(arr => arr.length)
+    .reduce((accumulator, value) => {
+      return accumulator + value
+    }, 0))
   let tokenBalances, balances = {};
   for (let balanceCall of balanceCallChunks) {
     tokenBalances = (
