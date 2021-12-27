@@ -81,7 +81,7 @@ async function getyDaiPrice(block) {
 module.exports = {
   name: 'Cover Protocol',
   token: 'COVER',
-  category: 'derivatives',
+  category: 'Derivatives',
   start: 1605830400, // Nov-20-2020 12am UTC
   tvl
 }

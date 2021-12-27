@@ -146,7 +146,7 @@ const utility = {
     });
     return allTokenObj;
   },
-  // 
+  //
   async handlerTokenApr(block, markets) {
     // Year Total Blocks Number
     let yearTotalBlocksNumber = 365 * 24 * 60 * 4;
@@ -199,7 +199,13 @@ const utility = {
         ).toFixed(0);
 
         targetTokenObj[item.input.params[0]] = {
-          ctoken: allTokenObj[item.input.params[0]] || '',
+          ctoken:
+            (allTokenObj[item.input.params[0]] &&
+              allTokenObj[item.input.params[0]] !==
+              "0x0000000000000000000000000000000000000001" &&
+              allTokenObj[item.input.params[0]] !==
+              "0x0000000000000000000000000000000000000002") ? allTokenObj[item.input.params[0]] :
+              "",
           capitalUtilizationRatio: item.output,
           notSupportCompBorrowRatePerBlock: notSupportCompBorrowRatePerBlock,
           supplyRatePerBlockComp: "",
@@ -285,18 +291,32 @@ const utility = {
     })
     return targetTokenObj;
   },
-  formatRates(tokensObj) {
+  async formatRates(tokensObj) {
     let result = {
       lend: {},
       borrow: {},
       supply: {}
     }
-    Object.keys(tokensObj).forEach(tokenAddress => {
+    let tokenAddresses = Object.keys(tokensObj);
+
+    for (let tokenAddress of tokenAddresses) {
+      let decimals;
+      if (tokenAddress === "0x000000000000000000000000000000000000000E") {
+        decimals = 18;
+      } else {
+        decimals = (
+          await sdk.api.abi.call({
+            target: tokenAddress,
+            abi: "erc20:decimals",
+          })
+        ).output;
+      }
+
       let tokenItem = tokensObj[tokenAddress];
       result.lend[tokenItem.symbol] = tokenItem.lend;
       result.borrow[tokenItem.symbol] = tokenItem.borrow;
-      result.supply[tokenItem.symbol] = tokenItem.supply;
-    })
+      result.supply[tokenItem.symbol] = tokenItem.supply / Math.pow(10, decimals);
+    }
     return result;
   }
 }
@@ -335,6 +355,10 @@ async function tvl(timestamp, block) {
     // cETH value
     balances['0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5'] = await utility.getCtokenValue(block, '0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5');
   }
+
+  balances['0x0000000000000000000000000000000000000000'] = balances['0x000000000000000000000000000000000000000E'];
+  delete balances['0x000000000000000000000000000000000000000E'];
+
   return balances;
 }
 
@@ -375,8 +399,7 @@ async function rates(timestamp, block) {
   }
 
   // Create output format
-  let result = utility.formatRates(initTokens);
-  return result;
+  return await utility.formatRates(initTokens);
 }
 
 /*==================================================
@@ -386,8 +409,8 @@ module.exports = {
   name: 'DeFiner',
   website: 'https://definer.org/',
   token: "FIN",
-  category: 'lending',
-  start: 10819493, // 09-08-2020 06:55:19 AM +UTC
+  category: 'Lending',
+  start: 1596956119, // 09-08-2020 06:55:19 AM +UTC
   tvl,
   rates,
   term: '1 block',

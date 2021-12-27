@@ -1,35 +1,21 @@
-/*==================================================
-  Modules
-  ==================================================*/
 const BigNumber = require('bignumber.js');
+
 const sdk = require('../../sdk');
 const token0 = require('./abis/token0.json');
 const token1 = require('./abis/token1.json');
 const getReserves = require('./abis/getReserves.json');
 
+const START_BLOCK = 12178218;
+const FACTORY = '0x833e4083B7ae46CeA85695c4f7ed25CDAd8886dE';
 
-/*==================================================
-  Settings
-  ==================================================*/
-const START_BLOCK = 4931780;
-const FACTORY = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
-
-/*==================================================
-  TVL
-  ==================================================*/
 module.exports = async function tvl(_, block) {
-  let supportedTokens = await (
+  const supportedTokens = await (
     sdk
       .api
       .util
-      .supportedTokens()
-      .then((supportedTokens) => supportedTokens.map((token) => {
-        if (token.platforms && token.platforms['polygon-pos']) {
-          return token.platforms['polygon-pos'];
-        }
-      }))
+      .tokenList()
+      .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
-  supportedTokens = supportedTokens.filter(token => token)
 
   const logs = (
     await sdk.api.util
@@ -38,45 +24,37 @@ module.exports = async function tvl(_, block) {
         toBlock: block,
         target: FACTORY,
         fromBlock: START_BLOCK,
-        topic: 'PairCreated(address,address,address,uint256)',
-        chain: 'polygon'
+        topic: 'PoolCreated(address,address,address,uint32,uint256)',
       })
   ).output;
 
-  const pairAddresses = (
-    logs
-      .map((log) =>         // sometimes the full log is emitted
-        typeof log === 'string' ? log.toLowerCase() : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`.toLowerCase()
-      )
-  );
+  const pairAddresses = logs
+    // sometimes the full log is emitted
+    .map((log) =>
+      typeof log === 'string' ? log : `0x${log.data.slice(64 - 40 + 2, 64 + 2)}`
+    )
+    // lowercase
+    .map((pairAddress) => pairAddress.toLowerCase());
 
   const [token0Addresses, token1Addresses] = await Promise.all([
-    (
-      await sdk
-        .api
-        .abi
-        .multiCall({
-          abi: token0,
-          calls: pairAddresses.map((pairAddress) => ({
-            target: pairAddress,
-          })),
-          block,
-          chain: 'polygon'
-        })
-    ).output,
-    (
-      await sdk
-        .api
-        .abi
-        .multiCall({
-          abi: token1,
-          calls: pairAddresses.map((pairAddress) => ({
-            target: pairAddress,
-          })),
-          block,
-          chain: 'polygon'
-        })
-    ).output,
+    sdk.api.abi
+      .multiCall({
+        abi: token0,
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      })
+      .then(({ output }) => output),
+    sdk.api.abi
+      .multiCall({
+        abi: token1,
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      })
+      .then(({ output }) => output),
   ]);
 
   const pairs = {};
@@ -108,19 +86,14 @@ module.exports = async function tvl(_, block) {
     }
   });
 
-  const reserves = (
-    await sdk
-      .api
-      .abi
-      .multiCall({
-        abi: getReserves,
-        calls: Object.keys(pairs).map((pairAddress) => ({
-          target: pairAddress,
-        })),
-        block,
-        chain: 'polygon'
-      })
-  ).output;
+  const reserves = (await sdk.api.abi
+    .multiCall({
+      abi: getReserves,
+      calls: Object.keys(pairs).map((pairAddress) => ({
+        target: pairAddress,
+      })),
+      block,
+    })).output;
 
   return reserves.reduce((accumulator, reserve, i) => {
     if (reserve.success) {

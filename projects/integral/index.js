@@ -11,7 +11,7 @@ const FACTORY = '0x673662e97b05e001816c380ba5a628d2e29f55d1';
 async function tvl(_, block) {
   const pairs = await getPairs(block);
   const reserves = await getReserves(block, pairs);
-  const balances = getBalances(pairs, reserves);
+  const balances = await getBalances(pairs, reserves);
 
   return balances;
 }
@@ -105,7 +105,7 @@ async function getReserves(block, pairs) {
     })),
     block,
   });
-  
+
   return reserves.output;
 }
 
@@ -139,7 +139,7 @@ async function getBalances(pairs, reserves) {
 module.exports = {
   name: 'Integral',
   token: null,
-  category: 'dexes',
+  category: 'DEXes',
   start: 1617031800, // 03/29/2021 @ 2:30PM (UTC)
   tvl,
 };

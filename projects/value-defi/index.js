@@ -21,11 +21,11 @@ const configs = {
       stakingContract: "0xC2D55CE14a8e04AEF9B6bCfD105079b63C6a0AC8",
       tokens: ['0xdAC17F958D2ee523a2206206994597C13D831ec7', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0x0000000000085d4780B73119b644AE5ecd22b376', '0x6B175474E89094C44Da98b954EedeAC495271d0F']
     },
-    {
-      // YFV Governance Vault
-      stakingContract: "0x07eb8CB8AEdB581a2d73cc29F6c7860226808Ca2",
-      tokens: ["0x45f24BaEef268BB6d63AEe5129015d69702BCDfa"],
-    }
+    // {
+    //   // YFV Governance Vault
+    //   stakingContract: "0x07eb8CB8AEdB581a2d73cc29F6c7860226808Ca2",
+    //   tokens: ["0x45f24BaEef268BB6d63AEe5129015d69702BCDfa"],
+    // }
 
   ],
   vault: {
@@ -104,50 +104,50 @@ async function singleVaultTvl(timestamp, block) {
   return balances
 }
 
-async function uniSwapPairInfo(pairAddresses, timestamp, block) {
-  const [token0Addresses, token1Addresses, reserves, totalSupplies] = await Promise.all([
-    sdk.api.abi.multiCall({
-      abi: token0,
-      calls: pairAddresses.map((pairAddress) => ({
-        target: pairAddress,
-      })),
-      block,
-    })
-      .then(({output}) => output.map(value => value.output)),
-    sdk.api.abi.multiCall({
-      abi: token1,
-      calls: _.map(pairAddresses, (pairAddress) => ({
-        target: pairAddress,
-      })),
-      block,
-    })
-      .then(({output}) => output.map(value => value.output)),
-    sdk.api.abi.multiCall({
-      abi: getReserves,
-      calls: _.map(pairAddresses, (pairAddress) => ({
-        target: pairAddress,
-      })),
-      block,
-    })
-      .then(({output}) => output.map(value => value.output)),
-    sdk.api.abi.multiCall({
-      block,
-      calls: _.map(pairAddresses, pairAddress => ({
-        target: pairAddress
-      })),
-      abi: 'erc20:totalSupply',
-    }).then(({output}) => output.map(value => value.output))
-  ]);
-  return pairAddresses.map((value, index) => {
-    return {
-      reserve0: reserves[index] ? reserves[index]['_reserve0'] : null,
-      reserve1: reserves[index] ? reserves[index]['_reserve1'] : null,
-      token0: token0Addresses[index],
-      token1: token1Addresses[index],
-      totalSupply: totalSupplies[index],
-    }
-  })
-}
+ async function uniSwapPairInfo(pairAddresses, timestamp, block) {
+   const [token0Addresses, token1Addresses, reserves, totalSupplies] = await Promise.all([
+     sdk.api.abi.multiCall({
+       abi: token0,
+       calls: pairAddresses.map((pairAddress) => ({
+         target: pairAddress,
+       })),
+       block,
+     })
+       .then(({output}) => output.map(value => value.output)),
+     sdk.api.abi.multiCall({
+       abi: token1,
+       calls: _.map(pairAddresses, (pairAddress) => ({
+         target: pairAddress,
+       })),
+       block,
+     })
+       .then(({output}) => output.map(value => value.output)),
+     sdk.api.abi.multiCall({
+       abi: getReserves,
+       calls: _.map(pairAddresses, (pairAddress) => ({
+         target: pairAddress,
+       })),
+       block,
+     })
+       .then(({output}) => output.map(value => value.output)),
+     sdk.api.abi.multiCall({
+       block,
+       calls: _.map(pairAddresses, pairAddress => ({
+         target: pairAddress
+       })),
+       abi: 'erc20:totalSupply',
+     }).then(({output}) => output.map(value => value.output))
+   ]);
+   return pairAddresses.map((value, index) => {
+     return {
+       reserve0: reserves[index]['_reserve0'] || 0,
+       reserve1: reserves[index]['_reserve1'] || 0,
+       token0: token0Addresses[index],
+       token1: token1Addresses[index],
+       totalSupply: totalSupplies[index],
+     }
+   })
+ }
 
 async function mergeBalance(array) {
   const globalBalances = {}
@@ -158,7 +158,8 @@ async function mergeBalance(array) {
       globalBalances[asset.toLowerCase()] = balance.plus(total).toFixed();
     }
   }
-  return globalBalances
+
+  return globalBalances;
 }
 
 async function cuNIv2LPVaultTvl(timestamp, block) {
@@ -228,6 +229,7 @@ async function cVaultBalancerTvl(timestamp, block) {
   const poolTokenData = (await sdk.api.abi.multiCall({
     calls: _.map(pools, (poolAddress) => ({target: poolAddress})),
     abi: getCurrentTokens,
+    block
   })).output;
   const totalSupplies = (await sdk.api.abi.multiCall({
     block,
@@ -284,32 +286,30 @@ async function uNIv2LPVaultTvl(timestamp, block) {
     abi: 'erc20:totalSupply',
   })).output.map(value => value.output);
 
-  const pairs = configs.vault.uniV2LP.map(value => value.underlyingToken);
-  const pairInfos = await uniSwapPairInfo(pairs, timestamp, block)
-  const balanceOfResult = []
-  for (let index = 0; index < configs.vault.uniV2LP.length; index++) {
-    let vaultSupply = new BigNumber(totalVaultSupplies[index] || 0)
-    let {reserve0, reserve1, token0, token1, totalSupply} = pairInfos[index];
-    if (reserve0 && reserve1 && token0 && token1 && totalSupply) {
-      balanceOfResult.push({
-        address: token0,
-        balance: new BigNumber(reserve0).times(vaultSupply).div(totalSupply).toFixed()
-      })
-      balanceOfResult.push({
-        address: token1,
-        balance: new BigNumber(reserve1).times(vaultSupply).div(totalSupply).toFixed()
-      })
-    }
-  }
-  const balances = {};
-  _.forEach(balanceOfResult, (result) => {
-    let balance = new BigNumber(result.balance || 0);
-    let asset = result.address;
-    let total = new BigNumber(balances[asset] || 0);
-    balances[asset] = balance.plus(total).toFixed();
-  });
-  return balances
-}
+   const pairs = configs.vault.uniV2LP.map(value => value.underlyingToken);
+   const pairInfos = await uniSwapPairInfo(pairs, timestamp, block)
+   const balanceOfResult = []
+   for (let index = 0; index < configs.vault.uniV2LP.length; index++) {
+     let vaultSupply = new BigNumber(totalVaultSupplies[index] || 0)
+     let {reserve0, reserve1, token0, token1, totalSupply} = pairInfos[index];
+     balanceOfResult.push({
+       address: token0,
+       balance: new BigNumber(reserve0).times(vaultSupply).div(totalSupply).toFixed()
+     })
+     balanceOfResult.push({
+       address: token1,
+       balance: new BigNumber(reserve1).times(vaultSupply).div(totalSupply).toFixed()
+     })
+   }
+   const balances = {};
+   _.forEach(balanceOfResult, (result) => {
+     let balance = new BigNumber(result.balance || 0);
+     let asset = result.address;
+     let total = new BigNumber(balances[asset] || 0);
+     balances[asset] = balance.plus(total).toFixed();
+   });
+   return balances
+ }
 
 async function vaultTvl(timestamp, block) {
   return mergeBalance([
@@ -352,8 +352,12 @@ async function seedPoolStakeTvl(timestamp, block) {
 
 
 async function tvl(timestamp, block) {
+  if (block < 10915393) {
+    const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
+    return await mergeBalance([seedPoolStake]);
+  }
   const seedPoolStake = await seedPoolStakeTvl(timestamp, block);
-  const vault = await vaultTvl(timestamp, block)
+  const vault = await vaultTvl(timestamp, block);
   return await mergeBalance([seedPoolStake, vault]);
 }
 
@@ -361,9 +365,9 @@ async function tvl(timestamp, block) {
   Exports
 ==================================================*/
 module.exports = {
-  name: 'valuedefi',
+  name: 'Value DeFi',
   token: null,
-  category: 'dexes',
-  start: 1601440616,  // 09/30/2020 @ 4:36am (UTC)
+  category: 'Assets',
+  start: 1597751065,  // 09/30/2020 @ 4:36am (UTC)
   tvl,
 };

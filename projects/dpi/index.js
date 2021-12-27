@@ -70,7 +70,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Index Coop',
   symbol: 'INDEX',
-  category: 'assets',
+  category: 'Assets',
   start: 1599769488,  // Sep-10-2020 08:24:48 PM +UTC, block: 10836209
   tvl,
 };

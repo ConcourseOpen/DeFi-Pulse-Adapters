@@ -214,6 +214,6 @@ module.exports = {
   token: "IDLE",
   start: 1605817213,
   name: 'Idle Finance',
-  category: 'lending',
+  category: 'Lending',
   website: 'https://idle.finance'
 };

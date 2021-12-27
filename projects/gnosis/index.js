@@ -11,9 +11,9 @@ const { tvl: conditionalTokenTvl } = require('./conditional-token')
 
 const START_BLOCK = 9340147;
 const PROTOCOL_ADDRESS = '0x6F400810b62df8E13fded51bE75fF5393eaa841F';
-/* 
+/*
 * Tokens on GP to ignore
-[ 
+[
     0x7cac16770dd5f2a59859a395a492224f05a846b6: "oETH Put $200 29/05/2020",
 ]
 */
@@ -25,12 +25,12 @@ const TOKENS_TO_IGNORE = new Set(['0x7cac16770dd5f2a59859a395a492224f05a846b6'])
 
 const getTokenAddressFromLogData = data => '0x' + data.substring(26, 66);
 
-const getCallDataOfErc20Token = (tokenAddress, atThisBlock) => 
-  ({ 
-    target: tokenAddress, 
-    params: PROTOCOL_ADDRESS, 
-    abi: 'erc20:balanceOf', 
-    block: atThisBlock, 
+const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
+  ({
+    target: tokenAddress,
+    params: PROTOCOL_ADDRESS,
+    abi: 'erc20:balanceOf',
+    block: atThisBlock,
   });
 
 /*==================================================
@@ -40,7 +40,7 @@ const getCallDataOfErc20Token = (tokenAddress, atThisBlock) =>
 async function tvl(_, block) {
   // Start promised TVL of Conditional Token
   const promisedConditionalTokenTvl = conditionalTokenTvl(_, block)
-  
+
   // Snag all token addresses that have been listed on GP
   const { output: events } = await util.getLogs({
     keys: [],
@@ -69,7 +69,7 @@ async function tvl(_, block) {
       block,
       abi: 'erc20:balanceOf',
       calls: tokenList
-    }), 
+    }),
     promisedConditionalTokenTvl,
   ])
 
@@ -93,8 +93,8 @@ async function tvl(_, block) {
 
 module.exports = {
   name: 'Gnosis',
+  category: 'DEXes',
   token: 'GNO',
-  category: 'dexes',
   start: 1579811423, // Thu, 23 Jan 2020 20:30:23 GMT
   tvl,
 };

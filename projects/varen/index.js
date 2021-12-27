@@ -14,7 +14,7 @@ async function tvl(timestamp, block) {
 
   const tokenAddresses = new Set(Object.keys(v1));
 
-  const balances = (
+  return (
     Array
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
@@ -24,14 +24,12 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
-
-  return balances;
 }
 
 module.exports = {
   name: 'Varen',
   token: 'VRN',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1606392528, // 11/26/2020 @ 12:08:48am (UTC)
   tvl,
 };

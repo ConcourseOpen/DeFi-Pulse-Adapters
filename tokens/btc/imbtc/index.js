@@ -22,7 +22,7 @@
       })
     ).output;
 
-    return { [imbtcContract]: btcTotalSupply };
+    return (await sdk.api.util.toSymbols({ [imbtcContract]: btcTotalSupply })).output;
   }
 
 /*==================================================

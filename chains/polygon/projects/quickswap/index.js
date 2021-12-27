@@ -2,7 +2,7 @@
   Modules
   ==================================================*/
 const BigNumber = require('bignumber.js');
-const sdk = require('../../sdk');
+const sdk = require('../../../../sdk');
 const v2TVL = require('./v2');
 
 /*==================================================
@@ -34,7 +34,8 @@ async function tvl(timestamp, block) {
       '0x0000000000000000000000000000000000000000' : 0
     }
   }
-  return (await sdk.api.util.toSymbols(balances, 'polygon')).output;
+
+  return balances;
 }
 
 module.exports = {
@@ -42,6 +43,6 @@ module.exports = {
   token: 'QUICK',
   category: 'DEXes',
   start: 1601614800, // 09/04/2020 @ 10:10:39am (UTC)
+  chain: 'polygon',
   tvl,
-  chain: 'Polygon'
 };
