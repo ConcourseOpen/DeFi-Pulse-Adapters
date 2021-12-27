@@ -79,7 +79,7 @@ async function POST(endpoint, options) {
           percent: true,
         });
       }
-      const processRequest = async () => {
+      const processRequest = async (chunk) => {
         const opts = {
           ...options,
         };
