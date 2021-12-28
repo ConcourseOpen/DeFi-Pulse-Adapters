@@ -68,7 +68,7 @@ module.exports = {
   name: 'TrueFi',               // project name
   website: 'https://app.truefi.com',
   token: 'TRU',
-  category: 'lending',          // Lending
+  category: 'Lending',          // Lending
   start: 1605830400,            // 11/20/2020 @ 12:00am (UTC)
   tvl                           // tvl adapter
 }
