@@ -41,7 +41,16 @@ npm run test -- --project=_template
 The test should complete successfully.
 
 # GitHub Collaboration
-Please fork this repository before you start building your adapter and then work on a topic branch within the forked repo. Like this, you will be able to easily create pull requests against the upstream repo and if needed, you can grant us the right to make commits on your topic branch to update your pull request. Please include the name of your project in the pull request. Further details: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork
+
+Please [fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) from the `staging` branch before you start building your adapter, then work on a topic branch within the forked repo.
+
+When your adapter is complete, create a pull request against this upstream repo **to the `staging` branch**.
+
+To help us merge your adapter more quickly, please:
+
+- **grant us the right to make commits on your topic branch**, so we can apply any minor fixes without back-and-forth or having to create a separate pull request
+- **include the name of your project** in the pull request and ideally in the branch name
+- ask questions up front about TVL calculation methodology in your discord channel
 
 # Writing a JSON Configurable Adapter
 
