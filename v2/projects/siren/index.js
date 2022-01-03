@@ -13,8 +13,8 @@ const GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/sirenmarkets/protocol
 
 async function getTokens(amms) {
   const tokens = [];
-  for (let i = 0; i < amms['amms'].length; i++) {
-    let amm = amms['amms'][i];
+  for (let i = 0; i < amms.length; i++) {
+    let amm = amms[i];
     tokens.push(amm['collateralToken']['id']);
   }
   return tokens;
@@ -23,8 +23,8 @@ async function getTokens(amms) {
 async function getHolders(amms) {
   const holders = [];
 
-  for (let i = 0; i < amms['amms'].length; i++) {
-    let amm = amms['amms'][i];
+  for (let i = 0; i < amms.length; i++) {
+    let amm = amms[i];
 
     holders.push(amm['id']);
     for (let im = 0; im < amm.markets.length; im++) {
@@ -42,8 +42,8 @@ async function calculateMainnetTVL(timestamp, block, mainnet_amms) {
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': '0'
   };
 
-  for (let i = 0; i < mainnet_amms['amms'].length; i++) {
-    const amm = mainnet_amms['amms'][i];
+  for (let i = 0; i < mainnet_amms.length; i++) {
+    const amm = mainnet_amms[i];
     const collateralToken = amm['collateralToken']['id'];
     // Get collateral in AMM
     let response;
@@ -93,7 +93,7 @@ const GET_POOLS = gql`
 let tokenHolderMap = [];
 
 async function tvl(timestamp, block) {
-  const amms = await request(GRAPH_URL, GET_POOLS, {
+  const { amms } = await request(GRAPH_URL, GET_POOLS, {
     block
   });
   const tokens = await getTokens(amms);
