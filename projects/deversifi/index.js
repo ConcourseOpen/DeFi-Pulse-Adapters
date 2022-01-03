@@ -90,7 +90,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'DeversiFi',
   token: 'NEC',
-  category: 'dexes',
+  category: 'DEXes',
   start: 1590969600, // 06/01/2020
   tvl,
 };
