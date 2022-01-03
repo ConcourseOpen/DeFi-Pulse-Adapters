@@ -54,9 +54,9 @@ To help us merge your adapter more quickly, please:
 
 # Writing a JSON Configurable Adapter
 
-*Note: We try our best to reduce dependecies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
+*Note: We try our best to reduce dependencies on third party APIs (The Graph, projects own TVL endpoints etc). Please utilize the DeFi Pulse SDK when writing your adapter.*
 
-Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own sub-directory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects that are multichain get their own adapter folder under `/chains/[chain name]/projects/`.  
+Let's take a look at the existing [Loopring](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/loopring) or [Balancer](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/v2/projects/balancer) or [Aave on Polygon](https://github.com/ConcourseOpen/DeFi-Pulse-Adapters/blob/master/chains/polygon/projects/aave) adapters to see a minimal example of how to write and test a JSON Configurable adapter. Each token adapter (on Ethereum mainnet) gets its own subdirectory under `/v2/projects`, with an index.js file containing the main json configurations and settings. Projects that are multichain get their own adapter folder under `/chains/[chain name]/projects/`.  
 
 Example: your project is multichain; Ethereum and Polygon. You want to place your Ethereum adapter in `/v2/` and your Polygon adapter in `/chains/polygon/projects/`.
 
@@ -92,7 +92,7 @@ Each item in the tokenHolderMap consists of 2 main parts:
 The tokens property of tokenHolderMap can be a single token, a list of tokens, an executable function that will return a single or a list of tokens, or a json configuration that can be used to pull token information from pool smart contracts.
 
 #### ```holders``` configuration
-The holders property of tokenHolderMap can be a single holder/vault/pool address, a list of addresses, an executable function that will return a single or a list of addresses, or a json configuration that can be used to pull pool address from pool smart contracts.
+The holders property of tokenHolderMap can be a single holder/vault/pool address, a list of addresses, an executable function that will return a single or a list of addresses, or a json configuration that can be used to pull pool addresses from pool smart contracts.
 
 #### ```Loopring``` adapter `tokenHolderMap` configuration
 ```js
@@ -232,7 +232,7 @@ Checking Loopring project adapter metadata
   6 passing (11ms)
 ```
 
-After test command `validate-metadata` passes successfully run `test-tvl`. This command runs the adapter through a series of points spread over it's lifespan.
+After the test command `validate-metadata` passes successfully, run `test-tvl`. This command runs the adapter through a series of points spread over it's lifespan.
 
 sample command: `npm run test-tvl -- --project=loopring`
 sample output:
@@ -322,13 +322,13 @@ In the above example, the output is saved to `output/ethereum/Loopring/tvl/2021-
 
 This test suite will only log verbose results and adapter output in the event of a problem.
 
-Once both tests pass successfully your project should appear on [Defipulse Staging](https://test.defipulse.com/) leaderboard. Once you see your project on the leaderboard click on the project to review project tvl chart.
+Once both tests pass successfully your project should appear on [Defipulse Staging](https://test.defipulse.com/) leaderboard. Once you see your project on the leaderboard click on the project to review the project tvl chart.
 
-# In case your your adapter needs more customisations please follow below instructions:
+# In case your adapter needs more customizations please follow below instructions:
 
 # Writing tvl function
 
-Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own sub-directory under `/projects`, with an index.js file containing the main code and settings.
+Let's take a look at the template project to see a minimal example of an adapter. Each project gets it's own subdirectory under `/projects`, with an index.js file containing the main code and settings.
 
 ```
 projects
