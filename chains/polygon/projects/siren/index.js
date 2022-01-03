@@ -1,105 +1,94 @@
 /*==================================================
   Modules
   ==================================================*/
-  const { request, gql } = require("graphql-request");
-  const BigNumber = require('bignumber.js');
-  const axios = require('axios');
-  const sdk = require('../../../../sdk');
+const { request, gql } = require('graphql-request');
+const BigNumber = require('bignumber.js');
+const sdk = require('../../../../sdk');
 
-
-  const POLYGON_GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/sirenmarkets/protocol-v2-matic'
+const POLYGON_GRAPH_URL = 'https://api.thegraph.com/subgraphs/name/sirenmarkets/protocol-v2-matic';
 
 /*==================================================
   TVL
   ==================================================*/
 
-  async function getTokens( amms) {
+async function getTokens(amms) {
+  let tokens = [];
+  for (let i = 0; i < amms['amms'].length; i++) {
+    let amm = amms['amms'][i];
+    tokens.push(amm['collateralToken']['id']);
+  }
+  return tokens;
+}
 
+async function getHolders(amms) {
+  const { seriesVaults } = await request(POLYGON_GRAPH_URL, GET_SERIES_VAULT_ID);
 
-    let tokens =[];
-    for (let i = 0; i < amms['amms'].length; i++) {
-      let amm = amms['amms'][i]
-      tokens.push(amm['collateralToken']['id']);
+  const holders = [];
 
+  for (let i = 0; i < amms['amms'].length; i++) {
+    let amm = amms['amms'][i];
+    holders.push(amm['id']);
+  }
+  holders.push(seriesVaults[0]['id']);
+  return holders;
+}
+
+async function calculatePolygonTVL(timestamp, block, polygon_amms) {
+  const { seriesVaults } = await request(POLYGON_GRAPH_URL, GET_SERIES_VAULT_ID);
+
+  const polygon_result = {
+    'polygon:0x2791bca1f2de4661ed88a30c99a7a9449aa84174': '0'
+  };
+
+  for (let i = 0; i < polygon_amms['amms'].length; i++) {
+    const amm = polygon_amms['amms'][i];
+    const collateralToken = amm['collateralToken']['id'];
+
+    // Get collateral in AMM
+    const response = await sdk.api.abi.call({
+      target: collateralToken,
+      params: amm['id'],
+      abi: 'erc20:balanceOf',
+      block: block
+    });
+
+    if (!polygon_result[collateralToken]) {
+      polygon_result[collateralToken] = '0';
     }
-    return tokens;
+    polygon_result[collateralToken] = BigNumber(polygon_result[collateralToken]).plus(response.output).toFixed();
+
+    // Get collateral in Series
+    const response2 = await sdk.api.abi.call({
+      target: collateralToken,
+      params: seriesVaults[0]['id'],
+      abi: 'erc20:balanceOf',
+      block: block
+    });
+    polygon_result[collateralToken] = BigNumber(polygon_result[collateralToken]).plus(response2.output).toFixed();
   }
+  return polygon_result;
+}
 
-  async function getHolders( amms) {
-    
-    // const {seriesVaults} = await request(POLYGON_GRAPH_URL, GET_SERIES_VAULT_ID);
-    const {seriesVaults} = await request(POLYGON_GRAPH_URL, GET_SERIES_VAULT_ID);
+let tokenHolderMap = [];
 
-    let holders =[];
+async function tvl(timestamp, block) {
+  const amms = await request(POLYGON_GRAPH_URL, GET_POOLS_POLYGON, {
+    block
+  });
 
-    for (let i = 0; i < amms['amms'].length; i++) {
-      let amm = amms['amms'][i]
-      holders.push(amm['id']);
-
+  const tokens = await getTokens(amms);
+  const holders = await getHolders(amms);
+  const balances = await calculatePolygonTVL(timestamp, block, amms);
+  tokenHolderMap = [
+    {
+      tokens,
+      holders
     }
-    holders.push(seriesVaults[0]['id']);
-    return holders;
-  }
+  ];
+  return balances;
+}
 
-  async function calculatePolygonTVL(timestamp,  block, polygon_amms) {
-
-    const {seriesVaults} = await request(POLYGON_GRAPH_URL, GET_SERIES_VAULT_ID);
-
-    const polygon_result = {
-      'polygon:0x2791bca1f2de4661ed88a30c99a7a9449aa84174': '0'
-    };
-  
-    for (let i = 0; i < polygon_amms['amms'].length; i++) {
-      const amm = polygon_amms['amms'][i];
-      const collateralToken = amm['collateralToken']['id'];
-  
-      // Get collateral in AMM
-      const response = await sdk.api.abi.call({
-          target: collateralToken,
-          params: amm['id'],
-          abi: 'erc20:balanceOf',
-          block: block,
-        });
-
-      if (!polygon_result[collateralToken]) {
-        polygon_result[collateralToken] = '0';
-      }
-      polygon_result[collateralToken] = BigNumber(polygon_result[collateralToken]).plus(response.output).toFixed();
-  
-      // Get collateral in Series
-        const response2 = await sdk.api.abi.call({
-          target: collateralToken,
-          params: seriesVaults[0]['id'],
-          abi: 'erc20:balanceOf',
-          block: block,
-        });
-        polygon_result[collateralToken] = BigNumber(polygon_result[collateralToken]).plus(response2.output).toFixed();
-  
-    }
-    console.log(polygon_result);
-    return polygon_result;
-  
-  }
-  let tokenHolderMap = [];
-  async function tvl(timestamp, block) {
-    const amms = await request(POLYGON_GRAPH_URL, GET_POOLS_POLYGON, {
-      block,
-    })
-
-    const tokens = await getTokens( amms);
-    const holders = await getHolders( amms);
-    const balances = await calculatePolygonTVL(timestamp, block, amms);
-    tokenHolderMap = [
-      {
-        tokens,
-        holders,
-      },
-    ];
-    console.log(tokenHolderMap);
-    return balances;
-  }
-
-  const GET_POOLS_POLYGON = gql`
+const GET_POOLS_POLYGON = gql`
   query Pools($block: Int) {
     amms(block: { number: $block }) {
       id
@@ -107,24 +96,26 @@
         id
       }
     }
-  }`
+  }`;
 
-  const GET_SERIES_VAULT_ID = gql`
-  query  {seriesVaults{
-          id
-          }
-  }`
+const GET_SERIES_VAULT_ID = gql`
+  query {
+    seriesVaults {
+      id
+    }
+  }`;
 
 /*==================================================
   Exports
   ==================================================*/
 
-  module.exports = {
-    name: 'Siren',
-    token: 'SI',
-    category: 'Derivatives',
-    start: 1605574800, // Nov-17-2020 01:00:00 AM +UTC // tvl function should be kept above tokenHolderMap
-    tokenHolderMap: [{
+module.exports = {
+  name: 'Siren',
+  token: 'SI',
+  category: 'Derivatives',
+  start: 1605574800, // Nov-17-2020 01:00:00 AM +UTC // tvl function should be kept above tokenHolderMap
+  tokenHolderMap: [
+    {
       tokens: [
         '0xda537104d6a5edd53c6fbba9a898708e465260b6',
         '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
@@ -148,6 +139,7 @@
         '0xedd2a39b0a4770e61eb7998f371522169d253905',
         '0xc40a31bd9fed1569ce647bb7de7ff93facca36e9'
       ]
-    }],
-    chain: "polygon"
-  }
+    }
+  ],
+  chain: 'polygon'
+};
