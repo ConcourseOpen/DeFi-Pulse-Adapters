@@ -9,12 +9,12 @@
   const args = require('../args');
 
   const categories = [
-    'derivatives',
-    'dexes',
-    'lending',
-    'payments',
-    'assets'
-  ]
+    'Derivatives',
+    'DEXes',
+    'Lending',
+    'Payments',
+    'Assets'
+  ];
 
 /*==================================================
   Test
