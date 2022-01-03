@@ -232,7 +232,7 @@ Checking Loopring project adapter metadata
   6 passing (11ms)
 ```
 
-After test command `validate-metadata` passes successfully, run `test-tvl`. This command runs the adapter through a series of points spread over it's lifespan.
+After the test command `validate-metadata` passes successfully, run `test-tvl`. This command runs the adapter through a series of points spread over it's lifespan.
 
 sample command: `npm run test-tvl -- --project=loopring`
 sample output:
