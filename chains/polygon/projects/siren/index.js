@@ -110,7 +110,7 @@ const GET_SERIES_VAULT_ID = gql`
   ==================================================*/
 
 module.exports = {
-  name: 'Siren',
+  name: 'Siren_Polygon',
   token: 'SI',
   category: 'Derivatives',
   start: 1605574800, // Nov-17-2020 01:00:00 AM +UTC // tvl function should be kept above tokenHolderMap
