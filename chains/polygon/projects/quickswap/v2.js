@@ -1,11 +1,22 @@
-const sdk = require("../../../../sdk");
-const factoryAbi = require("./abis/factory.json");
-const token0 = require("./abis/token0.json");
-const token1 = require("./abis/token1.json");
-const assert = require("assert");
-const FACTORY = '0xe7fb3e833efe5f9c441105eb65ef8b261266423b';
+/*==================================================
+  Modules
+  ==================================================*/
+const sdk = require('../../../../sdk');
+const assert = require('assert');
+const factoryAbi = require('./abis/factory.json');
+const token0 = require('./abis/token0.json');
+const token1 = require('./abis/token1.json');
 
-async function tvl(timestamp, block) {
+/*==================================================
+  Settings
+  ==================================================*/
+const START_BLOCK = 4931780;
+const FACTORY = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
+
+/*==================================================
+  TVL
+  ==================================================*/
+module.exports = async function tvl(_, block) {
   let supportedTokens = await (
     sdk
       .api
@@ -27,7 +38,7 @@ async function tvl(timestamp, block) {
     chain: 'polygon',
     block
   })).output
-  if (pairLength === null) {
+  if(pairLength === null){
     throw new Error("allPairsLength() failed")
   }
   const pairNums = Array.from(Array(Number(pairLength)).keys());
@@ -72,7 +83,7 @@ async function tvl(timestamp, block) {
   ]);
 
   const tokenPairs = {}
-// add token0Addresses
+  // add token0Addresses
   token0Addresses.forEach((token0Address, i) => {
     if (supportedTokens.includes(token0Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
@@ -82,7 +93,7 @@ async function tvl(timestamp, block) {
     }
   })
 
-// add token1Addresses
+  // add token1Addresses
   token1Addresses.forEach((token1Address, i) => {
     if (supportedTokens.includes(token1Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
@@ -111,7 +122,7 @@ async function tvl(timestamp, block) {
     }
   }
 
-// break into call chunks bc this gets huge fast
+  // break into call chunks bc this gets huge fast
   const chunk = 2500;
   let balanceCallChunks = [];
   for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
@@ -134,21 +145,5 @@ async function tvl(timestamp, block) {
     sdk.util.sumMultiBalanceOf(balances, tokenBalances)
   }
 
-  if (Object.keys(balances).length === 0) {
-    balances = {
-      '0x0000000000000000000000000000000000000000' : 0
-    }
-  }
-
   return balances;
-}
-module.exports = {
-  /* Project Metadata */
-  name: 'Dfyn Network',
-  token: "DFYN",
-  chain: 'polygon',
-  category: 'DEXes',
-  start: 1602073800, // @ october 10 2020
-  /*fetching token balances */
-  tvl
 };
