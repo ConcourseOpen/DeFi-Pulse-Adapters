@@ -17,16 +17,12 @@ module.exports = {
   tokenHolderMap: [
     {
       tokens: async () => {
-        const result = await getTokenAddresses(NETWORK_POLYGON)
-        console.log('tokens', result)
-        return result
+        return await getTokenAddresses(NETWORK_POLYGON)
       },
       holders: async () => {
         const options = await getOptionAddresses(NETWORK_POLYGON)
         const pools = await getPoolAddresses(NETWORK_POLYGON)
-        const result = options.concat(pools)
-        console.log('pools', result)
-        return result
+        return options.concat(pools)
       },
       checkNativeBalance: true
     }
