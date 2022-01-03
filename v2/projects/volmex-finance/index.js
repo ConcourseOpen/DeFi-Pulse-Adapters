@@ -1,6 +1,6 @@
 module.exports = {
     /* Project Metadata */
-    name: 'Volmex Finance', // project name
+    name: 'Volmex Finance',
     token: null, // null, or token symbol if project has a custom token
     category: 'Derivatives', // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1623344178, // June 10, 2021 04:56:18 PM +UTC (ETHV)
