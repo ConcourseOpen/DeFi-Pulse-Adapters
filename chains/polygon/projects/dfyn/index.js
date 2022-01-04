@@ -87,7 +87,7 @@ async function tvl(timestamp, block) {
     if (supportedTokens.includes(token1Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
       tokenPairs[pairAddress] = {
-        ...(pairs[pairAddress] || {}),
+        ...(tokenPairs[pairAddress] || {}),
         token1Address: token1Address.output.toLowerCase(),
       }
     }
@@ -112,34 +112,34 @@ async function tvl(timestamp, block) {
   }
 
 // break into call chunks bc this gets huge fast
-  const chunk = 2500;
-  let balanceCallChunks = [];
-  for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
-    balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
-  }
-  assert.equal(balanceCalls.length, balanceCallChunks
-    .map(arr => arr.length)
-    .reduce((accumulator, value) => {
-      return accumulator + value
-    }, 0))
+//   const chunk = 2500;
+//   let balanceCallChunks = [];
+//   for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
+//     balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
+//   }
+//   assert.equal(balanceCalls.length, balanceCallChunks
+//     .map(arr => arr.length)
+//     .reduce((accumulator, value) => {
+//       return accumulator + value
+//     }, 0))
   let tokenBalances, balances = {};
-  for (let balanceCall of balanceCallChunks) {
+//   for (let balanceCall of balanceCallChunks) {
     tokenBalances = (
       await sdk.api.abi.multiCall({
         abi: 'erc20:balanceOf',
-        calls: balanceCall,
+        calls: balanceCalls,
         block,
         chain: 'polygon'
       }));
     sdk.util.sumMultiBalanceOf(balances, tokenBalances)
-  }
+  // }
 
   if (Object.keys(balances).length === 0) {
     balances = {
       '0x0000000000000000000000000000000000000000' : 0
     }
   }
-
+  console.log(balances);
   return balances;
 }
 module.exports = {

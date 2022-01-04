@@ -90,7 +90,7 @@ async function tvl(timestamp, block) {
     if (supportedTokens.includes(token1Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
       tokenPairs[pairAddress] = {
-        ...(pairs[pairAddress] || {}),
+        ...(tokenPairs[pairAddress] || {}),
         token1Address: token1Address.output.toLowerCase(),
       }
     }
