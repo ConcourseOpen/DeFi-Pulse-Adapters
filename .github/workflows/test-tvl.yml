@@ -1,0 +1,25 @@
+name: test-tvl
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '10'
+    - run: npm ci
+    - name: test-tvl
+      run: |
+        adapters=$(git diff origin/staging... --name-only | grep v2/projects/ | cut -d / -f3 | sort | uniq)
+        echo adapters to test: $adapters
+        for adapter in $adapters
+          do npm run test-tvl -- --project=$adapter
+        done
+      env:
+        DEFIPULSE_KEY: ${{ secrets.DEFIPULSE_KEY }}
+        DEFIPULSE_API_URL: https://dfp-sdk-staging.defipulse.com
