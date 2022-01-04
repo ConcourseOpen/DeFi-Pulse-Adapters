@@ -2,7 +2,9 @@
  * Project: solace.fi
  * Chain: Ethereum
  * Tech Lead: Andrew | Solace#4854 @SolaceAndrew andrew@solace.fi leonardishere
- * Docs: https://docs.solace.fi/ https://github.com/solace-fi
+ * Docs:
+ * - https://docs.solace.fi/
+ * - https://github.com/solace-fi
  */
 
 const ADDRESS = {
