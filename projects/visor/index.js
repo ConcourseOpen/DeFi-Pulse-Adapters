@@ -129,7 +129,7 @@ async function tvl(timestamp, block) {
   ==================================================*/
 
   module.exports = {
-    name: 'Visor Finance',
+    name: 'Gamma Finance',
     token: 'VISR',
     category: 'Assets',     // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1623078120,      // June 7, 2021 23:02
