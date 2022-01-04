@@ -173,6 +173,5 @@ module.exports = async function tvl(_, block) {
     sdk.util.sumMultiBalanceOf(balances, tokenBalances);
   }
 
-  console.log(balances)
   return balances;
 };
