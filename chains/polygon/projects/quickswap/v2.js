@@ -16,7 +16,30 @@ const FACTORY = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
 /*==================================================
   TVL
   ==================================================*/
+  async function requery(results, block, abi, times = 2){
+    for(let i=0; i<times; i++){
+      await requeryOnce(results, block, abi)
+    }
+  }
+
+  async function requeryOnce(results, block, abi){
+    if(results.some(r=>!r.success)){
+      const failed = results.map((r,i)=>[r,i]).filter(r=>!r[0].success);
+      const newResults = await sdk.api.abi
+      .multiCall({
+        abi,
+        chain: 'polygon',
+        calls: failed.map((f) => f[0].input),
+        block,
+      }).then(({ output }) => output);
+      failed.forEach((f, i)=>{
+        results[f[1]] = newResults[i]
+      })
+    }
+  }
+
 module.exports = async function tvl(_, block) {
+  //block = 23346577;
   let supportedTokens = await (
     sdk
       .api
@@ -51,7 +74,7 @@ module.exports = async function tvl(_, block) {
     })),
     block
   })).output
-
+  await requery(pairs, block, factoryAbi.allPairs);
   pairAddresses = pairs.map(result => result.output.toLowerCase())
   const [token0Addresses, token1Addresses] = await Promise.all([
     (
@@ -81,24 +104,28 @@ module.exports = async function tvl(_, block) {
         })
     ).output,
   ]);
+  await requery(token0Addresses, block, token0);
+  await requery(token1Addresses, block, token1);
+
 
   const tokenPairs = {}
   // add token0Addresses
   token0Addresses.forEach((token0Address, i) => {
+    // if we support the token0 in sdk
     if (supportedTokens.includes(token0Address.output.toLowerCase())) {
+      // get the pool address for this token
       const pairAddress = pairAddresses[i]
+      // pool address gets object { token0Address: "address" }
       tokenPairs[pairAddress] = {
         token0Address: token0Address.output.toLowerCase(),
       }
     }
-  })
-
-  // add token1Addresses
+  })// add token1Addresses
   token1Addresses.forEach((token1Address, i) => {
     if (supportedTokens.includes(token1Address.output.toLowerCase())) {
       const pairAddress = pairAddresses[i]
       tokenPairs[pairAddress] = {
-        ...(pairs[pairAddress] || {}),
+        ...(tokenPairs[pairAddress] || {}),
         token1Address: token1Address.output.toLowerCase(),
       }
     }
@@ -123,7 +150,7 @@ module.exports = async function tvl(_, block) {
   }
 
   // break into call chunks bc this gets huge fast
-  const chunk = 2500;
+  const chunk = 2400;
   let balanceCallChunks = [];
   for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
     balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
@@ -142,8 +169,10 @@ module.exports = async function tvl(_, block) {
         block,
         chain: 'polygon'
       }));
-    sdk.util.sumMultiBalanceOf(balances, tokenBalances)
+    await requery(tokenBalances.output, block, 'erc20:balanceOf');
+    sdk.util.sumMultiBalanceOf(balances, tokenBalances);
   }
 
+  console.log(balances)
   return balances;
 };
