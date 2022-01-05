@@ -40,6 +40,18 @@ const FACTORY = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
   }
 
 module.exports = async function tvl(_, block) {
+  let supportedTokens = await (sdk
+      .api
+      .util
+      .supportedTokens()
+      .then((supportedTokens) => supportedTokens.map((token) => {
+        if (token.platforms && token.platforms['polygon-pos']) {
+          return token.platforms['polygon-pos'];
+        }
+      }))
+  );
+  supportedTokens = supportedTokens.filter(token => token)
+
   let pairAddresses;
 
   const pairLength = (await sdk.api.abi.call({
@@ -121,7 +133,7 @@ module.exports = async function tvl(_, block) {
     }
   });
 
-  const balances = reserves.reduce((accumulator, reserve, i) => {
+  let balances = reserves.reduce((accumulator, reserve, i) => {
     const pairAddress = reserve.input.target.toLowerCase();
     const pair = pairs[pairAddress] || {};
 
@@ -157,5 +169,12 @@ module.exports = async function tvl(_, block) {
     return accumulator
   }, {})
 
+  for(let balance in balances){
+    if (!supportedTokens.includes(balance))
+    {
+      delete balances[balance];
+    }
+  }
+  console.log(balances)
   return balances;
 };
