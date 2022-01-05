@@ -39,6 +39,12 @@ const TBTC_data = {
   start: 12146825,
   isFPool: true
 }
+const TBTCv2_data = {
+  version: 2,
+  addr: '0xc3280306b6218031E61752d060b091278d45c329',
+  start: 13460377,
+  isFPool: true
+}
 const BUSD_data = {
   version: 2,
   addr: '0xfE842e95f8911dcc21c943a1dAA4bd641a1381c6',
@@ -51,8 +57,25 @@ const GUSD_data = {
   start: 12146825,
   isFPool: true
 }
-
-const fPools = [HBTC_data, TBTC_data, BUSD_data, GUSD_data];
+const alUSD_data = {
+  version: 2,
+  addr: '0x4eaa01974b6594c0ee62ffd7fee56cf11e6af936',
+  start: 12806795,
+  isFPool: true
+}
+const RAI_data = {
+  version: 2,
+  addr: '0x36F944B7312EAc89381BD78326Df9C84691D8A5B',
+  start: 13643595,
+  isFPool: true
+}
+const FEI_data = {
+  version: 2,
+  addr: '0x2F1423D27f9B20058d9D1843E342726fDF985Eb4',
+  start: 13682060,
+  isFPool: true
+}
+const fPools = [HBTC_data, TBTC_data, TBTCv2_data, BUSD_data, GUSD_data, alUSD_data, RAI_data, FEI_data];
 
 /*==================================================
 Main
