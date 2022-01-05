@@ -175,6 +175,5 @@ module.exports = async function tvl(_, block) {
       delete balances[balance];
     }
   }
-  console.log(balances)
   return balances;
 };
