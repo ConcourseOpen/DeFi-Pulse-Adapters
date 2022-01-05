@@ -3,11 +3,34 @@ const factoryAbi = require("./abis/factory.json");
 const token0 = require("./abis/token0.json");
 const token1 = require("./abis/token1.json");
 const assert = require("assert");
+const getReserves = require("./abis/getReserves.json");
+const BigNumber = require("bignumber.js");
 const FACTORY = '0xe7fb3e833efe5f9c441105eb65ef8b261266423b';
 
+async function requery(results, block, abi, times = 2){
+  for(let i=0; i<times; i++){
+    await requeryOnce(results, block, abi)
+  }
+}
+
+async function requeryOnce(results, block, abi){
+  if(results.some(r=>!r.success)){
+    const failed = results.map((r,i)=>[r,i]).filter(r=>!r[0].success);
+    const newResults = await sdk.api.abi
+      .multiCall({
+        abi,
+        chain: 'polygon',
+        calls: failed.map((f) => f[0].input),
+        block,
+      }).then(({ output }) => output);
+    failed.forEach((f, i)=>{
+      results[f[1]] = newResults[i]
+    })
+  }
+}
+
 async function tvl(timestamp, block) {
-  let supportedTokens = await (
-    sdk
+  let supportedTokens = await (sdk
       .api
       .util
       .supportedTokens()
@@ -27,11 +50,11 @@ async function tvl(timestamp, block) {
     chain: 'polygon',
     block
   })).output
-  if (pairLength === null) {
+  if(pairLength === null){
     throw new Error("allPairsLength() failed")
   }
   const pairNums = Array.from(Array(Number(pairLength)).keys());
-  const pairs = (await sdk.api.abi.multiCall({
+  const pools = (await sdk.api.abi.multiCall({
     abi: factoryAbi.allPairs,
     chain: 'polygon',
     calls: pairNums.map(num => ({
@@ -40,106 +63,113 @@ async function tvl(timestamp, block) {
     })),
     block
   })).output
+  await requery(pools, block, factoryAbi.allPairs);
+  pairAddresses = pools.map(result => result.output.toLowerCase())
 
-  pairAddresses = pairs.map(result => result.output.toLowerCase())
-  const [token0Addresses, token1Addresses] = await Promise.all([
-    (
-      await sdk
-        .api
-        .abi
-        .multiCall({
-          abi: token0,
-          calls: pairAddresses.map((pairAddress) => ({
-            target: pairAddress,
-          })),
-          block,
-          chain: 'polygon'
-        })
-    ).output,
-    (
-      await sdk
-        .api
-        .abi
-        .multiCall({
-          abi: token1,
-          calls: pairAddresses.map((pairAddress) => ({
-            target: pairAddress,
-          })),
-          block,
-          chain: 'polygon'
-        })
-    ).output,
+
+  const [token0Addresses, token1Addresses, reserves] = await Promise.all([
+    sdk.api.abi
+      .multiCall({
+        abi: token0,
+        chain: 'polygon',
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      })
+      .then(({ output }) => output),
+    sdk.api.abi
+      .multiCall({
+        abi: token1,
+        chain: 'polygon',
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      })
+      .then(({ output }) => output),
+    sdk.api.abi
+      .multiCall({
+        abi: getReserves,
+        chain: 'polygon',
+        calls: pairAddresses.map((pairAddress) => ({
+          target: pairAddress,
+        })),
+        block,
+      }).then(({ output }) => output),
   ]);
+  await requery(token0Addresses, block, token0);
+  await requery(token1Addresses, block, token1);
+  await requery(reserves, block, getReserves);
 
-  const tokenPairs = {}
-// add token0Addresses
-  token0Addresses.forEach((token0Address, i) => {
-    if (supportedTokens.includes(token0Address.output.toLowerCase())) {
-      const pairAddress = pairAddresses[i]
-      tokenPairs[pairAddress] = {
-        token0Address: token0Address.output.toLowerCase(),
+  const pairs = {};
+  // add token0Addresses
+  token0Addresses.forEach((token0Address) => {
+    const tokenAddress = token0Address.output.toLowerCase();
+
+    const pairAddress = token0Address.input.target.toLowerCase();
+    pairs[pairAddress] = {
+      token0Address: tokenAddress,
+    }
+  });
+
+  // add token1Addresses
+  token1Addresses.forEach((token1Address) => {
+    const tokenAddress = token1Address.output.toLowerCase();
+    const pairAddress = token1Address.input.target.toLowerCase();
+    pairs[pairAddress] = {
+      ...(pairs[pairAddress] || {}),
+      token1Address: tokenAddress,
+    }
+  });
+
+  let balances = reserves.reduce((accumulator, reserve, i) => {
+    const pairAddress = reserve.input.target.toLowerCase();
+    const pair = pairs[pairAddress] || {};
+
+    // handle reserve0
+    if (pair.token0Address) {
+      const reserve0 = new BigNumber(reserve.output['0']);
+      if (!reserve0.isZero()) {
+        const existingBalance = new BigNumber(
+          accumulator[pair.token0Address] || '0'
+        );
+
+        accumulator[pair.token0Address] = existingBalance
+          .plus(reserve0)
+          .toFixed()
       }
     }
-  })
 
-// add token1Addresses
-  token1Addresses.forEach((token1Address, i) => {
-    if (supportedTokens.includes(token1Address.output.toLowerCase())) {
-      const pairAddress = pairAddresses[i]
-      tokenPairs[pairAddress] = {
-        ...(tokenPairs[pairAddress] || {}),
-        token1Address: token1Address.output.toLowerCase(),
+    // handle reserve1
+    if (pair.token1Address) {
+      const reserve1 = new BigNumber(reserve.output['1']);
+
+      if (!reserve1.isZero()) {
+        const existingBalance = new BigNumber(
+          accumulator[pair.token1Address] || '0'
+        );
+
+        accumulator[pair.token1Address] = existingBalance
+          .plus(reserve1)
+          .toFixed()
       }
     }
-  })
 
-  let balanceCalls = [];
+    return accumulator
+  }, {})
 
-  for (let pair of Object.keys(tokenPairs)) {
-    if (tokenPairs[pair].token0Address) {
-      balanceCalls.push({
-        target: tokenPairs[pair].token0Address,
-        params: pair,
-      })
-    }
-
-    if (tokenPairs[pair].token1Address) {
-      balanceCalls.push({
-        target: tokenPairs[pair].token1Address,
-        params: pair,
-      })
+  for(let balance in balances){
+    if (!supportedTokens.includes(balance))
+    {
+      delete balances[balance];
     }
   }
-
-// break into call chunks bc this gets huge fast
-//   const chunk = 2500;
-//   let balanceCallChunks = [];
-//   for (let i = 0, j = balanceCalls.length, count = 0; i < j; i += chunk, count++) {
-//     balanceCallChunks[count] = balanceCalls.slice(i, i + chunk);
-//   }
-//   assert.equal(balanceCalls.length, balanceCallChunks
-//     .map(arr => arr.length)
-//     .reduce((accumulator, value) => {
-//       return accumulator + value
-//     }, 0))
-  let tokenBalances, balances = {};
-//   for (let balanceCall of balanceCallChunks) {
-    tokenBalances = (
-      await sdk.api.abi.multiCall({
-        abi: 'erc20:balanceOf',
-        calls: balanceCalls,
-        block,
-        chain: 'polygon'
-      }));
-    sdk.util.sumMultiBalanceOf(balances, tokenBalances)
-  // }
-
   if (Object.keys(balances).length === 0) {
     balances = {
       '0x0000000000000000000000000000000000000000' : 0
     }
   }
-  console.log(balances);
   return balances;
 }
 module.exports = {
