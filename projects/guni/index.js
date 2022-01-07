@@ -1,9 +1,10 @@
 const sdk = require('../../sdk');
 const abi = require("./abi.json");
+const BigNumber = require('bignumber.js');
 
 const G_UNI_Factory = "0xEA1aFf9dbFfD1580F6b81A3ad3589E66652dB7D9";
 
-const tvl = async (timestamp, block, chainBlocks) => {
+const tvl = async (timestamp, block) => {
   const getAllDeplores = (
     await sdk.api.abi.call({
       abi: abi.getDeployers,
@@ -55,13 +56,13 @@ const tvl = async (timestamp, block, chainBlocks) => {
     })
   ).output.map((bal) => bal.output);
   
-  let balanceArray = [];
+  let balances = {};
   for (let i = 0; i < allGelatoPools.length; i++) {
-    balanceArray.push(balanceOfPools[i].amount0Current, token0[i]);
-    balanceArray.push(balanceOfPools[i].amount1Current, token1[i]);
+    balances[token0[i]] = BigNumber(balances[token0[i]] || 0).plus(balanceOfPools[i].amount0Current).toFixed();
+    balances[token1[i]] = BigNumber(balances[token1[i]] || 0).plus(balanceOfPools[i].amount1Current).toFixed();
   }
 
-  return sdk.util.sum(balanceArray)
+  return balances;
 }
 
 module.exports = {
