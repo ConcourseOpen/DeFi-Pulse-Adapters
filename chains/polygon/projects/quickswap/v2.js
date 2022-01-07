@@ -1,35 +1,45 @@
-const sdk = require("../../../../sdk");
-const factoryAbi = require("./abis/factory.json");
-const token0 = require("./abis/token0.json");
-const token1 = require("./abis/token1.json");
-const assert = require("assert");
-const getReserves = require("./abis/getReserves.json");
-const BigNumber = require("bignumber.js");
-const FACTORY = '0xe7fb3e833efe5f9c441105eb65ef8b261266423b';
+/*==================================================
+  Modules
+  ==================================================*/
+const sdk = require('../../../../sdk');
+const assert = require('assert');
+const factoryAbi = require('./abis/factory.json');
+const token0 = require('./abis/token0.json');
+const token1 = require('./abis/token1.json');
+const BigNumber = require('bignumber.js');
+const getReserves = require('./abis/getReserves.json');
+/*==================================================
+  Settings
+  ==================================================*/
+const START_BLOCK = 4931780;
+const FACTORY = '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32';
 
-async function requery(results, block, abi, times = 2){
-  for(let i=0; i<times; i++){
-    await requeryOnce(results, block, abi)
+/*==================================================
+  TVL
+  ==================================================*/
+  async function requery(results, block, abi, times = 2){
+    for(let i=0; i<times; i++){
+      await requeryOnce(results, block, abi)
+    }
   }
-}
 
-async function requeryOnce(results, block, abi){
-  if(results.some(r=>!r.success)){
-    const failed = results.map((r,i)=>[r,i]).filter(r=>!r[0].success);
-    const newResults = await sdk.api.abi
+  async function requeryOnce(results, block, abi){
+    if(results.some(r=>!r.success)){
+      const failed = results.map((r,i)=>[r,i]).filter(r=>!r[0].success);
+      const newResults = await sdk.api.abi
       .multiCall({
         abi,
         chain: 'polygon',
         calls: failed.map((f) => f[0].input),
         block,
       }).then(({ output }) => output);
-    failed.forEach((f, i)=>{
-      results[f[1]] = newResults[i]
-    })
+      failed.forEach((f, i)=>{
+        results[f[1]] = newResults[i]
+      })
+    }
   }
-}
 
-async function tvl(timestamp, block) {
+module.exports = async function tvl(_, block) {
   let supportedTokens = await (sdk
       .api
       .util
@@ -165,20 +175,5 @@ async function tvl(timestamp, block) {
       delete balances[balance];
     }
   }
-  if (Object.keys(balances).length === 0) {
-    balances = {
-      '0x0000000000000000000000000000000000000000' : 0
-    }
-  }
   return balances;
-}
-module.exports = {
-  /* Project Metadata */
-  name: 'Dfyn Network',
-  token: "DFYN",
-  chain: 'polygon',
-  category: 'DEXes',
-  start: 1602374400, // @ october 10 2020
-  /*fetching token balances */
-  tvl
 };

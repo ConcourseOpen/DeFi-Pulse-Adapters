@@ -3,7 +3,7 @@ module.exports = {
   name: "Crypto Volatility Index_Polygon",
   website: "https://cvi.finance/",
   token: "GOVI",
-  chain: "polygon",
+  chain: "Polygon",
   category: "Derivatives",
   start: 1622352129,
   /* required for fetching token balances */
