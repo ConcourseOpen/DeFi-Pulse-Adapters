@@ -11,11 +11,7 @@ module.exports = {
   /* Project Metadata */
   name: "Clipper",
   token: null,
-<<<<<<< HEAD
-  category: "DEX/AMM",
-=======
   category: "DEXes",
->>>>>>> 76bf44061a96535ca451857abd2418e9131fb4b2
   start: 1624383620, // Unix timestamp (utc 0) specifying when the project began, or where live data begins
   chain: "ethereum",
 
