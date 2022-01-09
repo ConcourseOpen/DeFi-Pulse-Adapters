@@ -2,12 +2,13 @@ const BigNumber = require('bignumber.js')
 
 const v1TVL = require('./convexity');
 const v2TVL = require('./gamma');
+const squeethTVL = require('./squeeth');
 
 const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase();
 
 async function tvl(timestamp, block) {
-  const [v1, v2] = await Promise.all([v1TVL(timestamp, block), v2TVL(timestamp, block)]);
+  const [v1, v2, squeeth] = await Promise.all([v1TVL(timestamp, block), v2TVL(timestamp, block), squeethTVL(timestamp, block)]);
 
   // replace WETH with ETH for Gamma(v2)
   v2[ETH] = v2[WETH];
@@ -21,7 +22,8 @@ async function tvl(timestamp, block) {
       .reduce((accumulator, tokenAddress) => {
         const v1Balance = new BigNumber(v1[tokenAddress] || '0');
         const v2Balance = new BigNumber(v2[tokenAddress] || '0');
-        accumulator[tokenAddress] = v1Balance.plus(v2Balance).toFixed();
+        const squeethBalance = new BigNumber(squeeth[tokenAddress] || '0');
+        accumulator[tokenAddress] = v1Balance.plus(v2Balance).plus(squeethBalance).toFixed();
 
         return accumulator
       }, {})
