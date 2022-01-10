@@ -10,10 +10,10 @@ const BigNumber = require('bignumber.js');
   Settings
 ==================================================*/
 
-const START_BLOCK = 13944813;
+const START_BLOCK = 13977497;
 const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
 
-const controller = "0x4c1fd946a082d26b40154eabd12f7a15a0cb3020";
+const controller = "0x0344f8706947321fa87881d3dad0eb1b8c65e732".toLowerCase();
 
 /*==================================================
   TVL
