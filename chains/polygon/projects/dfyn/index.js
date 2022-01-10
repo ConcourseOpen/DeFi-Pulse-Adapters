@@ -178,7 +178,7 @@ module.exports = {
   token: "DFYN",
   chain: 'polygon',
   category: 'DEXes',
-  start: 1602073800, // @ october 10 2020
+  start: 1602374400, // @ october 10 2020
   /*fetching token balances */
   tvl
 };
