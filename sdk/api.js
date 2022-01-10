@@ -281,47 +281,6 @@ module.exports = {
         chunk: { param: 'targets', length: 1000, combine: 'balances' },
       }),
     },
-    util: {
-      getLogs: (options) => util('getLogs', { ...options }),
-      supportedTokens: () => util('supportedTokens'),
-      tokenList: () => util('tokenList'),
-      kyberTokens: () => util('kyberTokens'),
-      getEthCallCount: () => util('getEthCallCount'),
-      resetEthCallCount: () => util('resetEthCallCount'),
-      toSymbols: (data, chain = null) => util('toSymbols', { data, chain }),
-      unwrap: (options) => util('unwrap', { ...options }),
-      lookupBlock: _lookupBlock,
-      /**
-       *
-       * @param {Number} block
-       * @param {Number} timestamp
-       * @param {Object} project
-       * @param {Object} tokenBalanceMap
-       * @returns {Promise<*>}
-       */
-      testAdapter: ((block, timestamp, project, tokenBalanceMap) => {
-        return _testAdapter(block, timestamp, project, tokenBalanceMap);
-      }),
-      /**
-       *
-       * @param {Number} timestamp
-       * @param {String} depositor
-       * @returns {Promise<*>}
-       */
-      testStakingAdapter: ((timestamp, depositor) => {
-        return _testStakingAdapter(timestamp, depositor);
-      }),
-      /**
-       *
-       */
-      isCallable: _isCallable,
-      /**
-       *
-       * @param {String} str
-       * @returns {boolean}
-       */
-      isString: (str) => typeof str === 'string',
-    },
     aave: {
       getAssetsLocked: (options) => aave('getAssetsLocked', {
         ...options,
@@ -338,7 +297,7 @@ module.exports = {
     resetEthCallCount: () => util('resetEthCallCount'),
     toSymbols: (data, chain = null) => util('toSymbols', { data, chain }),
     unwrap: (options) => util('unwrap', { ...options }),
-    lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
+    lookupBlock: _lookupBlock,
     /**
      *
      * @param {Number} block
