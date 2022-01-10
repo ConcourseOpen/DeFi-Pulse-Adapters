@@ -18,10 +18,18 @@ async function tvl(timestamp, block) {
   // replace WETH with ETH for v3
   v3[ETH] = v3[WETH];
   delete v3[WETH];
+  const supportedTokens = await (
+    sdk
+      .api
+      .util
+      .tokenList()
+      .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
+  );
 
   const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)).concat(Object.keys(v3)));
 
-  return (
+
+  let balances =  (
     Array
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
@@ -33,11 +41,19 @@ async function tvl(timestamp, block) {
         return accumulator
       }, {})
   );
+  for(let balance in balances){
+    if (!supportedTokens.includes(balance))
+    {
+      delete balances[balance];
+    }
+  }
+  return balances;
 }
 
 module.exports = {
   name: 'Uniswap',
   token: null,
+  chain: 'ethereum',
   category: 'DEXes',
   start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
   tvl,
