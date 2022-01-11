@@ -13,7 +13,7 @@ const BigNumber = require('bignumber.js');
 const START_BLOCK = 13977497;
 const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
 
-const controller = "0x0344f8706947321fa87881d3dad0eb1b8c65e732".toLowerCase();
+const controller = "0x64187ae08781B09368e6253F9E94951243A493D5".toLowerCase();
 
 /*==================================================
   TVL
