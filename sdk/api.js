@@ -297,7 +297,7 @@ module.exports = {
     resetEthCallCount: () => util('resetEthCallCount'),
     toSymbols: (data, chain = null) => util('toSymbols', { data, chain }),
     unwrap: (options) => util('unwrap', { ...options }),
-    lookupBlock: _lookupBlock,
+    lookupBlock: (timestamp) => util('lookupBlock', { timestamp }),
     /**
      *
      * @param {Number} block
