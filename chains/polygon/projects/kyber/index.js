@@ -173,7 +173,7 @@ async function tvl(timestamp, block) {
       '0x0000000000000000000000000000000000000000' : 0
     }
   }
-  console.log(balances)
+  
   return balances;
 }
 
