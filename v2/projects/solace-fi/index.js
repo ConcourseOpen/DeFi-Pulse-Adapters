@@ -17,7 +17,6 @@ const ADDRESS = {
   USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   WBTC: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
   USDT: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-  SOLACE_USDC_SLP: "0x9C051F8A6648a51eF324D30C235da74D060153aC",
   // Vault (V1 underwriting pool, in process of being deprecated)
   SOLACE_SCP_VAULT_V1: "0x501AcEe83a6f269B77c167c6701843D454E2EFA0",
   // Solace DAI Bond Teller (SBT), users deposit DAI and receive vested SOLACE or xSOLACE
@@ -59,11 +58,6 @@ module.exports = {
       checkNativeBalance: true,
     },
     {
-      tokens: ADDRESS.XSOLACE,
-      holders: [ADDRESS.SOLACE_DAI_BOND_SBT, ADDRESS.SOLACE_ETH_BOND_SBT],
-      checkNativeBalance: true,
-    },
-    {
       tokens: ADDRESS.DAI,
       holders: [
         ADDRESS.SOLACE_UNDERWRITTING_POOL_V2,
@@ -84,14 +78,6 @@ module.exports = {
       holders: [
         ADDRESS.SOLACE_UNDERWRITTING_POOL_V2,
         ADDRESS.SOLACE_USDC_BOND_SBT,
-      ],
-      checkNativeBalance: true,
-    },
-    {
-      tokens: ADDRESS.SOLACE_USDC_SLP,
-      holders: [
-        ADDRESS.SOLACE_UNDERWRITTING_POOL_V2,
-        ADDRESS.SOLACE_SOLACE_USDC_BOND_SBT,
       ],
       checkNativeBalance: true,
     },
