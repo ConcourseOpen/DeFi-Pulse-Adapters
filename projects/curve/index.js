@@ -366,4 +366,5 @@ module.exports = {
   category: "DEXes",
   start: 1581138000, // 03/01/2020 @ 5:54pm UTC
   tvl,
+  chain: 'Multichain,Ethereum-Arbitrum'
 };

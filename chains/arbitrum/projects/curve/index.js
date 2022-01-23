@@ -1,6 +1,6 @@
 module.exports = {
     /* Project Metadata */
-    name: "Curve_Arbitrum",
+    name: "Curve Finance_Arbitrum",
     token: "CRV",
     chain: 'arbitrum',
     category: "DEXes",
@@ -55,4 +55,3 @@ module.exports = {
       },
     ]
   };
-  
