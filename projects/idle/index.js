@@ -272,7 +272,7 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   tvl,
-  token: null,
+  token: "IDLE",
   start: 1605817213,
   name: 'Idle Finance',
   category: 'lending',
