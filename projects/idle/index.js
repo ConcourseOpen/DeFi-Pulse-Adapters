@@ -3,6 +3,7 @@ const BigNumber = require('bignumber.js');
 const COMP_abi = require('./abis/COMP.json');
 const IdleTokenV4 = require('./abis/IdleTokenV4.json');
 const IdleTokenV3 = require('./abis/IdleTokenV3.json');
+const IdleCDO= require('./abis/IdleCDO.json');
 
 const BNify = n => new BigNumber(n);
 const web3Call = async (block,target,abi,params=null) => {
@@ -16,7 +17,36 @@ const web3Call = async (block,target,abi,params=null) => {
 }
 
 // Idle tokens info
+const tranches={
+  idleDAICDO: {
+    abi: IdleCDO,
+    underlyingToken:'DAI',
+    address: '0xd0DbcD556cA22d3f3c142e9a3220053FD7a247BC'
+  },
+  idleFEICDO: {
+    abi: IdleCDO,
+    underlyingToken:'FEI',
+    address: '0x77648a2661687ef3b05214d824503f6717311596'
+  },
+  
+}
 const contracts = {
+
+  idleWETHYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'WETH',
+    address: '0xC8E6CA6E96a326dC448307A5fDE90a0b21fd7f80',
+  },
+  idleRAIYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'RAI',
+    address: '0x5C960a3DCC01BE8a0f49c02A8ceBCAcf5D07fABe',
+  },
+  idleFEIYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'FEI',
+    address: '0xb2d5CB72A621493fe83C6885E4A776279be595bC',
+  },
   idleDAIYieldV4:{
     abi:IdleTokenV4,
     underlyingToken:'DAI',
@@ -111,6 +141,19 @@ const contracts = {
 
 // Underlying tokens contracts
 const underlyingTokens = {
+
+  FEI: {
+    decimals: 18,
+    address: '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
+  },
+  RAI: {
+    decimals: 18,
+    address: '0x03ab458634910aad20ef5f1c8ee96f1d6ac54919',
+  },
+  WETH: {
+    decimals: 18,
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  },
   DAI: {
     decimals:18,
     address:'0x6b175474e89094c44da98b954eedeac495271d0f',
@@ -146,6 +189,7 @@ async function tvl(timestamp, block) {
   const calls = [];
 
   Object.keys(contracts).forEach( (contractName) => {
+    
     const call = new Promise( async (resolve, reject) => {
 
       const tokenBalances = {};
@@ -193,6 +237,23 @@ async function tvl(timestamp, block) {
     calls.push(call);
   });
 
+  Object.keys(tranches).forEach((trancheName) => {
+    const call = new Promise( async (resolve, reject) => {
+      const tokenBalances={};
+      const contractInfo= tranches[trancheName]
+      const tokenDecimals=underlyingTokens[contractInfo.underlyingToken].decimals;
+      const underlyingTokenAddr=underlyingTokens[contractInfo.underlyingToken].address;
+      let contractValue= await web3Call(block,contractInfo.address,contractInfo.abi.getContractValue);
+      if(contractValue)
+      {
+        let tokenTVL=BNify(contractValue);
+        tokenBalances[underlyingTokenAddr] = tokenTVL;
+      }
+      resolve(tokenBalances)
+    });
+    calls.push(call)
+  });
+
   const balances = {};
   const tokensBalances = await Promise.all(calls);
 
@@ -211,9 +272,9 @@ async function tvl(timestamp, block) {
 
 module.exports = {
   tvl,
-  token: "IDLE",
+  token: null,
   start: 1605817213,
   name: 'Idle Finance',
-  category: 'Lending',
+  category: 'lending',
   website: 'https://idle.finance'
 };
