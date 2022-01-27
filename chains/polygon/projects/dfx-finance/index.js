@@ -1,6 +1,6 @@
 module.exports = {
   /* Project Metadata */
-  name: "DFX Finance",
+  name: "DFX Finance_Polygon",
   token: "DFX",
   chain: "polygon",
   category: "DEXes",
