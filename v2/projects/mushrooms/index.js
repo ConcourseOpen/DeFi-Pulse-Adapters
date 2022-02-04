@@ -54,40 +54,12 @@ async function tvl(timestamp, block) {
   return balances;
 }
 
-
-async function getTokenHolderMap() {
-  let tokenHolderMap = [
-    {
-      tokens: [],
-      holders: [],
-    },
-  ];
-  const vaultsInfo = await fetchVaultsInfo();
-  vaultsInfo.map(info => tokenHolderMap.tokens.push(info.token));
-  vaultsInfo.map(info => tokenHolderMap.holders.push(info.vault_address));
-  return tokenHolderMap;
-}
-
-async function getTokens() {
-  return await getTokenHolderMap().tokens;
-}
-
-async function getHolders() {
-  return await getTokenHolderMap().holders;
-}
-
 module.exports = {
     /* Project Metadata */
     name: 'Mushrooms Finance', // project name
     token: "MM",              // null, or token symbol if project has a custom token
     category: 'Assets',       // allowed values as shown on DefiPulse: 'Derivatives', 'DEXes', 'Lending', 'Payments', 'Assets'
     start: 1604160000,        // unix timestamp (utc 0) specifying when the project began, or where live data begins
-    tokenHolderMap: [
-      {
-        tokens: async () => await getTokens(),
-        holders: async () => await getHolders(),
-      },
-    ],
     tvl,
   };
 
