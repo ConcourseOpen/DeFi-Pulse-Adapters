@@ -213,7 +213,7 @@ module.exports = {
     website: 'https://app.barnbridge.com',
     token: 'BOND',
     category: 'Derivatives',
-    chain: 'ethereum',
+    chain: 'Multichain,Ethereum-Polygon',
     start: 1615664559, // Mar-24-2021 02:17:40 PM +UTC,
     tvl,
 };

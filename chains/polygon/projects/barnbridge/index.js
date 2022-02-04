@@ -190,7 +190,7 @@ async function tvl(timestamp, ethBlock) {
   Metadata
 ==================================================*/
 module.exports = {
-    name: 'BarnBridge',
+    name: 'BarnBridge_Polygon',
     website: 'https://app.barnbridge.com',
     token: 'BOND',
     category: 'Derivatives',
