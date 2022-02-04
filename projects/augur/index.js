@@ -9,10 +9,11 @@ const sdk = require('../../sdk');
   ==================================================*/
 
 async function tvl(timestamp, block) {
-  let getBalance = await sdk.api.eth.getBalance({target: '0xd5524179cB7AE012f5B642C1D6D700Bbaa76B96b', block});
+  let getBalance = await sdk.api.eth.getBalance({target: '0xd5524179cb7ae012f5b642c1d6d700bbaa76b96b', block});
 
+  console.log(getBalance.output);
   return {
-    '0x0000000000000000000000000000000000000000': getBalance.output
+    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': getBalance.output
   };
 }
 
