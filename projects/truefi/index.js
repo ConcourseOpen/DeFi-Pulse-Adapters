@@ -108,7 +108,7 @@ async function tvl(timestamp, block) {
   balances[TRU] = truTVL.output;
 
   const managedPortfoliosBalances = await getTvlForManagedPortfolios(block)
-  Object.keys(managedPortfoliosBalances).map(token => balances[token] = managedPortfoliosBalances[token].add(balances[token]))
+  managedPortfoliosBalances.forEach(token => balances[token] = managedPortfoliosBalances[token].add(balances[token]))
 
   return balances;
 }
