@@ -18,25 +18,33 @@ const managedPortfolioFactory = '0x17b7b75FD4288197cFd99D20e13B0dD9da1FF3E7';
 
 async function getTvlForManagedPortfolios(block) {
   if (block < 14043986) {
-    return 0
+    return {}
   }
-  const portfolios = await sdk.api.abi.call({
-    target: managedPortfolioFactory,
-    abi: managedPortfolioFactoryAbi['getPortfolios'],
-    block
-  });
+  let portfolios = []
+  try{
+    portfolios = await sdk.api.abi.call({
+      target: managedPortfolioFactory,
+      abi: managedPortfolioFactoryAbi['getPortfolios'],
+      block
+    });
+  } catch (e) { return {} }
   const portfoliosBalances = {};
   for (let i = 0; i < portfolios.length; i++) {
-    const value = await sdk.api.abi.call({
-      target: portfolios[i],
-      abi: managedPortfolioAbi['value'],
-      block
-    });
-    const underlyingToken = await sdk.api.abi.call({
-      target: portfolios[i],
-      abi: managedPortfolioAbi['underlyingToken'],
-      block
-    });
+    let value;
+    let underlyingToken;
+    try {
+        value = await sdk.api.abi.call({
+        target: portfolios[i],
+        abi: managedPortfolioAbi['value'],
+        block
+      });
+      underlyingToken = await sdk.api.abi.call({
+        target: portfolios[i],
+        abi: managedPortfolioAbi['underlyingToken'],
+        block
+      });
+    } catch (e) { break; }
+
     if (!portfoliosBalances[underlyingToken]) {
       portfoliosBalances[underlyingToken] = []
     }
