@@ -22,27 +22,27 @@ async function getTvlForManagedPortfolios(block) {
   }
   let portfolios = []
   try {
-    portfolios = await sdk.api.abi.call({
+    portfolios = (await sdk.api.abi.call({
       target: managedPortfolioFactory,
       abi: managedPortfolioFactoryAbi['getPortfolios'],
       block
-    });
+    })).output;
   } catch (e) { return {} }
   const portfoliosBalances = {};
   for (let i = 0; i < portfolios.length; i++) {
     let value;
     let underlyingToken;
     try {
-      value = await sdk.api.abi.call({
+      value = (await sdk.api.abi.call({
         target: portfolios[i],
         abi: managedPortfolioAbi['value'],
         block
-      });
-      underlyingToken = await sdk.api.abi.call({
+      })).output;
+      underlyingToken = (await sdk.api.abi.call({
         target: portfolios[i],
         abi: managedPortfolioAbi['underlyingToken'],
         block
-      });
+      })).output;
     } catch (e) { break; }
 
     if (!portfoliosBalances[underlyingToken]) {
@@ -108,7 +108,7 @@ async function tvl(timestamp, block) {
   balances[TRU] = truTVL.output;
 
   const managedPortfoliosBalances = await getTvlForManagedPortfolios(block)
-  managedPortfoliosBalances.forEach(token => balances[token] = managedPortfoliosBalances[token].add(balances[token]))
+  Object.keys(managedPortfoliosBalances).map(token => balances[token] = managedPortfoliosBalances[token].add(balances[token]).toString())
 
   return balances;
 }
