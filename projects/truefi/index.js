@@ -21,7 +21,7 @@ async function getTvlForManagedPortfolios(block) {
     return {}
   }
   let portfolios = []
-  try{
+  try {
     portfolios = await sdk.api.abi.call({
       target: managedPortfolioFactory,
       abi: managedPortfolioFactoryAbi['getPortfolios'],
@@ -33,7 +33,7 @@ async function getTvlForManagedPortfolios(block) {
     let value;
     let underlyingToken;
     try {
-        value = await sdk.api.abi.call({
+      value = await sdk.api.abi.call({
         target: portfolios[i],
         abi: managedPortfolioAbi['value'],
         block
