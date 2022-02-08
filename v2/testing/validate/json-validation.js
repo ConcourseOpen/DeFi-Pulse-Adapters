@@ -27,39 +27,44 @@ _.each(args.projects, (projectAdapter) => {
         `Valid categories: ${categories.join(',')}`).to.be.oneOf(categories);
     });
 
-    describe('has valid tokenHolderMap configurations', () => {
-      it('tokenHolderMap is an array', () => {
-        chai.assert.isArray(projectAdapter.tokenHolderMap);
+    if (!projectAdapter.tokenHolderMap) {
+      it('has a tvl if tokenHolderMap is null', () => {
+        chai.assert(projectAdapter.tvl);
       });
+    } else {
+      describe('has valid tokenHolderMap configurations', () => {
+        it('tokenHolderMap is an array', () => {
+          chai.assert.isArray(projectAdapter.tokenHolderMap);
+        });
 
-      it('tokenHolderMap has valid token configurations', () => {
-        projectAdapter.tokenHolderMap.forEach((thm) => {
-          chai.expect(thm.tokens).to.satisfy((tokens) => {
-            if (sdk.api.util.isCallable(tokens)) {
-              return true;
-            } else if (sdk.api.util.isString(tokens) || Array.isArray(tokens)) {
-              return tokens.length > 0;
-            } else if (tokens.pullFromPools) {
-              return !!tokens.abi;
-            }
+        it('tokenHolderMap has valid token configurations', () => {
+          projectAdapter.tokenHolderMap.forEach((thm) => {
+            chai.expect(thm.tokens).to.satisfy((tokens) => {
+              if (sdk.api.util.isCallable(tokens)) {
+                return true;
+              } else if (sdk.api.util.isString(tokens) || Array.isArray(tokens)) {
+                return tokens.length > 0;
+              } else if (tokens.pullFromPools) {
+                return !!tokens.abi;
+              }
+            });
+          });
+        });
+
+        it('tokenHolderMap has valid holder/vault/pool configurations', () => {
+          projectAdapter.tokenHolderMap.forEach((thm) => {
+            chai.expect(thm.holders).to.satisfy((holders) => {
+              if (sdk.api.util.isCallable(holders)) {
+                return true;
+              } else if (sdk.api.util.isString(holders) || Array.isArray(holders)) {
+                return holders.length > 0;
+              } else if (holders.pullFromLogs) {
+                return !!holders.logConfig;
+              }
+            });
           });
         });
       });
-
-      it('tokenHolderMap has valid holder/vault/pool configurations', () => {
-        projectAdapter.tokenHolderMap.forEach((thm) => {
-          chai.expect(thm.holders).to.satisfy((holders) => {
-            if (sdk.api.util.isCallable(holders)) {
-              return true;
-            } else if (sdk.api.util.isString(holders) || Array.isArray(holders)) {
-              return holders.length > 0;
-            } else if (holders.pullFromLogs) {
-              return !!holders.logConfig;
-            }
-          });
-        });
-      });
-    });
-  });
+    }});
 });
 

@@ -14,13 +14,13 @@ async function GenerateCallList() {
   const markets = (await axios.get('https://mcdex.io/api/markets')).data.data.markets;
   const marketStatus = (await axios.get('https://mcdex.io/api/markets/status')).data.data;
   let id2Info = {};
-  _.forEach(markets, market => {
+  _.forEach(_.compact(markets), market => {
     const id = market.id;
     if (market.contractType === 'Perpetual') {
       id2Info[id] = { perpetualAddress: market.perpetualAddress };
     }
   });
-  _.forEach(marketStatus, status => {
+  _.forEach(_.compact(marketStatus), status => {
     const id = status.marketID;
     if (id2Info[id] && status.perpetualStorage && status.perpetualStorage.collateralTokenAddress !== '0x0000000000000000000000000000000000000000') {
       id2Info[id].collateralTokenAddress = status.perpetualStorage.collateralTokenAddress;
