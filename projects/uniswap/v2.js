@@ -20,7 +20,6 @@ async function requeryOnce(results, block, abi){
     const newResults = await sdk.api.abi
       .multiCall({
         abi,
-        chain: 'polygon',
         calls: failed.map((f) => f[0].input),
         block,
       }).then(({ output }) => output);
