@@ -1,0 +1,30 @@
+{
+  "tokenCount":{
+    "name":"tokenCount",
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "out"
+      }
+    ],
+    "inputs": [],
+    "constant": true,
+    "payable": false,
+    "type": "function"
+  },
+  "getTokenWithId":{
+    "name": "getTokenWithId",
+    "outputs":[{
+      "type":"address",
+      "name":"out"
+    }],
+    "inputs":[{
+      "type":"uint256",
+      "name":"token_id"
+    }],
+    "constant":true,
+    "payable":false,
+    "type":"function"
+  }
+}
+
