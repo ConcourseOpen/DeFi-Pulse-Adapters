@@ -260,7 +260,7 @@ async function cdp(endpoint, options) {
 module.exports = {
   abi: {
     call: (options) => abi('call', { ...options }),
-    multiCall: (options) => abi('multiCall', { ...options, chunk: { param: 'calls', length: 2000, combine: 'array' } }),
+    multiCall: (options) => abi('multiCall', { ...options, chunk: { param: 'calls', length: 1000, combine: 'array' } }),
   },
   cdp: {
     getAssetsLocked: (options) => cdp('getAssetsLocked', {
