@@ -11,16 +11,17 @@ const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase();
 async function tvl(timestamp, block) {
   console.log('Getting V1 data...')
   const v1 = await v1TVL(timestamp, block);
-  console.log(v1);
   console.log('V1 Data got');
+  console.log('Getting V2 data...');
+  const v2 = await v2TVL(timestamp, block);
+  console.log('V2 Data got');
   console.log('Getting V3 data...');
   const v3 = await v3TVL(timestamp, block);
-  console.log(v3)
   console.log('V3 Data got');
 
-  // // replace WETH with ETH for v2
-  // v2[ETH] = v2[WETH];
-  // delete v2[WETH];
+  // replace WETH with ETH for v2
+  v2[ETH] = v2[WETH];
+  delete v2[WETH];
 
   // replace WETH with ETH for v3
   v3[ETH] = v3[WETH];
@@ -33,7 +34,7 @@ async function tvl(timestamp, block) {
       .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
 
-  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v3)));
+  const tokenAddresses = new Set(Object.keys(v1).concat(Object.keys(v2)).concat(Object.keys(v3)));
 
 
   let balances =  (
@@ -41,9 +42,9 @@ async function tvl(timestamp, block) {
       .from(tokenAddresses)
       .reduce((accumulator, tokenAddress) => {
         const v1Balance = new BigNumber(v1[tokenAddress] || '0');
-        // const v2Balance = new BigNumber(v2[tokenAddress] || '0');
+        const v2Balance = new BigNumber(v2[tokenAddress] || '0');
         const v3Balance = new BigNumber(v3[tokenAddress] || '0');
-        accumulator[tokenAddress] = v1Balance.plus(v3Balance).toFixed();
+        accumulator[tokenAddress] = v1Balance.plus(v2Balance).plus(v3Balance).toFixed();
 
         return accumulator
       }, {})
