@@ -1,5 +1,6 @@
 const sdk = require('../../sdk');
 const BigNumber = require('bignumber.js');
+const factoryAbi = require("./abis/v1factory.json");
 
 const START_BLOCK = 6627917;
 const FACTORY = '0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95';
@@ -22,6 +23,33 @@ module.exports = async function tvl(timestamp, block) {
       fromBlock: START_BLOCK,
       topic: 'NewExchange(address,address)',
     })).output;
+  //
+  // const pairLength = (await sdk.api.abi.call({
+  //   target: FACTORY,
+  //   abi: factoryAbi.tokenCount,
+  //   block
+  // })).output;
+  //
+  // const pairNums = Array.from(Array(Number(pairLength)).keys());
+  // const tokens = (await sdk.api.abi.multiCall({
+  //   abi: factoryAbi.getToken,
+  //   calls: pairNums.map(num => ({
+  //     target: FACTORY,
+  //     params: [num]
+  //   })),
+  //   block
+  // })).output;
+  //
+  // const pools = (await sdk.api.abi.multiCall({
+  //   abi: factoryAbi.allPairs,
+  //   calls: pairNums.map(num => ({
+  //     target: FACTORY,
+  //     params: [num]
+  //   })),
+  //   block
+  // })).output
+  //
+  //
 
   const exchanges = {};
   logs.forEach((log) => {

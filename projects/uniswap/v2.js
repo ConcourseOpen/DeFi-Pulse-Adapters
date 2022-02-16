@@ -7,6 +7,7 @@ const getReserves = require('./abis/getReserves.json');
 const factoryAbi = require('./abis/factory.json');
 const START_BLOCK = 10000835;
 const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
+const v2pools = require('./univ2pools.json');
 
 async function requery(results, block, abi, times = 2){
   for(let i=0; i<times; i++){
@@ -29,7 +30,7 @@ async function requeryOnce(results, block, abi){
   }
 }
 
-module.exports = async function tvl(_, block) {
+module.exports = async function tvl(timestamp, block) {
   const supportedTokens = await (
     sdk
       .api
@@ -37,6 +38,30 @@ module.exports = async function tvl(_, block) {
       .tokenList()
       .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
   );
+  let calls=[];
+    for(pool of v2pools) {
+      if (block > pool.block) {
+        calls.push({
+          target: pool.tokens[0],
+          params: v2pools[pool]
+        });
+        calls.push({
+          target: v2pools[pool].tokens[1],
+          params: v2pools[pool]
+        });
+      }
+    }
+
+  const token1Balances = (
+    await sdk.api.abi
+      .multiCall({
+        abi: 'erc20:balanceOf',
+        calls: calls,
+        block,
+      })
+  ).output;
+
+
 
 
   const pairLength = (await sdk.api.abi.call({
