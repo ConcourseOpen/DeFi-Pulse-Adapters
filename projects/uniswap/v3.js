@@ -1,59 +1,78 @@
-const sdk = require('../../sdk');
-const BigNumber = require('bignumber.js');
-const v3pools = require('./univ3pools.json');
-const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
+const sdk = require('../../sdk')
 
-module.exports = async function tvl(timestamp, block) {
-  const supportedTokens = await (
-    sdk
-      .api
-      .util
-      .tokenList()
-      .then((supportedTokens) => supportedTokens.map(({ contract }) => contract.toLowerCase()))
-  );
+const START_BLOCK = 12369621
+const FACTORY = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 
-  let poolData = v3pools;
-  let tokenCalls = [];
+module.exports = async function tvl(_, block) {
+  const supportedTokens = await sdk.api.util
+    .tokenList()
+    .then((supportedTokens) => supportedTokens.map(({ contract }) => contract))
 
-  for (let exchange of Object.keys(poolData)) {
-    let exchangeData = poolData[exchange];
-    if (exchangeData.block > block) break;
-    if (supportedTokens.includes(exchangeData.tokens[0].toLowerCase())) {
-      tokenCalls.push({
-        target: exchangeData.tokens[0],
-        params: exchange
-      })
+  const logs = (
+    await sdk.api.util.getLogs({
+      keys: [],
+      toBlock: block,
+      target: FACTORY,
+      fromBlock: START_BLOCK,
+      topic: 'PoolCreated(address,address,uint24,int24,address)',
+    })
+  ).output
+
+  const pairAddresses = []
+  const token0Addresses = []
+  const token1Addresses = []
+  for (let log of logs) {
+    token0Addresses.push(`0x${log.topics[1].substr(-40)}`.toLowerCase())
+    token1Addresses.push(`0x${log.topics[2].substr(-40)}`.toLowerCase())
+    pairAddresses.push(`0x${log.data.substr(-40)}`.toLowerCase())
+  }
+
+  const pairs = {}
+  // add token0Addresses
+  token0Addresses.forEach((token0Address, i) => {
+    if (supportedTokens.includes(token0Address)) {
+      const pairAddress = pairAddresses[i]
+      pairs[pairAddress] = {
+        token0Address: token0Address,
+      }
     }
-    if (supportedTokens.includes(exchangeData.tokens[1].toLowerCase())) {
-      tokenCalls.push({
-        target: exchangeData.tokens[1],
-        params: exchange
-      })
+  })
+
+  // add token1Addresses
+  token1Addresses.forEach((token1Address, i) => {
+    if (supportedTokens.includes(token1Address)) {
+      const pairAddress = pairAddresses[i]
+      pairs[pairAddress] = {
+        ...(pairs[pairAddress] || {}),
+        token1Address: token1Address,
+      }
     }
+  })
+
+  let balanceCalls = []
+
+  for (let pair of Object.keys(pairs)) {
+    balanceCalls.push({
+      target: pairs[pair].token0Address,
+      params: pair,
+    })
+    balanceCalls.push({
+      target: pairs[pair].token1Address,
+      params: pair,
+    })
   }
 
   const tokenBalances = (
-    await sdk.api.abi
-      .multiCall({
-        abi: 'erc20:balanceOf',
-        calls: tokenCalls,
-        block,
-      })
-  ).output;
-
-  return tokenBalances.reduce(
-    (accumulator, tokenBalance) => {
-      if (tokenBalance.success) {
-        const balanceBigNumber = new BigNumber(tokenBalance.output)
-        if (!balanceBigNumber.isZero()) {
-          const tokenAddress = tokenBalance.input.target.toLowerCase()
-          accumulator[tokenAddress] = accumulator[tokenAddress] ? accumulator[tokenAddress].plus(balanceBigNumber) : balanceBigNumber
-        }
-      }
-      return accumulator
-    },
-    {
-      [ETH]: 0
-    }
+    await sdk.api.abi.multiCall({
+      abi: 'erc20:balanceOf',
+      calls: balanceCalls,
+      block,
+    })
   )
-};
+
+  let balances = {};
+ 
+  sdk.util.sumMultiBalanceOf(balances, tokenBalances)
+
+  return balances;
+}

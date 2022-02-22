@@ -9,15 +9,7 @@ const ETH = '0x0000000000000000000000000000000000000000'.toLowerCase();
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase();
 
 async function tvl(timestamp, block) {
-  console.log('Getting V1 data...')
-  const v1 = await v1TVL(timestamp, block);
-  console.log('V1 Data got');
-  console.log('Getting V2 data...');
-  const v2 = await v2TVL(timestamp, block);
-  console.log('V2 Data got');
-  console.log('Getting V3 data...');
-  const v3 = await v3TVL(timestamp, block);
-  console.log('V3 Data got');
+  const [v1, v2, v3] = await Promise.all([v1TVL(timestamp, block), v2TVL(timestamp, block), v3TVL(timestamp, block)]);
 
   // replace WETH with ETH for v2
   v2[ETH] = v2[WETH];
