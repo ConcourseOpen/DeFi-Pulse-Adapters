@@ -53,7 +53,7 @@ async function tvl(timestamp, block) {
 module.exports = {
   name: 'Uniswap',
   token: null,
-  chain: 'ethereum',
+  chain: 'Ethereum',
   category: 'DEXes',
   start: 1541116800, // 11/02/2018 @ 12:00am (UTC)
   tvl,
