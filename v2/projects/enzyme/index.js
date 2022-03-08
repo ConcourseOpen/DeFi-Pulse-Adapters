@@ -90,7 +90,7 @@ module.exports = {
           await axios.get(
             "https://app.enzyme.finance/api/v1/network/assets?network=ethereum"
           )
-        ).data.data;
+        ).data;
         return allTokens.map((token) => token.id);
       },
       holders: {
