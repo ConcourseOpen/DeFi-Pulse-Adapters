@@ -2,7 +2,6 @@ module.exports = {
   /* Project Metadata */
   name: "DFX Finance",
   token: "DFX",
-  chain: "Multichain,Ethereum-Polygon",
   category: "DEXes",
   start: 1611100082, // Tue, 19 Jan 2021 23:48:02 GMT
   /* required for fetching token balances */
