@@ -88,7 +88,7 @@ module.exports = {
       tokens: async () => {
         const allTokens = (
           await axios.get(
-            "https://app.enzyme.finance/api/v1/network/assets?network=ethereum"
+            "https://app.enzyme.finance/api/v1/network-asset-balances?network=ethereum"
           )
         ).data;
         return allTokens.map((token) => token.id);
