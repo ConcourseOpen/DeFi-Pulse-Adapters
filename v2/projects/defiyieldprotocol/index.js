@@ -35,6 +35,11 @@ module.exports = {
       	'0xF73baaC19eEEB7C4B7Cc211F3eDF88BB9F1d40f9', // cDAI Vault 30 Days Lock
       	'0x8Fb2c9F8c07FaCf0aF442a1900cD2Cfe1940971B', // cDAI Vault 60 Days Lock
       	'0x8ad8e5FA0f2781dA3327275049B5469275A1042E', // cDAI Vault 90 Days Lock
+	'0x28eabA060E5EF0d41eeB20d41aafaE8f685739d9', // cETH New Vault 
+        '0x2F2cff66fEB7320FC9Adf91b7B74bFb5a80C7C35', // cWBTC New Vault 
+        '0xA987aEE0189Af45d5FA95a9FBBCB4374228f375E', // cUSDT New Vault 
+        '0x251B9ee6cEd97565A821C5608014a107ddc9C98F', // cUSDC New Vault 
+        '0x54F30bFfeb925F47225e148f0bAe17a452d6b8c0', // cDAI New Vault 
       ],
       checkETHBalance: true,
     }
