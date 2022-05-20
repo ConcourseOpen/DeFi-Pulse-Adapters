@@ -55,7 +55,7 @@ module.exports = {
   name: 'Opium Network',
   token: null,
   category: 'Derivatives',
-  chain: 'Multichain,Ethereum-Polygon',
+  //chain: 'Multichain,Ethereum-Polygon',
   start: 1579601633, // 2020-01-21T10:13:53+00:00
   tvl,
 };

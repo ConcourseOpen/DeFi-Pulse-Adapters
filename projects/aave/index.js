@@ -559,5 +559,5 @@ module.exports = {
   rates,
   term: "1 block",
   variability: "medium",
-  chain: 'Multichain,Ethereum-Polygon'
+  // chain: 'Multichain,Ethereum-Polygon'
 };
