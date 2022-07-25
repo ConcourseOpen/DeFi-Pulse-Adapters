@@ -4,12 +4,6 @@ const BigNumber = require("bignumber.js");
 const axios = require('axios');
 const v1TVL = require('./v1');
 
-const tokens = async () => {
-  let tokens = (await axios.get('https://i-op.dodoex.io/erc-20-s?chains.name=mainnet'))
-    .data.map(item => item.address);
-  return tokens;
-}
-
 const DSP_FACTORY = "0x6fdDB76c93299D985f4d3FC7ac468F9A168577A4";
 const DVM_FACTORY = "0x72d220cE168C4f361dD4deE5D826a01AD8598f6C";
 const DVM_START_BLOCK = 12049617;
