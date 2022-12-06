@@ -1,13 +1,14 @@
-const axios = require('axios');
+const axios = require("axios");
 
 module.exports = {
   /* Project Metadata */
   name: "Enzyme Finance",
-  token: "MLN", 
-  category: "Assets", 
+  token: "MLN",
+  category: "Assets",
   start: 1551398400, // Fri Mar 01 2019 00:00:00 GMT+0000
   tokenHolderMap: [
-    { // Melon v1 (VaultFactory deployed on 2019-02-23 16:37:46)
+    {
+      // Melon v1 (VaultFactory deployed on 2019-02-23 16:37:46)
       tokens: [
         "0x0d8775f648430679a709e98d2b0cb6250d2887ef", // BAT
         "0x0f5d2fb29fb7d3cfee444a200298f468908cc942", // MANA
@@ -35,16 +36,17 @@ module.exports = {
       holders: {
         pullFromLogs: true,
         logConfig: {
-          target: '0x42822b1f64249154Fc82f7F6246AE7C69254F30A',
-          topic: 'NewInstance(address,address)',
-          keys: ['topics'],
-          fromBlock: 7258098
+          target: "0x42822b1f64249154Fc82f7F6246AE7C69254F30A",
+          topic: "NewInstance(address,address)",
+          keys: ["topics"],
+          fromBlock: 7258098,
         },
-        transform: null
+        transform: null,
       },
       checkETHBalance: false,
     },
-    { // Melon v1 (VaultFactory deployed on 2020-02-14 23:31:59)
+    {
+      // Melon v1 (VaultFactory deployed on 2020-02-14 23:31:59)
       tokens: [
         "0x0d8775f648430679a709e98d2b0cb6250d2887ef", // BAT
         "0x0f5d2fb29fb7d3cfee444a200298f468908cc942", // MANA
@@ -72,30 +74,36 @@ module.exports = {
       holders: {
         pullFromLogs: true,
         logConfig: {
-          target: '0x3c551588b64d1E282f734fAd7D28c4CBC2940386',
-          topic: 'NewInstance(address,address)',
-          keys: ['topics'],
-          fromBlock: 9484138
+          target: "0x3c551588b64d1E282f734fAd7D28c4CBC2940386",
+          topic: "NewInstance(address,address)",
+          keys: ["topics"],
+          fromBlock: 9484138,
         },
-        transform: null
+        transform: null,
       },
       checkETHBalance: false,
     },
-    { // Enzyme v2 (Dispatcher deployd on 2021-01-11 23:00:07)
+    {
+      // Enzyme v2 (Dispatcher deployd on 2021-01-11 23:00:07)
       tokens: async () => {
-        const allTokens = (await axios.get('https://data.enzyme.finance/api/asset/list')).data.data;
-        return allTokens.map(token => token.id);
+        const allTokens = (
+          await axios.get(
+            "https://app.enzyme.finance/api/v1/network-asset-balances?network=ethereum"
+          )
+        ).data;
+        return allTokens.map((token) => token.id);
       },
       holders: {
         pullFromLogs: true,
         logConfig: {
-          target: '0xC3DC853dD716bd5754f421ef94fdCbac3902ab32',
-          topic: 'VaultProxyDeployed(address,address,address,address,address,string)',
-          fromBlock: 11636493
+          target: "0xC3DC853dD716bd5754f421ef94fdCbac3902ab32",
+          topic:
+            "VaultProxyDeployed(address,address,address,address,address,string)",
+          fromBlock: 11636493,
         },
-        transform: (log) => `0x${log.substr(26,40)}`,
+        transform: (log) => `0x${log.substr(26, 40)}`,
       },
       checkETHBalance: false,
-    }
+    },
   ],
 };
