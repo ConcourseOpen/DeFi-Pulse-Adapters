@@ -3,16 +3,16 @@
   ==================================================*/
 
 const sdk = require("../../sdk");
-const { getAssets } = require("./api");
 
+const API_CALL_CHUNK_SIZE = 100;
 const IDEX_CUSTODY_CONTRACT = "0xE5c405C5578d84c5231D3a9a29Ef4374423fA0c2";
 
 /*==================================================
   TVL
   ==================================================*/
 
-async function tvl(timestamp, block) {
-  const assets = await getAssets();
+async function tvl(_timestamp, block) {
+  const assets = await sdk.api.util.tokenList();
 
   const balances = {
     "0x0000000000000000000000000000000000000000": (
@@ -20,21 +20,22 @@ async function tvl(timestamp, block) {
     ).output
   };
 
-  const assetBalancesResult = await sdk.api.abi.multiCall({
-    abi: "erc20:balanceOf",
-    block,
-    calls: assets.reduce((arr, asset) => {
-      if (asset.symbol !== "ETH") {
-        arr.push({
-          target: asset.contractAddress,
-          params: IDEX_CUSTODY_CONTRACT,
-        });
-      }
-      return arr;
-    }, []),
-  });
-
-  sdk.util.sumMultiBalanceOf(balances, assetBalancesResult);
+  while (assets.length) {
+    const assetBalancesResult = await sdk.api.abi.multiCall({
+      abi: "erc20:balanceOf",
+      block,
+      calls: assets.splice(0,API_CALL_CHUNK_SIZE).reduce((arr, asset) => {
+        if (asset.symbol !== "ETH") {
+          arr.push({
+            target: asset.contract,
+            params: IDEX_CUSTODY_CONTRACT,
+          });
+        }
+        return arr;
+      }, []),
+    });
+    sdk.util.sumMultiBalanceOf(balances, assetBalancesResult);
+  }
 
   return balances;
 }
