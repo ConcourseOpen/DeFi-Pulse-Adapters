@@ -1,6 +1,7 @@
 const sdk = require('../../sdk');
 const BigNumber = require('bignumber.js');
 const COMP_abi = require('./abis/COMP.json');
+const IdleCDO= require('./abis/IdleCDO.json');
 const IdleTokenV4 = require('./abis/IdleTokenV4.json');
 const IdleTokenV3 = require('./abis/IdleTokenV3.json');
 
@@ -16,7 +17,50 @@ const web3Call = async (block,target,abi,params=null) => {
 }
 
 // Idle tokens info
+const tranches = {
+  idleDAICDO: {
+    abi: IdleCDO,
+    underlyingToken:'DAI',
+    address: '0xd0DbcD556cA22d3f3c142e9a3220053FD7a247BC'
+  },
+  idleFEICDO: {
+    abi: IdleCDO,
+    underlyingToken:'FEI',
+    address: '0x77648a2661687ef3b05214d824503f6717311596'
+  },
+  idleStEthCDO: {
+    abi: IdleCDO,
+    underlyingToken:'STETH',
+    address: '0x34dcd573c5de4672c8248cd12a99f875ca112ad8'
+  },
+  idleMIMCDO: {
+    abi: IdleCDO,
+    underlyingToken:'MIM',
+    address: '0x151e89e117728ac6c93aae94c621358b0ebd1866'
+  },
+  idleFRAXCDO: {
+    abi: IdleCDO,
+    underlyingToken:'FRAX',
+    address: '0x4ccaf1392a17203edab55a1f2af3079a8ac513e7'
+  }
+};
+
 const contracts = {
+  idleWETHYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'WETH',
+    address: '0xC8E6CA6E96a326dC448307A5fDE90a0b21fd7f80',
+  },
+  idleRAIYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'RAI',
+    address: '0x5C960a3DCC01BE8a0f49c02A8ceBCAcf5D07fABe',
+  },
+  idleFEIYieldV4: {
+    abi: IdleTokenV4,
+    underlyingToken: 'FEI',
+    address: '0xb2d5CB72A621493fe83C6885E4A776279be595bC',
+  },
   idleDAIYieldV4:{
     abi:IdleTokenV4,
     underlyingToken:'DAI',
@@ -111,6 +155,30 @@ const contracts = {
 
 // Underlying tokens contracts
 const underlyingTokens = {
+  MIM: {
+    decimals: 18,
+    address: '0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3',
+  },
+  FRAX: {
+    decimals: 18,
+    address: '0x853d955acef822db058eb8505911ed77f175b99e',
+  },
+  STETH: {
+    decimals: 18,
+    address: '0xae7ab96520de3a18e5e111b5eaab095312d7fe84',
+  },
+  FEI: {
+    decimals: 18,
+    address: '0x956f47f50a910163d8bf957cf5846d573e7f87ca',
+  },
+  RAI: {
+    decimals: 18,
+    address: '0x03ab458634910aad20ef5f1c8ee96f1d6ac54919',
+  },
+  WETH: {
+    decimals: 18,
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  },
   DAI: {
     decimals:18,
     address:'0x6b175474e89094c44da98b954eedeac495271d0f',
@@ -146,6 +214,7 @@ async function tvl(timestamp, block) {
   const calls = [];
 
   Object.keys(contracts).forEach( (contractName) => {
+    
     const call = new Promise( async (resolve, reject) => {
 
       const tokenBalances = {};
@@ -167,16 +236,6 @@ async function tvl(timestamp, block) {
 
       if (totalSupply && tokenPrice){
         let tokenTVL = BNify(totalSupply).div(1e18).times(BNify(tokenPrice).div(`1e${tokenDecimals}`));
-
-        // Get unlent funds
-        if (underlyingTokenBalance){
-          underlyingTokenBalance = BNify(underlyingTokenBalance);
-          if (!underlyingTokenBalance.isNaN() && underlyingTokenBalance.gt(0)){
-            underlyingTokenBalance = underlyingTokenBalance.div(`1e${tokenDecimals}`);
-            tokenTVL = tokenTVL.plus(underlyingTokenBalance);
-          }
-        }
-
         tokenTVL = tokenTVL.times(`1e${tokenDecimals}`);
         tokenBalances[underlyingTokenAddr] = tokenTVL;
       }
@@ -193,9 +252,24 @@ async function tvl(timestamp, block) {
     calls.push(call);
   });
 
+  Object.keys(tranches).forEach((trancheName) => {
+    const call = new Promise( async (resolve, reject) => {
+      const tokenBalances = {};
+      const contractInfo = tranches[trancheName];
+      const tokenDecimals = underlyingTokens[contractInfo.underlyingToken].decimals;
+      const underlyingTokenAddr = underlyingTokens[contractInfo.underlyingToken].address;
+      let contractValue = await web3Call(block,contractInfo.address,contractInfo.abi.getContractValue);
+      if(contractValue) {
+        let tokenTVL = BNify(contractValue);
+        tokenBalances[underlyingTokenAddr] = tokenTVL;
+      }
+      resolve(tokenBalances);
+    });
+    calls.push(call)
+  });
+
   const balances = {};
   const tokensBalances = await Promise.all(calls);
-
 
   tokensBalances.forEach( tokenBalances => {
     Object.keys(tokenBalances).forEach( tokenAddr => {
@@ -205,6 +279,21 @@ async function tvl(timestamp, block) {
       balances[tokenAddr] = balances[tokenAddr].plus(tokenBalances[tokenAddr]);
     });
   });
+
+  /*
+  let totalBalance = BNify(0);
+  Object.keys(balances).forEach( tokenAddr => {
+    const underlyingToken = Object.keys(underlyingTokens).find( uToken => underlyingTokens[uToken].address === tokenAddr );
+    if (!underlyingToken){
+      return;
+    }
+    const tokenConfig = underlyingTokens[underlyingToken];
+    const tokenBalance = balances[tokenAddr].div(`1e${tokenConfig.decimals}`);
+    totalBalance = totalBalance.plus(tokenBalance);
+    console.log(underlyingToken,tokenBalance.toFixed(5));
+  });
+  console.log('Total: '+totalBalance.toFixed(5));
+  */
 
   return balances;
 }
